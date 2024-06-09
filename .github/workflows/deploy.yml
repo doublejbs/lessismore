@@ -5,6 +5,9 @@ on:
     branches:
       - main  # main 브랜치에 푸시할 때 실행
 
+permissions:
+  contents: write  # 리포지토리 콘텐츠에 대한 쓰기 권한 부여
+
 jobs:
   deploy:
     runs-on: ubuntu-latest
