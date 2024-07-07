@@ -1,8 +1,8 @@
 import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
 import firebase from "./Firebase";
+import { useNavigate } from "react-router-dom";
 
-const LogIn = () => {
+const Join = () => {
   const [formValues, setFormValues] = useState({
     email: "",
     password: "",
@@ -10,7 +10,10 @@ const LogIn = () => {
   const navigate = useNavigate();
   const handleSubmit = async (event: React.ChangeEvent<HTMLFormElement>) => {
     event.preventDefault();
-    await firebase.login(formValues.email, formValues.password);
+    await firebase.createUserWithEmailAndPassword(
+      formValues.email,
+      formValues.password,
+    );
     navigate("/home");
   };
 
@@ -26,10 +29,9 @@ const LogIn = () => {
     <div className="flex min-h-full flex-1 flex-col justify-center px-6 py-12 lg:px-8">
       <div className="sm:mx-auto sm:w-full sm:max-w-sm">
         <h2 className="mt-10 text-center text-2xl font-bold leading-9 tracking-tight text-gray-900">
-          로그인
+          회원가입
         </h2>
       </div>
-
       <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
         <form className="space-y-6" onSubmit={handleSubmit}>
           <div>
@@ -73,12 +75,13 @@ const LogIn = () => {
               />
             </div>
           </div>
+
           <div>
             <button
               type="submit"
               className="flex w-full justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
             >
-              로그인
+              회원가입
             </button>
           </div>
         </form>
@@ -87,4 +90,4 @@ const LogIn = () => {
   );
 };
 
-export default LogIn;
+export default Join;

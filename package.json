@@ -7,25 +7,32 @@
     "dev": "vite",
     "build": "tsc -b && vite build",
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "predeploy": "npm run build",
+    "deploy": "firebase deploy"
   },
   "dependencies": {
     "@headlessui/react": "^2.1.1",
     "@heroicons/react": "^2.1.4",
+    "@rollup/plugin-babel": "^6.0.4",
     "@tailwindcss/forms": "^0.5.7",
     "firebase": "^10.12.3",
+    "mobx": "^6.13.0",
+    "mobx-react-lite": "^4.0.7",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "react-router-dom": "^6.24.1",
     "tailwindcss": "^3.4.4"
   },
   "devDependencies": {
+    "@babel/plugin-proposal-decorators": "^7.24.7",
     "@eslint/compat": "^1.1.0",
     "@eslint/js": "^9.6.0",
     "@types/react": "^18.3.3",
     "@types/react-dom": "^18.3.0",
     "@typescript-eslint/eslint-plugin": "^7.13.1",
     "@typescript-eslint/parser": "^7.13.1",
+    "@vitejs/plugin-react": "^4.3.1",
     "@vitejs/plugin-react-swc": "^3.5.0",
     "eslint": "^8.57.0",
     "eslint-plugin-react": "^7.34.3",
