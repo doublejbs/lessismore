@@ -6,7 +6,8 @@ import LogIn from "./LogIn.tsx";
 import Join from "./Join.tsx";
 import { observer } from "mobx-react-lite";
 import firebase from "./firebase/Firebase.ts";
-import Home from "./home/Home.tsx";
+import Bag from "./bag/Bag.tsx";
+import Warehouse from "./warehouse/Warehouse.tsx";
 
 const ROUTES = [
   {
@@ -22,9 +23,10 @@ const ROUTES = [
     element: <Join />,
   },
   {
-    path: "/home",
-    element: <Home />,
+    path: "/bag",
+    element: <Bag />,
   },
+  { path: "warehouse", element: <Warehouse /> },
 ];
 
 const App = () => {
@@ -33,7 +35,7 @@ const App = () => {
 
   useEffect(() => {
     if (isLoggedIn) {
-      navigate("/home");
+      navigate("/bag");
     } else {
       navigate("/");
     }
