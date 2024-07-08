@@ -1,6 +1,20 @@
 import firebase from "./firebase/Firebase.ts";
+import { useLocation, useNavigate } from "react-router-dom";
 
 const Top = () => {
+  const navigate = useNavigate();
+  const location = useLocation();
+  const isBag = location.pathname === "/bag";
+  const isWarehouse = location.pathname === "/warehouse";
+
+  const handleClickBag = () => {
+    navigate("/bag");
+  };
+
+  const handleClickWarehouse = () => {
+    navigate("/warehouse");
+  };
+
   return (
     <nav
       style={{
@@ -20,8 +34,22 @@ const Top = () => {
           gap: "30px",
         }}
       >
-        <button>창고</button>
-        <button>배낭</button>
+        <button
+          onClick={handleClickWarehouse}
+          style={{
+            color: isWarehouse ? "skyblue" : "black",
+          }}
+        >
+          창고
+        </button>
+        <button
+          onClick={handleClickBag}
+          style={{
+            color: isBag ? "skyblue" : "black",
+          }}
+        >
+          배낭
+        </button>
       </div>
       <div>
         <button onClick={() => firebase.logout()}>

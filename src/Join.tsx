@@ -14,7 +14,7 @@ const Join = () => {
       formValues.email,
       formValues.password,
     );
-    navigate("/home");
+    navigate("/bag");
   };
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
