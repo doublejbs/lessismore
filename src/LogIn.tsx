@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import firebase from "./Firebase";
+import firebase from "./firebase/Firebase.ts";
 
 const LogIn = () => {
   const [formValues, setFormValues] = useState({

@@ -12,4 +12,9 @@ export default defineConfig({
       plugins: [["@babel/plugin-proposal-decorators", { legacy: true }]],
     }),
   ],
+  resolve: {
+    alias: {
+      "@": "/src",
+    },
+  },
 });
