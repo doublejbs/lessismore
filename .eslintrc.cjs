@@ -15,4 +15,9 @@ module.exports = {
       { allowConstantExport: true },
     ],
   },
+  overrideConfig: {
+    linterOptions: {
+      reportUnusedDisableDirectives: true
+    }
+  }
 }

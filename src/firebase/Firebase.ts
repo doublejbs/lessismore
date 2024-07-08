@@ -1,13 +1,13 @@
 // Import the functions you need from the SDKs you need
 import { initializeApp } from "firebase/app";
-import { getAnalytics } from "firebase/analytics";
 import {
   createUserWithEmailAndPassword,
   getAuth,
   onAuthStateChanged,
   signInWithEmailAndPassword,
+  signOut,
 } from "firebase/auth";
-import { action, makeAutoObservable } from "mobx";
+import { makeAutoObservable } from "mobx";
 
 class Firebase {
   private static readonly config = {
@@ -62,8 +62,16 @@ class Firebase {
     await signInWithEmailAndPassword(this.auth, email, password);
   }
 
+  public async logout() {
+    await signOut(this.auth);
+  }
+
   public getUserId() {
     return this.userId;
+  }
+
+  public isLoggedIn() {
+    return this.loggedIn;
   }
 }
 const firebase = new Firebase();

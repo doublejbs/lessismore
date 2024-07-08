@@ -1,23 +1,51 @@
-import React from "react";
+import React, { useEffect } from "react";
 import "./App.css";
-import { useNavigate } from "react-router-dom";
+import { BrowserRouter, Route, Routes, useNavigate } from "react-router-dom";
+import Welcome from "./Welcome.tsx";
+import LogIn from "./LogIn.tsx";
+import Join from "./Join.tsx";
+import { observer } from "mobx-react-lite";
+import firebase from "./firebase/Firebase.ts";
+import Home from "./home/Home.tsx";
+
+const ROUTES = [
+  {
+    path: "/",
+    element: <Welcome />,
+  },
+  {
+    path: "/login",
+    element: <LogIn />,
+  },
+  {
+    path: "/join",
+    element: <Join />,
+  },
+  {
+    path: "/home",
+    element: <Home />,
+  },
+];
 
 const App = () => {
   const navigate = useNavigate();
-  const handleClickLogin = () => {
-    navigate("/login");
-  };
+  const isLoggedIn = firebase.isLoggedIn();
 
-  const handleClickJoin = () => {
-    navigate("/join");
-  };
+  useEffect(() => {
+    if (isLoggedIn) {
+      navigate("/home");
+    } else {
+      navigate("/");
+    }
+  }, [isLoggedIn]);
 
   return (
-    <div>
-      <button onClick={handleClickLogin}>로그인</button>
-      <button onClick={handleClickJoin}>회원가입</button>
-    </div>
+    <Routes>
+      {ROUTES.map(({ path, element }) => (
+        <Route key={path} path={path} element={element} />
+      ))}
+    </Routes>
   );
 };
 
-export default App;
+export default observer(App);
