@@ -26,7 +26,7 @@ const ROUTES = [
     path: "/bag",
     element: <Bag />,
   },
-  { path: "warehouse", element: <Warehouse /> },
+  { path: "/warehouse", element: <Warehouse /> },
 ];
 
 const App = () => {
@@ -35,7 +35,7 @@ const App = () => {
 
   useEffect(() => {
     if (isLoggedIn) {
-      navigate("/bag");
+      navigate("/warehouse");
     } else {
       navigate("/");
     }

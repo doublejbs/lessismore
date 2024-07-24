@@ -1,62 +1,55 @@
 import firebase from "./firebase/Firebase.ts";
 import { useLocation, useNavigate } from "react-router-dom";
+import { Button, Menu } from "antd";
+import { Header } from "antd/es/layout/layout";
+
+const menus = [
+  { key: "warehouse", label: "창고" },
+  { key: "bag", label: "배낭" },
+];
 
 const Top = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const isBag = location.pathname === "/bag";
   const isWarehouse = location.pathname === "/warehouse";
+  const selectedKeys = isBag ? ["bag"] : isWarehouse ? ["warehouse"] : [];
 
-  const handleClickBag = () => {
-    navigate("/bag");
+  const handleClickMenu = ({ key }: { key: string }) => {
+    navigate(`/${key}`);
   };
 
-  const handleClickWarehouse = () => {
-    navigate("/warehouse");
+  const handleClickLogout = () => {
+    firebase.logout();
   };
 
   return (
-    <nav
+    <Header
       style={{
-        border: "1px solid black",
         display: "flex",
-        justifyContent: "space-between",
         alignItems: "center",
-        flexDirection: "row",
-        gap: "30px",
+        justifyContent: "center",
+        background: "white",
+        padding: "0 32px",
       }}
     >
-      <div
+      <Menu
+        theme={"light"}
         style={{
           display: "flex",
+          flex: 1,
+          alignItems: "center",
           justifyContent: "center",
-          flexGrow: 1,
-          gap: "30px",
         }}
-      >
-        <button
-          onClick={handleClickWarehouse}
-          style={{
-            color: isWarehouse ? "skyblue" : "black",
-          }}
-        >
-          창고
-        </button>
-        <button
-          onClick={handleClickBag}
-          style={{
-            color: isBag ? "skyblue" : "black",
-          }}
-        >
-          배낭
-        </button>
-      </div>
-      <div>
-        <button onClick={() => firebase.logout()}>
-          {firebase.getUserId()} 로그아웃
-        </button>
-      </div>
-    </nav>
+        mode={"horizontal"}
+        items={menus}
+        defaultSelectedKeys={selectedKeys}
+        onClick={handleClickMenu}
+      />
+      <Button type="text" onClick={handleClickLogout}>
+        로그아웃
+      </Button>
+    </Header>
   );
 };
 
