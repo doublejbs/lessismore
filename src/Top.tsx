@@ -1,12 +1,9 @@
 import firebase from "./firebase/Firebase.ts";
 import { useLocation, useNavigate } from "react-router-dom";
-import { Button, Menu } from "antd";
+import { Button, Typography } from "antd";
 import { Header } from "antd/es/layout/layout";
 
-const menus = [
-  { key: "warehouse", label: "창고" },
-  { key: "bag", label: "배낭" },
-];
+const { Text } = Typography;
 
 const Top = () => {
   const navigate = useNavigate();
@@ -15,8 +12,12 @@ const Top = () => {
   const isWarehouse = location.pathname === "/warehouse";
   const selectedKeys = isBag ? ["bag"] : isWarehouse ? ["warehouse"] : [];
 
-  const handleClickMenu = ({ key }: { key: string }) => {
-    navigate(`/${key}`);
+  const handleClickWarehouse = () => {
+    navigate("/warehouse");
+  };
+
+  const handleClickBag = () => {
+    navigate("/bag");
   };
 
   const handleClickLogout = () => {
@@ -27,28 +28,48 @@ const Top = () => {
     <Header
       style={{
         display: "flex",
+        justifyContent: "space-between",
         alignItems: "center",
-        justifyContent: "center",
         background: "white",
-        padding: "0 32px",
+        padding: "0px",
       }}
     >
-      <Menu
-        theme={"light"}
+      <div
         style={{
           display: "flex",
-          flex: 1,
           alignItems: "center",
-          justifyContent: "center",
+          paddingLeft: "15px",
+          fontWeight: "900",
+          fontSize: "xx-large",
         }}
-        mode={"horizontal"}
-        items={menus}
-        defaultSelectedKeys={selectedKeys}
-        onClick={handleClickMenu}
-      />
-      <Button type="text" onClick={handleClickLogout}>
-        로그아웃
-      </Button>
+      >
+        <a>USELESS</a>
+      </div>
+      <div>
+        <Button
+          type={"text"}
+          onClick={handleClickWarehouse}
+          style={{
+            fontWeight: isWarehouse ? "bold" : "normal",
+          }}
+        >
+          창고
+        </Button>
+        <Button
+          type={"text"}
+          onClick={handleClickBag}
+          style={{
+            fontWeight: isBag ? "bold" : "normal",
+          }}
+        >
+          배낭
+        </Button>
+      </div>
+      <div>
+        <Button type="text" onClick={handleClickLogout}>
+          로그아웃
+        </Button>
+      </div>
     </Header>
   );
 };
