@@ -6,11 +6,8 @@ import Top from "../Top.tsx";
 const Warehouse = () => {
   return (
     <Layout>
-      <Layout>
-        <Top />
-        <Content />
-      </Layout>
-      <Sider />
+      <Top />
+      <Content />
     </Layout>
   );
 };

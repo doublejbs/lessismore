@@ -6,7 +6,7 @@ const Bag = () => {
   return (
     <>
       <Top />
-      <img src={"https://www.useless.my/bag.png"} alt="Bag" />
+      <img src={"/bag.png"} alt="Bag" />
     </>
   );
 };
