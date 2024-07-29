@@ -14,7 +14,7 @@ import { makeAutoObservable } from "mobx";
 class Firebase {
   private static readonly config = {
     apiKey: "AIzaSyBhg7PCSJY7Zm6p804Y5dTad4Qoi8Tr6MU",
-    authDomain: "lessismore-7e070.firebaseapp.com",
+    authDomain: "useless.my",
     projectId: "lessismore-7e070",
     storageBucket: "lessismore-7e070.appspot.com",
     messagingSenderId: "434364025032",
