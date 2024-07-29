@@ -76,11 +76,11 @@ class Firebase {
   public async logInWithGoogle() {
     const result = await signInWithPopup(this.auth, this.googleProvider);
     const credential = GoogleAuthProvider.credentialFromResult(result);
-    const token = credential.accessToken;
+    // const token = credential.accessToken;
     const user = result.user;
 
     console.log(user);
-    this.userId = user.userId;
+    // this.userId = user.userId;
   }
 }
 const firebase = new Firebase();

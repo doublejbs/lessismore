@@ -31,7 +31,7 @@ const LogIn = () => {
         await firebase.login(email, password);
         navigate("/bag");
       }
-    } catch (e) {
+    } catch (e: any) {
       setErrorMessage(e.message);
       setShowError(true);
     }
@@ -73,6 +73,7 @@ const LogIn = () => {
             display: "flex",
             flexDirection: "column",
             alignItems: "center",
+            justifyContent: "center",
             maxWidth: "400px",
           }}
         >
@@ -81,7 +82,6 @@ const LogIn = () => {
               fontWeight: "bold",
               fontSize: "xxx-large",
               alignContent: "end",
-              height: "300px",
             }}
           >
             USELESS
@@ -153,6 +153,11 @@ const LogIn = () => {
               </Form.Item>
             </Form>
           </div>
+          <div
+            style={{
+              height: "10%",
+            }}
+          ></div>
         </div>
       </Layout>
     </ConfigProvider>
