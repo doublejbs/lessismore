@@ -1,89 +1,161 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import firebase from "./firebase/Firebase.ts";
+import {
+  Alert,
+  Button,
+  Checkbox,
+  ConfigProvider,
+  Form,
+  FormProps,
+  Input,
+  Layout,
+} from "antd";
+
+type FieldType = {
+  email?: string;
+  password?: string;
+};
 
 const LogIn = () => {
-  const [formValues, setFormValues] = useState({
-    email: "",
-    password: "",
-  });
   const navigate = useNavigate();
-  const handleSubmit = async (event: React.ChangeEvent<HTMLFormElement>) => {
-    event.preventDefault();
-    await firebase.login(formValues.email, formValues.password);
-    navigate("/bag");
+  const [showError, setShowError] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
+
+  const onFinish: FormProps<FieldType>["onFinish"] = async ({
+    email,
+    password,
+  }) => {
+    try {
+      if (email && password) {
+        await firebase.login(email, password);
+        navigate("/bag");
+      }
+    } catch (e) {
+      setErrorMessage(e.message);
+      setShowError(true);
+    }
   };
 
-  const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = event.target;
-    setFormValues({
-      ...formValues,
-      [name]: value,
-    });
+  const handleClickGoogle = () => {
+    firebase.logInWithGoogle();
+  };
+
+  const handleClickJoin = () => {
+    navigate("/join");
   };
 
   return (
-    <div className="flex min-h-full flex-1 flex-col justify-center px-6 py-12 lg:px-8">
-      <div className="sm:mx-auto sm:w-full sm:max-w-sm">
-        <h2 className="mt-10 text-center text-2xl font-bold leading-9 tracking-tight text-gray-900">
-          로그인
-        </h2>
-      </div>
-
-      <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
-        <form className="space-y-6" onSubmit={handleSubmit}>
-          <div>
-            <label
-              htmlFor="email"
-              className="block text-sm font-medium leading-6 text-gray-900"
+    <ConfigProvider
+      theme={{
+        token: {
+          colorPrimary: "black",
+        },
+      }}
+    >
+      {showError && (
+        <Alert
+          message="Error"
+          description={errorMessage}
+          type="error"
+          showIcon
+        />
+      )}
+      <Layout
+        style={{
+          display: "flex",
+          justifyContent: "center",
+          flexDirection: "row",
+        }}
+      >
+        <div
+          style={{
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+            maxWidth: "400px",
+          }}
+        >
+          <div
+            style={{
+              fontWeight: "bold",
+              fontSize: "xxx-large",
+              alignContent: "end",
+              height: "300px",
+            }}
+          >
+            USELESS
+          </div>
+          <div style={{ marginTop: "20px" }}>
+            <Form
+              initialValues={{ remember: true }}
+              onFinish={onFinish}
+              style={{
+                width: "350px",
+              }}
             >
-              이메일
-            </label>
-            <div className="mt-2">
-              <input
-                id="email"
+              <Form.Item
                 name="email"
-                type="email"
-                autoComplete="email"
-                required
-                className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                onChange={handleChange}
-              />
-            </div>
-          </div>
-
-          <div>
-            <div className="flex items-center justify-between">
-              <label
-                htmlFor="password"
-                className="block text-sm font-medium leading-6 text-gray-900"
+                rules={[{ required: true, message: "이메일을 입력해주세요." }]}
               >
-                비밀번호
-              </label>
-            </div>
-            <div className="mt-2">
-              <input
-                id="password"
+                <Input placeholder="이메일" />
+              </Form.Item>
+              <Form.Item
                 name="password"
-                type="password"
-                autoComplete="current-password"
-                required
-                className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                onChange={handleChange}
-              />
-            </div>
+                rules={[
+                  { required: true, message: "비밀번호를 입력해주세요." },
+                ]}
+              >
+                <Input type="password" placeholder="비밀번호" />
+              </Form.Item>
+              <Form.Item>
+                <Form.Item name="remember" valuePropName="checked" noStyle>
+                  <Checkbox>아이디 저장</Checkbox>
+                </Form.Item>
+              </Form.Item>
+              <Form.Item>
+                <Button
+                  type="primary"
+                  htmlType="submit"
+                  style={{
+                    width: "100%",
+                  }}
+                >
+                  로그인
+                </Button>
+              </Form.Item>
+
+              <Form.Item>
+                <Button
+                  style={{
+                    width: "100%",
+                  }}
+                  onClick={handleClickJoin}
+                >
+                  회원가입
+                </Button>
+              </Form.Item>
+              <Form.Item>
+                <a
+                  onClick={handleClickGoogle}
+                  style={{
+                    display: "flex",
+                    justifyContent: "center",
+                  }}
+                >
+                  <img
+                    src={"/web_light_sq_SI.svg"}
+                    alt={"google"}
+                    width={175}
+                    height={32}
+                  />
+                </a>
+              </Form.Item>
+            </Form>
           </div>
-          <div>
-            <button
-              type="submit"
-              className="flex w-full justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
-            >
-              로그인
-            </button>
-          </div>
-        </form>
-      </div>
-    </div>
+        </div>
+      </Layout>
+    </ConfigProvider>
   );
 };
 
