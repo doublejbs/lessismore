@@ -6,6 +6,8 @@ import {
   onAuthStateChanged,
   signInWithEmailAndPassword,
   signOut,
+  signInWithPopup,
+  GoogleAuthProvider,
 } from "firebase/auth";
 import { makeAutoObservable } from "mobx";
 
@@ -23,6 +25,7 @@ class Firebase {
   private auth: any;
   private loggedIn = false;
   private userId = "";
+  private googleProvider = new GoogleAuthProvider();
 
   public constructor() {
     makeAutoObservable(this);
@@ -51,11 +54,7 @@ class Firebase {
   }
 
   public async createUserWithEmailAndPassword(email: string, password: string) {
-    try {
-      await createUserWithEmailAndPassword(this.auth, email, password);
-    } catch (e) {
-      throw e;
-    }
+    await createUserWithEmailAndPassword(this.auth, email, password);
   }
 
   public async login(email: string, password: string) {
@@ -72,6 +71,16 @@ class Firebase {
 
   public isLoggedIn() {
     return this.loggedIn;
+  }
+
+  public async logInWithGoogle() {
+    const result = await signInWithPopup(this.auth, this.googleProvider);
+    const credential = GoogleAuthProvider.credentialFromResult(result);
+    const token = credential.accessToken;
+    const user = result.user;
+
+    console.log(user);
+    this.userId = user.userId;
   }
 }
 const firebase = new Firebase();

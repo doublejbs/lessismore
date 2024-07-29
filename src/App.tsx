@@ -37,7 +37,7 @@ const App = () => {
     if (isLoggedIn) {
       navigate("/warehouse");
     } else {
-      navigate("/");
+      navigate("/login");
     }
   }, [isLoggedIn]);
 
