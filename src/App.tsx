@@ -35,7 +35,7 @@ const App = () => {
 
   useEffect(() => {
     if (isLoggedIn) {
-      navigate("/warehouse");
+      navigate("/warehouse", { replace: true });
     } else {
       navigate("/login");
     }
