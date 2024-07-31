@@ -37,8 +37,9 @@ const LogIn = () => {
     }
   };
 
-  const handleClickGoogle = () => {
-    firebase.logInWithGoogle();
+  const handleClickGoogle = async () => {
+    await firebase.logInWithGoogle();
+    navigate("/");
   };
 
   const handleClickJoin = () => {

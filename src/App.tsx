@@ -32,22 +32,29 @@ const ROUTES = [
 const App = () => {
   const navigate = useNavigate();
   const isLoggedIn = firebase.isLoggedIn();
+  const isInitialized = firebase.isInitialized();
 
   useEffect(() => {
-    if (isLoggedIn) {
-      navigate("/warehouse", { replace: true });
-    } else {
-      navigate("/login");
+    if (isInitialized) {
+      if (isLoggedIn) {
+        navigate("/warehouse", { replace: true });
+      } else {
+        navigate("/login");
+      }
     }
-  }, [isLoggedIn]);
+  }, [isLoggedIn, isInitialized]);
 
-  return (
-    <Routes>
-      {ROUTES.map(({ path, element }) => (
-        <Route key={path} path={path} element={element} />
-      ))}
-    </Routes>
-  );
+  if (isInitialized) {
+    return (
+      <Routes>
+        {ROUTES.map(({ path, element }) => (
+          <Route key={path} path={path} element={element} />
+        ))}
+      </Routes>
+    );
+  } else {
+    return "loading";
+  }
 };
 
 export default observer(App);

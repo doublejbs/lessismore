@@ -2,12 +2,13 @@
 import { initializeApp } from "firebase/app";
 import {
   createUserWithEmailAndPassword,
-  getAuth,
   onAuthStateChanged,
   signInWithEmailAndPassword,
   signOut,
   signInWithPopup,
   GoogleAuthProvider,
+  authStateReady,
+  getAuth,
 } from "firebase/auth";
 import { makeAutoObservable } from "mobx";
 
@@ -26,31 +27,19 @@ class Firebase {
   private loggedIn = false;
   private userId = "";
   private googleProvider = new GoogleAuthProvider();
+  private initialized = false;
 
   public constructor() {
     makeAutoObservable(this);
   }
 
-  public initialize() {
+  public async initialize() {
     const fireBaseApp = initializeApp(Firebase.config);
     this.auth = getAuth(fireBaseApp);
 
-    onAuthStateChanged(this.auth, (user) => {
-      if (user) {
-        // User is signed in, see docs for a list of available properties
-        // https://firebase.google.com/docs/reference/js/auth.user
-        const uid = user.uid;
+    await this.auth.authStateReady();
 
-        console.log(uid);
-        this.userId = user.email ?? "";
-        this.loggedIn = true;
-        // ...
-      } else {
-        this.loggedIn = false;
-        // User is signed out
-        // ...
-      }
-    });
+    this.initialized = true;
   }
 
   public async createUserWithEmailAndPassword(email: string, password: string) {
@@ -70,17 +59,17 @@ class Firebase {
   }
 
   public isLoggedIn() {
-    return this.loggedIn;
+    return this.initialized && !!this.auth.currentUser;
   }
 
   public async logInWithGoogle() {
     const result = await signInWithPopup(this.auth, this.googleProvider);
     const credential = GoogleAuthProvider.credentialFromResult(result);
-    // const token = credential.accessToken;
     const user = result.user;
+  }
 
-    console.log(user);
-    // this.userId = user.userId;
+  public isInitialized() {
+    return this.initialized;
   }
 }
 const firebase = new Firebase();
