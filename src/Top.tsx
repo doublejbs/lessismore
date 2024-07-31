@@ -20,8 +20,9 @@ const Top = () => {
     navigate("/bag");
   };
 
-  const handleClickLogout = () => {
-    firebase.logout();
+  const handleClickLogout = async () => {
+    await firebase.logout();
+    navigate("/login");
   };
 
   return (
