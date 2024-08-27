@@ -7,10 +7,15 @@ import {
   signOut,
   signInWithPopup,
   GoogleAuthProvider,
-  authStateReady,
   getAuth,
 } from "firebase/auth";
 import { makeAutoObservable } from "mobx";
+import {
+  addDoc,
+  collection,
+  Firestore,
+  getFirestore,
+} from "firebase/firestore";
 
 class Firebase {
   private static readonly config = {
@@ -24,10 +29,10 @@ class Firebase {
   };
 
   private auth: any;
-  private loggedIn = false;
   private userId = "";
   private googleProvider = new GoogleAuthProvider();
   private initialized = false;
+  private store: Firestore;
 
   public constructor() {
     makeAutoObservable(this);
@@ -36,8 +41,11 @@ class Firebase {
   public async initialize() {
     const fireBaseApp = initializeApp(Firebase.config);
     this.auth = getAuth(fireBaseApp);
+    this.store = getFirestore(fireBaseApp);
 
     await this.auth.authStateReady();
+
+    this.userId = this.auth.currentUser.uid;
 
     this.initialized = true;
   }
@@ -71,7 +79,22 @@ class Firebase {
   public isInitialized() {
     return this.initialized;
   }
+
+  public getStore() {
+    return this.store;
+  }
+
+  public async add() {
+    try {
+      await addDoc(collection(this.getStore(), "gear"), {
+        company: "nemo",
+        name: "ora",
+        weight: "301",
+      });
+    } catch (e) {
+      console.log(e);
+    }
+  }
 }
-const firebase = new Firebase();
-firebase.initialize();
-export default firebase;
+
+export default Firebase;
