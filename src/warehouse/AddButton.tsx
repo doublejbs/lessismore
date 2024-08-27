@@ -1,6 +1,6 @@
 import { css } from "@emotion/css";
-import App from "@/App.ts";
 import { doc, setDoc } from "firebase/firestore";
+import App from "../App.ts";
 const AddButton = () => {
   const handleClick = () => {
     setDoc(doc(App.getStore(), "users", App.getFirebase().getUserId()), {

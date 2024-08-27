@@ -2,7 +2,7 @@ import firebase from "./firebase/Firebase.ts";
 import { useLocation, useNavigate } from "react-router-dom";
 import { Button, Typography } from "antd";
 import { Header } from "antd/es/layout/layout";
-import app from "@/App.ts";
+import app from "./App.ts";
 
 const { Text } = Typography;
 

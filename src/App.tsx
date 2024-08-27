@@ -8,7 +8,7 @@ import { observer } from "mobx-react-lite";
 import firebase from "./firebase/Firebase.ts";
 import Bag from "./bag/Bag.tsx";
 import Warehouse from "./warehouse/Warehouse.tsx";
-import app from "@/App.ts";
+import app from "./App.ts";
 import { ConfigProvider } from "antd";
 
 const ROUTES = [

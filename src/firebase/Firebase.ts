@@ -32,7 +32,7 @@ class Firebase {
   private userId = "";
   private googleProvider = new GoogleAuthProvider();
   private initialized = false;
-  private store: Firestore;
+  private store!: Firestore;
 
   public constructor() {
     makeAutoObservable(this);
