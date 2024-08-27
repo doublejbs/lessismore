@@ -8,8 +8,6 @@ const SearchBar: FC = () => {
       allowClear
       enterButton="Search"
       size="middle"
-      onSearch={onSearch}
-      onFocus={handleFocus}
       style={{
         maxWidth: "300px",
         margin: "10px",

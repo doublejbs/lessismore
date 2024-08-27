@@ -1,9 +1,9 @@
-import Firebase from "@/firebase/Firebase.ts";
-import GearStore from "@/firebase/GearStore.ts";
+import Firebase from "./firebase/Firebase.ts";
+import GearStore from "./firebase/GearStore.ts";
 
 class App {
   private readonly firebase = new Firebase();
-  private gearStore: GearStore;
+  private gearStore!: GearStore;
   public constructor() {}
 
   public async initialize() {
