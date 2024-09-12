@@ -9,7 +9,6 @@ import firebase from "./firebase/Firebase.ts";
 import Bag from "./bag/Bag.tsx";
 import Warehouse from "./warehouse/Warehouse.tsx";
 import app from "./App.ts";
-import { ConfigProvider } from "antd";
 
 const ROUTES = [
   {
@@ -35,11 +34,7 @@ const App = () => {
   const firebase = app.getFirebase();
   const navigate = useNavigate();
   const isLoggedIn = firebase.isLoggedIn();
-  const isInitialized = firebase.isInitialized();
-
-  useEffect(() => {
-    app.initialize();
-  }, []);
+  const isInitialized = app.isInitialized();
 
   useEffect(() => {
     if (isInitialized) {
@@ -48,24 +43,18 @@ const App = () => {
       } else {
         navigate("/login");
       }
+    } else {
+      app.initialize();
     }
   }, [isLoggedIn, isInitialized]);
 
   if (isInitialized) {
     return (
-      <ConfigProvider
-        theme={{
-          token: {
-            colorPrimary: "black",
-          },
-        }}
-      >
         <Routes>
           {ROUTES.map(({ path, element }) => (
             <Route key={path} path={path} element={element} />
           ))}
         </Routes>
-      </ConfigProvider>
     );
   } else {
     return "loading";

@@ -1,4 +1,3 @@
-// Import the functions you need from the SDKs you need
 import { initializeApp } from "firebase/app";
 import {
   createUserWithEmailAndPassword,
@@ -8,6 +7,7 @@ import {
   signInWithPopup,
   GoogleAuthProvider,
   getAuth,
+  Auth,
 } from "firebase/auth";
 import { makeAutoObservable } from "mobx";
 import {
@@ -28,7 +28,7 @@ class Firebase {
     measurementId: "G-NC0J0766BX",
   };
 
-  private auth: any;
+  private auth!: Auth;
   private userId = "";
   private googleProvider = new GoogleAuthProvider();
   private initialized = false;
@@ -45,9 +45,13 @@ class Firebase {
 
     await this.auth.authStateReady();
 
-    this.userId = this.auth.currentUser.uid;
+    this.userId = this.auth.currentUser?.uid ?? '';
 
-    this.initialized = true;
+    this.setInitialized(true);
+  }
+
+  private setInitialized(value: boolean) {
+    this.initialized = value;
   }
 
   public async createUserWithEmailAndPassword(email: string, password: string) {
