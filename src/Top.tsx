@@ -1,10 +1,6 @@
 import firebase from "./firebase/Firebase.ts";
 import { useLocation, useNavigate } from "react-router-dom";
-import { Button, Typography } from "antd";
-import { Header } from "antd/es/layout/layout";
 import app from "./App.ts";
-
-const { Text } = Typography;
 
 const Top = () => {
   const navigate = useNavigate();
@@ -28,46 +24,43 @@ const Top = () => {
   // };
 
   return (
-    <Header
-      style={{
-        background: "white",
-        padding: "0px",
-      }}
+    <div
     >
       <div
         style={{
           height: "30px",
         }}
       >
-        <Button
-          type={"text"}
+        <button
+
           onClick={handleClickWarehouse}
           style={{
             fontWeight: isWarehouse ? "bold" : "normal",
           }}
         >
           창고
-        </Button>
-        <Button
-          type={"text"}
+        </button>
+        <button
+
           onClick={handleClickBag}
           style={{
             fontWeight: isBag ? "bold" : "normal",
           }}
         >
           배낭
-        </Button>
-        <Button
-          type={"text"}
+        </button>
+        <button
+
           onClick={handleClickBag}
           style={{
             fontWeight: isBag ? "bold" : "normal",
           }}
         >
           모험
-        </Button>
+        </button>
+        {/* <Button onClick={handleClickLogout}>로그아웃</Button> */}
       </div>
-    </Header>
+    </div>
   );
 };
 
