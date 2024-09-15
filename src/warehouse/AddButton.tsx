@@ -1,27 +1,34 @@
-import { css } from "@emotion/css";
-import { doc, setDoc } from "firebase/firestore";
-import App from "../App.ts";
-const AddButton = () => {
+import { FC } from 'react';
+
+interface Props {
+  showAdd: () => void;
+}
+
+const AddButton: FC<Props> = ({ showAdd }) => {
   const handleClick = () => {
-    setDoc(doc(App.getStore(), "users", App.getFirebase().getUserId()), {
-      gears: ["1"],
-    });
+    showAdd();
   };
 
   return (
     <button
-      className={css`
-        position: fixed;
-        right: 30px;
-        bottom: 30px;
-        border-radius: 50%;
-        border: 1px solid black;
-        width: 50px;
-        height: 50px;
-        background: black;
-        color: white;
-        font-size: 25px;
-      `}
+      style={{
+        position: 'fixed',
+        right: '10px',
+        bottom: '90px',
+        borderRadius: '10px',
+        border: '1px solid black',
+        width: '80px',
+        height: '80px',
+        background: 'black',
+        color: 'white',
+        fontWeight: 'lighter',
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
+        textAlign: 'center',
+        overflow: 'hidden',
+        fontSize: '60px',
+      }}
       onClick={handleClick}
     >
       +
