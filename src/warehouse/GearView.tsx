@@ -1,11 +1,12 @@
-import { FC } from 'react';
-import GearType from './type/GearType';
+import { FC, ReactNode } from 'react';
+import Gear from './search-warehouse/Gear';
 
 interface Props {
-  gear: GearType;
+  gear: Gear;
+  children?: ReactNode;
 }
 
-const GearView: FC<Props> = ({ gear }) => {
+const GearView: FC<Props> = ({ gear, children }) => {
   return (
     <div
       style={{
@@ -14,6 +15,7 @@ const GearView: FC<Props> = ({ gear }) => {
         flexDirection: 'row',
         padding: '10px',
         width: '100%',
+        position: 'relative',
       }}
     >
       <div
@@ -23,7 +25,7 @@ const GearView: FC<Props> = ({ gear }) => {
           height: '30%',
         }}
       >
-        <img src={gear.imageUrl} width={100} height={100} />
+        <img src={gear.getImageUrl()} width={100} height={100} />
       </div>
       <div
         style={{
@@ -38,11 +40,12 @@ const GearView: FC<Props> = ({ gear }) => {
             fontWeight: 'bold',
           }}
         >
-          {gear.name}
+          {gear.getName()}
         </span>
-        <span>{gear.company}</span>
-        <span>{gear.weight}g</span>
+        <span>{gear.getCompany()}</span>
+        <span>{gear.geWeight()}g</span>
       </div>
+      {children}
     </div>
   );
 };

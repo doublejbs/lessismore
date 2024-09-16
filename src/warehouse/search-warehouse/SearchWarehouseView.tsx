@@ -1,19 +1,26 @@
-import React, { FC, InputHTMLAttributes, useEffect, useState } from 'react';
-import Layout from '../Layout';
+import React, { FC, useEffect, useState } from 'react';
+import Layout from '../../Layout';
 import SearchWarehouse from './SearchWarehouse';
 import { observer } from 'mobx-react-lite';
-import GearView from './GearView';
+import SearchGearView from './SearchGearView';
+import Warehouse from '../Warehouse';
 
 interface Props {
   hideAdd: () => void;
+  warehouse: Warehouse;
 }
 
-const AddWarehouse: FC<Props> = ({ hideAdd }) => {
+const SearchWarehouseView: FC<Props> = ({ hideAdd, warehouse }) => {
   const [searchWarehouse] = useState(() => SearchWarehouse.new());
   const result = searchWarehouse.getResult();
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     searchWarehouse.search(e.target.value);
+  };
+
+  const handleClickConfirm = async () => {
+    await searchWarehouse.register();
+    hideAdd();
   };
 
   useEffect(() => {
@@ -70,7 +77,12 @@ const AddWarehouse: FC<Props> = ({ hideAdd }) => {
             }}
           >
             {result.map((gear) => (
-              <GearView key={gear.id} gear={gear} />
+              <SearchGearView
+                key={gear.getId()}
+                gear={gear}
+                searchWarehouse={searchWarehouse}
+                warehouse={warehouse}
+              />
             ))}
           </ul>
         </div>
@@ -87,7 +99,7 @@ const AddWarehouse: FC<Props> = ({ hideAdd }) => {
             transform: 'translateX(-50%)',
             borderRadius: '10px',
           }}
-          onClick={hideAdd}
+          onClick={handleClickConfirm}
         >
           <button>확인</button>
         </div>
@@ -96,4 +108,4 @@ const AddWarehouse: FC<Props> = ({ hideAdd }) => {
   );
 };
 
-export default observer(AddWarehouse);
+export default observer(SearchWarehouseView);

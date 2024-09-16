@@ -1,20 +1,15 @@
-import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
-import firebase from "./firebase/Firebase.ts";
+import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 const Join = () => {
   const [formValues, setFormValues] = useState({
-    email: "",
-    password: "",
+    email: '',
+    password: '',
   });
   const navigate = useNavigate();
   const handleSubmit = async (event: React.ChangeEvent<HTMLFormElement>) => {
     event.preventDefault();
-    await firebase.createUserWithEmailAndPassword(
-      formValues.email,
-      formValues.password,
-    );
-    navigate("/bag");
+    navigate('/bag');
   };
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {

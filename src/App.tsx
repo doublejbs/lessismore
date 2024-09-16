@@ -1,7 +1,6 @@
 import React, { useEffect } from 'react';
 import { Route, Routes, useNavigate } from 'react-router-dom';
 import './App.css';
-import Welcome from './Welcome.tsx';
 import LogIn from './LogIn.tsx';
 import Join from './Join.tsx';
 import { observer } from 'mobx-react-lite';
@@ -13,10 +12,6 @@ import app from './App.ts';
 import WarehouseWrapper from './warehouse/WarehouseWrapper.tsx';
 
 const ROUTES = [
-  {
-    path: '/',
-    element: <Welcome />,
-  },
   {
     path: '/login',
     element: <LogIn />,
@@ -36,6 +31,7 @@ const App = () => {
   const firebase = app.getFirebase();
   const navigate = useNavigate();
   const isLoggedIn = firebase.isLoggedIn();
+
   const isInitialized = app.isInitialized();
 
   useEffect(() => {

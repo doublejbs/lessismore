@@ -1,4 +1,4 @@
-import { initializeApp } from "firebase/app";
+import { initializeApp } from 'firebase/app';
 import {
   createUserWithEmailAndPassword,
   onAuthStateChanged,
@@ -8,28 +8,28 @@ import {
   GoogleAuthProvider,
   getAuth,
   Auth,
-} from "firebase/auth";
-import { makeAutoObservable } from "mobx";
+} from 'firebase/auth';
+import { makeAutoObservable } from 'mobx';
 import {
   addDoc,
   collection,
   Firestore,
   getFirestore,
-} from "firebase/firestore";
+} from 'firebase/firestore';
 
 class Firebase {
   private static readonly config = {
-    apiKey: "AIzaSyBhg7PCSJY7Zm6p804Y5dTad4Qoi8Tr6MU",
-    authDomain: "useless.my",
-    projectId: "lessismore-7e070",
-    storageBucket: "lessismore-7e070.appspot.com",
-    messagingSenderId: "434364025032",
-    appId: "1:434364025032:web:a8c458d1ee31b0e14dbdfd",
-    measurementId: "G-NC0J0766BX",
+    apiKey: 'AIzaSyBhg7PCSJY7Zm6p804Y5dTad4Qoi8Tr6MU',
+    authDomain: 'useless.my',
+    projectId: 'lessismore-7e070',
+    storageBucket: 'lessismore-7e070.appspot.com',
+    messagingSenderId: '434364025032',
+    appId: '1:434364025032:web:a8c458d1ee31b0e14dbdfd',
+    measurementId: 'G-NC0J0766BX',
   };
 
   private auth!: Auth;
-  private userId = "";
+  private userId = '';
   private googleProvider = new GoogleAuthProvider();
   private initialized = false;
   private store!: Firestore;
@@ -45,7 +45,13 @@ class Firebase {
 
     await this.auth.authStateReady();
 
-    this.userId = this.auth.currentUser?.uid ?? '';
+    this.auth.onAuthStateChanged((user) => {
+      if (user?.uid) {
+        this.setUserId(user.uid);
+      } else {
+        this.setUserId('');
+      }
+    });
 
     this.setInitialized(true);
   }
@@ -71,13 +77,11 @@ class Firebase {
   }
 
   public isLoggedIn() {
-    return this.initialized && !!this.auth.currentUser;
+    return this.initialized && !!this.userId;
   }
 
   public async logInWithGoogle() {
-    const result = await signInWithPopup(this.auth, this.googleProvider);
-    const credential = GoogleAuthProvider.credentialFromResult(result);
-    const user = result.user;
+    await signInWithPopup(this.auth, this.googleProvider);
   }
 
   public isInitialized() {
@@ -90,14 +94,18 @@ class Firebase {
 
   public async add() {
     try {
-      await addDoc(collection(this.getStore(), "gear"), {
-        company: "nemo",
-        name: "ora",
-        weight: "301",
+      await addDoc(collection(this.getStore(), 'gear'), {
+        company: 'nemo',
+        name: 'ora',
+        weight: '301',
       });
     } catch (e) {
       console.log(e);
     }
+  }
+
+  private setUserId(value: string) {
+    this.userId = value;
   }
 }
 
