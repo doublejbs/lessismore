@@ -1,6 +1,6 @@
-import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
-import App from "./App";
+import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import App from './App';
 
 type FieldType = {
   email?: string;
@@ -10,17 +10,20 @@ type FieldType = {
 const LogIn = () => {
   const navigate = useNavigate();
   const [showError, setShowError] = useState(false);
-  const [errorMessage, setErrorMessage] = useState("");
+  const [errorMessage, setErrorMessage] = useState('');
   const firebase = App.getFirebase();
 
   const onFinish = async ({
     email,
     password,
+  }: {
+    email: string;
+    password: string;
   }) => {
     try {
       if (email && password) {
         await firebase.login(email, password);
-        navigate("/bag");
+        navigate('/bag');
       }
     } catch (e: any) {
       setErrorMessage(e.message);
@@ -30,29 +33,28 @@ const LogIn = () => {
 
   const handleClickGoogle = async () => {
     await firebase.logInWithGoogle();
-    navigate("/");
   };
 
   const handleClickJoin = () => {
-    navigate("/join");
+    navigate('/join');
   };
 
   return (
     <div>
-       <a
-                  onClick={handleClickGoogle}
-                  style={{
-                    display: "flex",
-                    justifyContent: "center",
-                  }}
-                >
-                  <img
-                    src={"/web_light_sq_SI.svg"}
-                    alt={"google"}
-                    width={175}
-                    height={32}
-                  />
-                </a>
+      <a
+        onClick={handleClickGoogle}
+        style={{
+          display: 'flex',
+          justifyContent: 'center',
+        }}
+      >
+        <img
+          src={'/web_light_sq_SI.svg'}
+          alt={'google'}
+          width={175}
+          height={32}
+        />
+      </a>
     </div>
   );
 };

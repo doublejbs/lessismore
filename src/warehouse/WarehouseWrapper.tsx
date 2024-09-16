@@ -1,24 +1,26 @@
 import { FC, useState } from 'react';
+import WarehouseView from './WarehouseView';
 import Warehouse from './Warehouse';
-import AddWarehouse from './AddWarehouse';
+import SearchWarehouseView from './search-warehouse/SearchWarehouseView';
 
 interface Props {}
 
 const WarehouseWrapper: FC<Props> = () => {
-  const [shouldShowAdd, setShouldShowAdd] = useState(false);
+  const [shouldShowSearch, setShouldShowSearch] = useState(false);
+  const [warehouse] = useState(() => Warehouse.new());
 
   const showAdd = () => {
-    setShouldShowAdd(true);
+    setShouldShowSearch(true);
   };
 
   const hideAdd = () => {
-    setShouldShowAdd(false);
+    setShouldShowSearch(false);
   };
 
-  if (shouldShowAdd) {
-    return <AddWarehouse hideAdd={hideAdd} />;
+  if (shouldShowSearch) {
+    return <SearchWarehouseView hideAdd={hideAdd} warehouse={warehouse} />;
   } else {
-    return <Warehouse showAdd={showAdd} />;
+    return <WarehouseView showAdd={showAdd} warehouse={warehouse} />;
   }
 };
 

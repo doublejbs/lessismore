@@ -13,10 +13,7 @@ class App {
 
   public async initialize() {
     await this.firebase.initialize();
-    this.gearStore = new GearStore(
-      this.firebase.getStore(),
-      this.firebase.getUserId()
-    );
+    this.gearStore = new GearStore(this.firebase);
     this.setInitialized(true);
   }
 
