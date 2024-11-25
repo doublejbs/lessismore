@@ -42,6 +42,14 @@ class GearStore {
     }
   }
 
+  public async getGears(ids: string[]) {
+    const gears = await getDocs(
+      query(collection(this.getStore(), 'gear'), where('id', 'in', ids))
+    );
+
+    return this.convertToArray(gears);
+  }
+
   public async remove(gear: Gear) {
     await updateDoc(doc(this.getStore(), 'users', this.getUserId()), {
       gears: arrayRemove(gear.getId()),

@@ -8,6 +8,10 @@ const BagEditView: FC = () => {
   const { id } = useParams();
   const [bagEdit] = useState(() => BagEdit.from(id ?? ''));
   const name = bagEdit.getName();
+  const weight = bagEdit.getWeight();
+  const gears = bagEdit.getGears();
+
+  const handleClickAdd = () => {};
 
   useEffect(() => {
     bagEdit.initialize();
@@ -16,6 +20,13 @@ const BagEditView: FC = () => {
   return (
     <Layout>
       <div>{name}</div>
+      <div>{weight}kg</div>
+      <button onClick={handleClickAdd}>배낭 채우기</button>
+      <ul>
+        {gears.map((gear) => (
+          <div>{gear.getName()}</div>
+        ))}
+      </ul>
     </Layout>
   );
 };
