@@ -4,12 +4,12 @@ import './App.css';
 import LogIn from './LogIn.tsx';
 import Join from './Join.tsx';
 import { observer } from 'mobx-react-lite';
-
-import Bag from './bag/Bag.tsx';
+import BagView from './bag/BagView.tsx';
 
 import app from './App.ts';
 
 import WarehouseWrapper from './warehouse/WarehouseWrapper.tsx';
+import BagEditView from './bag/BagEditView.tsx';
 
 const ROUTES = [
   {
@@ -21,8 +21,12 @@ const ROUTES = [
     element: <Join />,
   },
   {
+    path: '/bag/:id',
+    element: <BagEditView />,
+  },
+  {
     path: '/bag',
-    element: <Bag />,
+    element: <BagView />,
   },
   { path: '/warehouse', element: <WarehouseWrapper /> },
 ];
@@ -37,7 +41,9 @@ const App = () => {
   useEffect(() => {
     if (isInitialized) {
       if (isLoggedIn) {
-        navigate('/warehouse', { replace: true });
+        if (location.pathname === '/login') {
+          navigate('/warehouse', { replace: true });
+        }
       } else {
         navigate('/login');
       }

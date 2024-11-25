@@ -6,6 +6,7 @@ const Bottom = () => {
   const location = useLocation();
   const isBag = location.pathname === '/bag';
   const isWarehouse = location.pathname === '/warehouse';
+  const isAdventure = location.pathname === '/adventure';
   const firebase = app.getFirebase();
   const selectedKeys = isBag ? ['bag'] : isWarehouse ? ['warehouse'] : [];
 
@@ -51,7 +52,7 @@ const Bottom = () => {
       <button
         onClick={handleClickBag}
         style={{
-          fontWeight: isBag ? 'bold' : 'normal',
+          fontWeight: isAdventure ? 'bold' : 'normal',
         }}
       >
         모험
