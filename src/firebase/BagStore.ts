@@ -13,15 +13,18 @@ import {
   where,
 } from 'firebase/firestore';
 import BagItem from '../bag/BagItem.ts';
+import GearStore from './GearStore.ts';
 
 class BagStore {
-  public constructor(private readonly firebase: Firebase) {}
+  public constructor(
+    private readonly firebase: Firebase,
+    private readonly gearStore: GearStore
+  ) {}
 
   public async getList(): Promise<BagItem[]> {
     const bagIDs = (
       await getDoc(doc(this.getStore(), 'users', this.firebase.getUserId()))
     ).data()?.['bags'];
-    console.log(bagIDs);
 
     if (!!bagIDs.length) {
       const bags = await getDocs(
@@ -38,13 +41,14 @@ class BagStore {
   }
 
   public async getBag(id: string) {
-    const { name, weight } = (
+    const { name, weight, gears } = (
       await getDoc(doc(this.getStore(), 'bag', id))
-    ).data() as { name: string; weight: string };
+    ).data() as { name: string; weight: string; gears: string[] };
 
     return {
       name,
       weight,
+      gears: gears.length ? await this.gearStore.getGears(gears) : [],
     };
   }
 
@@ -61,6 +65,7 @@ class BagStore {
     const docRef = await addDoc(collection(this.getStore(), 'bag'), {
       name: value,
       weight: '0',
+      gears: [],
     });
     await updateDoc(doc(this.getStore(), 'users', this.getUserID()), {
       bags: arrayUnion(docRef.id),

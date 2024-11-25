@@ -18,7 +18,7 @@ const BagView = () => {
     setShouldShowAdd(true);
   };
 
-  const handleChange = (e) => {
+  const handleChange = (e: any) => {
     setInputValue(e.target.value);
   };
 

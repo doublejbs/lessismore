@@ -20,6 +20,7 @@ class Bag {
 
   public async add(value: string) {
     await this.bagStore.add(value);
+    await this.getList();
   }
 
   public getBags() {
