@@ -1,12 +1,14 @@
 import Firebase from './Firebase';
 import {
   addDoc,
+  arrayRemove,
   arrayUnion,
   collection,
   doc,
   DocumentData,
   getDoc,
   getDocs,
+  orderBy,
   query,
   QuerySnapshot,
   updateDoc,
@@ -14,6 +16,7 @@ import {
 } from 'firebase/firestore';
 import BagItem from '../bag/BagItem.ts';
 import GearStore from './GearStore.ts';
+import dayjs from 'dayjs';
 
 class BagStore {
   public constructor(
@@ -30,7 +33,8 @@ class BagStore {
       const bags = await getDocs(
         query(
           collection(this.getStore(), 'bag'),
-          where('__name__', 'in', bagIDs)
+          where('__name__', 'in', bagIDs),
+          orderBy('editDate', 'desc')
         )
       );
 
@@ -55,8 +59,9 @@ class BagStore {
   private convertToArray(data: QuerySnapshot<DocumentData, DocumentData>) {
     const result: BagItem[] = [];
     data.forEach((doc) => {
-      const { name } = doc.data();
-      result.push(new BagItem(doc.id, name));
+      const { name, weight, editDate } = doc.data();
+
+      result.push(new BagItem(doc.id, name, weight, dayjs(editDate)));
     });
     return result;
   }
@@ -66,9 +71,16 @@ class BagStore {
       name: value,
       weight: '0',
       gears: [],
+      editDate: new Date().toISOString(),
     });
     await updateDoc(doc(this.getStore(), 'users', this.getUserID()), {
       bags: arrayUnion(docRef.id),
+    });
+  }
+
+  public async delete(id: string) {
+    await updateDoc(doc(this.getStore(), 'users', this.getUserID()), {
+      bags: arrayRemove(id),
     });
   }
 

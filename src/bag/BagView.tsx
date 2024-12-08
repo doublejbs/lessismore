@@ -24,10 +24,12 @@ const BagView = () => {
 
   const handleClickConfirm = async () => {
     await bag.add(inputValue);
+    setInputValue('');
     setShouldShowAdd(false);
   };
 
   const handleClickCancel = () => {
+    setInputValue('');
     setShouldShowAdd(false);
   };
 
@@ -52,11 +54,9 @@ const BagView = () => {
             height: '100%',
           }}
         >
-          <ul>
-            {bags.map((bag: BagItem) => (
-              <BagItemView key={bag.getID()} bag={bag} />
-            ))}
-          </ul>
+          {bags.map((bagItem: BagItem) => (
+            <BagItemView key={bagItem.getID()} bag={bag} bagItem={bagItem} />
+          ))}
         </div>
       )}
       <Bottom />

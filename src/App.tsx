@@ -5,9 +5,7 @@ import LogIn from './LogIn.tsx';
 import Join from './Join.tsx';
 import { observer } from 'mobx-react-lite';
 import BagView from './bag/BagView.tsx';
-
 import app from './App.ts';
-
 import WarehouseWrapper from './warehouse/WarehouseWrapper.tsx';
 import BagEditView from './bag/BagEditView.tsx';
 
@@ -35,13 +33,12 @@ const App = () => {
   const firebase = app.getFirebase();
   const navigate = useNavigate();
   const isLoggedIn = firebase.isLoggedIn();
-
   const isInitialized = app.isInitialized();
 
   useEffect(() => {
     if (isInitialized) {
       if (isLoggedIn) {
-        if (location.pathname === '/login') {
+        if (location.pathname === '/login' || location.pathname === '/') {
           navigate('/warehouse', { replace: true });
         }
       } else {
