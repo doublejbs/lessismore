@@ -15,11 +15,20 @@ class Bag {
   }
 
   public async getList() {
-    this.bags = await this.bagStore.getList();
+    this.setBags(await this.bagStore.getList());
+  }
+
+  private setBags(value: BagItem[]) {
+    this.bags = value;
   }
 
   public async add(value: string) {
     await this.bagStore.add(value);
+    await this.getList();
+  }
+
+  public async delete(bagItem: BagItem) {
+    await this.bagStore.delete(bagItem.getID());
     await this.getList();
   }
 

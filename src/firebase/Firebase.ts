@@ -1,13 +1,12 @@
 import { initializeApp } from 'firebase/app';
 import {
-  createUserWithEmailAndPassword,
-  onAuthStateChanged,
-  signInWithEmailAndPassword,
-  signOut,
-  signInWithPopup,
-  GoogleAuthProvider,
-  getAuth,
   Auth,
+  createUserWithEmailAndPassword,
+  getAuth,
+  GoogleAuthProvider,
+  signInWithEmailAndPassword,
+  signInWithPopup,
+  signOut,
 } from 'firebase/auth';
 import { makeAutoObservable } from 'mobx';
 import {
@@ -90,18 +89,6 @@ class Firebase {
 
   public getStore() {
     return this.store;
-  }
-
-  public async add() {
-    try {
-      await addDoc(collection(this.getStore(), 'gear'), {
-        company: 'nemo',
-        name: 'ora',
-        weight: '301',
-      });
-    } catch (e) {
-      console.log(e);
-    }
   }
 
   private setUserId(value: string) {
