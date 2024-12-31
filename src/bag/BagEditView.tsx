@@ -1,4 +1,4 @@
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { FC, useEffect, useState } from 'react';
 import BagEdit from './BagEdit.ts';
 import Layout from '../Layout.tsx';
@@ -8,6 +8,7 @@ import BagEditWarehouseView from './BagEditWarehouseView.tsx';
 const BagEditView: FC = () => {
   const { id } = useParams();
   const [bagEdit] = useState(() => BagEdit.from(id ?? ''));
+  const navigate = useNavigate();
   const [showWarehouse, setShowWarehouse] = useState(false);
   const name = bagEdit.getName();
   const weight = bagEdit.getWeight();
@@ -21,6 +22,10 @@ const BagEditView: FC = () => {
     setShowWarehouse(false);
   };
 
+  const handleClickBack = () => {
+    navigate('/bag');
+  };
+
   useEffect(() => {
     bagEdit.initialize();
   }, []);
@@ -32,8 +37,28 @@ const BagEditView: FC = () => {
         flexDirection: 'column',
         alignItems: 'center',
         height: '100%',
+        marginTop: '10px',
       }}
     >
+      <div
+        style={{
+          width: '100%',
+          height: '16px',
+          display: 'flex',
+          flexDirection: 'row',
+          justifyContent: 'start',
+          marginBottom: '10px',
+        }}
+      >
+        <div
+          style={{
+            marginLeft: '10px',
+            fontWeight: '400',
+          }}
+        >
+          <button onClick={handleClickBack}>뒤로가기</button>
+        </div>
+      </div>
       <div
         style={{
           width: '100%',
@@ -80,11 +105,14 @@ const BagEditView: FC = () => {
       </div>
       <ul>
         {gears.map((gear) => (
-          <div>{gear.getName()}</div>
+          <div key={gear.getId()}>{gear.getName()}</div>
         ))}
       </ul>
       {showWarehouse && (
-        <BagEditWarehouseView onClose={handleClickCloseWarehouse} />
+        <BagEditWarehouseView
+          onClose={handleClickCloseWarehouse}
+          bagEdit={bagEdit}
+        />
       )}
     </div>
   );

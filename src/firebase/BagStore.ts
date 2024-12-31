@@ -17,6 +17,7 @@ import {
 import BagItem from '../bag/BagItem.ts';
 import GearStore from './GearStore.ts';
 import dayjs from 'dayjs';
+import Gear from '../warehouse/search-warehouse/Gear.ts';
 
 class BagStore {
   public constructor(
@@ -75,6 +76,32 @@ class BagStore {
     });
     await updateDoc(doc(this.getStore(), 'users', this.getUserID()), {
       bags: arrayUnion(docRef.id),
+    });
+  }
+
+  public async addGear(id: string, gear: string) {
+    await updateDoc(doc(this.getStore(), 'bag', id), {
+      gears: arrayUnion(gear),
+    });
+    await this.updateWeight(id);
+  }
+
+  public async removeGear(id: string, gear: string) {
+    await updateDoc(doc(this.getStore(), 'bag', id), {
+      gears: arrayRemove(gear),
+    });
+    await this.updateWeight(id);
+  }
+
+  private async updateWeight(id: string) {
+    const { gears } = await this.getBag(id);
+    const weight = gears.reduce(
+      (acc, gear: Gear) => acc + parseInt(gear.getWeight()),
+      0
+    );
+
+    await updateDoc(doc(this.getStore(), 'bag', id), {
+      weight,
     });
   }
 

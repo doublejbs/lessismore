@@ -18,19 +18,19 @@ const Bottom = () => {
     navigate('/bag');
   };
 
-  // const handleClickLogout = async () => {
-  //   await firebase.logout();
-  //   navigate("/login");
-  // };
-
   return (
     <div
       style={{
-        height: '100px',
-        border: '1px solid black',
+        position: 'fixed',
+        width: '100%',
+        bottom: '0px',
+        height: '56px',
         display: 'flex',
         flexDirection: 'row',
         justifyContent: 'space-around',
+        left: '50%',
+        transform: 'translateX(-50%)',
+        backgroundColor: '#F0F0F0',
       }}
     >
       <button

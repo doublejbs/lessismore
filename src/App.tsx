@@ -8,6 +8,9 @@ import BagView from './bag/BagView.tsx';
 import app from './App.ts';
 import WarehouseWrapper from './warehouse/WarehouseWrapper.tsx';
 import BagEditView from './bag/BagEditView.tsx';
+import AdminView from './AdminView.tsx';
+import CrawlView from './CrawlView.tsx';
+import LoadingView from './LoadingView.tsx';
 
 const ROUTES = [
   {
@@ -27,6 +30,8 @@ const ROUTES = [
     element: <BagView />,
   },
   { path: '/warehouse', element: <WarehouseWrapper /> },
+  { path: '/admin', element: <AdminView /> },
+  { path: '/crawler', element: <CrawlView /> },
 ];
 
 const App = () => {
@@ -58,7 +63,7 @@ const App = () => {
       </Routes>
     );
   } else {
-    return 'loading';
+    return <LoadingView />;
   }
 };
 

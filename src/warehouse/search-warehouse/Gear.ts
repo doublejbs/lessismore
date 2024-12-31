@@ -19,7 +19,7 @@ class Gear {
     return this.company;
   }
 
-  public geWeight() {
+  public getWeight() {
     return this.weight;
   }
 

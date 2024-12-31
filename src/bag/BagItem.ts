@@ -17,7 +17,7 @@ class BagItem {
   }
 
   public getWeight() {
-    return this.weight;
+    return Number(this.weight) / 1000;
   }
 
   public getEditDate() {

@@ -6,11 +6,13 @@ import Bottom from '../Bottom.tsx';
 import BagItemView from './BagItemView.tsx';
 import BagItem from './BagItem.ts';
 import AddButton from '../warehouse/AddButton.tsx';
+import LoadingView from '../LoadingView.tsx';
 
 const BagView = () => {
   const [bag] = useState(() => Bag.new());
   const [shouldShowAdd, setShouldShowAdd] = useState(false);
   const [inputValue, setInputValue] = useState('');
+  const isLoading = bag.isLoading();
   const bags = bag.getBags();
   const isEmpty = bag.isEmpty();
 
@@ -37,16 +39,51 @@ const BagView = () => {
     bag.getList();
   }, []);
 
+  if (isLoading) {
+    return <LoadingView />;
+  }
+
   return (
     <Layout>
-      <div>배낭</div>
+      <div
+        style={{
+          height: '60px',
+          paddingLeft: '20px',
+          paddingTop: '20px',
+          display: 'flex',
+          flexDirection: 'column',
+        }}
+      >
+        <div>
+          <span
+            style={{
+              fontSize: '16px',
+              fontWeight: 'bold',
+            }}
+          >
+            배낭
+          </span>
+        </div>
+      </div>
       {isEmpty ? (
         <div
           style={{
             height: '100%',
+            fontSize: '30px',
+            fontWeight: 'bold',
+            position: 'relative',
           }}
         >
-          아직 등록한 배낭이 없어요:(
+          <span
+            style={{
+              position: 'absolute',
+              top: '20%',
+              left: '20px',
+            }}
+          >
+            아직 등록한
+            <br /> 배낭이 없어요:(
+          </span>
         </div>
       ) : (
         <div

@@ -32,7 +32,22 @@ const WarehouseGearView: FC<Props> = ({ gear, warehouse }) => {
           }}
           onClick={handleClick}
         >
-          -
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            viewBox="0 0 24 24"
+            width="36"
+            height="36"
+            className="svg-cross"
+          >
+            <line
+              x1="4"
+              y1="12"
+              x2="20"
+              y2="12"
+              stroke="black"
+              strokeWidth="0.5"
+            />
+          </svg>
         </button>
       </div>
     </GearView>

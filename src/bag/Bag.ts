@@ -9,13 +9,16 @@ class Bag {
   }
 
   private bags: BagItem[] = [];
+  private loading = false;
 
   private constructor(private readonly bagStore: BagStore) {
     makeAutoObservable(this);
   }
 
   public async getList() {
+    this.setLoading(true);
     this.setBags(await this.bagStore.getList());
+    this.setLoading(false);
   }
 
   private setBags(value: BagItem[]) {
@@ -38,6 +41,14 @@ class Bag {
 
   public isEmpty() {
     return !this.bags.length;
+  }
+
+  private setLoading(value: boolean) {
+    this.loading = value;
+  }
+
+  public isLoading() {
+    return this.loading;
   }
 }
 
