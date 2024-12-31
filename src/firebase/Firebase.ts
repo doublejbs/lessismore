@@ -12,8 +12,11 @@ import { makeAutoObservable } from 'mobx';
 import {
   addDoc,
   collection,
+  doc,
   Firestore,
+  getDoc,
   getFirestore,
+  setDoc,
 } from 'firebase/firestore';
 
 class Firebase {
@@ -44,15 +47,29 @@ class Firebase {
 
     await this.auth.authStateReady();
 
-    this.auth.onAuthStateChanged((user) => {
+    this.auth.onAuthStateChanged(async (user) => {
       if (user?.uid) {
         this.setUserId(user.uid);
+        await this.initializeStore();
       } else {
         this.setUserId('');
       }
     });
 
     this.setInitialized(true);
+  }
+
+  private async initializeStore() {
+    if (
+      (await getDoc(doc(this.getStore(), 'users', this.getUserId()))).data()
+    ) {
+      return;
+    } else {
+      await setDoc(doc(this.getStore(), 'users', this.getUserId()), {
+        gears: [],
+        bags: [],
+      });
+    }
   }
 
   private setInitialized(value: boolean) {

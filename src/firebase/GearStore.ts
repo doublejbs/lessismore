@@ -33,7 +33,10 @@ class GearStore {
 
     if (!!gearIds.length) {
       const gears = await getDocs(
-        query(collection(this.getStore(), 'gear'), where('id', 'in', gearIds))
+        query(
+          collection(this.getStore(), 'gear'),
+          where('__name__', 'in', gearIds)
+        )
       );
 
       return this.convertToArray(gears);
@@ -44,7 +47,7 @@ class GearStore {
 
   public async getGears(ids: string[]) {
     const gears = await getDocs(
-      query(collection(this.getStore(), 'gear'), where('id', 'in', ids))
+      query(collection(this.getStore(), 'gear'), where('__name__', 'in', ids))
     );
 
     return this.convertToArray(gears);
@@ -68,8 +71,8 @@ class GearStore {
     });
 
     return (results[0] as SearchResponse<GearType>).hits.map(
-      ({ name, weight, company, id, imageUrl }) =>
-        new Gear(id, name, company, weight, imageUrl)
+      ({ name, weight, company, objectID, imageUrl }) =>
+        new Gear(objectID, name, company, weight, imageUrl)
     );
   }
 
@@ -87,8 +90,8 @@ class GearStore {
   private convertToArray(data: QuerySnapshot<DocumentData, DocumentData>) {
     const result: Gear[] = [];
     data.forEach((doc) => {
-      const { name, company, weight, imageUrl, id } = doc.data();
-      result.push(new Gear(id, name, company, weight, imageUrl));
+      const { name, company, weight, imageUrl } = doc.data();
+      result.push(new Gear(doc.id, name, company, weight, imageUrl));
     });
     return result;
   }

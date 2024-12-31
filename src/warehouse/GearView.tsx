@@ -7,6 +7,8 @@ interface Props {
 }
 
 const GearView: FC<Props> = ({ gear, children }) => {
+  const imageUrl = gear.getImageUrl();
+
   return (
     <div
       style={{
@@ -25,7 +27,17 @@ const GearView: FC<Props> = ({ gear, children }) => {
           height: '30%',
         }}
       >
-        <img src={gear.getImageUrl()} width={100} height={100} />
+        {imageUrl ? (
+          <img src={imageUrl} width={100} height={100} />
+        ) : (
+          <div
+            style={{
+              width: '100px',
+              height: '100px',
+              backgroundColor: '#F1F1F1',
+            }}
+          ></div>
+        )}
       </div>
       <div
         style={{
@@ -45,6 +57,8 @@ const GearView: FC<Props> = ({ gear, children }) => {
             style={{
               fontWeight: 'bold',
               fontSize: '16px',
+              textOverflow: 'ellipsis',
+              whiteSpace: 'nowrap',
             }}
           >
             {gear.getName()}
@@ -63,7 +77,7 @@ const GearView: FC<Props> = ({ gear, children }) => {
             fontSize: '16px',
           }}
         >
-          {gear.geWeight()}g
+          {gear.getWeight()}g
         </span>
       </div>
       {children}

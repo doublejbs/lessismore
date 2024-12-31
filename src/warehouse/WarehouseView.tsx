@@ -5,7 +5,6 @@ import AddButton from './AddButton.tsx';
 import Warehouse from './Warehouse.ts';
 import { observer } from 'mobx-react-lite';
 import WarehouseGearView from './WarehouseGearView.tsx';
-import app from '../App.ts';
 
 interface Props {
   showAdd: () => void;
@@ -21,7 +20,49 @@ const WarehouseView: FC<Props> = ({ showAdd, warehouse }) => {
 
   return (
     <Layout>
-      <div>창고</div>
+      <div
+        style={{
+          height: '150px',
+          paddingLeft: '20px',
+          paddingTop: '20px',
+          display: 'flex',
+          flexDirection: 'column',
+        }}
+      >
+        <div>
+          <span
+            style={{
+              fontSize: '16px',
+              fontWeight: 'bold',
+            }}
+          >
+            창고
+          </span>
+        </div>
+        <div
+          style={{
+            height: '100%',
+            display: 'flex',
+            justifyContent: 'center',
+            flexDirection: 'column',
+          }}
+        >
+          <div
+            style={{
+              width: '58px',
+              height: '32px',
+              borderRadius: '15px',
+              backgroundColor: '#EBEBEB',
+              display: 'flex',
+              justifyContent: 'center',
+              alignItems: 'center',
+              fontSize: '14px',
+            }}
+          >
+            <span>전체</span>
+          </div>
+        </div>
+      </div>
       {/* <button
         onClick={() => {
           app.getFirebase().logout();

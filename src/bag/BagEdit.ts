@@ -39,7 +39,7 @@ class BagEdit {
   }
 
   public getWeight() {
-    return this.weight;
+    return Number(this.weight) / 1000;
   }
 
   private setGears(value: Gear[]) {
@@ -48,6 +48,20 @@ class BagEdit {
 
   public getGears() {
     return this.gears;
+  }
+
+  public async addGear(gear: Gear) {
+    await this.bagStore.addGear(this.id, gear.getId());
+    await this.initialize();
+  }
+
+  public async removeGear(gear: Gear) {
+    await this.bagStore.removeGear(this.id, gear.getId());
+    await this.initialize();
+  }
+
+  public hasGear(gear: Gear) {
+    return this.gears.some((g) => g.isSame(gear));
   }
 }
 
