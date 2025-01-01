@@ -2,26 +2,23 @@ import { FC, useState } from 'react';
 import WarehouseView from './WarehouseView';
 import Warehouse from './Warehouse';
 import SearchWarehouseView from './search-warehouse/SearchWarehouseView';
+import { observer } from 'mobx-react-lite';
+import CustomGearView from './custom-gear/CustomGearView.tsx';
 
 interface Props {}
 
 const WarehouseWrapper: FC<Props> = () => {
-  const [shouldShowSearch, setShouldShowSearch] = useState(false);
   const [warehouse] = useState(() => Warehouse.new());
-
-  const showAdd = () => {
-    setShouldShowSearch(true);
-  };
-
-  const hideAdd = () => {
-    setShouldShowSearch(false);
-  };
+  const shouldShowSearch = warehouse.shouldShowSearch();
+  const shouldShowCustom = warehouse.shouldShowCustom();
 
   if (shouldShowSearch) {
-    return <SearchWarehouseView hideAdd={hideAdd} warehouse={warehouse} />;
+    return <SearchWarehouseView warehouse={warehouse} />;
+  } else if (shouldShowCustom) {
+    return <CustomGearView warehouse={warehouse} />;
   } else {
-    return <WarehouseView showAdd={showAdd} warehouse={warehouse} />;
+    return <WarehouseView warehouse={warehouse} />;
   }
 };
 
-export default WarehouseWrapper;
+export default observer(WarehouseWrapper);

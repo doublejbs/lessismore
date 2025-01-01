@@ -1,12 +1,13 @@
 import { FC } from 'react';
+import Warehouse from './Warehouse.ts';
 
 interface Props {
-  showAdd: () => void;
+  warehouse: Warehouse;
 }
 
-const AddButton: FC<Props> = ({ showAdd }) => {
+const AddButton: FC<Props> = ({ warehouse }) => {
   const handleClick = () => {
-    showAdd();
+    warehouse.showSearch();
   };
 
   return (
