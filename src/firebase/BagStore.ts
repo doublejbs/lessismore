@@ -15,7 +15,7 @@ import {
   where,
 } from 'firebase/firestore';
 import BagItem from '../bag/BagItem.ts';
-import GearStore from './GearStore.ts';
+import GearStore, { GearData } from './GearStore.ts';
 import dayjs from 'dayjs';
 import Gear from '../warehouse/search-warehouse/Gear.ts';
 
@@ -48,12 +48,17 @@ class BagStore {
   public async getBag(id: string) {
     const { name, weight, gears } = (
       await getDoc(doc(this.getStore(), 'bag', id))
-    ).data() as { name: string; weight: string; gears: string[] };
+    ).data() as { name: string; weight: string; gears: GearData[] };
 
     return {
       name,
       weight,
-      gears: gears.length ? await this.gearStore.getGears(gears) : [],
+      gears: gears.length
+        ? gears.map(
+            ({ id, name, company, weight, imageUrl }) =>
+              new Gear(id, name, company, weight, imageUrl)
+          )
+        : [],
     };
   }
 
@@ -79,16 +84,16 @@ class BagStore {
     });
   }
 
-  public async addGear(id: string, gear: string) {
+  public async addGear(id: string, gear: Gear) {
     await updateDoc(doc(this.getStore(), 'bag', id), {
-      gears: arrayUnion(gear),
+      gears: arrayUnion({ ...gear.getData() }),
     });
     await this.updateWeight(id);
   }
 
-  public async removeGear(id: string, gear: string) {
+  public async removeGear(id: string, gear: Gear) {
     await updateDoc(doc(this.getStore(), 'bag', id), {
-      gears: arrayRemove(gear),
+      gears: arrayRemove({ ...gear.getData() }),
     });
     await this.updateWeight(id);
   }

@@ -51,12 +51,12 @@ class BagEdit {
   }
 
   public async addGear(gear: Gear) {
-    await this.bagStore.addGear(this.id, gear.getId());
+    await this.bagStore.addGear(this.id, gear);
     await this.initialize();
   }
 
   public async removeGear(gear: Gear) {
-    await this.bagStore.removeGear(this.id, gear.getId());
+    await this.bagStore.removeGear(this.id, gear);
     await this.initialize();
   }
 
