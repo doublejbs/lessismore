@@ -30,6 +30,16 @@ class Gear {
   public getId() {
     return this.id;
   }
+
+  public getData() {
+    return {
+      id: this.id,
+      name: this.name,
+      company: this.company,
+      weight: this.weight,
+      imageUrl: this.imageUrl,
+    };
+  }
 }
 
 export default Gear;

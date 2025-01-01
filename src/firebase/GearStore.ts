@@ -18,6 +18,14 @@ import Gear from '../warehouse/search-warehouse/Gear';
 import GearType from '../warehouse/type/GearType';
 import Firebase from './Firebase';
 
+export interface GearData {
+  id: string;
+  name: string;
+  company: string;
+  weight: string;
+  imageUrl: string;
+}
+
 class GearStore {
   private readonly searchClient = liteClient(
     'RSDA6EDQZP',
@@ -27,35 +35,23 @@ class GearStore {
   public constructor(private readonly firebase: Firebase) {}
 
   public async getList(): Promise<Gear[]> {
-    const gearIds = (
+    const gears = (
       await getDoc(doc(this.getStore(), 'users', this.getUserId()))
     ).data()?.['gears'];
 
-    if (!!gearIds.length) {
-      const gears = await getDocs(
-        query(
-          collection(this.getStore(), 'gear'),
-          where('__name__', 'in', gearIds)
-        )
+    if (!!gears.length) {
+      return gears.map(
+        ({ id, name, company, weight, imageUrl }: GearData) =>
+          new Gear(id, name, company, weight, imageUrl)
       );
-
-      return this.convertToArray(gears);
     } else {
       return [];
     }
   }
 
-  public async getGears(ids: string[]) {
-    const gears = await getDocs(
-      query(collection(this.getStore(), 'gear'), where('__name__', 'in', ids))
-    );
-
-    return this.convertToArray(gears);
-  }
-
   public async remove(gear: Gear) {
     await updateDoc(doc(this.getStore(), 'users', this.getUserId()), {
-      gears: arrayRemove(gear.getId()),
+      gears: arrayRemove({ ...gear.getData() }),
     });
   }
 
@@ -78,7 +74,11 @@ class GearStore {
 
   public async register(value: Gear[]) {
     await updateDoc(doc(this.getStore(), 'users', this.getUserId()), {
-      gears: arrayUnion(...value.map((data) => data.getId())),
+      gears: arrayUnion(
+        ...value.map((data) => {
+          return { ...data.getData() };
+        })
+      ),
     });
   }
 
