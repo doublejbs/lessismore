@@ -23,7 +23,7 @@ const GearView: FC<Props> = ({ gear, children }) => {
       <div
         style={{
           marginRight: '20px',
-          width: '30%',
+          flex: '0 0 30%',
           height: '30%',
         }}
       >
@@ -43,7 +43,8 @@ const GearView: FC<Props> = ({ gear, children }) => {
         style={{
           display: 'flex',
           flexDirection: 'column',
-          width: '70%',
+          flex: '1',
+          overflow: 'hidden',
         }}
       >
         <div
@@ -53,32 +54,33 @@ const GearView: FC<Props> = ({ gear, children }) => {
             flexDirection: 'column',
           }}
         >
-          <span
+          <div
             style={{
               fontWeight: 'bold',
               fontSize: '16px',
               textOverflow: 'ellipsis',
               whiteSpace: 'nowrap',
+              overflow: 'hidden',
             }}
           >
             {gear.getName()}
-          </span>
-          <span
+          </div>
+          <div
             style={{
               fontSize: '12px',
             }}
           >
             {gear.getCompany()}
-          </span>
+          </div>
         </div>
 
-        <span
+        <div
           style={{
             fontSize: '16px',
           }}
         >
           {gear.getWeight()}g
-        </span>
+        </div>
       </div>
       {children}
     </div>

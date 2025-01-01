@@ -68,6 +68,8 @@ const SearchWarehouseView: FC<Props> = ({ hideAdd, warehouse }) => {
         <div
           style={{
             height: '100%',
+            overflowY: 'auto',
+            marginBottom: '54px',
           }}
         >
           <ul

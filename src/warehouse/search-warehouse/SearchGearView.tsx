@@ -76,7 +76,7 @@ const SearchGearView: FC<Props> = ({ gear, searchWarehouse, warehouse }) => {
         style={{
           display: 'flex',
           flexDirection: 'column-reverse',
-          width: '50px',
+          flex: '0 0 50px',
         }}
       >
         {renderButton()}

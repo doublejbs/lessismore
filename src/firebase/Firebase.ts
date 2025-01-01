@@ -10,8 +10,6 @@ import {
 } from 'firebase/auth';
 import { makeAutoObservable } from 'mobx';
 import {
-  addDoc,
-  collection,
   doc,
   Firestore,
   getDoc,
@@ -98,10 +96,6 @@ class Firebase {
 
   public async logInWithGoogle() {
     await signInWithPopup(this.auth, this.googleProvider);
-  }
-
-  public isInitialized() {
-    return this.initialized;
   }
 
   public getStore() {
