@@ -9,6 +9,8 @@ class Warehouse {
   }
 
   private gears: Gear[] = [];
+  private searchVisible = false;
+  private customVisible = false;
 
   private constructor(private readonly gearStore: GearStore) {
     makeAutoObservable(this);
@@ -33,6 +35,38 @@ class Warehouse {
 
   public hasGear(value: Gear) {
     return this.gears.some((gear) => gear.getId() === value.getId());
+  }
+
+  public showSearch() {
+    this.setSearchVisible(true);
+  }
+
+  public hideSearch() {
+    this.setSearchVisible(false);
+  }
+
+  private setSearchVisible(value: boolean) {
+    this.searchVisible = value;
+  }
+
+  public shouldShowSearch() {
+    return this.searchVisible;
+  }
+
+  public showCustom() {
+    this.setCustomVisible(true);
+  }
+
+  public hideCustom() {
+    this.setCustomVisible(false);
+  }
+
+  private setCustomVisible(value: boolean) {
+    this.customVisible = value;
+  }
+
+  public shouldShowCustom() {
+    return this.customVisible;
   }
 }
 

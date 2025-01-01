@@ -6,11 +6,10 @@ import SearchGearView from './SearchGearView';
 import Warehouse from '../Warehouse';
 
 interface Props {
-  hideAdd: () => void;
   warehouse: Warehouse;
 }
 
-const SearchWarehouseView: FC<Props> = ({ hideAdd, warehouse }) => {
+const SearchWarehouseView: FC<Props> = ({ warehouse }) => {
   const [searchWarehouse] = useState(() => SearchWarehouse.new());
   const result = searchWarehouse.getResult();
 
@@ -20,7 +19,12 @@ const SearchWarehouseView: FC<Props> = ({ hideAdd, warehouse }) => {
 
   const handleClickConfirm = async () => {
     await searchWarehouse.register();
-    hideAdd();
+    warehouse.hideSearch();
+  };
+
+  const handleClickCustom = () => {
+    warehouse.hideSearch();
+    warehouse.showCustom();
   };
 
   useEffect(() => {
@@ -61,6 +65,7 @@ const SearchWarehouseView: FC<Props> = ({ hideAdd, warehouse }) => {
               backgroundColor: '#F1F1F1',
               height: '100%',
             }}
+            onClick={handleClickCustom}
           >
             나만의 제품 추가하기
           </button>

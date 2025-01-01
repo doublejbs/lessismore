@@ -53,13 +53,15 @@ const BagEditWarehouseView: FC<Props> = ({ onClose, bagEdit }) => {
         style={{
           width: '100%',
           overflowY: 'auto',
+          marginLeft: '10px',
+          marginRight: '10px',
         }}
       >
         <ul
           style={{
             display: 'flex',
             flexDirection: 'row',
-            justifyContent: 'space-around',
+            justifyContent: 'start',
             width: '100%',
             height: '100%',
             flexWrap: 'wrap',
@@ -83,6 +85,7 @@ const BagEditWarehouseView: FC<Props> = ({ onClose, bagEdit }) => {
                   width: '30%',
                   height: '30%',
                   marginBottom: '40px',
+                  marginRight: '10px',
                 }}
                 key={gear.getId()}
                 onClick={handleClick}
