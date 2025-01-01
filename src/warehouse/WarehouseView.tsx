@@ -73,6 +73,8 @@ const WarehouseView: FC<Props> = ({ showAdd, warehouse }) => {
       <div
         style={{
           height: '100%',
+          overflow: 'auto',
+          marginBottom: '60px',
         }}
       >
         <ul
