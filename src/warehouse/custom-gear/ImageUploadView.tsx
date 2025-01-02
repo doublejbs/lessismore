@@ -1,8 +1,12 @@
 import React, { FC, useState } from 'react';
+import CustomGear from './CustomGear.ts';
 
-const ImageUploadView: FC = () => {
+interface Props {
+  customGear: CustomGear;
+}
+
+const ImageUploadView: FC<Props> = ({ customGear }) => {
   const [previewSrc, setPreviewSrc] = useState('');
-  const [selectedFile, setSelectedFile] = useState<File | null>(null);
 
   const handlePreview = (file: File) => {
     const reader = new FileReader();
@@ -18,7 +22,7 @@ const ImageUploadView: FC = () => {
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
-      setSelectedFile(file);
+      customGear.setFile(file);
       handlePreview(file);
     }
   };

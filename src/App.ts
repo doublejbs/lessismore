@@ -32,6 +32,10 @@ class App {
     return this.firebase.getStore();
   }
 
+  public getStorage() {
+    return this.firebase.getStorage();
+  }
+
   public getGearStore() {
     return this.gearStore;
   }

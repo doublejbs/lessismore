@@ -1,5 +1,6 @@
 import { FC, ReactNode } from 'react';
 import Gear from './search-warehouse/Gear';
+import GearImageView from './GearImageView.tsx';
 
 interface Props {
   gear: Gear;
@@ -24,11 +25,11 @@ const GearView: FC<Props> = ({ gear, children }) => {
         style={{
           marginRight: '20px',
           flex: '0 0 30%',
-          height: '30%',
+          height: '100%',
         }}
       >
         {imageUrl ? (
-          <img src={imageUrl} width={100} height={100} />
+          <GearImageView imageUrl={imageUrl} />
         ) : (
           <div
             style={{

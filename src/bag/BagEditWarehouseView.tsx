@@ -2,6 +2,7 @@ import { FC, useEffect, useState } from 'react';
 import Warehouse from '../warehouse/Warehouse.ts';
 import { observer } from 'mobx-react-lite';
 import BagEdit from './BagEdit.ts';
+import BagEditImageView from './BagEditImageView.tsx';
 
 interface Props {
   onClose: () => void;
@@ -91,15 +92,7 @@ const BagEditWarehouseView: FC<Props> = ({ onClose, bagEdit }) => {
                 onClick={handleClick}
               >
                 {imageUrl ? (
-                  <img
-                    src={imageUrl}
-                    alt={gear.getName()}
-                    width={'100%'}
-                    height={'100%'}
-                    style={{
-                      filter: isAdded ? 'brightness(50%)' : 'none',
-                    }}
-                  />
+                  <BagEditImageView imageUrl={imageUrl} isAdded={isAdded} />
                 ) : (
                   <div
                     style={{
