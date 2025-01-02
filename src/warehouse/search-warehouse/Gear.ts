@@ -4,7 +4,8 @@ class Gear {
     private readonly name: string,
     private readonly company: string,
     private readonly weight: string,
-    private readonly imageUrl: string
+    private readonly imageUrl: string,
+    private readonly isCustom: boolean = false
   ) {}
 
   public isSame(value: Gear) {
@@ -38,6 +39,7 @@ class Gear {
       company: this.company,
       weight: this.weight,
       imageUrl: this.imageUrl,
+      isCustom: this.isCustom,
     };
   }
 }

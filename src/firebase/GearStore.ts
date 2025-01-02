@@ -24,6 +24,7 @@ export interface GearData {
   company: string;
   weight: string;
   imageUrl: string;
+  isCustom?: boolean;
 }
 
 class GearStore {
@@ -41,8 +42,8 @@ class GearStore {
 
     if (!!gears.length) {
       return gears.map(
-        ({ id, name, company, weight, imageUrl }: GearData) =>
-          new Gear(id, name, company, weight, imageUrl)
+        ({ id, name, company, weight, imageUrl, isCustom = false }: GearData) =>
+          new Gear(id, name, company, weight, imageUrl, isCustom)
       );
     } else {
       return [];

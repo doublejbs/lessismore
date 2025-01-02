@@ -16,6 +16,7 @@ import {
   getFirestore,
   setDoc,
 } from 'firebase/firestore';
+import { FirebaseStorage, getStorage } from 'firebase/storage';
 
 class Firebase {
   private static readonly config = {
@@ -33,6 +34,7 @@ class Firebase {
   private googleProvider = new GoogleAuthProvider();
   private initialized = false;
   private store!: Firestore;
+  private storage!: FirebaseStorage;
 
   public constructor() {
     makeAutoObservable(this);
@@ -42,6 +44,7 @@ class Firebase {
     const fireBaseApp = initializeApp(Firebase.config);
     this.auth = getAuth(fireBaseApp);
     this.store = getFirestore(fireBaseApp);
+    this.storage = getStorage(fireBaseApp);
 
     await this.auth.authStateReady();
 
@@ -104,6 +107,10 @@ class Firebase {
 
   private setUserId(value: string) {
     this.userId = value;
+  }
+
+  public getStorage() {
+    return this.storage;
   }
 }
 

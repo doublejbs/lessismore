@@ -4,6 +4,7 @@ import CustomGear from './CustomGear.ts';
 import { observer } from 'mobx-react-lite';
 import Warehouse from '../Warehouse.ts';
 import ImageUploadView from './ImageUploadView.tsx';
+import LoadingIconView from '../../LoadingIconView.tsx';
 
 interface Props {
   warehouse: Warehouse;
@@ -14,6 +15,7 @@ const CustomGearView: FC<Props> = ({ warehouse }) => {
   const name = customGear.getName();
   const company = customGear.getCompany();
   const weight = customGear.getWeight();
+  const isLoading = customGear.isLoading();
 
   const handleChangeName = (e: React.ChangeEvent<HTMLInputElement>) => {
     customGear.setName(e.target.value);
@@ -34,6 +36,19 @@ const CustomGearView: FC<Props> = ({ warehouse }) => {
 
   return (
     <Layout>
+      {isLoading && (
+        <div
+          style={{
+            position: 'absolute',
+            top: 0,
+            left: 0,
+            width: '100vw',
+            height: '100vh',
+          }}
+        >
+          <LoadingIconView />
+        </div>
+      )}
       <div
         style={{
           width: '100%',
@@ -96,7 +111,7 @@ const CustomGearView: FC<Props> = ({ warehouse }) => {
         }}
       >
         <span>이미지</span>
-        <ImageUploadView />
+        <ImageUploadView customGear={customGear} />
       </div>
       <div
         style={{
