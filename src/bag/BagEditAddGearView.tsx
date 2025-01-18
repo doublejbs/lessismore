@@ -4,6 +4,7 @@ import { observer } from 'mobx-react-lite';
 import BagEdit from './BagEdit.ts';
 import BagEditImageView from './BagEditImageView.tsx';
 import BagEditWarehouseView from './BagEditWarehouseView';
+import BagEditSearchView from './BagEditSearchView';
 
 interface Props {
   onClose: () => void;
@@ -11,6 +12,16 @@ interface Props {
 }
 
 const BagEditAddGearView: FC<Props> = ({ onClose, bagEdit }) => {
+  const [isWarehouseSelected, setIsWarehouseSelected] = useState(true);
+
+  const handleClickWarehouse = () => {
+    setIsWarehouseSelected(true);
+  };
+
+  const handleClickSearch = () => {
+    setIsWarehouseSelected(false);
+  };
+
   return (
     <div
       style={{
@@ -37,12 +48,27 @@ const BagEditAddGearView: FC<Props> = ({ onClose, bagEdit }) => {
       </div>
       <div
         style={{
-          padding: '10px 20px',
-          fontWeight: 'bold',
-          fontSize: '30px',
+          display: 'flex',
         }}
       >
-        <span>창고</span>
+        <div
+          style={{
+            padding: '10px 20px',
+            fontWeight: isWarehouseSelected ? 'bold' : 'normal',
+            fontSize: '30px',
+          }}
+        >
+          <button onClick={handleClickWarehouse}>창고</button>
+        </div>
+        <div
+          style={{
+            padding: '10px 20px',
+            fontWeight: isWarehouseSelected ? 'normal' : 'bold',
+            fontSize: '30px',
+          }}
+        >
+          <button onClick={handleClickSearch}>검색</button>
+        </div>
       </div>
       <div
         style={{
@@ -52,7 +78,11 @@ const BagEditAddGearView: FC<Props> = ({ onClose, bagEdit }) => {
           marginRight: '10px',
         }}
       >
-        <BagEditWarehouseView bagEdit={bagEdit} />
+        {isWarehouseSelected ? (
+          <BagEditWarehouseView bagEdit={bagEdit} />
+        ) : (
+          <BagEditSearchView />
+        )}
       </div>
     </div>
   );

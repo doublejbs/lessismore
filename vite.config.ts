@@ -5,7 +5,9 @@ import { babel } from '@rollup/plugin-babel';
 // https://vitejs.dev/config/
 export default defineConfig({
   plugins: [
-    react(),
+    react({
+      tsDecorators: true,
+    }),
     babel({
       babelHelpers: 'bundled',
       extensions: ['.js', '.jsx', '.ts', '.tsx'],
