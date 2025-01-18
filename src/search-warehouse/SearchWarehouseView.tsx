@@ -1,30 +1,18 @@
 import React, { FC, useEffect, useState } from 'react';
-import Layout from '../../Layout';
 import SearchWarehouse from './SearchWarehouse';
 import { observer } from 'mobx-react-lite';
 import SearchGearView from './SearchGearView';
-import Warehouse from '../Warehouse';
+import Layout from '../Layout';
+import Bottom from '../Bottom';
 
-interface Props {
-  warehouse: Warehouse;
-}
+interface Props {}
 
-const SearchWarehouseView: FC<Props> = ({ warehouse }) => {
+const SearchWarehouseView: FC<Props> = () => {
   const [searchWarehouse] = useState(() => SearchWarehouse.new());
   const result = searchWarehouse.getResult();
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     searchWarehouse.search(e.target.value);
-  };
-
-  const handleClickConfirm = async () => {
-    await searchWarehouse.register();
-    warehouse.hideSearch();
-  };
-
-  const handleClickCustom = () => {
-    warehouse.hideSearch();
-    warehouse.showCustom();
   };
 
   useEffect(() => {
@@ -54,24 +42,6 @@ const SearchWarehouseView: FC<Props> = ({ warehouse }) => {
         </div>
         <div
           style={{
-            width: '100%',
-            height: '48px',
-            padding: '0 10px',
-          }}
-        >
-          <button
-            style={{
-              width: '100%',
-              backgroundColor: '#F1F1F1',
-              height: '100%',
-            }}
-            onClick={handleClickCustom}
-          >
-            나만의 제품 추가하기
-          </button>
-        </div>
-        <div
-          style={{
             height: '100%',
             overflowY: 'auto',
             marginBottom: '54px',
@@ -88,28 +58,11 @@ const SearchWarehouseView: FC<Props> = ({ warehouse }) => {
                 key={gear.getId()}
                 gear={gear}
                 searchWarehouse={searchWarehouse}
-                warehouse={warehouse}
               />
             ))}
           </ul>
         </div>
-        <div
-          style={{
-            position: 'fixed',
-            bottom: '10px',
-            width: '90%',
-            padding: '10px',
-            textAlign: 'center',
-            backgroundColor: 'black',
-            color: 'white',
-            left: '50%',
-            transform: 'translateX(-50%)',
-            borderRadius: '10px',
-          }}
-          onClick={handleClickConfirm}
-        >
-          <button>확인</button>
-        </div>
+        <Bottom />
       </Layout>
     </>
   );

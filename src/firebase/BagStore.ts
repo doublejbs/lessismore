@@ -17,7 +17,7 @@ import {
 import BagItem from '../bag/BagItem.ts';
 import GearStore, { GearData } from './GearStore.ts';
 import dayjs from 'dayjs';
-import Gear from '../warehouse/search-warehouse/Gear.ts';
+import Gear from '../search-warehouse/Gear';
 
 class BagStore {
   public constructor(

@@ -1,9 +1,9 @@
 import { makeAutoObservable } from 'mobx';
 import GearStore from '../../firebase/GearStore.ts';
 import app from '../../App.ts';
-import Gear from '../search-warehouse/Gear.ts';
 import FirebaseImageStorage from '../../firebase/FirebaseImageStorage.ts';
 import { v4 as uuidv4 } from 'uuid';
+import Gear from '../../search-warehouse/Gear';
 
 class CustomGear {
   public static new() {

@@ -1,14 +1,11 @@
 import { useLocation, useNavigate } from 'react-router-dom';
-import app from './App';
 
 const Bottom = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const isBag = location.pathname === '/bag';
   const isWarehouse = location.pathname === '/warehouse';
-  const isAdventure = location.pathname === '/adventure';
-  const firebase = app.getFirebase();
-  const selectedKeys = isBag ? ['bag'] : isWarehouse ? ['warehouse'] : [];
+  const isSearch = location.pathname === '/search';
 
   const handleClickWarehouse = () => {
     navigate('/warehouse');
@@ -16,6 +13,10 @@ const Bottom = () => {
 
   const handleClickBag = () => {
     navigate('/bag');
+  };
+
+  const handleClickSearch = () => {
+    navigate('/search');
   };
 
   return (
@@ -34,6 +35,14 @@ const Bottom = () => {
       }}
     >
       <button
+        onClick={handleClickSearch}
+        style={{
+          fontWeight: isSearch ? 'bold' : 'normal',
+        }}
+      >
+        검색
+      </button>
+      <button
         onClick={handleClickWarehouse}
         style={{
           fontWeight: isWarehouse ? 'bold' : 'normal',
@@ -48,14 +57,6 @@ const Bottom = () => {
         }}
       >
         배낭
-      </button>
-      <button
-        onClick={handleClickBag}
-        style={{
-          fontWeight: isAdventure ? 'bold' : 'normal',
-        }}
-      >
-        모험
       </button>
       {/* <Button onClick={handleClickLogout}>로그아웃</Button> */}
     </div>

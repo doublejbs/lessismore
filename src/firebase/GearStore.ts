@@ -4,19 +4,17 @@ import {
   collection,
   doc,
   DocumentData,
-  Firestore,
   getDoc,
   getDocs,
   query,
   QuerySnapshot,
   updateDoc,
-  where,
 } from 'firebase/firestore';
 import { liteClient } from 'algoliasearch/lite';
 import { SearchResponse } from 'algoliasearch';
-import Gear from '../warehouse/search-warehouse/Gear';
 import GearType from '../warehouse/type/GearType';
 import Firebase from './Firebase';
+import Gear from '../search-warehouse/Gear';
 
 export interface GearData {
   id: string;
@@ -52,8 +50,15 @@ class GearStore {
 
   public async remove(gear: Gear) {
     await updateDoc(doc(this.getStore(), 'users', this.getUserId()), {
-      gears: arrayRemove({ ...gear.getData() }),
+      gears: (await this.getList())
+        .filter((data) => !data.isSame(gear))
+        .map((data) => data.getData()),
     });
+  }
+
+  public async searchAll() {
+    const gears = await getDocs(query(collection(this.getStore(), 'gear')));
+    return this.convertWithMyGears(this.convertToArray(gears));
   }
 
   public async searchList(value: string): Promise<Gear[]> {
@@ -67,10 +72,38 @@ class GearStore {
       ],
     });
 
-    return (results[0] as SearchResponse<GearType>).hits.map(
-      ({ name, weight, company, objectID, imageUrl }) =>
-        new Gear(objectID, name, company, weight, imageUrl)
+    return this.convertWithMyGears(
+      (results[0] as SearchResponse<GearType>).hits.map(
+        ({ name, weight, company, objectID, imageUrl }) => ({
+          name,
+          weight,
+          company,
+          id: objectID,
+          imageUrl,
+        })
+      )
     );
+  }
+
+  private async convertWithMyGears(data: Array<GearType>) {
+    const myGears = await this.getList();
+
+    return data.map(({ name, weight, company, id, imageUrl }) => {
+      return new Gear(
+        id,
+        name,
+        company,
+        weight,
+        imageUrl,
+        this.hasGear(id, myGears)
+      );
+    });
+  }
+
+  private hasGear(id: string, myGears: Gear[]) {
+    return myGears.some((myGear) => {
+      return myGear.hasId(id);
+    });
   }
 
   public async register(value: Gear[]) {
@@ -83,17 +116,16 @@ class GearStore {
     });
   }
 
-  public async getAll() {
-    const gears = await getDocs(query(collection(this.getStore(), 'gear')));
-    return this.convertToArray(gears);
-  }
+  private convertToArray(
+    data: QuerySnapshot<DocumentData, DocumentData>
+  ): GearType[] {
+    const result: GearType[] = [];
 
-  private convertToArray(data: QuerySnapshot<DocumentData, DocumentData>) {
-    const result: Gear[] = [];
     data.forEach((doc) => {
       const { name, company, weight, imageUrl } = doc.data();
-      result.push(new Gear(doc.id, name, company, weight, imageUrl));
+      result.push({ id: doc.id, name, company, weight, imageUrl });
     });
+
     return result;
   }
 

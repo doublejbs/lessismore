@@ -1,7 +1,7 @@
 import { makeAutoObservable } from 'mobx';
 import app from '../App';
 import GearStore from '../firebase/GearStore';
-import Gear from './search-warehouse/Gear';
+import Gear from '../search-warehouse/Gear';
 
 class Warehouse {
   public static new() {
@@ -9,7 +9,6 @@ class Warehouse {
   }
 
   private gears: Gear[] = [];
-  private searchVisible = false;
   private customVisible = false;
 
   private constructor(private readonly gearStore: GearStore) {
@@ -31,26 +30,6 @@ class Warehouse {
 
   public getGears() {
     return this.gears;
-  }
-
-  public hasGear(value: Gear) {
-    return this.gears.some((gear) => gear.getId() === value.getId());
-  }
-
-  public showSearch() {
-    this.setSearchVisible(true);
-  }
-
-  public hideSearch() {
-    this.setSearchVisible(false);
-  }
-
-  private setSearchVisible(value: boolean) {
-    this.searchVisible = value;
-  }
-
-  public shouldShowSearch() {
-    return this.searchVisible;
   }
 
   public showCustom() {
