@@ -5,7 +5,6 @@ import Bag from './Bag.ts';
 import Bottom from '../Bottom.tsx';
 import BagItemView from './BagItemView.tsx';
 import BagItem from './BagItem.ts';
-import AddButton from '../warehouse/AddButton.tsx';
 import LoadingView from '../LoadingView.tsx';
 
 const BagView = () => {

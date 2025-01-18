@@ -1,6 +1,4 @@
 import { FC, ReactNode } from 'react';
-import Bottom from './Bottom';
-import AddButton from './warehouse/AddButton';
 
 interface Props {
   children: ReactNode;

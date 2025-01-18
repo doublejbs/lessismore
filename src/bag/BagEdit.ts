@@ -1,7 +1,7 @@
 import BagStore from '../firebase/BagStore.ts';
 import app from '../App.ts';
 import { makeAutoObservable } from 'mobx';
-import Gear from '../warehouse/search-warehouse/Gear.ts';
+import Gear from '../search-warehouse/Gear';
 
 class BagEdit {
   public static from(id: string) {
