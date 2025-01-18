@@ -3,7 +3,8 @@ import { FC, useEffect, useState } from 'react';
 import BagEdit from './BagEdit.ts';
 import Layout from '../Layout.tsx';
 import { observer } from 'mobx-react-lite';
-import BagEditWarehouseView from './BagEditWarehouseView.tsx';
+import BagEditWarehouseView from './BagEditAddGearView.tsx';
+import BagEditImageView from './BagEditImageView';
 
 const BagEditView: FC = () => {
   const { id } = useParams();
@@ -103,10 +104,66 @@ const BagEditView: FC = () => {
       >
         <span>배낭 채우기</span>
       </div>
-      <ul>
-        {gears.map((gear) => (
-          <div key={gear.getId()}>{gear.getName()}</div>
-        ))}
+      <ul
+        style={{
+          display: 'flex',
+          flexDirection: 'row',
+          justifyContent: 'space-between',
+          alignContent: 'flex-start',
+          width: '100%',
+          height: '100%',
+          flexWrap: 'wrap',
+          padding: '10px',
+        }}
+      >
+        {gears.map((gear) => {
+          const imageUrl = gear.getImageUrl();
+
+          return (
+            <div
+              key={gear.getId()}
+              style={{
+                width: '30%',
+                height: '33%',
+                display: 'flex',
+                flexDirection: 'column',
+                marginBottom: '10px',
+              }}
+            >
+              <div
+                style={{
+                  width: '100%',
+                  height: '100%',
+                }}
+              >
+                {imageUrl ? (
+                  <BagEditImageView imageUrl={imageUrl} isAdded={false} />
+                ) : (
+                  <div
+                    style={{
+                      width: '100%',
+                      height: '100%',
+                      backgroundColor: '#F1F1F1',
+                    }}
+                  ></div>
+                )}
+              </div>
+              <div
+                style={{
+                  height: '30px',
+                  whiteSpace: 'nowrap',
+                  textOverflow: 'ellipsis',
+                  overflow: 'hidden',
+                }}
+              >
+                <span>{gear.getName()}</span>
+              </div>
+              <div style={{ height: '30px', textAlign: 'center' }}>
+                <span>{gear.getWeight()}g</span>
+              </div>
+            </div>
+          );
+        })}
       </ul>
       {showWarehouse && (
         <BagEditWarehouseView

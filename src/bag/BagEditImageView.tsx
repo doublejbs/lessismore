@@ -24,6 +24,9 @@ const BagEditImageView: FC<Props> = ({ imageUrl, isAdded }) => {
         style={{
           display: loading ? 'none' : 'block',
           filter: isAdded ? 'brightness(50%)' : 'none',
+          width: '100%',
+          height: '100%',
+          objectFit: 'cover',
         }}
       />
     </>
