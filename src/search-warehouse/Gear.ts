@@ -5,8 +5,13 @@ class Gear {
     private readonly company: string,
     private readonly weight: string,
     private readonly imageUrl: string,
+    private readonly added: boolean,
     private readonly isCustom: boolean = false
   ) {}
+
+  public hasId(value: string) {
+    return this.getId() === value;
+  }
 
   public isSame(value: Gear) {
     return this.getId() === value.getId();
@@ -41,6 +46,10 @@ class Gear {
       imageUrl: this.imageUrl,
       isCustom: this.isCustom,
     };
+  }
+
+  public isAdded() {
+    return this.added;
   }
 }
 

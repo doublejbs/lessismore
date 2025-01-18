@@ -1,7 +1,6 @@
 import { FC, useEffect } from 'react';
 import Layout from '../Layout.tsx';
 import Bottom from '../Bottom.tsx';
-import AddButton from './AddButton.tsx';
 import Warehouse from './Warehouse.ts';
 import { observer } from 'mobx-react-lite';
 import WarehouseGearView from './WarehouseGearView.tsx';
@@ -94,7 +93,6 @@ const WarehouseView: FC<Props> = ({ warehouse }) => {
       </div>
       <CustomGearAddButtonView warehouse={warehouse} />
       <Bottom />
-      <AddButton warehouse={warehouse} />
     </Layout>
   );
 };

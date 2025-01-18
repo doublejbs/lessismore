@@ -1,7 +1,7 @@
 import { FC } from 'react';
-import Gear from './search-warehouse/Gear';
 import GearView from './GearView';
 import Warehouse from './Warehouse';
+import Gear from '../search-warehouse/Gear';
 
 interface Props {
   gear: Gear;
