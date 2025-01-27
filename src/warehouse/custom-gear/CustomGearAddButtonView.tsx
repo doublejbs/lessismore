@@ -1,13 +1,14 @@
 import Warehouse from '../Warehouse.ts';
 import { FC } from 'react';
+import CustomGear from './CustomGear.ts';
 
 interface Props {
-  warehouse: Warehouse;
+  customGear: CustomGear;
 }
 
-const CustomGearAddButtonView: FC<Props> = ({ warehouse }) => {
+const CustomGearAddButtonView: FC<Props> = ({ customGear }) => {
   const handleClick = () => {
-    warehouse.showCustom();
+    customGear.show();
   };
 
   return (

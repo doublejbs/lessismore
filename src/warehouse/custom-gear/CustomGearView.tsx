@@ -5,13 +5,13 @@ import { observer } from 'mobx-react-lite';
 import Warehouse from '../Warehouse.ts';
 import ImageUploadView from './ImageUploadView.tsx';
 import LoadingIconView from '../../LoadingIconView.tsx';
+import CustomGearConfirmView from './CustomGearConfirmView.tsx';
 
 interface Props {
-  warehouse: Warehouse;
+  customGear: CustomGear;
 }
 
-const CustomGearView: FC<Props> = ({ warehouse }) => {
-  const [customGear] = useState(() => CustomGear.new());
+const CustomGearView: FC<Props> = ({ customGear }) => {
   const name = customGear.getName();
   const company = customGear.getCompany();
   const weight = customGear.getWeight();
@@ -29,13 +29,21 @@ const CustomGearView: FC<Props> = ({ warehouse }) => {
     customGear.setWeight(Number(e.target.value));
   };
 
-  const handleClickConfirm = async () => {
-    await customGear.register();
-    warehouse.hideCustom();
+  const handleClickHide = () => {
+    customGear.hide();
   };
 
   return (
     <Layout>
+      <div
+        style={{
+          position: 'fixed',
+          left: '10px',
+          top: '10px',
+        }}
+      >
+        <button onClick={handleClickHide}>X</button>
+      </div>
       {isLoading && (
         <div
           style={{
@@ -56,6 +64,26 @@ const CustomGearView: FC<Props> = ({ warehouse }) => {
           flexDirection: 'column',
         }}
       >
+        <div
+          style={{
+            width: '100%',
+            textAlign: 'center',
+            padding: '10px',
+          }}
+        >
+          커스텀 장비 추가하기
+        </div>
+        <div
+          style={{
+            width: '100%',
+            display: 'flex',
+            flexDirection: 'row',
+            height: '100px',
+            alignItems: 'center',
+          }}
+        >
+          <ImageUploadView customGear={customGear} />
+        </div>
         <span>제품명</span>
         <input
           style={{
@@ -100,40 +128,11 @@ const CustomGearView: FC<Props> = ({ warehouse }) => {
             border: 'none',
           }}
           onChange={handleChangeWeight}
-          value={weight}
+          value={weight || ''}
+          type={'number'}
         />
       </div>
-      <div
-        style={{
-          width: '100%',
-          display: 'flex',
-          flexDirection: 'column',
-        }}
-      >
-        <span>이미지</span>
-        <ImageUploadView customGear={customGear} />
-      </div>
-      <div
-        style={{
-          position: 'fixed',
-          bottom: '10px',
-          width: '100%',
-          textAlign: 'center',
-          backgroundColor: 'black',
-          color: 'white',
-          padding: '10px',
-          borderRadius: '5px',
-        }}
-      >
-        <button
-          style={{
-            width: '100%',
-          }}
-          onClick={handleClickConfirm}
-        >
-          확인
-        </button>
-      </div>
+      <CustomGearConfirmView customGear={customGear} />
     </Layout>
   );
 };

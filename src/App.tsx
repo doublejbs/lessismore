@@ -12,6 +12,7 @@ import AdminView from './AdminView.tsx';
 import CrawlView from './CrawlView.tsx';
 import LoadingView from './LoadingView.tsx';
 import SearchWarehouseView from './search-warehouse/SearchWarehouseView';
+import WarehouseEditView from './warehouse/edit/WarehouseEditView.tsx';
 
 const ROUTES = [
   {
@@ -29,6 +30,10 @@ const ROUTES = [
   {
     path: '/bag',
     element: <BagView />,
+  },
+  {
+    path: '/warehouse/edit',
+    element: <WarehouseEditView />,
   },
   { path: '/warehouse', element: <WarehouseWrapper /> },
   { path: '/admin', element: <AdminView /> },

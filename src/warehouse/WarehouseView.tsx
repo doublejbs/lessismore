@@ -5,12 +5,14 @@ import Warehouse from './Warehouse.ts';
 import { observer } from 'mobx-react-lite';
 import WarehouseGearView from './WarehouseGearView.tsx';
 import CustomGearAddButtonView from './custom-gear/CustomGearAddButtonView.tsx';
+import CustomGear from './custom-gear/CustomGear.ts';
 
 interface Props {
   warehouse: Warehouse;
+  customGear: CustomGear;
 }
 
-const WarehouseView: FC<Props> = ({ warehouse }) => {
+const WarehouseView: FC<Props> = ({ warehouse, customGear }) => {
   const gears = warehouse.getGears();
 
   useEffect(() => {
@@ -91,7 +93,7 @@ const WarehouseView: FC<Props> = ({ warehouse }) => {
           ))}
         </ul>
       </div>
-      <CustomGearAddButtonView warehouse={warehouse} />
+      <CustomGearAddButtonView customGear={customGear} />
       <Bottom />
     </Layout>
   );
