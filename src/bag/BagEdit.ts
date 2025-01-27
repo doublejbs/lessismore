@@ -63,6 +63,10 @@ class BagEdit {
   public hasGear(gear: Gear) {
     return this.gears.some((g) => g.isSame(gear));
   }
+
+  public hasGearWith(id: string) {
+    return this.gears.some((gear) => gear.hasId(id));
+  }
 }
 
 export default BagEdit;

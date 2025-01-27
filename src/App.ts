@@ -2,11 +2,13 @@ import { makeAutoObservable } from 'mobx';
 import Firebase from './firebase/Firebase.ts';
 import GearStore from './firebase/GearStore.ts';
 import BagStore from './firebase/BagStore.ts';
+import SearchStore from './firebase/SearchStore.ts';
 
 class App {
   private readonly firebase = new Firebase();
   private gearStore!: GearStore;
   private bagStore!: BagStore;
+  private searchStore!: SearchStore;
   private initialized = false;
 
   public constructor() {
@@ -17,6 +19,7 @@ class App {
     await this.firebase.initialize();
     this.gearStore = new GearStore(this.firebase);
     this.bagStore = new BagStore(this.firebase, this.gearStore);
+    this.searchStore = new SearchStore(this.firebase);
     this.setInitialized(true);
   }
 
@@ -38,6 +41,10 @@ class App {
 
   public getGearStore() {
     return this.gearStore;
+  }
+
+  public getSearchStore() {
+    return this.searchStore;
   }
 
   private setInitialized(value: boolean) {

@@ -6,30 +6,27 @@ abstract class Search {
   @observable private keyword: string = '';
   @observable private result: Array<Gear> = [];
 
-  protected constructor(private readonly gearStore: GearStore) {
+  protected constructor() {
     makeObservable(this);
   }
 
+  public abstract select(gear: Gear): Promise<void>;
+  public abstract deselect(gear: Gear): Promise<void>;
+  public abstract searchList(keyword: string): Promise<Gear[]>;
+  public abstract searchAll(): Promise<Gear[]>;
+
   public async getAll() {
-    this.setResult(await this.gearStore.searchAll());
+    this.setResult(await this.searchAll());
   }
 
   public async search(keyword: string) {
     this.setKeyword(keyword.trim());
 
     if (this.keyword) {
-      this.setResult(await this.gearStore.searchList(this.keyword));
+      this.setResult(await this.searchList(keyword));
     } else {
-      this.setResult(await this.gearStore.searchAll());
+      this.setResult(await this.searchAll());
     }
-  }
-
-  public async register(value: Array<Gear>) {
-    await this.gearStore.register(value);
-  }
-
-  protected async remove(gear: Gear) {
-    await this.gearStore.remove(gear);
   }
 
   @action
@@ -48,6 +45,10 @@ abstract class Search {
 
   protected getKeyword() {
     return this.keyword;
+  }
+
+  protected async refresh() {
+    await this.search(this.getKeyword());
   }
 }
 
