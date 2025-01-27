@@ -9,7 +9,6 @@ class Warehouse {
   }
 
   private gears: Gear[] = [];
-  private customVisible = false;
 
   private constructor(private readonly gearStore: GearStore) {
     makeAutoObservable(this);
@@ -32,21 +31,7 @@ class Warehouse {
     return this.gears;
   }
 
-  public showCustom() {
-    this.setCustomVisible(true);
-  }
-
-  public hideCustom() {
-    this.setCustomVisible(false);
-  }
-
-  private setCustomVisible(value: boolean) {
-    this.customVisible = value;
-  }
-
-  public shouldShowCustom() {
-    return this.customVisible;
-  }
+  public edit(gear: Gear) {}
 }
 
 export default Warehouse;

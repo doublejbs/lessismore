@@ -16,6 +16,8 @@ class CustomGear {
   private weight = 0;
   private imageFile: File | null = null;
   private loading = false;
+  private visible = false;
+  private errorMessage = '';
 
   private constructor(private readonly gearStore: GearStore) {
     makeAutoObservable(this);
@@ -30,10 +32,12 @@ class CustomGear {
   }
 
   public setWeight(value: number) {
-    this.weight = value;
+    this.weight = +String(value)
+      .replace(/[^0-9.]/g, '')
+      .replace(/e/g, '');
   }
 
-  public setFile(file: File) {
+  public setFile(file: null | File) {
     this.imageFile = file;
   }
 
@@ -51,32 +55,50 @@ class CustomGear {
 
   public async register() {
     try {
-      if (this.validate()) {
-        this.setLoading(true);
-        const url = await this.imageStorage.uploadFile(
-          this.imageFile as File,
-          `${this.name}${this.company}${this.weight}`
-        );
-
-        await this.gearStore.register([
-          new Gear(
-            uuidv4(),
-            this.name,
-            this.company,
-            String(this.weight),
-            url,
-            true
-          ),
-        ]);
-        this.setLoading(false);
-      }
+      this.validate();
+      this.setLoading(true);
+      await this.gearStore.register([
+        new Gear(
+          uuidv4(),
+          this.name,
+          this.company,
+          String(this.weight),
+          await this.getFileUrl(),
+          true
+        ),
+      ]);
+      this.setLoading(false);
+      this.hide();
     } catch (e) {
       this.setLoading(false);
     }
   }
 
+  private async getFileUrl() {
+    if (this.imageFile) {
+      return await this.imageStorage.uploadFile(
+        this.imageFile as File,
+        `${this.name}${this.company}${this.weight}`
+      );
+    } else {
+      return '';
+    }
+  }
+
   private validate() {
-    return !!this.name && !!this.company && this.imageFile;
+    switch (true) {
+      case !this.name: {
+        this.setErrorMessage('이름을 입력해주세요');
+        throw Error('Invalid name');
+      }
+      case !this.company: {
+        this.setErrorMessage('브랜드를 입력해주세요');
+        throw Error('Invalid company');
+      }
+      default: {
+        break;
+      }
+    }
   }
 
   private setLoading(value: boolean) {
@@ -85,6 +107,39 @@ class CustomGear {
 
   public isLoading() {
     return this.loading;
+  }
+
+  public show() {
+    this.setVisible(true);
+  }
+
+  public hide() {
+    this.setVisible(false);
+    this.clear();
+  }
+
+  private clear() {
+    this.setName('');
+    this.setWeight(0);
+    this.setFile(null);
+    this.setErrorMessage('');
+    this.setCompany('');
+  }
+
+  private setVisible(value: boolean) {
+    this.visible = value;
+  }
+
+  public isVisible() {
+    return this.visible;
+  }
+
+  private setErrorMessage(value: string) {
+    this.errorMessage = value;
+  }
+
+  public getErrorMessage() {
+    return this.errorMessage;
   }
 }
 

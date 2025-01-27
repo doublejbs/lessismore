@@ -28,21 +28,21 @@ const ImageUploadView: FC<Props> = ({ customGear }) => {
   };
 
   return (
-    <div style={{ padding: '20px', maxWidth: '400px', margin: 'auto' }}>
+    <div>
       {/* 파일 첨부 */}
       <label
         htmlFor="fileInput"
         style={{
-          display: 'inline-block',
           padding: '10px 20px',
           border: '1px solid #ccc',
           borderRadius: '4px',
           cursor: 'pointer',
           backgroundColor: '#f9f9f9',
           marginBottom: '10px',
+          height: '100px',
         }}
       >
-        파일 첨부
+        📷
       </label>
       <input
         type="file"
@@ -51,31 +51,6 @@ const ImageUploadView: FC<Props> = ({ customGear }) => {
         onChange={handleFileChange}
         style={{ display: 'none' }}
       />
-
-      {/* 모바일 카메라 촬영 */}
-      <label
-        htmlFor="fileCapture"
-        style={{
-          display: 'inline-block',
-          padding: '10px 20px',
-          border: '1px solid #ccc',
-          borderRadius: '4px',
-          cursor: 'pointer',
-          backgroundColor: '#f9f9f9',
-          marginBottom: '10px',
-        }}
-      >
-        사진 촬영
-      </label>
-      <input
-        type="file"
-        id="fileCapture"
-        accept="image/*"
-        capture="environment"
-        onChange={handleFileChange}
-        style={{ display: 'none' }}
-      />
-
       {previewSrc && (
         <img
           src={previewSrc}
