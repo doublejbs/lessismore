@@ -4,7 +4,7 @@ import { observer } from 'mobx-react-lite';
 import BagEdit from './BagEdit.ts';
 import BagEditImageView from './BagEditImageView.tsx';
 import BagEditWarehouseView from './BagEditWarehouseView';
-import BagEditSearchView from './BagEditSearchView';
+import BagEditSearchView from './bag-edit-search/BagEditSearchView.tsx';
 
 interface Props {
   onClose: () => void;
@@ -74,14 +74,12 @@ const BagEditAddGearView: FC<Props> = ({ onClose, bagEdit }) => {
         style={{
           width: '100%',
           overflowY: 'auto',
-          marginLeft: '10px',
-          marginRight: '10px',
         }}
       >
         {isWarehouseSelected ? (
           <BagEditWarehouseView bagEdit={bagEdit} />
         ) : (
-          <BagEditSearchView />
+          <BagEditSearchView bagEdit={bagEdit} />
         )}
       </div>
     </div>

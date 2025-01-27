@@ -8,18 +8,26 @@ class SearchWarehouse extends Search {
     return new SearchWarehouse(app.getGearStore());
   }
 
-  protected constructor(gearStore: GearStore) {
-    super(gearStore);
+  protected constructor(private readonly gearStore: GearStore) {
+    super();
   }
 
-  public async select(value: Gear) {
-    await this.register([value]);
+  public async deselect(gear: Gear) {
+    await this.gearStore.remove(gear);
     await this.search(this.getKeyword());
   }
 
-  public async deselect(value: Gear) {
-    await this.remove(value);
+  public async select(gear: Gear) {
+    await this.gearStore.register([gear]);
     await this.search(this.getKeyword());
+  }
+
+  public async searchAll(): Promise<Gear[]> {
+    return await this.gearStore.searchAll();
+  }
+
+  public async searchList(keyword: string): Promise<Gear[]> {
+    return await this.gearStore.searchList(keyword);
   }
 }
 
