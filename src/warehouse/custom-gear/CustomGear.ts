@@ -13,7 +13,7 @@ class CustomGear {
   private readonly imageStorage = FirebaseImageStorage.new();
   private name = '';
   private company = '';
-  private weight = 0;
+  private weight = '';
   private imageFile: File | null = null;
   private loading = false;
   private visible = false;
@@ -31,10 +31,8 @@ class CustomGear {
     this.company = value;
   }
 
-  public setWeight(value: number) {
-    this.weight = +String(value)
-      .replace(/[^0-9.]/g, '')
-      .replace(/e/g, '');
+  public setWeight(value: string) {
+    this.weight = value;
   }
 
   public setFile(file: null | File) {
@@ -62,7 +60,7 @@ class CustomGear {
           uuidv4(),
           this.name,
           this.company,
-          String(this.weight),
+          String(this.weight || 0),
           await this.getFileUrl(),
           true
         ),
