@@ -27,7 +27,7 @@ const SearchGearView: FC<Props> = ({ gear, searchWarehouse }) => {
           style={{
             backgroundColor: 'black',
             padding: '4px',
-            height: '35px',
+            height: '32px',
             fontSize: '12px',
             color: 'white',
           }}
@@ -58,8 +58,9 @@ const SearchGearView: FC<Props> = ({ gear, searchWarehouse }) => {
       <div
         style={{
           display: 'flex',
-          flexDirection: 'column-reverse',
-          flex: '0 0 50px',
+          flexDirection: 'column',
+          width: '48px',
+          height: '100%',
         }}
       >
         {renderButton()}

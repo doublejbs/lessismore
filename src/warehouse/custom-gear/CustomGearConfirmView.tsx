@@ -18,15 +18,19 @@ const CustomGearConfirmView: FC<Props> = ({ customGear }) => {
     <div
       style={{
         position: 'fixed',
-        bottom: '10px',
+        bottom: '16px',
+        left: 0,
         width: '100%',
+        display: 'flex',
+        flexDirection: 'column',
+        padding: '0 16px',
+        gap: '16px',
       }}
     >
       <div
         style={{
           width: '100%',
           textAlign: 'center',
-          margin: '10px',
         }}
       >
         {errorMessage}
@@ -37,7 +41,7 @@ const CustomGearConfirmView: FC<Props> = ({ customGear }) => {
           textAlign: 'center',
           backgroundColor: 'black',
           color: 'white',
-          padding: '10px',
+          padding: '8px',
           borderRadius: '5px',
         }}
         onClick={handleClickConfirm}

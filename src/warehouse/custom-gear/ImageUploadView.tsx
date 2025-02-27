@@ -27,41 +27,78 @@ const ImageUploadView: FC<Props> = ({ customGear }) => {
     }
   };
 
+  const handleDeletePreview = () => {
+    setPreviewSrc('');
+  };
+
   return (
-    <div>
-      {/* 파일 첨부 */}
-      <label
-        htmlFor="fileInput"
-        style={{
-          padding: '10px 20px',
-          border: '1px solid #ccc',
-          borderRadius: '4px',
-          cursor: 'pointer',
-          backgroundColor: '#f9f9f9',
-          marginBottom: '10px',
-          height: '100px',
-        }}
-      >
-        📷
-      </label>
-      <input
-        type="file"
-        id="fileInput"
-        accept="image/*"
-        onChange={handleFileChange}
-        style={{ display: 'none' }}
-      />
-      {previewSrc && (
-        <img
-          src={previewSrc}
-          alt="이미지 미리보기"
+    <div
+      style={{
+        height: '100%',
+        display: 'flex',
+        gap: '8px',
+      }}
+    >
+      <div>
+        <label
+          htmlFor="fileInput"
           style={{
-            width: '100%',
-            maxHeight: '200px',
-            marginTop: '10px',
-            objectFit: 'cover',
+            border: '1px solid #ccc',
+            borderRadius: '4px',
+            cursor: 'pointer',
+            backgroundColor: '#f9f9f9',
+            height: '80px',
+            width: '60px',
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center',
           }}
+        >
+          📷
+        </label>
+        <input
+          type="file"
+          id="fileInput"
+          accept="image/*"
+          onChange={handleFileChange}
+          style={{ display: 'none' }}
         />
+      </div>
+      {previewSrc && (
+        <div
+          style={{
+            width: '60px',
+            height: '80px',
+            objectFit: 'cover',
+            position: 'relative',
+          }}
+        >
+          <button
+            style={{
+              position: 'absolute',
+              top: '-4px',
+              right: '-4px',
+              border: '1px solid black',
+              borderRadius: '50%',
+              backgroundColor: 'black',
+              color: 'white',
+              width: '16px',
+              height: '16px',
+              fontSize: '10px',
+            }}
+            onClick={handleDeletePreview}
+          >
+            X
+          </button>
+          <img
+            src={previewSrc}
+            alt="이미지 미리보기"
+            style={{
+              width: '60px',
+              height: '80px',
+            }}
+          />
+        </div>
       )}
     </div>
   );

@@ -20,51 +20,50 @@ const SearchWarehouseView: FC<Props> = () => {
   }, []);
 
   return (
-    <>
-      <Layout>
-        <div
+    <Layout>
+      <div
+        style={{
+          width: '100%',
+          marginBottom: '16px',
+        }}
+      >
+        <input
           style={{
             width: '100%',
-            padding: '10px',
+            borderRadius: '5px',
+            backgroundColor: '#F1F1F1',
+            border: 'none',
           }}
-        >
-          <input
-            style={{
-              width: '100%',
-              borderRadius: '5px',
-              backgroundColor: '#F1F1F1',
-              border: 'none',
-            }}
-            type="text"
-            placeholder="제품 혹은 브랜드명으로 검색해보세요"
-            onChange={handleChange}
-          />
-        </div>
-        <div
+          type="text"
+          placeholder="제품 혹은 브랜드명으로 검색해보세요"
+          onChange={handleChange}
+        />
+      </div>
+      <div
+        style={{
+          height: '100%',
+          overflowY: 'auto',
+          marginBottom: '54px',
+        }}
+      >
+        <ul
           style={{
-            height: '100%',
-            overflowY: 'auto',
-            marginBottom: '54px',
+            display: 'flex',
+            flexDirection: 'column',
+            gap: '16px',
           }}
         >
-          <ul
-            style={{
-              display: 'flex',
-              flexDirection: 'column',
-            }}
-          >
-            {result.map((gear) => (
-              <SearchGearView
-                key={gear.getId()}
-                gear={gear}
-                searchWarehouse={searchWarehouse}
-              />
-            ))}
-          </ul>
-        </div>
-        <Bottom />
-      </Layout>
-    </>
+          {result.map((gear) => (
+            <SearchGearView
+              key={gear.getId()}
+              gear={gear}
+              searchWarehouse={searchWarehouse}
+            />
+          ))}
+        </ul>
+      </div>
+      <Bottom />
+    </Layout>
   );
 };
 

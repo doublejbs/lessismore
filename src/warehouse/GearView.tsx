@@ -11,80 +11,92 @@ const GearView: FC<Props> = ({ gear, children }) => {
   const imageUrl = gear.getImageUrl();
 
   return (
-    <div
-      style={{
-        display: 'flex',
-        height: '124px',
-        flexDirection: 'row',
-        padding: '10px',
-        width: '100%',
-        position: 'relative',
-      }}
-    >
-      <div
-        style={{
-          marginRight: '20px',
-          flex: '0 0 30%',
-          height: '100%',
-        }}
-      >
-        {imageUrl ? (
-          <GearImageView imageUrl={imageUrl} />
-        ) : (
-          <div
-            style={{
-              width: '100px',
-              height: '100px',
-              backgroundColor: '#F1F1F1',
-            }}
-          ></div>
-        )}
-      </div>
+    <li>
       <div
         style={{
           display: 'flex',
-          flexDirection: 'column',
-          flex: '1',
-          overflow: 'hidden',
+          height: '160px',
+          flexDirection: 'row',
+          position: 'relative',
         }}
       >
         <div
           style={{
             display: 'flex',
-            height: '50px',
-            flexDirection: 'column',
+            flexDirection: 'row',
+            gap: '16px',
+            flexGrow: 1,
+            minWidth: 0,
           }}
         >
           <div
             style={{
-              fontWeight: 'bold',
-              fontSize: '16px',
-              textOverflow: 'ellipsis',
-              whiteSpace: 'nowrap',
+              width: '120px',
+              height: '160px',
+              backgroundColor: '#F1F1F1',
+              display: 'flex',
+              alignItems: 'center',
+              minWidth: '120px',
+            }}
+          >
+            <GearImageView imageUrl={imageUrl} />
+          </div>
+          <div
+            style={{
+              display: 'flex',
+              flexDirection: 'column',
+              flexGrow: 1,
+              minWidth: 0,
               overflow: 'hidden',
             }}
           >
-            {gear.getName()}
-          </div>
-          <div
-            style={{
-              fontSize: '12px',
-            }}
-          >
-            {gear.getCompany()}
+            <div
+              style={{
+                display: 'flex',
+                flexDirection: 'column',
+                height: '100%',
+                gap: '8px',
+              }}
+            >
+              <div
+                style={{
+                  display: 'flex',
+                  flexDirection: 'column',
+                  gap: '4px',
+                }}
+              >
+                <div
+                  style={{
+                    fontWeight: 'bold',
+                    fontSize: '16px',
+                    textOverflow: 'ellipsis',
+                    whiteSpace: 'nowrap',
+                    overflow: 'hidden',
+                  }}
+                >
+                  {gear.getName()}
+                </div>
+                <div
+                  style={{
+                    fontSize: '12px',
+                  }}
+                >
+                  {gear.getCompany()}
+                </div>
+              </div>
+              <div
+                style={{
+                  fontSize: '16px',
+                }}
+              >
+                {gear.getWeight()}g
+              </div>
+            </div>
           </div>
         </div>
-
-        <div
-          style={{
-            fontSize: '16px',
-          }}
-        >
-          {gear.getWeight()}g
-        </div>
+        {children}
       </div>
-      {children}
-    </div>
+    </li>
   );
 };
 
