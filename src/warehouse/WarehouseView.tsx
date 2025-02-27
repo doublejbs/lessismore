@@ -24,8 +24,6 @@ const WarehouseView: FC<Props> = ({ warehouse, customGear }) => {
       <div
         style={{
           height: '150px',
-          paddingLeft: '20px',
-          paddingTop: '20px',
           display: 'flex',
           flexDirection: 'column',
         }}
@@ -82,6 +80,7 @@ const WarehouseView: FC<Props> = ({ warehouse, customGear }) => {
           style={{
             display: 'flex',
             flexDirection: 'column',
+            gap: '10px',
           }}
         >
           {gears.map((gear) => (
