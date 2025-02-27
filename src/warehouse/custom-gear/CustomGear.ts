@@ -118,7 +118,7 @@ class CustomGear {
 
   private clear() {
     this.setName('');
-    this.setWeight(0);
+    this.setWeight('');
     this.setFile(null);
     this.setErrorMessage('');
     this.setCompany('');
