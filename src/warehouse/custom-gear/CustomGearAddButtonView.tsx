@@ -15,7 +15,7 @@ const CustomGearAddButtonView: FC<Props> = ({ customGear }) => {
     <div
       style={{
         position: 'fixed',
-        bottom: '70px',
+        bottom: '64px',
         backgroundColor: 'lightgray',
         borderRadius: '5px',
         padding: '5px',

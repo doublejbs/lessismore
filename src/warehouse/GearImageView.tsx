@@ -11,6 +11,10 @@ const GearImageView: FC<Props> = ({ imageUrl }) => {
     setLoading(false);
   };
 
+  if (!imageUrl) {
+    return null;
+  }
+
   return (
     <>
       {loading && <LoadingIconView />}

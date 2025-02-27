@@ -11,7 +11,8 @@ const Layout: FC<Props> = ({ children }) => {
         display: 'flex',
         flexDirection: 'column',
         height: '100%',
-        padding: '20px',
+        width: '100%',
+        padding: '16px',
       }}
     >
       {children}
