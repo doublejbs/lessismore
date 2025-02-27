@@ -19,7 +19,7 @@ const WarehouseGearView: FC<Props> = ({ gear, warehouse }) => {
   };
 
   const handleClickEdit = () => {
-    navigate(`/warehouse/edit/${gear.getId()}`);
+    // navigate(`/warehouse/edit/${gear.getId()}`);
   };
 
   return (

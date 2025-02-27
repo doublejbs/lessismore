@@ -50,11 +50,11 @@ const CustomGearView: FC<Props> = ({ customGear }) => {
       <div
         style={{
           position: 'fixed',
-          left: '10px',
-          top: '10px',
+          left: '16px',
+          top: '16px',
         }}
       >
-        <button onClick={handleClickHide}>X</button>
+        <button onClick={handleClickHide}>닫기</button>
       </div>
       {isLoading && (
         <div
@@ -74,13 +74,14 @@ const CustomGearView: FC<Props> = ({ customGear }) => {
           width: '100%',
           display: 'flex',
           flexDirection: 'column',
+          gap: '16px',
         }}
       >
         <div
           style={{
             width: '100%',
             textAlign: 'center',
-            padding: '10px',
+            padding: '8px',
           }}
         >
           커스텀 장비 추가하기
@@ -90,59 +91,67 @@ const CustomGearView: FC<Props> = ({ customGear }) => {
             width: '100%',
             display: 'flex',
             flexDirection: 'row',
-            height: '100px',
+            height: '80px',
             alignItems: 'center',
           }}
         >
           <ImageUploadView customGear={customGear} />
         </div>
-        <span>제품명</span>
-        <input
+        <div
           style={{
-            borderRadius: '5px',
-            backgroundColor: 'lightgray',
-            border: 'none',
+            display: 'flex',
+            flexDirection: 'column',
+            gap: '8px',
           }}
-          onChange={handleChangeName}
-          value={name}
-        />
-      </div>
-      <div
-        style={{
-          width: '100%',
-          display: 'flex',
-          flexDirection: 'column',
-        }}
-      >
-        <span>브랜드</span>
-        <input
+        >
+          <span>제품명</span>
+          <input
+            style={{
+              borderRadius: '5px',
+              backgroundColor: 'lightgray',
+              border: 'none',
+            }}
+            onChange={handleChangeName}
+            value={name}
+          />
+        </div>
+        <div
           style={{
-            borderRadius: '5px',
-            backgroundColor: 'lightgray',
-            border: 'none',
+            display: 'flex',
+            flexDirection: 'column',
+            gap: '8px',
           }}
-          onChange={handleChangeCompany}
-          value={company}
-        />
-      </div>
-      <div
-        style={{
-          width: '100%',
-          display: 'flex',
-          flexDirection: 'column',
-        }}
-      >
-        <span>무게</span>
-        <input
+        >
+          <span>브랜드</span>
+          <input
+            style={{
+              borderRadius: '5px',
+              backgroundColor: 'lightgray',
+              border: 'none',
+            }}
+            onChange={handleChangeCompany}
+            value={company}
+          />
+        </div>
+        <div
           style={{
-            borderRadius: '5px',
-            backgroundColor: 'lightgray',
-            border: 'none',
+            display: 'flex',
+            flexDirection: 'column',
+            gap: '8px',
           }}
-          onChange={handleChangeWeight}
-          value={weight}
-          type={'number'}
-        />
+        >
+          <span>무게</span>
+          <input
+            style={{
+              borderRadius: '5px',
+              backgroundColor: 'lightgray',
+              border: 'none',
+            }}
+            onChange={handleChangeWeight}
+            value={weight}
+            type={'number'}
+          />
+        </div>
       </div>
       <CustomGearConfirmView customGear={customGear} />
     </Layout>

@@ -23,9 +23,10 @@ const WarehouseView: FC<Props> = ({ warehouse, customGear }) => {
     <Layout>
       <div
         style={{
-          height: '150px',
           display: 'flex',
           flexDirection: 'column',
+          gap: '16px',
+          marginBottom: '16px',
         }}
       >
         <div>
@@ -62,13 +63,6 @@ const WarehouseView: FC<Props> = ({ warehouse, customGear }) => {
           </div>
         </div>
       </div>
-      {/* <button
-        onClick={() => {
-          app.getFirebase().logout();
-        }}
-      >
-        로그아웃
-      </button> */}
       <div
         style={{
           width: '100%',
