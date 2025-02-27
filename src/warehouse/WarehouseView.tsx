@@ -71,6 +71,7 @@ const WarehouseView: FC<Props> = ({ warehouse, customGear }) => {
       </button> */}
       <div
         style={{
+          width: '100%',
           height: '100%',
           overflow: 'auto',
           marginBottom: '60px',
@@ -80,7 +81,8 @@ const WarehouseView: FC<Props> = ({ warehouse, customGear }) => {
           style={{
             display: 'flex',
             flexDirection: 'column',
-            gap: '10px',
+            gap: '16px',
+            width: '100%',
           }}
         >
           {gears.map((gear) => (
