@@ -23,115 +23,102 @@ const WarehouseGearView: FC<Props> = ({ gear, warehouse }) => {
   };
 
   return (
-    <li style={{}} onClick={handleClickEdit}>
+    <li
+      style={{
+        padding: '8px',
+      }}
+      onClick={handleClickEdit}
+    >
       <div
         style={{
           display: 'flex',
-          height: '160px',
-          flexDirection: 'row',
-          justifyContent: 'space-between',
+          flexDirection: 'column',
           position: 'relative',
-          gap: '16px',
+          gap: '8px',
         }}
       >
         <div
           style={{
+            height: '100%',
+            backgroundColor: '#F1F1F1',
             display: 'flex',
-            flexDirection: 'row',
-            gap: '16px',
-            flexGrow: 1,
-            minWidth: 0,
+            flexDirection: 'column',
+            justifyContent: 'center',
+            aspectRatio: '2000 / 2500',
+            borderRadius: '5px',
+            position: 'relative',
           }}
         >
           <div
             style={{
-              width: '120px',
-              height: '160px',
-              backgroundColor: '#F1F1F1',
-              display: 'flex',
-              flexDirection: 'column',
-              justifyContent: 'center',
-              minWidth: '120px',
+              width: '32px',
+              height: '32px',
+              position: 'absolute',
+              bottom: 0,
+              right: 0,
             }}
           >
-            <GearImageView imageUrl={imageUrl} />
-          </div>
-          <div
-            style={{
-              display: 'flex',
-              flexDirection: 'column',
-              gap: '8px',
-              minWidth: 0,
-              flexGrow: 1,
-            }}
-          >
-            <div
+            <button
               style={{
-                display: 'flex',
-                height: '50px',
-                flexDirection: 'column',
-                gap: '4px',
+                width: '32px',
+                backgroundColor: '#F1F1F1',
+                borderRadius: '5px',
               }}
+              onClick={handleClick}
             >
-              <div
-                style={{
-                  fontWeight: 'bold',
-                  fontSize: '16px',
-                  textOverflow: 'ellipsis',
-                  whiteSpace: 'nowrap',
-                  overflow: 'hidden',
-                }}
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 24 24"
+                width="32"
+                height="32"
+                className="svg-cross"
               >
-                {gear.getName()}
-              </div>
-              <div
-                style={{
-                  fontSize: '12px',
-                }}
-              >
-                {gear.getCompany()}
-              </div>
-            </div>
-            <div
-              style={{
-                fontSize: '16px',
-              }}
-            >
-              {gear.getWeight()}g
-            </div>
+                <line
+                  x1="4"
+                  y1="12"
+                  x2="20"
+                  y2="12"
+                  stroke="black"
+                  strokeWidth="0.5"
+                />
+              </svg>
+            </button>
           </div>
+          <GearImageView imageUrl={imageUrl} />
         </div>
         <div
           style={{
-            width: '32px',
-            height: '160px',
+            display: 'flex',
+            height: '100%',
+            flexDirection: 'column',
+            gap: '2px',
           }}
         >
-          <button
+          <div
             style={{
-              height: '32px',
-              width: '32px',
-              backgroundColor: '#F1F1F1',
+              fontWeight: 'bold',
+              fontSize: '16px',
+              textOverflow: 'ellipsis',
+              whiteSpace: 'nowrap',
+              overflow: 'hidden',
             }}
-            onClick={handleClick}
           >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              viewBox="0 0 24 24"
-              width="32"
-              height="32"
-              className="svg-cross"
-            >
-              <line
-                x1="4"
-                y1="12"
-                x2="20"
-                y2="12"
-                stroke="black"
-                strokeWidth="0.5"
-              />
-            </svg>
-          </button>
+            {gear.getName()}
+          </div>
+          <div
+            style={{
+              fontSize: '12px',
+            }}
+          >
+            {gear.getCompany()}
+          </div>
+          <div
+            style={{
+              fontSize: '16px',
+            }}
+          >
+            {gear.getWeight()}g
+          </div>
         </div>
       </div>
     </li>

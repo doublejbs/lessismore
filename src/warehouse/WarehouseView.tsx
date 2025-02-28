@@ -29,6 +29,16 @@ const WarehouseView: FC<Props> = ({ warehouse, customGear }) => {
           marginBottom: '16px',
         }}
       >
+        <div
+          style={{
+            fontWeight: '1000',
+            fontSize: '32px',
+            textAlign: 'center',
+            height: '48px',
+          }}
+        >
+          USELESS
+        </div>
         <div>
           <span
             style={{
@@ -73,9 +83,9 @@ const WarehouseView: FC<Props> = ({ warehouse, customGear }) => {
       >
         <ul
           style={{
-            display: 'flex',
-            flexDirection: 'column',
-            gap: '16px',
+            display: 'grid',
+            gridTemplateColumns: 'repeat(2, minmax(0, 1fr))',
+            gap: '0px',
             width: '100%',
           }}
         >

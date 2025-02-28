@@ -19,14 +19,15 @@ const GearImageView: FC<Props> = ({ imageUrl }) => {
     <>
       {loading && <LoadingIconView />}
       <img
-        width={120}
-        height={160}
+        width={2000}
+        height={2500}
         src={imageUrl}
         onLoad={handleLoad}
         style={{
           display: loading ? 'none' : 'block',
           objectFit: 'cover',
           overflow: 'hidden',
+          borderRadius: '5px',
         }}
       />
     </>
