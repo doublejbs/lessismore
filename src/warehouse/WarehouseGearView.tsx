@@ -23,12 +23,7 @@ const WarehouseGearView: FC<Props> = ({ gear, warehouse }) => {
   };
 
   return (
-    <li
-      style={{
-        padding: '8px',
-      }}
-      onClick={handleClickEdit}
-    >
+    <li style={{}} onClick={handleClickEdit}>
       <div
         style={{
           display: 'flex',
@@ -45,17 +40,17 @@ const WarehouseGearView: FC<Props> = ({ gear, warehouse }) => {
             flexDirection: 'column',
             justifyContent: 'center',
             aspectRatio: '2000 / 2500',
-            borderRadius: '5px',
+            borderRadius: '4px',
             position: 'relative',
+            overflow: 'hidden',
           }}
         >
           <div
             style={{
               width: '32px',
-              height: '32px',
               position: 'absolute',
-              bottom: 0,
-              right: 0,
+              bottom: '8px',
+              right: '8px',
             }}
           >
             <button
@@ -66,22 +61,7 @@ const WarehouseGearView: FC<Props> = ({ gear, warehouse }) => {
               }}
               onClick={handleClick}
             >
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                viewBox="0 0 24 24"
-                width="32"
-                height="32"
-                className="svg-cross"
-              >
-                <line
-                  x1="4"
-                  y1="12"
-                  x2="20"
-                  y2="12"
-                  stroke="black"
-                  strokeWidth="0.5"
-                />
-              </svg>
+              🗑️
             </button>
           </div>
           <GearImageView imageUrl={imageUrl} />

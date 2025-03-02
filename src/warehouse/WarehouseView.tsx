@@ -85,7 +85,7 @@ const WarehouseView: FC<Props> = ({ warehouse, customGear }) => {
           style={{
             display: 'grid',
             gridTemplateColumns: 'repeat(2, minmax(0, 1fr))',
-            gap: '0px',
+            gap: '8px',
             width: '100%',
           }}
         >

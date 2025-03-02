@@ -23,44 +23,50 @@ const SearchWarehouseView: FC<Props> = () => {
     <Layout>
       <div
         style={{
-          width: '100%',
-          marginBottom: '16px',
+          paddingTop: '16px',
         }}
       >
-        <input
+        <div
           style={{
             width: '100%',
-            borderRadius: '5px',
-            backgroundColor: '#F1F1F1',
-            border: 'none',
-          }}
-          type="text"
-          placeholder="제품 혹은 브랜드명으로 검색해보세요"
-          onChange={handleChange}
-        />
-      </div>
-      <div
-        style={{
-          height: '100%',
-          overflowY: 'auto',
-          marginBottom: '54px',
-        }}
-      >
-        <ul
-          style={{
-            display: 'flex',
-            flexDirection: 'column',
-            gap: '16px',
+            marginBottom: '16px',
           }}
         >
-          {result.map((gear) => (
-            <SearchGearView
-              key={gear.getId()}
-              gear={gear}
-              searchWarehouse={searchWarehouse}
-            />
-          ))}
-        </ul>
+          <input
+            style={{
+              width: '100%',
+              borderRadius: '5px',
+              backgroundColor: '#F1F1F1',
+              border: 'none',
+            }}
+            type="text"
+            placeholder="제품 혹은 브랜드명으로 검색해보세요"
+            onChange={handleChange}
+          />
+        </div>
+        <div
+          style={{
+            height: '100%',
+            overflowY: 'auto',
+            marginBottom: '54px',
+          }}
+        >
+          <ul
+            style={{
+              display: 'flex',
+              flexDirection: 'column',
+              gap: '8px',
+            }}
+          >
+            {result.map((gear) => (
+              <SearchGearView
+                key={gear.getId()}
+                gear={gear}
+                searchWarehouse={searchWarehouse}
+              />
+            ))}
+          </ul>
+        </div>
       </div>
       <Bottom />
     </Layout>

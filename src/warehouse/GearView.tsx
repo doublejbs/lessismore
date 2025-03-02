@@ -37,6 +37,8 @@ const GearView: FC<Props> = ({ gear, children }) => {
               display: 'flex',
               alignItems: 'center',
               minWidth: '120px',
+              borderRadius: '4px',
+              justifyContent: 'center',
             }}
           >
             <GearImageView imageUrl={imageUrl} />
