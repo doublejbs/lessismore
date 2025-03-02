@@ -27,7 +27,6 @@ const GearImageView: FC<Props> = ({ imageUrl }) => {
           display: loading ? 'none' : 'block',
           objectFit: 'cover',
           overflow: 'hidden',
-          borderRadius: '5px',
         }}
       />
     </>

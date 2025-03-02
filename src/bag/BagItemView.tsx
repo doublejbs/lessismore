@@ -2,7 +2,6 @@ import BagItem from './BagItem.ts';
 import React, { FC } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Bag from './Bag.ts';
-import bag from './Bag.ts';
 
 interface Props {
   bagItem: BagItem;
@@ -25,10 +24,8 @@ const BagItemView: FC<Props> = ({ bagItem, bag }) => {
     <div
       style={{
         width: '100%',
-        height: '124px',
         display: 'flex',
         justifyContent: 'space-between',
-        padding: '20px',
       }}
       onClick={handleClick}
     >
@@ -59,28 +56,16 @@ const BagItemView: FC<Props> = ({ bagItem, bag }) => {
       </div>
       <button
         style={{
-          height: '36px',
-          width: '36px',
+          height: '32px',
+          width: '32px',
+          padding: '4px',
           backgroundColor: '#F1F1F1',
+          fontSize: '16px',
+          borderRadius: '4px',
         }}
         onClick={handleClickDelete}
       >
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          viewBox="0 0 24 24"
-          width="36"
-          height="36"
-          className="svg-cross"
-        >
-          <line
-            x1="4"
-            y1="12"
-            x2="20"
-            y2="12"
-            stroke="black"
-            strokeWidth="0.5"
-          />
-        </svg>
+        🗑️
       </button>
     </div>
   );

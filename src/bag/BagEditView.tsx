@@ -37,28 +37,34 @@ const BagEditView: FC = () => {
         display: 'flex',
         flexDirection: 'column',
         alignItems: 'center',
+        gap: '8px',
         height: '100%',
-        marginTop: '10px',
+        padding: '16px',
       }}
     >
       <div
         style={{
-          width: '100%',
-          height: '16px',
-          display: 'flex',
-          flexDirection: 'row',
-          justifyContent: 'start',
-          marginBottom: '10px',
+          position: 'absolute',
+          left: '16px',
+          top: '16px',
         }}
+        onClick={handleClickBack}
       >
-        <div
-          style={{
-            marginLeft: '10px',
-            fontWeight: '400',
-          }}
+        <svg
+          width="24"
+          height="24"
+          viewBox="0 0 24 24"
+          fill="none"
+          xmlns="http://www.w3.org/2000/svg"
         >
-          <button onClick={handleClickBack}>뒤로가기</button>
-        </div>
+          <path
+            d="M15 5L8 12L15 19"
+            stroke="black"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          />
+        </svg>
       </div>
       <div
         style={{
@@ -72,48 +78,52 @@ const BagEditView: FC = () => {
       </div>
       <div
         style={{
-          width: '100%',
-          textAlign: 'center',
-          fontWeight: 'bold',
-          fontSize: '64px',
+          display: 'flex',
+          flexDirection: 'column',
+          gap: '0px',
         }}
       >
-        {weight}kg
+        <div
+          style={{
+            width: '100%',
+            textAlign: 'center',
+            fontWeight: 'bold',
+            fontSize: '64px',
+          }}
+        >
+          {weight}kg
+        </div>
+        <div
+          style={{
+            width: '100%',
+            textAlign: 'center',
+            fontWeight: 'bold',
+            fontSize: '14px',
+          }}
+        >
+          패킹 무게 기준
+        </div>
       </div>
       <div
         style={{
           width: '100%',
-          textAlign: 'center',
-          fontWeight: 'bold',
-          fontSize: '14px',
-        }}
-      >
-        패킹 무게 기준
-      </div>
-      <div
-        style={{
-          width: '90%',
-          height: '45px',
           backgroundColor: '#F0F0F0',
           display: 'flex',
           justifyContent: 'center',
           alignItems: 'center',
-          margin: '10px',
+          padding: '4px',
+          borderRadius: '4px',
         }}
         onClick={handleClickAdd}
       >
-        <span>배낭 채우기</span>
+        <span>배낭 편집</span>
       </div>
       <ul
         style={{
           display: 'flex',
-          flexDirection: 'row',
-          justifyContent: 'space-between',
-          alignContent: 'flex-start',
+          flexDirection: 'column',
           width: '100%',
-          height: '100%',
-          flexWrap: 'wrap',
-          padding: '10px',
+          gap: '8px',
         }}
       >
         {gears.map((gear) => {
@@ -123,43 +133,36 @@ const BagEditView: FC = () => {
             <div
               key={gear.getId()}
               style={{
-                width: '30%',
-                height: '33%',
                 display: 'flex',
-                flexDirection: 'column',
-                marginBottom: '10px',
+                flexDirection: 'row',
+                width: '100%',
+                gap: '8px',
               }}
             >
               <div
                 style={{
-                  width: '100%',
-                  height: '100%',
-                }}
-              >
-                {imageUrl ? (
-                  <BagEditImageView imageUrl={imageUrl} isAdded={false} />
-                ) : (
-                  <div
-                    style={{
-                      width: '100%',
-                      height: '100%',
-                      backgroundColor: '#F1F1F1',
-                    }}
-                  ></div>
-                )}
-              </div>
-              <div
-                style={{
-                  height: '30px',
-                  whiteSpace: 'nowrap',
-                  textOverflow: 'ellipsis',
+                  width: '120px',
+                  height: '160px',
+                  backgroundColor: '#F1F1F1',
+                  borderRadius: '4px',
                   overflow: 'hidden',
                 }}
               >
-                <span>{gear.getName()}</span>
+                <BagEditImageView imageUrl={imageUrl} isAdded={false} />
               </div>
-              <div style={{ height: '30px', textAlign: 'center' }}>
-                <span>{gear.getWeight()}g</span>
+              <div
+                style={{
+                  display: 'flex',
+                  flexDirection: 'column',
+                  alignItems: 'start',
+                }}
+              >
+                <div style={{}}>
+                  <span>{gear.getName()}</span>
+                </div>
+                <div style={{}}>
+                  <span>{gear.getWeight()}g</span>
+                </div>
               </div>
             </div>
           );
