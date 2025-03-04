@@ -1,62 +1,62 @@
-import App from './App.ts';
-import { addDoc, collection } from 'firebase/firestore';
-import * as XLSX from 'xlsx';
 import React, { useState } from 'react';
+import * as XLSX from 'xlsx';
+import app from './App';
 
 const AdminView = () => {
-  // 엑셀 파일 읽기 및 JSON 변환
-  const [data, setData] = useState<any>([]);
+  const [file, setFile] = useState<null | File>(null);
 
-  const handleFileUpload = async (
-    event: React.ChangeEvent<HTMLInputElement>
-  ) => {
-    const file = event.target.files?.[0];
+  // 파일 선택 시 상태 업데이트
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files?.[0]) {
+      setFile(e.target.files[0]);
+    }
+  };
 
-    if (!file) return;
+  // 엑셀 파일 파싱 후 Firestore에 업로드
+  const handleFileUpload = async () => {
+    if (!file) {
+      alert('엑셀 파일을 선택해주세요.');
+      return;
+    }
 
     const reader = new FileReader();
 
-    reader.onload = async (e) => {
-      const data = new Uint8Array(e.target?.result as any);
-      const workbook = XLSX.read(data, { type: 'array' });
-      const sheet = workbook.Sheets[workbook.SheetNames[0]];
-      const jsonData: Iterable<{
-        name: string;
-        weight: number;
-        company: string;
-      }> = XLSX.utils.sheet_to_json(sheet);
-      setData(jsonData);
-      const db = App.getStore();
+    reader.onload = async () => {
+      const data = reader.result;
+      const workbook = XLSX.read(data, { type: 'binary' });
 
-      // Firestore에 추가
-      for (const row of jsonData) {
-        const docRef = await addDoc(collection(db, 'gear'), {
-          name: row.name,
-          weight: row.weight,
-          company: row.company,
-          imageUrl: '',
+      // 첫 번째 시트 데이터 가져오기
+      const sheetName = workbook.SheetNames[0];
+      const sheet = workbook.Sheets[sheetName];
+
+      // 시트 데이터를 JSON 형태로 변환
+      const jsonData = XLSX.utils.sheet_to_json(sheet);
+
+      for (let i = 0; i < jsonData.length; i++) {
+        const item: any = jsonData[i];
+        await app.getGearStore().add({
+          name: item.name,
+          company: item.company,
+          category: item.category,
+          subCategory: item.subCategory,
+          weight: item.weight,
         });
-
-        console.log(`Added document with ID: ${docRef.id}`);
       }
 
-      alert('Data uploaded to Firestore!');
+      // Firestore에 데이터 업로드
+
+      alert('데이터가 Firestore에 업로드되었습니다.');
     };
 
-    reader.readAsArrayBuffer(file);
+    // 엑셀 파일을 읽기
+    reader.readAsBinaryString(file);
   };
-
-  // Firestore에 데이터 추가
 
   return (
     <div>
-      <h1>Admin View</h1>
-      <h1>Upload Excel to Firestore</h1>
-      <input type="file" accept=".xlsx, .xls" onChange={handleFileUpload} />
-      <div>
-        <h2>Data Preview:</h2>
-        <pre>{JSON.stringify(data, null, 2)}</pre>
-      </div>
+      <h2>엑셀 파일 업로드</h2>
+      <input type="file" accept=".xlsx, .xls" onChange={handleFileChange} />
+      <button onClick={handleFileUpload}>업로드</button>
     </div>
   );
 };

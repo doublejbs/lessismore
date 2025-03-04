@@ -6,7 +6,9 @@ class Gear {
     private readonly weight: string,
     private readonly imageUrl: string,
     private readonly added: boolean,
-    private readonly isCustom: boolean = false
+    private readonly isCustom: boolean = false,
+    private readonly category: string = '',
+    private readonly subCategory: string = ''
   ) {}
 
   public hasId(value: string) {
@@ -45,6 +47,8 @@ class Gear {
       weight: this.weight,
       imageUrl: this.imageUrl,
       isCustom: this.isCustom,
+      category: this.category,
+      subCategory: this.subCategory,
     };
   }
 
