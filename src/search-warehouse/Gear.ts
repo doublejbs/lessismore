@@ -45,7 +45,7 @@ class Gear {
       name: this.name,
       company: this.company,
       weight: this.weight,
-      imageUrl: this.imageUrl,
+      imageUrl: this.imageUrl ?? '',
       isCustom: this.isCustom,
       category: this.category,
       subCategory: this.subCategory,
