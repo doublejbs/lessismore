@@ -62,7 +62,10 @@ class CustomGear {
           this.company,
           String(this.weight || 0),
           await this.getFileUrl(),
-          true
+          true,
+          true,
+          '',
+          ''
         ),
       ]);
       this.setLoading(false);
