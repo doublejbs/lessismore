@@ -156,8 +156,17 @@ class GearStore {
     const result: GearType[] = [];
 
     data.forEach((doc) => {
-      const { name, company, weight, imageUrl } = doc.data();
-      result.push({ id: doc.id, name, company, weight, imageUrl });
+      const { name, company, weight, imageUrl, category, subCategory } =
+        doc.data();
+      result.push({
+        id: doc.id,
+        name,
+        company,
+        weight,
+        imageUrl,
+        category,
+        subCategory,
+      });
     });
 
     return result;
