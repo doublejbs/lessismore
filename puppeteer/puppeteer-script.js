@@ -106,12 +106,12 @@ const crawl = async (keyword, maxPage) => {
             }
           }
         };
-        const items = document.querySelectorAll('.product_info_area__xxCTi'); // 제품 리스트 선택
+        const items = document.querySelectorAll('.product_inner__gr8QR'); // 제품 리스트 선택
 
         return Array.from(items).map((item) => {
           // 이름 가져오기
           const nameElement = item.querySelector(
-            'a[data-shp-contents-type="catalog_nv_mid"]'
+            'div.product_title__Mmw2K > a[data-shp-contents-type="catalog_nv_mid"]'
           );
           const name = nameElement ? nameElement.innerText.trim() : '';
 
@@ -163,12 +163,17 @@ const crawl = async (keyword, maxPage) => {
           // 쿼리 파라미터 값 가져오기
           const company = urlParams.get('adQuery');
 
+          const imageUrl = item.querySelector(
+            'div.product_img_area__cUrko > div > a > img'
+          )?.src;
+
           return {
             name,
             weight,
             category: categoryText,
             subCategory: subCategoryText,
             company,
+            imageUrl,
           };
         });
       });

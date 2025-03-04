@@ -40,6 +40,7 @@ const AdminView = () => {
           category: item.category,
           subCategory: item.subCategory,
           weight: item.weight,
+          imageUrl: item.imageUrl,
         });
       }
 
