@@ -14,6 +14,7 @@ import { SearchResponse } from 'algoliasearch';
 import GearType from '../warehouse/type/GearType';
 import Firebase from './Firebase';
 import Gear from '../search-warehouse/Gear';
+import { addDoc } from '@firebase/firestore';
 
 export interface GearData {
   id: string;
@@ -134,6 +135,10 @@ class GearStore {
 
   private getUserId() {
     return this.firebase.getUserId();
+  }
+
+  public async add(value: any) {
+    await addDoc(collection(this.getStore(), 'gear'), value);
   }
 }
 
