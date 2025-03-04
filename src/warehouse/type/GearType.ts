@@ -4,6 +4,8 @@ interface GearType {
   company: string;
   weight: string;
   imageUrl: string;
+  category?: string;
+  subCategory?: string;
 }
 
 export default GearType;
