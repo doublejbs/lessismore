@@ -55,8 +55,26 @@ class BagStore {
       weight,
       gears: gears.length
         ? gears.map(
-            ({ id, name, company, weight, imageUrl }) =>
-              new Gear(id, name, company, weight, imageUrl, true)
+            ({
+              id,
+              name,
+              company,
+              weight,
+              imageUrl,
+              category = '',
+              subCategory = '',
+            }) =>
+              new Gear(
+                id,
+                name,
+                company,
+                weight,
+                imageUrl,
+                true,
+                false,
+                category,
+                subCategory
+              )
           )
         : [],
     };

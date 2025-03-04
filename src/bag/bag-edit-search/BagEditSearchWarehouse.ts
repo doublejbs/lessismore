@@ -28,14 +28,25 @@ class BagEditSearchWarehouse extends Search {
 
   public async searchAll(): Promise<Gear[]> {
     return (await this.searchStore.searchAll()).map(
-      ({ name, weight, company, id, imageUrl }) => {
+      ({
+        name,
+        weight,
+        company,
+        id,
+        imageUrl,
+        category = '',
+        subCategory = '',
+      }) => {
         return new Gear(
           id,
           name,
           company,
           weight,
           imageUrl,
-          this.bagEdit.hasGearWith(id)
+          this.bagEdit.hasGearWith(id),
+          false,
+          category,
+          subCategory
         );
       }
     );
@@ -43,14 +54,25 @@ class BagEditSearchWarehouse extends Search {
 
   public async searchList(keyword: string): Promise<Gear[]> {
     return (await this.searchStore.searchList(keyword)).map(
-      ({ name, weight, company, id, imageUrl }) => {
+      ({
+        name,
+        weight,
+        company,
+        id,
+        imageUrl,
+        category = '',
+        subCategory = '',
+      }) => {
         return new Gear(
           id,
           name,
           company,
           weight,
           imageUrl,
-          this.bagEdit.hasGearWith(id)
+          this.bagEdit.hasGearWith(id),
+          false,
+          category,
+          subCategory
         );
       }
     );

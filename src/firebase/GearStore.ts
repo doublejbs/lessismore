@@ -23,6 +23,8 @@ export interface GearData {
   weight: string;
   imageUrl: string;
   isCustom?: boolean;
+  category?: string;
+  subCategory?: string;
 }
 
 class GearStore {
@@ -40,8 +42,27 @@ class GearStore {
 
     if (!!gears.length) {
       return gears.map(
-        ({ id, name, company, weight, imageUrl, isCustom = false }: GearData) =>
-          new Gear(id, name, company, weight, imageUrl, isCustom)
+        ({
+          id,
+          name,
+          company,
+          weight,
+          imageUrl,
+          isCustom = false,
+          category = '',
+          subCategory = '',
+        }: GearData) =>
+          new Gear(
+            id,
+            name,
+            company,
+            weight,
+            imageUrl,
+            true,
+            isCustom,
+            category,
+            subCategory
+          )
       );
     } else {
       return [];
@@ -88,16 +109,29 @@ class GearStore {
   private async convertWithMyGears(data: Array<GearType>) {
     const myGears = await this.getList();
 
-    return data.map(({ name, weight, company, id, imageUrl }) => {
-      return new Gear(
-        id,
+    return data.map(
+      ({
         name,
-        company,
         weight,
+        company,
+        id,
         imageUrl,
-        this.hasGear(id, myGears)
-      );
-    });
+        category = '',
+        subCategory = '',
+      }) => {
+        return new Gear(
+          id,
+          name,
+          company,
+          weight,
+          imageUrl,
+          this.hasGear(id, myGears),
+          false,
+          category,
+          subCategory
+        );
+      }
+    );
   }
 
   private hasGear(id: string, myGears: Gear[]) {
