@@ -1,41 +1,54 @@
 import { FC } from 'react';
 import Warehouse from './Warehouse';
+import WarehouseFilter from './WarehouseFilter.ts';
+import { observer } from 'mobx-react-lite';
 
 interface Props {
   warehouse: Warehouse;
 }
 
 const WarehouseFiltersView: FC<Props> = ({ warehouse }) => {
+  const handleClick = (filter: WarehouseFilter) => {
+    warehouse.selectFilter(filter);
+  };
+
   return (
     <div
       style={{
         height: '100%',
+        width: '100%',
         display: 'flex',
         flexDirection: 'row',
         gap: '4px',
-        overflowY: 'scroll',
-        width: 'fit-content',
+        overflowX: 'scroll',
+        scrollbarWidth: 'none',
       }}
     >
       {warehouse.mapFilters((filter) => {
         return (
-          <div
+          <button
+            key={filter.getName()}
             style={{
               height: '32px',
-              borderRadius: '15px',
-              backgroundColor: '#EBEBEB',
+              borderRadius: '16px',
+              fontSize: '12px',
+              padding: '16px',
               display: 'flex',
               justifyContent: 'center',
               alignItems: 'center',
-              fontSize: '14px',
+              flexDirection: 'column',
+              whiteSpace: 'nowrap',
+              backgroundColor: filter.isSelected() ? 'black' : '#EBEBEB',
+              color: filter.isSelected() ? 'white' : 'black',
             }}
+            onClick={() => handleClick(filter)}
           >
-            <span>{filter}</span>
-          </div>
+            {filter.getName()}
+          </button>
         );
       })}
     </div>
   );
 };
 
-export default WarehouseFiltersView;
+export default observer(WarehouseFiltersView);

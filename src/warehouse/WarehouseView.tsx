@@ -56,7 +56,7 @@ const WarehouseView: FC<Props> = ({ warehouse, customGear }) => {
         style={{
           width: '100%',
           height: '100%',
-          overflow: 'auto',
+          overflowY: 'auto',
           marginBottom: '60px',
         }}
       >

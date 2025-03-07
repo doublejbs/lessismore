@@ -1,35 +1,66 @@
-import { makeAutoObservable, observable } from 'mobx';
+import { makeAutoObservable } from 'mobx';
 import app from '../App';
 import GearStore from '../firebase/GearStore';
 import Gear from '../search-warehouse/Gear';
 import GearFilter from './GearFilter';
+import WarehouseFilter from './WarehouseFilter.ts';
 
 class Warehouse {
   public static new() {
     return new Warehouse(app.getGearStore());
   }
 
-  private readonly filters: GearFilter[] = [
-    GearFilter.All,
-    GearFilter.Tent,
-    GearFilter.SleepingBag,
-    GearFilter.Backpack,
-    GearFilter.Clothing,
-    GearFilter.Mat,
-    GearFilter.Furniture,
-    GearFilter.Lantern,
-    GearFilter.Cooking,
-    GearFilter.Etc,
-  ];
+  private readonly filters: WarehouseFilter[] = [
+    {
+      filter: GearFilter.All,
+      name: '전체',
+    },
+    {
+      filter: GearFilter.Tent,
+      name: '텐트',
+    },
+    {
+      filter: GearFilter.SleepingBag,
+      name: '침낭',
+    },
+    {
+      filter: GearFilter.Backpack,
+      name: '배낭',
+    },
+    {
+      filter: GearFilter.Clothing,
+      name: '의류',
+    },
+    {
+      filter: GearFilter.Mat,
+      name: '매트',
+    },
+    {
+      filter: GearFilter.Furniture,
+      name: '가구',
+    },
+    {
+      filter: GearFilter.Lantern,
+      name: '랜턴',
+    },
+    {
+      filter: GearFilter.Cooking,
+      name: '조리',
+    },
+    {
+      filter: GearFilter.Etc,
+      name: '기타',
+    },
+  ].map(({ filter, name }) => WarehouseFilter.from(filter, name));
   private gears: Gear[] = [];
-  private selectedFilter: GearFilter = GearFilter.All;
 
   private constructor(private readonly gearStore: GearStore) {
     makeAutoObservable(this);
+    this.filters[0].select();
   }
 
   public async getList() {
-    this.setGears(await this.gearStore.getList());
+    this.setGears(await this.gearStore.getList(this.getSelectedFilter()));
   }
 
   public async remove(value: Gear) {
@@ -47,12 +78,26 @@ class Warehouse {
 
   public edit(gear: Gear) {}
 
-  public setSelectedFilter(value: GearFilter) {
-    this.selectedFilter = value;
+  public mapFilters<R>(callback: (filter: WarehouseFilter) => R) {
+    return this.filters.map(callback);
   }
 
-  public mapFilters<R>(callback: (filter: GearFilter) => R) {
-    return this.filters.map(callback);
+  public async selectFilter(filter: WarehouseFilter) {
+    this.filters.forEach((currentFilter) => {
+      if (currentFilter === filter) {
+        currentFilter.select();
+      } else {
+        currentFilter.deselect();
+      }
+    });
+    await this.getList();
+  }
+
+  private getSelectedFilter() {
+    return (
+      this.filters.find((filter) => filter.isSelected())?.getFilter() ??
+      GearFilter.All
+    );
   }
 }
 
