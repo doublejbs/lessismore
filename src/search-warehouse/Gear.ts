@@ -39,6 +39,14 @@ class Gear {
     return this.id;
   }
 
+  public getCategory() {
+    return this.category;
+  }
+
+  public getSubCategory() {
+    return this.subCategory;
+  }
+
   public getData() {
     return {
       id: this.id,

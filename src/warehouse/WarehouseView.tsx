@@ -27,6 +27,7 @@ const WarehouseView: FC<Props> = ({ warehouse, customGear }) => {
           display: 'flex',
           flexDirection: 'column',
           gap: '8px',
+          marginTop: '8px',
           marginBottom: '16px',
         }}
       >
@@ -35,20 +36,11 @@ const WarehouseView: FC<Props> = ({ warehouse, customGear }) => {
             fontWeight: '1000',
             fontSize: '32px',
             textAlign: 'center',
-            height: '48px',
+            display: 'inline-block',
+            lineHeight: 1,
           }}
         >
           USELESS
-        </div>
-        <div>
-          <span
-            style={{
-              fontSize: '16px',
-              fontWeight: 'bold',
-            }}
-          >
-            창고
-          </span>
         </div>
         <WarehouseFiltersView warehouse={warehouse} />
       </div>

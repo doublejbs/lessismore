@@ -1,17 +1,17 @@
 import Search from '../../search-warehouse/Search.ts';
 import Gear from '../../search-warehouse/Gear.ts';
 import BagEdit from '../BagEdit.ts';
-import SearchStore from '../../firebase/SearchStore.ts';
 import app from '../../App.ts';
+import GearStore from '../../firebase/GearStore.ts';
 
 class BagEditSearchWarehouse extends Search {
   public static from(bagEdit: BagEdit) {
-    return new BagEditSearchWarehouse(bagEdit, app.getSearchStore());
+    return new BagEditSearchWarehouse(bagEdit, app.getGearStore());
   }
 
   private constructor(
     private readonly bagEdit: BagEdit,
-    private readonly searchStore: SearchStore
+    private readonly gearStore: GearStore
   ) {
     super();
   }
@@ -27,55 +27,67 @@ class BagEditSearchWarehouse extends Search {
   }
 
   public async searchAll(): Promise<Gear[]> {
-    return (await this.searchStore.searchAll()).map(
-      ({
-        name,
-        weight,
-        company,
-        id,
-        imageUrl,
-        category = '',
-        subCategory = '',
-      }) => {
-        return new Gear(
-          id,
-          name,
-          company,
-          weight,
-          imageUrl,
-          this.bagEdit.hasGearWith(id),
-          false,
-          category,
-          subCategory
-        );
-      }
-    );
+    return (await this.gearStore.searchAll()).map((gear) => {
+      return new Gear(
+        gear.getId(),
+        gear.getName(),
+        gear.getCompany(),
+        gear.getWeight(),
+        gear.getImageUrl(),
+        this.bagEdit.hasGearWith(gear.getId()),
+        false,
+        gear.getCategory(),
+        gear.getSubCategory()
+      );
+    });
+  }
+
+  public async searchAllMore(): Promise<Gear[]> {
+    return (await this.gearStore.searchAllMore()).map((gear) => {
+      return new Gear(
+        gear.getId(),
+        gear.getName(),
+        gear.getCompany(),
+        gear.getWeight(),
+        gear.getImageUrl(),
+        this.bagEdit.hasGearWith(gear.getId()),
+        false,
+        gear.getCategory(),
+        gear.getSubCategory()
+      );
+    });
   }
 
   public async searchList(keyword: string): Promise<Gear[]> {
-    return (await this.searchStore.searchList(keyword)).map(
-      ({
-        name,
-        weight,
-        company,
-        id,
-        imageUrl,
-        category = '',
-        subCategory = '',
-      }) => {
-        return new Gear(
-          id,
-          name,
-          company,
-          weight,
-          imageUrl,
-          this.bagEdit.hasGearWith(id),
-          false,
-          category,
-          subCategory
-        );
-      }
-    );
+    return (await this.gearStore.searchList(keyword)).map((gear) => {
+      return new Gear(
+        gear.getId(),
+        gear.getName(),
+        gear.getCompany(),
+        gear.getWeight(),
+        gear.getImageUrl(),
+        this.bagEdit.hasGearWith(gear.getId()),
+        false,
+        gear.getCategory(),
+        gear.getSubCategory()
+      );
+    });
+  }
+
+  public async searchListMore(keyword: string): Promise<Gear[]> {
+    return (await this.gearStore.searchListMore(keyword)).map((gear) => {
+      return new Gear(
+        gear.getId(),
+        gear.getName(),
+        gear.getCompany(),
+        gear.getWeight(),
+        gear.getImageUrl(),
+        this.bagEdit.hasGearWith(gear.getId()),
+        false,
+        gear.getCategory(),
+        gear.getSubCategory()
+      );
+    });
   }
 }
 

@@ -23,7 +23,13 @@ const WarehouseGearView: FC<Props> = ({ gear, warehouse }) => {
   };
 
   return (
-    <li style={{}} onClick={handleClickEdit}>
+    <li
+      className={'clickable'}
+      style={{
+        backgroundColor: 'white',
+      }}
+      onClick={handleClickEdit}
+    >
       <div
         style={{
           display: 'flex',
@@ -39,7 +45,7 @@ const WarehouseGearView: FC<Props> = ({ gear, warehouse }) => {
             display: 'flex',
             flexDirection: 'column',
             justifyContent: 'center',
-            aspectRatio: '2000 / 2500',
+            aspectRatio: '2000 / 2000',
             borderRadius: '4px',
             position: 'relative',
             overflow: 'hidden',

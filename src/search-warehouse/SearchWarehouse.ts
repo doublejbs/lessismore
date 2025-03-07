@@ -26,8 +26,16 @@ class SearchWarehouse extends Search {
     return await this.gearStore.searchAll();
   }
 
+  public async searchAllMore(): Promise<Gear[]> {
+    return await this.gearStore.searchAllMore();
+  }
+
   public async searchList(keyword: string): Promise<Gear[]> {
     return await this.gearStore.searchList(keyword);
+  }
+
+  public async searchListMore(keyword: string): Promise<Gear[]> {
+    return await this.gearStore.searchListMore(keyword);
   }
 }
 

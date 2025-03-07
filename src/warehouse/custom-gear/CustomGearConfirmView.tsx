@@ -36,6 +36,7 @@ const CustomGearConfirmView: FC<Props> = ({ customGear }) => {
         {errorMessage}
       </div>
       <button
+        className={'clickable'}
         style={{
           width: '100%',
           textAlign: 'center',
