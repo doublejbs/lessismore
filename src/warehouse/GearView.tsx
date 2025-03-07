@@ -11,93 +11,90 @@ const GearView: FC<Props> = ({ gear, children }) => {
   const imageUrl = gear.getImageUrl();
 
   return (
-    <li>
+    <li
+      style={{
+        display: 'flex',
+        gap: '8px',
+        height: '120px',
+      }}
+    >
       <div
         style={{
           display: 'flex',
-          height: '160px',
           flexDirection: 'row',
-          position: 'relative',
+          gap: '8px',
+          flexGrow: 1,
+          minWidth: 0,
         }}
       >
         <div
           style={{
+            width: '120px',
+            height: '120px',
+            backgroundColor: '#F1F1F1',
             display: 'flex',
-            flexDirection: 'row',
-            gap: '16px',
+            alignItems: 'center',
+            minWidth: '120px',
+            borderRadius: '4px',
+            justifyContent: 'center',
+          }}
+        >
+          <GearImageView imageUrl={imageUrl} />
+        </div>
+        <div
+          style={{
+            display: 'flex',
+            flexDirection: 'column',
             flexGrow: 1,
             minWidth: 0,
+            overflow: 'hidden',
           }}
         >
           <div
             style={{
-              width: '120px',
-              height: '160px',
-              backgroundColor: '#F1F1F1',
-              display: 'flex',
-              alignItems: 'center',
-              minWidth: '120px',
-              borderRadius: '4px',
-              justifyContent: 'center',
-            }}
-          >
-            <GearImageView imageUrl={imageUrl} />
-          </div>
-          <div
-            style={{
               display: 'flex',
               flexDirection: 'column',
-              flexGrow: 1,
-              minWidth: 0,
-              overflow: 'hidden',
+              height: '100%',
+              justifyContent: 'center',
             }}
           >
             <div
               style={{
                 display: 'flex',
                 flexDirection: 'column',
-                height: '100%',
-                gap: '8px',
+                gap: '1px',
               }}
             >
               <div
                 style={{
-                  display: 'flex',
-                  flexDirection: 'column',
-                  gap: '4px',
+                  fontWeight: 'bold',
+                  fontSize: '16px',
+                  textOverflow: 'ellipsis',
+                  whiteSpace: 'nowrap',
+                  overflow: 'hidden',
                 }}
               >
-                <div
-                  style={{
-                    fontWeight: 'bold',
-                    fontSize: '16px',
-                    textOverflow: 'ellipsis',
-                    whiteSpace: 'nowrap',
-                    overflow: 'hidden',
-                  }}
-                >
-                  {gear.getName()}
-                </div>
-                <div
-                  style={{
-                    fontSize: '12px',
-                  }}
-                >
-                  {gear.getCompany()}
-                </div>
+                {gear.getName()}
+              </div>
+              <div
+                style={{
+                  fontSize: '12px',
+                }}
+              >
+                {gear.getCompany()}
               </div>
               <div
                 style={{
                   fontSize: '16px',
                 }}
               >
-                {gear.getWeight()}g
+                {gear.getWeight() ? `${gear.getWeight()}g` : ''}
               </div>
             </div>
           </div>
         </div>
-        {children}
       </div>
+      {children}
     </li>
   );
 };

@@ -18,8 +18,8 @@ const BagEditImageView: FC<Props> = ({ imageUrl, isAdded }) => {
       {loading && <LoadingIconView />}
       <img
         src={imageUrl}
-        width={'100%'}
-        height={'100%'}
+        width={2000}
+        height={2000}
         onLoad={handleLoad}
         style={{
           display: loading ? 'none' : 'block',

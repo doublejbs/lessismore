@@ -12,7 +12,8 @@ interface Props {
 const SearchGearView: FC<Props> = ({ gear, searchWarehouse }) => {
   const isAdded = gear.isAdded();
 
-  const handleClick = () => {
+  const handleClick = (e: React.MouseEvent) => {
+    e.stopPropagation();
     if (isAdded) {
       searchWarehouse.deselect(gear);
     } else {
@@ -30,6 +31,7 @@ const SearchGearView: FC<Props> = ({ gear, searchWarehouse }) => {
             height: '32px',
             fontSize: '12px',
             color: 'white',
+            borderRadius: '8px',
           }}
           onClick={handleClick}
         >
@@ -44,6 +46,7 @@ const SearchGearView: FC<Props> = ({ gear, searchWarehouse }) => {
             padding: '4px',
             height: '35px',
             fontSize: '12px',
+            borderRadius: '8px',
           }}
           onClick={handleClick}
         >
@@ -59,8 +62,9 @@ const SearchGearView: FC<Props> = ({ gear, searchWarehouse }) => {
         style={{
           display: 'flex',
           flexDirection: 'column',
-          width: '48px',
+          minWidth: '48px',
           height: '100%',
+          justifyContent: 'center',
         }}
       >
         {renderButton()}

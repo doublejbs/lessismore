@@ -4,6 +4,7 @@ import BagEditSearchGearView from './BagEditSearchGearView.tsx';
 import Gear from '../../search-warehouse/Gear.ts';
 import { observer } from 'mobx-react-lite';
 import BagEdit from '../BagEdit.ts';
+import InfinityScroll from '../../search-warehouse/InfinityScroll.tsx';
 
 interface Props {
   bagEdit: BagEdit;
@@ -14,13 +15,18 @@ const BagEditSearchView: FC<Props> = ({ bagEdit }) => {
     BagEditSearchWarehouse.from(bagEdit)
   );
   const result = bagEditSearchWarehouse.getResult();
+  const isLoading = bagEditSearchWarehouse.isLoading();
 
   useEffect(() => {
-    bagEditSearchWarehouse.getAll();
+    bagEditSearchWarehouse.search('');
   }, []);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     bagEditSearchWarehouse.search(e.target.value);
+  };
+
+  const handleLoadMore = () => {
+    bagEditSearchWarehouse.searchMore();
   };
 
   return (
@@ -39,15 +45,17 @@ const BagEditSearchView: FC<Props> = ({ bagEdit }) => {
         />
       </div>
       <ul>
-        {result.map((gear: Gear) => {
-          return (
-            <BagEditSearchGearView
-              key={gear.getId()}
-              bagEditSearchWarehouse={bagEditSearchWarehouse}
-              gear={gear}
-            />
-          );
-        })}
+        <InfinityScroll loadMore={handleLoadMore} isLoading={isLoading}>
+          {result.map((gear: Gear) => {
+            return (
+              <BagEditSearchGearView
+                key={gear.getId()}
+                bagEditSearchWarehouse={bagEditSearchWarehouse}
+                gear={gear}
+              />
+            );
+          })}
+        </InfinityScroll>
       </ul>
     </div>
   );

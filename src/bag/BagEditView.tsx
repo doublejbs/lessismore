@@ -61,9 +61,8 @@ const BagEditView: FC = () => {
             <path
               d="M15 5L8 12L15 19"
               stroke="black"
-              stroke-width="2"
-              stroke-linecap="round"
-              stroke-linejoin="round"
+              strokeWidth="2"
+              strokeLinejoin="round"
             />
           </svg>
         </div>
@@ -156,6 +155,7 @@ const BagEditView: FC = () => {
                   style={{
                     width: '80px',
                     height: '80px',
+                    minWidth: '80px',
                     backgroundColor: '#F1F1F1',
                     borderRadius: '4px',
                     overflow: 'hidden',
@@ -170,6 +170,7 @@ const BagEditView: FC = () => {
                     alignItems: 'start',
                     justifyContent: 'center',
                     fontSize: '16px',
+                    flexGrow: 1,
                   }}
                 >
                   <div style={{ fontWeight: 'bold' }}>
@@ -186,7 +187,6 @@ const BagEditView: FC = () => {
                     flexDirection: 'column',
                     justifyContent: 'center',
                     alignItems: 'end',
-                    flexGrow: 1,
                   }}
                 >
                   <button

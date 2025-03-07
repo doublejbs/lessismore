@@ -12,7 +12,15 @@ import { SearchResponse } from 'algoliasearch';
 import GearType from '../warehouse/type/GearType';
 import Firebase from './Firebase';
 import Gear from '../search-warehouse/Gear';
-import { addDoc, deleteDoc, orderBy, setDoc, where } from '@firebase/firestore';
+import {
+  addDoc,
+  deleteDoc,
+  limit,
+  orderBy,
+  setDoc,
+  startAfter,
+  where,
+} from '@firebase/firestore';
 import GearFilter from '../warehouse/GearFilter.ts';
 
 export interface GearData {
@@ -32,10 +40,12 @@ class GearStore {
     'e6231534c3832c1253d08ce1f2d3aaa7'
   );
 
+  private lastDoc: DocumentData | null = null;
+  private searchPage = 0;
+
   public constructor(private readonly firebase: Firebase) {}
 
   public async getList(filter: GearFilter): Promise<Gear[]> {
-    console.log('filter', filter);
     const filterQuery =
       filter === GearFilter.All
         ? collection(this.getStore(), 'users', this.getUserId(), 'gears')
@@ -112,20 +122,67 @@ class GearStore {
   }
 
   public async searchAll() {
-    const gears = await getDocs(query(collection(this.getStore(), 'gear')));
+    const gears = await getDocs(
+      query(collection(this.getStore(), 'gear'), limit(100))
+    );
+    this.lastDoc = gears.docs[gears.docs.length - 1];
+    return this.convertWithMyGears(this.convertToArray(gears));
+  }
+
+  public async searchAllMore() {
+    const gears = await getDocs(
+      query(
+        collection(this.getStore(), 'gear'),
+        startAfter(this.lastDoc),
+        limit(100)
+      )
+    );
+    this.lastDoc = gears.docs[gears.docs.length - 1];
     return this.convertWithMyGears(this.convertToArray(gears));
   }
 
   public async searchList(value: string): Promise<Gear[]> {
+    const keyword = value.trim();
+    this.searchPage = 0;
+    const { results } = await this.searchClient.search<GearType>({
+      requests: [
+        {
+          indexName: 'useless-lessismore-gear',
+          query: keyword,
+          page: this.searchPage,
+          hitsPerPage: 100,
+        },
+      ],
+    });
+
+    this.searchPage += 1;
+
+    return this.convertWithMyGears(
+      (results[0] as SearchResponse<GearType>).hits.map(
+        ({ name, weight, company, objectID, imageUrl }) => ({
+          name,
+          weight,
+          company,
+          id: objectID,
+          imageUrl,
+        })
+      )
+    );
+  }
+
+  public async searchListMore(value: string): Promise<Gear[]> {
     const keyword = value.trim();
     const { results } = await this.searchClient.search<GearType>({
       requests: [
         {
           indexName: 'useless-lessismore-gear',
           query: keyword,
+          page: this.searchPage,
+          hitsPerPage: 100,
         },
       ],
     });
+    this.searchPage += 1;
 
     return this.convertWithMyGears(
       (results[0] as SearchResponse<GearType>).hits.map(

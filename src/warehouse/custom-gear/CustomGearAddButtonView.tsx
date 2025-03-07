@@ -16,14 +16,25 @@ const CustomGearAddButtonView: FC<Props> = ({ customGear }) => {
       style={{
         position: 'fixed',
         bottom: '56px',
-        backgroundColor: 'lightgray',
-        borderRadius: '5px',
-        padding: '4px',
-        left: '50%',
-        transform: 'translate(-50%, -50%)',
+        width: '100%',
+        left: 0,
+        display: 'flex',
+        justifyContent: 'center',
+        flexDirection: 'row',
+        paddingBottom: '16px',
       }}
     >
-      <button onClick={handleClick}>커스텀 장비 추가</button>
+      <button
+        style={{
+          backgroundColor: 'lightgray',
+          borderRadius: '5px',
+          padding: '8px',
+          fontSize: '14px',
+        }}
+        onClick={handleClick}
+      >
+        커스텀 장비 추가
+      </button>
     </div>
   );
 };

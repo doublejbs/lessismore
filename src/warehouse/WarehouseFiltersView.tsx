@@ -28,6 +28,7 @@ const WarehouseFiltersView: FC<Props> = ({ warehouse }) => {
         return (
           <button
             key={filter.getName()}
+            className={'clickable'}
             style={{
               height: '32px',
               borderRadius: '16px',
