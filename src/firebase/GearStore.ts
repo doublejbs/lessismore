@@ -14,7 +14,7 @@ import { SearchResponse } from 'algoliasearch';
 import GearType from '../warehouse/type/GearType';
 import Firebase from './Firebase';
 import Gear from '../search-warehouse/Gear';
-import { addDoc } from '@firebase/firestore';
+import { addDoc, deleteDoc, setDoc } from '@firebase/firestore';
 
 export interface GearData {
   id: string;
@@ -37,44 +37,74 @@ class GearStore {
 
   public async getList(): Promise<Gear[]> {
     const gears = (
-      await getDoc(doc(this.getStore(), 'users', this.getUserId()))
-    ).data()?.['gears'];
+      await getDocs(
+        collection(this.getStore(), 'users', this.getUserId(), 'gears')
+      )
+    ).docs;
 
-    if (!!gears.length) {
-      return gears.map(
-        ({
+    if (!!gears?.length) {
+      return gears.map((doc) => {
+        const {
           id,
           name,
           company,
           weight,
           imageUrl,
-          isCustom = false,
-          category = '',
-          subCategory = '',
-        }: GearData) =>
-          new Gear(
-            id,
-            name,
-            company,
-            weight,
-            imageUrl,
-            true,
-            isCustom,
-            category,
-            subCategory
-          )
-      );
+          isCustom,
+          category,
+          subCategory,
+        } = doc.data();
+
+        return new Gear(
+          id,
+          name,
+          company,
+          weight,
+          imageUrl,
+          true,
+          isCustom,
+          category,
+          subCategory
+        );
+      });
     } else {
       return [];
     }
   }
 
+  public async register(value: Gear[]) {
+    try {
+      for (const gear of value) {
+        const gearRef = doc(
+          this.getStore(),
+          'users',
+          this.getUserId(),
+          'gears',
+          gear.getId()
+        );
+        if ((await getDoc(gearRef)).exists()) {
+        } else {
+          return await setDoc(gearRef, gear.getData());
+        }
+      }
+    } catch (e) {
+      console.log(e);
+    }
+  }
+
   public async remove(gear: Gear) {
-    await updateDoc(doc(this.getStore(), 'users', this.getUserId()), {
-      gears: (await this.getList())
-        .filter((data) => !data.isSame(gear))
-        .map((data) => data.getData()),
-    });
+    try {
+      const gearRef = doc(
+        this.getStore(),
+        'users',
+        this.getUserId(),
+        'gears',
+        gear.getId()
+      );
+      await deleteDoc(gearRef);
+    } catch (error) {
+      console.error('Error deleting gear:', error);
+    }
   }
 
   public async searchAll() {
@@ -140,16 +170,6 @@ class GearStore {
     });
   }
 
-  public async register(value: Gear[]) {
-    await updateDoc(doc(this.getStore(), 'users', this.getUserId()), {
-      gears: arrayUnion(
-        ...value.map((data) => {
-          return { ...data.getData() };
-        })
-      ),
-    });
-  }
-
   private convertToArray(
     data: QuerySnapshot<DocumentData, DocumentData>
   ): GearType[] {
@@ -180,8 +200,8 @@ class GearStore {
     return this.firebase.getUserId();
   }
 
-  public async add(value: any) {
-    await addDoc(collection(this.getStore(), 'gear'), value);
+  public async add(value: Gear) {
+    await addDoc(collection(this.getStore(), 'gear'), value.getData());
   }
 }
 

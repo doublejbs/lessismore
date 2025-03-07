@@ -6,6 +6,7 @@ import { observer } from 'mobx-react-lite';
 import WarehouseGearView from './WarehouseGearView.tsx';
 import CustomGearAddButtonView from './custom-gear/CustomGearAddButtonView.tsx';
 import CustomGear from './custom-gear/CustomGear.ts';
+import WarehouseFiltersView from './WarehouseFiltersView';
 
 interface Props {
   warehouse: Warehouse;
@@ -25,7 +26,7 @@ const WarehouseView: FC<Props> = ({ warehouse, customGear }) => {
         style={{
           display: 'flex',
           flexDirection: 'column',
-          gap: '16px',
+          gap: '8px',
           marginBottom: '16px',
         }}
       >
@@ -49,29 +50,7 @@ const WarehouseView: FC<Props> = ({ warehouse, customGear }) => {
             창고
           </span>
         </div>
-        <div
-          style={{
-            height: '100%',
-            display: 'flex',
-            justifyContent: 'center',
-            flexDirection: 'column',
-          }}
-        >
-          <div
-            style={{
-              width: '58px',
-              height: '32px',
-              borderRadius: '15px',
-              backgroundColor: '#EBEBEB',
-              display: 'flex',
-              justifyContent: 'center',
-              alignItems: 'center',
-              fontSize: '14px',
-            }}
-          >
-            <span>전체</span>
-          </div>
-        </div>
+        <WarehouseFiltersView warehouse={warehouse} />
       </div>
       <div
         style={{

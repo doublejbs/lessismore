@@ -23,13 +23,18 @@ const SearchWarehouseView: FC<Props> = () => {
     <Layout>
       <div
         style={{
-          paddingTop: '16px',
+          paddingTop: '72px',
         }}
       >
         <div
           style={{
             width: '100%',
-            marginBottom: '16px',
+            position: 'fixed',
+            top: 0,
+            left: 0,
+            padding: '16px',
+            backgroundColor: 'white',
+            zIndex: 10,
           }}
         >
           <input

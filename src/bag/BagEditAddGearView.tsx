@@ -29,7 +29,7 @@ const BagEditAddGearView: FC<Props> = ({ onClose, bagEdit }) => {
         bottom: 0,
         height: '480px',
         width: '100%',
-        borderRadius: '20px 20px 0',
+        borderRadius: '20px 20px 0 0',
         outline: '5px solid transparent',
         boxShadow: '0 4px 10px rgba(0, 0, 0, 0.3)',
         backgroundColor: 'white',

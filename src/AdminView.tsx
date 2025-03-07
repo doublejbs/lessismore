@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import * as XLSX from 'xlsx';
 import app from './App';
+import Gear from './search-warehouse/Gear';
 
 const AdminView = () => {
   const [file, setFile] = useState<null | File>(null);
@@ -34,14 +35,21 @@ const AdminView = () => {
 
       for (let i = 0; i < jsonData.length; i++) {
         const item: any = jsonData[i];
-        await app.getGearStore().add({
-          name: item.name,
-          company: item.company,
-          category: item.category,
-          subCategory: item.subCategory,
-          weight: item.weight,
-          imageUrl: item.imageUrl,
-        });
+        await app
+          .getGearStore()
+          .add(
+            new Gear(
+              '',
+              item.name,
+              item.company,
+              item.weight,
+              item.imageUrl,
+              true,
+              false,
+              item.category,
+              item.subCategory
+            )
+          );
       }
 
       // Firestore에 데이터 업로드
