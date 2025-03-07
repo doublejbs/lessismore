@@ -1,5 +1,4 @@
 import {
-  arrayUnion,
   collection,
   doc,
   DocumentData,
@@ -7,14 +6,14 @@ import {
   getDocs,
   query,
   QuerySnapshot,
-  updateDoc,
 } from 'firebase/firestore';
 import { liteClient } from 'algoliasearch/lite';
 import { SearchResponse } from 'algoliasearch';
 import GearType from '../warehouse/type/GearType';
 import Firebase from './Firebase';
 import Gear from '../search-warehouse/Gear';
-import { addDoc, deleteDoc, setDoc } from '@firebase/firestore';
+import { addDoc, deleteDoc, orderBy, setDoc, where } from '@firebase/firestore';
+import GearFilter from '../warehouse/GearFilter.ts';
 
 export interface GearData {
   id: string;
@@ -35,12 +34,17 @@ class GearStore {
 
   public constructor(private readonly firebase: Firebase) {}
 
-  public async getList(): Promise<Gear[]> {
-    const gears = (
-      await getDocs(
-        collection(this.getStore(), 'users', this.getUserId(), 'gears')
-      )
-    ).docs;
+  public async getList(filter: GearFilter): Promise<Gear[]> {
+    console.log('filter', filter);
+    const filterQuery =
+      filter === GearFilter.All
+        ? collection(this.getStore(), 'users', this.getUserId(), 'gears')
+        : query(
+            collection(this.getStore(), 'users', this.getUserId(), 'gears'),
+            where('subCategory', '==', filter),
+            orderBy('name', 'desc')
+          );
+    const gears = (await getDocs(filterQuery)).docs;
 
     if (!!gears?.length) {
       return gears.map((doc) => {
@@ -137,7 +141,7 @@ class GearStore {
   }
 
   private async convertWithMyGears(data: Array<GearType>) {
-    const myGears = await this.getList();
+    const myGears = await this.getList(GearFilter.All);
 
     return data.map(
       ({
