@@ -14,8 +14,8 @@ const GearView: FC<Props> = ({ gear, children }) => {
     <li
       style={{
         display: 'flex',
-        gap: '8px',
-        height: '120px',
+        padding: '16px 0px',
+        borderBottom: '1px solid #F1F1F1',
       }}
     >
       <div
@@ -29,12 +29,12 @@ const GearView: FC<Props> = ({ gear, children }) => {
       >
         <div
           style={{
-            width: '120px',
-            height: '120px',
+            width: '80px',
+            height: '80px',
             backgroundColor: '#F1F1F1',
             display: 'flex',
             alignItems: 'center',
-            minWidth: '120px',
+            minWidth: '80px',
             borderRadius: '4px',
             justifyContent: 'center',
           }}
@@ -55,41 +55,40 @@ const GearView: FC<Props> = ({ gear, children }) => {
               display: 'flex',
               flexDirection: 'column',
               height: '100%',
-              justifyContent: 'center',
+              justifyContent: 'space-between',
             }}
           >
             <div
               style={{
                 display: 'flex',
                 flexDirection: 'column',
-                gap: '1px',
+                overflow: 'hidden',
               }}
             >
               <div
                 style={{
-                  fontWeight: 'bold',
-                  fontSize: '16px',
-                  textOverflow: 'ellipsis',
-                  whiteSpace: 'nowrap',
-                  overflow: 'hidden',
-                }}
-              >
-                {gear.getName()}
-              </div>
-              <div
-                style={{
                   fontSize: '12px',
+                  fontWeight: 'bold',
                 }}
               >
                 {gear.getCompany()}
               </div>
-              <div
+              <p
+                className={'text-ellipsis'}
                 style={{
-                  fontSize: '16px',
+                  fontSize: '12px',
                 }}
               >
-                {gear.getWeight() ? `${gear.getWeight()}g` : ''}
-              </div>
+                {gear.getName()}
+              </p>
+            </div>
+            <div
+              style={{
+                fontSize: '12px',
+                fontWeight: 'bold',
+              }}
+            >
+              {gear.getWeight() ? `${gear.getWeight()}g` : ''}
             </div>
           </div>
         </div>

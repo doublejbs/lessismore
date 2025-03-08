@@ -55,8 +55,10 @@ const WarehouseView: FC<Props> = ({ warehouse, customGear }) => {
         <ul
           style={{
             display: 'grid',
-            gridTemplateColumns: 'repeat(2, minmax(0, 1fr))',
-            gap: '8px',
+            gridTemplateColumns:
+              'repeat(auto-fill,minmax(min(128px,100%),1fr))',
+            rowGap: '1.25rem',
+            columnGap: '0.625rem',
             width: '100%',
           }}
         >

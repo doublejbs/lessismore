@@ -57,6 +57,8 @@ const WarehouseGearView: FC<Props> = ({ gear, warehouse }) => {
               position: 'absolute',
               bottom: '8px',
               right: '8px',
+              borderRadius: '0.25rem',
+              overflow: 'hidden',
             }}
           >
             <button
@@ -77,34 +79,33 @@ const WarehouseGearView: FC<Props> = ({ gear, warehouse }) => {
             display: 'flex',
             height: '100%',
             flexDirection: 'column',
-            gap: '2px',
+            gap: '.125rem',
+            fontSize: '12px',
           }}
         >
-          <div
+          <span
             style={{
               fontWeight: 'bold',
-              fontSize: '16px',
+            }}
+          >
+            {gear.getCompany()}
+          </span>
+          <p
+            className={'text-ellipsis'}
+            style={{
               textOverflow: 'ellipsis',
-              whiteSpace: 'nowrap',
               overflow: 'hidden',
             }}
           >
             {gear.getName()}
-          </div>
-          <div
+          </p>
+          <span
             style={{
-              fontSize: '12px',
-            }}
-          >
-            {gear.getCompany()}
-          </div>
-          <div
-            style={{
-              fontSize: '16px',
+              fontWeight: 'bold',
             }}
           >
             {gear.getWeight()}g
-          </div>
+          </span>
         </div>
       </div>
     </li>
