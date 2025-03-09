@@ -1,5 +1,5 @@
 import React, { FC, useState } from 'react';
-import CustomGear from './CustomGear.ts';
+import CustomGear from '../model/CustomGear';
 
 interface Props {
   customGear: CustomGear;

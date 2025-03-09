@@ -2,8 +2,8 @@ import { FC, useState } from 'react';
 import WarehouseView from './WarehouseView';
 import Warehouse from './Warehouse';
 import { observer } from 'mobx-react-lite';
-import CustomGearView from './custom-gear/CustomGearView.tsx';
-import CustomGear from './custom-gear/CustomGear.ts';
+import CustomGear from './custom-gear/model/CustomGear.ts';
+import CustomGearView from './custom-gear/component/CustomGearView';
 
 interface Props {}
 

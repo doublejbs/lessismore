@@ -1,7 +1,6 @@
 import React, { FC } from 'react';
-import CustomGear from './CustomGear.ts';
-import Warehouse from '../Warehouse.ts';
 import { observer } from 'mobx-react-lite';
+import CustomGear from '../model/CustomGear';
 
 interface Props {
   customGear: CustomGear;

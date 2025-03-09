@@ -1,9 +1,12 @@
 import { makeAutoObservable } from 'mobx';
-import GearStore from '../../firebase/GearStore.ts';
-import app from '../../App.ts';
-import FirebaseImageStorage from '../../firebase/FirebaseImageStorage.ts';
-import { v4 as uuidv4 } from 'uuid';
-import Gear from '../../search-warehouse/Gear';
+import app from '../../../App';
+import FirebaseImageStorage from '../../../firebase/FirebaseImageStorage';
+import GearStore from '../../../firebase/GearStore';
+import Gear from '../../../search-warehouse/Gear';
+import { uuidv4 } from '@firebase/util';
+import WarehouseFilters from '../../WarehouseFilters';
+import WarehouseFilter from '../../WarehouseFilter';
+import GearFilter from '../../GearFilter';
 
 class CustomGear {
   public static new() {
@@ -11,6 +14,7 @@ class CustomGear {
   }
 
   private readonly imageStorage = FirebaseImageStorage.new();
+  private readonly filters = WarehouseFilters.new();
   private name = '';
   private company = '';
   private weight = '';
@@ -64,8 +68,8 @@ class CustomGear {
           await this.getFileUrl(),
           true,
           true,
-          '',
-          ''
+          this.filters.getSelectedFirstCategory(),
+          this.filters.getSelectedFilter()
         ),
       ]);
       this.setLoading(false);
@@ -141,6 +145,18 @@ class CustomGear {
 
   public getErrorMessage() {
     return this.errorMessage;
+  }
+
+  public getFilter() {
+    return this.filters.getSelectedFilter();
+  }
+
+  public selectFilter(filter: GearFilter) {
+    this.filters.selectFilterWith(filter);
+  }
+
+  public mapFilters<R>(callback: (filter: WarehouseFilter) => R) {
+    return this.filters.mapFilters(callback);
   }
 }
 

@@ -1,6 +1,5 @@
-import Warehouse from '../Warehouse.ts';
 import { FC } from 'react';
-import CustomGear from './CustomGear.ts';
+import CustomGear from '../model/CustomGear';
 
 interface Props {
   customGear: CustomGear;
