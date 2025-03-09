@@ -1,11 +1,11 @@
-import React, { FC, useState } from 'react';
-import Layout from '../../Layout.tsx';
-import CustomGear from './CustomGear.ts';
+import React, { FC } from 'react';
 import { observer } from 'mobx-react-lite';
-import Warehouse from '../Warehouse.ts';
 import ImageUploadView from './ImageUploadView.tsx';
-import LoadingIconView from '../../LoadingIconView.tsx';
 import CustomGearConfirmView from './CustomGearConfirmView.tsx';
+import Layout from '../../../Layout';
+import CustomGear from '../model/CustomGear';
+import LoadingIconView from '../../../LoadingIconView';
+import GearFilter from '../../GearFilter';
 
 interface Props {
   customGear: CustomGear;
@@ -15,6 +15,7 @@ const CustomGearView: FC<Props> = ({ customGear }) => {
   const name = customGear.getName();
   const company = customGear.getCompany();
   const weight = customGear.getWeight();
+  const filter = customGear.getFilter();
   const isLoading = customGear.isLoading();
 
   const handleChangeName = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -23,6 +24,10 @@ const CustomGearView: FC<Props> = ({ customGear }) => {
 
   const handleChangeCompany = (e: React.ChangeEvent<HTMLInputElement>) => {
     customGear.setCompany(e.target.value);
+  };
+
+  const handleChangeCategory = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    customGear.selectFilter(e.target.value as GearFilter);
   };
 
   const handleChangeWeight = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -111,6 +116,7 @@ const CustomGearView: FC<Props> = ({ customGear }) => {
               backgroundColor: 'lightgray',
               border: 'none',
             }}
+            placeholder={'제품명을 입력해주세요'}
             onChange={handleChangeName}
             value={name}
           />
@@ -129,9 +135,36 @@ const CustomGearView: FC<Props> = ({ customGear }) => {
               backgroundColor: 'lightgray',
               border: 'none',
             }}
+            placeholder={'브랜드를 입력해주세요'}
             onChange={handleChangeCompany}
             value={company}
           />
+        </div>
+        <div
+          style={{
+            display: 'flex',
+            flexDirection: 'column',
+            gap: '8px',
+          }}
+        >
+          <label htmlFor={'category'}>카테고리</label>
+          <select
+            style={{
+              borderRadius: '5px',
+              backgroundColor: 'lightgray',
+              border: 'none',
+            }}
+            id={'category'}
+            onChange={handleChangeCategory}
+          >
+            {customGear.mapFilters((filter) => {
+              return (
+                <option key={filter.getFilter()} value={filter.getFilter()}>
+                  {filter.getName()}
+                </option>
+              );
+            })}
+          </select>
         </div>
         <div
           style={{

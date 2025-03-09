@@ -4,9 +4,9 @@ import Bottom from '../Bottom.tsx';
 import Warehouse from './Warehouse.ts';
 import { observer } from 'mobx-react-lite';
 import WarehouseGearView from './WarehouseGearView.tsx';
-import CustomGearAddButtonView from './custom-gear/CustomGearAddButtonView.tsx';
-import CustomGear from './custom-gear/CustomGear.ts';
 import WarehouseFiltersView from './WarehouseFiltersView';
+import CustomGear from './custom-gear/model/CustomGear';
+import CustomGearAddButtonView from './custom-gear/component/CustomGearAddButtonView';
 
 interface Props {
   warehouse: Warehouse;

@@ -34,6 +34,10 @@ class WarehouseFilter {
   public getFilter() {
     return this.filter;
   }
+
+  public isSame(filter: GearFilter) {
+    return this.filter === filter;
+  }
 }
 
 export default WarehouseFilter;
