@@ -4,9 +4,8 @@ import FirebaseImageStorage from '../../../firebase/FirebaseImageStorage';
 import GearStore from '../../../firebase/GearStore';
 import Gear from '../../../search-warehouse/Gear';
 import { uuidv4 } from '@firebase/util';
-import WarehouseFilters from '../../WarehouseFilters';
 import WarehouseFilter from '../../WarehouseFilter';
-import GearFilter from '../../GearFilter';
+import CustomGearCategory from './CustomGearCategory';
 
 class CustomGear {
   public static new() {
@@ -14,7 +13,7 @@ class CustomGear {
   }
 
   private readonly imageStorage = FirebaseImageStorage.new();
-  private readonly filters = WarehouseFilters.new();
+  private readonly category = CustomGearCategory.new().selectFirst();
   private name = '';
   private company = '';
   private weight = '';
@@ -68,8 +67,8 @@ class CustomGear {
           await this.getFileUrl(),
           true,
           true,
-          this.filters.getSelectedFirstCategory(),
-          this.filters.getSelectedFilter()
+          this.category.getSelectedFirstCategory(),
+          this.category.getSelectedFilter()
         ),
       ]);
       this.setLoading(false);
@@ -129,6 +128,7 @@ class CustomGear {
     this.setFile(null);
     this.setErrorMessage('');
     this.setCompany('');
+    this.category.clear();
   }
 
   private setVisible(value: boolean) {
@@ -148,15 +148,15 @@ class CustomGear {
   }
 
   public getFilter() {
-    return this.filters.getSelectedFilter();
+    return this.category.getSelectedFilter();
   }
 
-  public selectFilter(filter: GearFilter) {
-    this.filters.selectFilterWith(filter);
+  public selectFilter(filter: WarehouseFilter) {
+    this.category.selectFilter(filter);
   }
 
   public mapFilters<R>(callback: (filter: WarehouseFilter) => R) {
-    return this.filters.mapFilters(callback);
+    return this.category.mapFilters(callback);
   }
 }
 

@@ -40,7 +40,7 @@ const WarehouseView: FC<Props> = ({ warehouse, customGear }) => {
             lineHeight: 1,
           }}
         >
-          USELESS
+          useless
         </div>
         <WarehouseFiltersView warehouse={warehouse} />
       </div>
