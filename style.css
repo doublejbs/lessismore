@@ -6,3 +6,11 @@
     transform: scale(0.95);
     filter: brightness(0.8);
 }
+
+.text-ellipsis {
+    text-overflow: ellipsis;
+    overflow: hidden;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+    display: -webkit-box;
+}

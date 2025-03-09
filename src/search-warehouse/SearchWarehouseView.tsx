@@ -31,7 +31,7 @@ const SearchWarehouseView: FC<Props> = () => {
     <Layout>
       <div
         style={{
-          paddingTop: '72px',
+          paddingTop: '56px',
         }}
       >
         <div
@@ -40,7 +40,7 @@ const SearchWarehouseView: FC<Props> = () => {
             position: 'fixed',
             top: 0,
             left: 0,
-            padding: '16px',
+            padding: '16px 16px 0 16px',
             backgroundColor: 'white',
             zIndex: 10,
           }}
@@ -70,7 +70,6 @@ const SearchWarehouseView: FC<Props> = () => {
             style={{
               display: 'flex',
               flexDirection: 'column',
-              gap: '8px',
             }}
           >
             <InfinityScroll loadMore={handleLoadMore} isLoading={isLoading}>

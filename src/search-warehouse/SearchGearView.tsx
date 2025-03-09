@@ -62,8 +62,8 @@ const SearchGearView: FC<Props> = ({ gear, searchWarehouse }) => {
         style={{
           display: 'flex',
           flexDirection: 'column',
-          minWidth: '48px',
-          height: '100%',
+          minWidth: '32px',
+          height: '80px',
           justifyContent: 'center',
         }}
       >
