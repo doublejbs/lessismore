@@ -5,7 +5,8 @@ import CustomGearConfirmView from './CustomGearConfirmView.tsx';
 import Layout from '../../../Layout';
 import CustomGear from '../model/CustomGear';
 import LoadingIconView from '../../../LoadingIconView';
-import GearFilter from '../../GearFilter';
+import WarehouseFilter from '../../WarehouseFilter';
+import CustomGearWeightView from './CustomGearWeightView';
 
 interface Props {
   customGear: CustomGear;
@@ -14,8 +15,6 @@ interface Props {
 const CustomGearView: FC<Props> = ({ customGear }) => {
   const name = customGear.getName();
   const company = customGear.getCompany();
-  const weight = customGear.getWeight();
-  const filter = customGear.getFilter();
   const isLoading = customGear.isLoading();
 
   const handleChangeName = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -26,28 +25,12 @@ const CustomGearView: FC<Props> = ({ customGear }) => {
     customGear.setCompany(e.target.value);
   };
 
-  const handleChangeCategory = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    customGear.selectFilter(e.target.value as GearFilter);
-  };
-
-  const handleChangeWeight = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const trimmedValue = e.target.value.trim();
-
-    if (trimmedValue.length) {
-      const number = parseFloat(trimmedValue.replace(/[^0-9.-]/g, ''));
-
-      if (isNaN(number)) {
-        return;
-      } else {
-        customGear.setWeight(String(number));
-      }
-    } else {
-      customGear.setWeight(trimmedValue);
-    }
-  };
-
   const handleClickHide = () => {
     customGear.hide();
+  };
+
+  const handleClickSelectFilter = (filter: WarehouseFilter) => {
+    customGear.selectFilter(filter);
   };
 
   return (
@@ -147,44 +130,34 @@ const CustomGearView: FC<Props> = ({ customGear }) => {
             gap: '8px',
           }}
         >
-          <label htmlFor={'category'}>카테고리</label>
-          <select
+          <span>카테고리</span>
+          <div
             style={{
-              borderRadius: '5px',
-              backgroundColor: 'lightgray',
-              border: 'none',
+              display: 'flex',
+              flexWrap: 'wrap',
+              gap: '8px',
             }}
-            id={'category'}
-            onChange={handleChangeCategory}
           >
             {customGear.mapFilters((filter) => {
               return (
-                <option key={filter.getFilter()} value={filter.getFilter()}>
+                <button
+                  style={{
+                    backgroundColor: filter.isSelected() ? 'black' : '#F1F1F1',
+                    color: filter.isSelected() ? 'white' : 'black',
+                    borderRadius: '16px',
+                    padding: '8px 16px',
+                    fontSize: '14px',
+                  }}
+                  key={filter.getFilter()}
+                  onClick={() => handleClickSelectFilter(filter)}
+                >
                   {filter.getName()}
-                </option>
+                </button>
               );
             })}
-          </select>
+          </div>
         </div>
-        <div
-          style={{
-            display: 'flex',
-            flexDirection: 'column',
-            gap: '8px',
-          }}
-        >
-          <span>무게</span>
-          <input
-            style={{
-              borderRadius: '5px',
-              backgroundColor: 'lightgray',
-              border: 'none',
-            }}
-            onChange={handleChangeWeight}
-            value={weight}
-            type={'number'}
-          />
-        </div>
+        <CustomGearWeightView customGear={customGear} />
       </div>
       <CustomGearConfirmView customGear={customGear} />
     </Layout>
