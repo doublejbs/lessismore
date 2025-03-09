@@ -1,7 +1,7 @@
-import BagItem from './BagItem.ts';
 import React, { FC } from 'react';
 import { useNavigate } from 'react-router-dom';
-import Bag from './Bag.ts';
+import Bag from '../model/Bag';
+import BagItem from '../model/BagItem';
 
 interface Props {
   bagItem: BagItem;

@@ -26,10 +26,10 @@ const BagEditSearchGearView: FC<Props> = ({ bagEditSearchWarehouse, gear }) => {
         <button
           style={{
             backgroundColor: 'black',
-            padding: '4px',
-            height: '35px',
+            padding: '8px',
             fontSize: '12px',
             color: 'white',
+            borderRadius: '4px',
           }}
           onClick={handleClick}
         >
@@ -41,9 +41,9 @@ const BagEditSearchGearView: FC<Props> = ({ bagEditSearchWarehouse, gear }) => {
         <button
           style={{
             backgroundColor: '#F1F1F1',
-            padding: '4px',
-            height: '35px',
+            padding: '8px',
             fontSize: '12px',
+            borderRadius: '4px',
           }}
           onClick={handleClick}
         >
@@ -58,8 +58,9 @@ const BagEditSearchGearView: FC<Props> = ({ bagEditSearchWarehouse, gear }) => {
       <div
         style={{
           display: 'flex',
-          flexDirection: 'column-reverse',
-          flex: '0 0 50px',
+          flexDirection: 'column',
+          justifyContent: 'center',
+          minWidth: '48px',
         }}
       >
         {renderButton()}

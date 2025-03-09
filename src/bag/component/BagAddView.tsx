@@ -1,5 +1,5 @@
 import React, { FC, useState } from 'react';
-import Bag from './Bag';
+import Bag from '../model/Bag';
 
 interface Props {
   bag: Bag;

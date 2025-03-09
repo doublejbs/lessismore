@@ -95,6 +95,7 @@ const WarehouseGearView: FC<Props> = ({ gear, warehouse }) => {
             style={{
               textOverflow: 'ellipsis',
               overflow: 'hidden',
+              fontSize: '16px',
             }}
           >
             {gear.getName()}

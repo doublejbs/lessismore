@@ -67,7 +67,7 @@ const GearView: FC<Props> = ({ gear, children }) => {
             >
               <div
                 style={{
-                  fontSize: '12px',
+                  fontSize: '14px',
                   fontWeight: 'bold',
                 }}
               >
@@ -76,7 +76,7 @@ const GearView: FC<Props> = ({ gear, children }) => {
               <p
                 className={'text-ellipsis'}
                 style={{
-                  fontSize: '12px',
+                  fontSize: '16px',
                 }}
               >
                 {gear.getName()}
@@ -84,7 +84,7 @@ const GearView: FC<Props> = ({ gear, children }) => {
             </div>
             <div
               style={{
-                fontSize: '12px',
+                fontSize: '16px',
                 fontWeight: 'bold',
               }}
             >

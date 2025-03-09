@@ -14,10 +14,10 @@ import {
   updateDoc,
   where,
 } from 'firebase/firestore';
-import BagItem from '../bag/BagItem.ts';
 import GearStore, { GearData } from './GearStore.ts';
 import dayjs from 'dayjs';
 import Gear from '../search-warehouse/Gear';
+import BagItem from '../bag/model/BagItem';
 
 class BagStore {
   public constructor(
@@ -118,10 +118,9 @@ class BagStore {
 
   private async updateWeight(id: string) {
     const { gears } = await this.getBag(id);
-    const weight = gears.reduce(
-      (acc, gear: Gear) => acc + parseInt(gear.getWeight()),
-      0
-    );
+    const weight = gears.reduce((acc, gear: Gear) => {
+      return acc + (parseInt(gear.getWeight()) || 0);
+    }, 0);
 
     await updateDoc(doc(this.getStore(), 'bag', id), {
       weight,
