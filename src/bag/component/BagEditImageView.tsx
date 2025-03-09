@@ -1,12 +1,11 @@
 import { FC, useState } from 'react';
-import LoadingIconView from '../LoadingIconView.tsx';
+import LoadingIconView from '../../LoadingIconView';
 
 interface Props {
   imageUrl: string;
-  isAdded: boolean;
 }
 
-const BagEditImageView: FC<Props> = ({ imageUrl, isAdded }) => {
+const BagEditImageView: FC<Props> = ({ imageUrl }) => {
   const [loading, setLoading] = useState(true);
 
   const handleLoad = () => {
@@ -23,9 +22,6 @@ const BagEditImageView: FC<Props> = ({ imageUrl, isAdded }) => {
         onLoad={handleLoad}
         style={{
           display: loading ? 'none' : 'block',
-          filter: isAdded ? 'brightness(50%)' : 'none',
-          width: '100%',
-          height: '100%',
           objectFit: 'cover',
         }}
       />

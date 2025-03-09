@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import { observer } from 'mobx-react-lite';
-import Layout from '../Layout.tsx';
-import Bag from './Bag.ts';
-import Bottom from '../Bottom.tsx';
 import BagItemView from './BagItemView.tsx';
-import BagItem from './BagItem.ts';
-import LoadingView from '../LoadingView.tsx';
 import BagAddView from './BagAddView';
+import Bag from '../model/Bag.ts';
+import LoadingView from '../../LoadingView.tsx';
+import BagItem from '../model/BagItem';
+import Layout from '../../Layout';
+import Bottom from '../../Bottom';
 
 const BagView = () => {
   const [bag] = useState(() => Bag.new());

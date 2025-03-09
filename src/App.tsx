@@ -4,15 +4,15 @@ import './App.css';
 import LogIn from './LogIn.tsx';
 import Join from './Join.tsx';
 import { observer } from 'mobx-react-lite';
-import BagView from './bag/BagView.tsx';
 import app from './App.ts';
 import WarehouseWrapper from './warehouse/WarehouseWrapper.tsx';
-import BagEditView from './bag/BagEditView.tsx';
 import AdminView from './AdminView.tsx';
 import CrawlView from './CrawlView.tsx';
 import LoadingView from './LoadingView.tsx';
 import SearchWarehouseView from './search-warehouse/SearchWarehouseView';
 import WarehouseEditView from './warehouse/edit/WarehouseEditView.tsx';
+import BagEditView from './bag/component/BagEditView';
+import BagView from './bag/component/BagView';
 
 const ROUTES = [
   {

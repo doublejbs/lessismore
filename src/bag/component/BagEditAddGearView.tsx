@@ -1,10 +1,8 @@
-import { FC, useEffect, useState } from 'react';
-import Warehouse from '../warehouse/Warehouse.ts';
+import { FC, useState } from 'react';
 import { observer } from 'mobx-react-lite';
-import BagEdit from './BagEdit.ts';
-import BagEditImageView from './BagEditImageView.tsx';
 import BagEditWarehouseView from './BagEditWarehouseView';
-import BagEditSearchView from './bag-edit-search/BagEditSearchView.tsx';
+import BagEdit from '../model/BagEdit';
+import BagEditSearchView from '../bag-edit-search/BagEditSearchView';
 
 interface Props {
   onClose: () => void;
@@ -37,23 +35,41 @@ const BagEditAddGearView: FC<Props> = ({ onClose, bagEdit }) => {
         overflow: 'hidden',
         display: 'flex',
         flexDirection: 'column',
+        gap: '8px',
       }}
     >
       <div
         style={{
-          textAlign: 'center',
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
         }}
       >
-        <button onClick={onClose}>닫기</button>
+        <button onClick={onClose}>
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="24"
+            height="24"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          >
+            <line x1="4" y1="12" x2="20" y2="12" />
+          </svg>
+        </button>
       </div>
       <div
         style={{
           display: 'flex',
+          justifyContent: 'center',
+          gap: '16px',
         }}
       >
         <div
           style={{
-            padding: '10px 20px',
             fontWeight: isWarehouseSelected ? 'bold' : 'normal',
             fontSize: '30px',
           }}
@@ -62,7 +78,6 @@ const BagEditAddGearView: FC<Props> = ({ onClose, bagEdit }) => {
         </div>
         <div
           style={{
-            padding: '10px 20px',
             fontWeight: isWarehouseSelected ? 'normal' : 'bold',
             fontSize: '30px',
           }}

@@ -27,9 +27,9 @@ const SearchGearView: FC<Props> = ({ gear, searchWarehouse }) => {
         <button
           style={{
             backgroundColor: 'black',
-            padding: '4px',
+            padding: '0 4px',
             height: '32px',
-            fontSize: '12px',
+            fontSize: '14px',
             color: 'white',
             borderRadius: '8px',
           }}
@@ -45,7 +45,7 @@ const SearchGearView: FC<Props> = ({ gear, searchWarehouse }) => {
             backgroundColor: '#F1F1F1',
             padding: '4px',
             height: '35px',
-            fontSize: '12px',
+            fontSize: '14px',
             borderRadius: '8px',
           }}
           onClick={handleClick}
@@ -62,7 +62,7 @@ const SearchGearView: FC<Props> = ({ gear, searchWarehouse }) => {
         style={{
           display: 'flex',
           flexDirection: 'column',
-          minWidth: '32px',
+          minWidth: '40px',
           height: '80px',
           justifyContent: 'center',
         }}

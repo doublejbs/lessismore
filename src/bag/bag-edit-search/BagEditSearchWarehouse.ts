@@ -1,8 +1,8 @@
 import Search from '../../search-warehouse/Search.ts';
 import Gear from '../../search-warehouse/Gear.ts';
-import BagEdit from '../BagEdit.ts';
 import app from '../../App.ts';
 import GearStore from '../../firebase/GearStore.ts';
+import BagEdit from '../model/BagEdit';
 
 class BagEditSearchWarehouse extends Search {
   public static from(bagEdit: BagEdit) {

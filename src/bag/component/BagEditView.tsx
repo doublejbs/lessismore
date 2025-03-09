@@ -1,10 +1,10 @@
 import { useNavigate, useParams } from 'react-router-dom';
 import { FC, useEffect, useState } from 'react';
-import BagEdit from './BagEdit.ts';
-import Layout from '../Layout.tsx';
 import { observer } from 'mobx-react-lite';
 import BagEditWarehouseView from './BagEditAddGearView.tsx';
 import BagEditImageView from './BagEditImageView';
+import BagEdit from '../model/BagEdit';
+import BagEditGearView from './BagEditGearView';
 
 const BagEditView: FC = () => {
   const { id } = useParams();
@@ -139,70 +139,12 @@ const BagEditView: FC = () => {
           }}
         >
           {gears.map((gear) => {
-            const imageUrl = gear.getImageUrl();
-
             return (
-              <div
+              <BagEditGearView
                 key={gear.getId()}
-                style={{
-                  display: 'flex',
-                  flexDirection: 'row',
-                  width: '100%',
-                  gap: '8px',
-                }}
-              >
-                <div
-                  style={{
-                    width: '80px',
-                    height: '80px',
-                    minWidth: '80px',
-                    backgroundColor: '#F1F1F1',
-                    borderRadius: '4px',
-                    overflow: 'hidden',
-                  }}
-                >
-                  <BagEditImageView imageUrl={imageUrl} isAdded={false} />
-                </div>
-                <div
-                  style={{
-                    display: 'flex',
-                    flexDirection: 'column',
-                    alignItems: 'start',
-                    justifyContent: 'center',
-                    fontSize: '16px',
-                    flexGrow: 1,
-                  }}
-                >
-                  <div style={{ fontWeight: 'bold' }}>
-                    <span>{gear.getName()}</span>
-                  </div>
-                  <div style={{}}>
-                    <span>{gear.getWeight()}g</span>
-                  </div>
-                </div>
-                <div
-                  style={{
-                    height: '100%',
-                    display: 'flex',
-                    flexDirection: 'column',
-                    justifyContent: 'center',
-                    alignItems: 'end',
-                  }}
-                >
-                  <button
-                    style={{
-                      width: '64px',
-                      backgroundColor: 'black',
-                      color: 'white',
-                      padding: '8px',
-                      borderRadius: '8px',
-                      fontSize: '12px',
-                    }}
-                  >
-                    Useful
-                  </button>
-                </div>
-              </div>
+                gear={gear}
+                bagEdit={bagEdit}
+              />
             );
           })}
         </ul>
