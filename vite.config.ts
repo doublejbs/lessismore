@@ -19,4 +19,17 @@ export default defineConfig({
       '@': '/src',
     },
   },
+  build: {
+    rollupOptions: {
+      output: {
+        manualChunks(id) {
+          if (id.includes('node_modules')) {
+            if (id.includes('react')) return 'react'; // React 관련 라이브러리는 별도 청크
+            if (id.includes('lodash')) return 'lodash'; // Lodash는 따로 분리
+            if (id.includes('firebase')) return 'firebase';
+          }
+        },
+      },
+    },
+  },
 });
