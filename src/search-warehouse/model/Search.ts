@@ -1,5 +1,5 @@
-import Gear from './Gear';
-import GearStore from '../firebase/GearStore';
+import Gear from '../../model/Gear';
+import GearStore from '../../firebase/GearStore';
 import { action, makeObservable, observable } from 'mobx';
 
 abstract class Search {

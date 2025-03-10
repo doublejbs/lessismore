@@ -1,9 +1,9 @@
 import React, { FC, useEffect, useState } from 'react';
 import BagEditSearchWarehouse from './BagEditSearchWarehouse.ts';
 import BagEditSearchGearView from './BagEditSearchGearView.tsx';
-import Gear from '../../search-warehouse/Gear.ts';
+import Gear from '../../model/Gear.ts';
 import { observer } from 'mobx-react-lite';
-import InfinityScroll from '../../search-warehouse/InfinityScroll.tsx';
+import InfinityScroll from '../../search-warehouse/component/InfinityScroll.tsx';
 import BagEdit from '../model/BagEdit';
 import { debounce } from 'lodash';
 

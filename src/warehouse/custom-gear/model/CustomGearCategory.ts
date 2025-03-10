@@ -92,6 +92,13 @@ class CustomGearCategory {
   public clear() {
     this.selectFirst();
   }
+
+  public selectFilterWith(gearFilter: GearFilter) {
+    this.selectFilter(
+      this.filters.find((filter) => filter.getFilter() === gearFilter) ??
+        this.filters[0]
+    );
+  }
 }
 
 export default CustomGearCategory;

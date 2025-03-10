@@ -1,6 +1,6 @@
 import React, { FC } from 'react';
 import BagEditSearchWarehouse from './BagEditSearchWarehouse.ts';
-import Gear from '../../search-warehouse/Gear.ts';
+import Gear from '../../model/Gear.ts';
 import GearView from '../../warehouse/GearView.tsx';
 import { observer } from 'mobx-react-lite';
 

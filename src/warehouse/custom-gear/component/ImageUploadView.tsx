@@ -1,18 +1,19 @@
-import React, { FC, useState } from 'react';
-import CustomGear from '../model/CustomGear';
+import React, { FC } from 'react';
+import FileUpload from '../../model/FileUpload';
+import { observer } from 'mobx-react-lite';
 
 interface Props {
-  customGear: CustomGear;
+  fileUpload: FileUpload;
 }
 
-const ImageUploadView: FC<Props> = ({ customGear }) => {
-  const [previewSrc, setPreviewSrc] = useState('');
+const ImageUploadView: FC<Props> = ({ fileUpload }) => {
+  const previewSrc = fileUpload.getPreviewSrc();
 
   const handlePreview = (file: File) => {
     const reader = new FileReader();
     reader.onload = (e) => {
       if (e.target?.result) {
-        setPreviewSrc(e.target.result as string);
+        fileUpload.setPreviewSrc(e.target.result as string);
       }
     };
     reader.readAsDataURL(file);
@@ -22,13 +23,13 @@ const ImageUploadView: FC<Props> = ({ customGear }) => {
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
-      customGear.setFile(file);
+      fileUpload.setFile(file);
       handlePreview(file);
     }
   };
 
   const handleDeletePreview = () => {
-    setPreviewSrc('');
+    fileUpload.setPreviewSrc('');
   };
 
   return (
@@ -104,4 +105,4 @@ const ImageUploadView: FC<Props> = ({ customGear }) => {
   );
 };
 
-export default ImageUploadView;
+export default observer(ImageUploadView);

@@ -1,5 +1,5 @@
-import Search from '../../search-warehouse/Search.ts';
-import Gear from '../../search-warehouse/Gear.ts';
+import Search from '../../search-warehouse/model/Search.ts';
+import Gear from '../../model/Gear.ts';
 import app from '../../App.ts';
 import GearStore from '../../firebase/GearStore.ts';
 import BagEdit from '../model/BagEdit';

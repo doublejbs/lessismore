@@ -7,6 +7,7 @@ import WarehouseGearView from './WarehouseGearView.tsx';
 import WarehouseFiltersView from './WarehouseFiltersView';
 import CustomGear from './custom-gear/model/CustomGear';
 import CustomGearAddButtonView from './custom-gear/component/CustomGearAddButtonView';
+import WarehouseEditWrapperView from './edit/component/WarehouseEditWrapperView';
 
 interface Props {
   warehouse: Warehouse;
@@ -73,6 +74,7 @@ const WarehouseView: FC<Props> = ({ warehouse, customGear }) => {
       </div>
       <CustomGearAddButtonView customGear={customGear} />
       <Bottom />
+      <WarehouseEditWrapperView />
     </Layout>
   );
 };

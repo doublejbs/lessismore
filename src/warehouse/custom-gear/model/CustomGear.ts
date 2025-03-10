@@ -1,74 +1,48 @@
-import { makeAutoObservable } from 'mobx';
+import { makeObservable } from 'mobx';
 import app from '../../../App';
-import FirebaseImageStorage from '../../../firebase/FirebaseImageStorage';
 import GearStore from '../../../firebase/GearStore';
-import Gear from '../../../search-warehouse/Gear';
+import Gear from '../../../model/Gear';
 import { uuidv4 } from '@firebase/util';
-import WarehouseFilter from '../../WarehouseFilter';
 import CustomGearCategory from './CustomGearCategory';
+import GearEdit from './GearEdit';
 
-class CustomGear {
+class CustomGear extends GearEdit {
   public static new() {
-    return new CustomGear(app.getGearStore());
+    return new CustomGear(
+      app.getGearStore(),
+      CustomGearCategory.new().selectFirst(),
+      '',
+      '',
+      ''
+    );
   }
 
-  private readonly imageStorage = FirebaseImageStorage.new();
-  private readonly category = CustomGearCategory.new().selectFirst();
-  private name = '';
-  private company = '';
-  private weight = '';
-  private imageFile: File | null = null;
-  private loading = false;
-  private visible = false;
-  private errorMessage = '';
-
-  private constructor(private readonly gearStore: GearStore) {
-    makeAutoObservable(this);
+  private constructor(
+    private readonly gearStore: GearStore,
+    category: CustomGearCategory,
+    name: string,
+    company: string,
+    weight: string
+  ) {
+    super(category, name, company, weight);
+    makeObservable(this);
   }
 
-  public setName(value: string) {
-    this.name = value;
-  }
-
-  public setCompany(value: string) {
-    this.company = value;
-  }
-
-  public setWeight(value: string) {
-    this.weight = value;
-  }
-
-  public setFile(file: null | File) {
-    this.imageFile = file;
-  }
-
-  public getName() {
-    return this.name;
-  }
-
-  public getCompany() {
-    return this.company;
-  }
-
-  public getWeight() {
-    return this.weight;
-  }
-
-  public async register() {
+  public async _register() {
     try {
       this.validate();
       this.setLoading(true);
       await this.gearStore.register([
         new Gear(
           uuidv4(),
-          this.name,
-          this.company,
-          String(this.weight || 0),
+          this.getName(),
+          this.getCompany(),
+          String(this.getWeight() || 0),
           await this.getFileUrl(),
           true,
           true,
-          this.category.getSelectedFirstCategory(),
-          this.category.getSelectedFilter()
+          this.getSelectedFirstCategory(),
+          this.getSelectedFilter()
         ),
       ]);
       this.setLoading(false);
@@ -78,85 +52,8 @@ class CustomGear {
     }
   }
 
-  private async getFileUrl() {
-    if (this.imageFile) {
-      return await this.imageStorage.uploadFile(
-        this.imageFile as File,
-        `${this.name}${this.company}${this.weight}`
-      );
-    } else {
-      return '';
-    }
-  }
-
-  private validate() {
-    switch (true) {
-      case !this.name: {
-        this.setErrorMessage('이름을 입력해주세요');
-        throw Error('Invalid name');
-      }
-      case !this.company: {
-        this.setErrorMessage('브랜드를 입력해주세요');
-        throw Error('Invalid company');
-      }
-      default: {
-        break;
-      }
-    }
-  }
-
-  private setLoading(value: boolean) {
-    this.loading = value;
-  }
-
-  public isLoading() {
-    return this.loading;
-  }
-
-  public show() {
-    this.setVisible(true);
-  }
-
-  public hide() {
-    this.setVisible(false);
-    this.clear();
-  }
-
-  private clear() {
-    this.setName('');
-    this.setWeight('');
-    this.setFile(null);
-    this.setErrorMessage('');
-    this.setCompany('');
-    this.category.clear();
-  }
-
-  private setVisible(value: boolean) {
-    this.visible = value;
-  }
-
-  public isVisible() {
-    return this.visible;
-  }
-
-  private setErrorMessage(value: string) {
-    this.errorMessage = value;
-  }
-
-  public getErrorMessage() {
-    return this.errorMessage;
-  }
-
-  public getFilter() {
-    return this.category.getSelectedFilter();
-  }
-
-  public selectFilter(filter: WarehouseFilter) {
-    this.category.selectFilter(filter);
-  }
-
-  public mapFilters<R>(callback: (filter: WarehouseFilter) => R) {
-    return this.category.mapFilters(callback);
+  public getFileName(): string {
+    return `${this.getName()}${this.getCompany()}${this.getWeight()}`;
   }
 }
 

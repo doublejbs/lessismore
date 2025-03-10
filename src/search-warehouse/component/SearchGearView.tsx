@@ -1,8 +1,8 @@
 import React, { FC } from 'react';
 import { observer } from 'mobx-react-lite';
-import SearchWarehouse from './SearchWarehouse';
-import Gear from './Gear';
-import GearView from '../warehouse/GearView';
+import SearchWarehouse from '../model/SearchWarehouse';
+import Gear from '../../model/Gear';
+import GearView from '../../warehouse/GearView';
 
 interface Props {
   searchWarehouse: SearchWarehouse;

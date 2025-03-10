@@ -1,6 +1,6 @@
 import { makeAutoObservable } from 'mobx';
 import app from '../../App';
-import Gear from '../../search-warehouse/Gear';
+import Gear from '../../model/Gear';
 import BagStore from '../../firebase/BagStore';
 
 class BagEdit {
