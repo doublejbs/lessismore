@@ -7,7 +7,6 @@ import { observer } from 'mobx-react-lite';
 import app from './App.ts';
 import WarehouseWrapper from './warehouse/WarehouseWrapper.tsx';
 import AdminView from './AdminView.tsx';
-import CrawlView from './CrawlView.tsx';
 import LoadingView from './LoadingView.tsx';
 import SearchWarehouseView from './search-warehouse/component/SearchWarehouseView';
 import BagEditView from './bag/component/BagEditView';
@@ -32,7 +31,6 @@ const ROUTES = [
   },
   { path: '/warehouse', element: <WarehouseWrapper /> },
   { path: '/admin', element: <AdminView /> },
-  { path: '/crawler', element: <CrawlView /> },
   { path: '/search', element: <SearchWarehouseView /> },
 ];
 
