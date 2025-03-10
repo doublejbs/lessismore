@@ -16,10 +16,6 @@ const WarehouseEditView: FC<Props> = ({ warehouseEdit }) => {
   const name = warehouseEdit.getName();
   const company = warehouseEdit.getCompany();
 
-  const handleClickHide = () => {
-    warehouseEdit.hide();
-  };
-
   const handleChangeCompany = (e: React.ChangeEvent<HTMLInputElement>) => {
     warehouseEdit.setCompany(e.target.value);
   };
@@ -50,15 +46,6 @@ const WarehouseEditView: FC<Props> = ({ warehouseEdit }) => {
     >
       <div
         style={{
-          position: 'fixed',
-          left: '16px',
-          top: '16px',
-        }}
-      >
-        <button onClick={handleClickHide}>닫기</button>
-      </div>
-      <div
-        style={{
           width: '100%',
           display: 'flex',
           flexDirection: 'column',
@@ -69,6 +56,8 @@ const WarehouseEditView: FC<Props> = ({ warehouseEdit }) => {
           style={{
             width: '100%',
             textAlign: 'center',
+            fontWeight: 'bold',
+            fontSize: '20px',
           }}
         >
           장비 정보 수정하기
@@ -109,7 +98,7 @@ const WarehouseEditView: FC<Props> = ({ warehouseEdit }) => {
         <input
           style={{
             borderRadius: '5px',
-            backgroundColor: 'lightgray',
+            backgroundColor: '#F1F1F1',
             border: 'none',
           }}
           placeholder={'제품명을 입력해주세요'}
@@ -128,7 +117,7 @@ const WarehouseEditView: FC<Props> = ({ warehouseEdit }) => {
         <input
           style={{
             borderRadius: '5px',
-            backgroundColor: 'lightgray',
+            backgroundColor: '#F1F1F1',
             border: 'none',
           }}
           placeholder={'브랜드를 입력해주세요'}

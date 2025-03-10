@@ -37,8 +37,8 @@ const WarehouseEditWeightView: FC<Props> = ({ warehouseEdit }) => {
       <input
         style={{
           borderRadius: '5px',
-          backgroundColor: 'lightgray',
           border: 'none',
+          backgroundColor: '#F1F1F1',
         }}
         onChange={handleChangeWeight}
         value={weight}

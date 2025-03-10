@@ -10,8 +10,11 @@ const WarehouseEditConfirmView: FC<Props> = ({ warehouseEdit }) => {
   const errorMessage = warehouseEdit.getErrorMessage();
 
   const handleClickConfirm = async () => {
-    console.log('here');
     await warehouseEdit.register();
+  };
+
+  const handleClickCancel = () => {
+    warehouseEdit.hide();
   };
 
   return (
@@ -35,20 +38,41 @@ const WarehouseEditConfirmView: FC<Props> = ({ warehouseEdit }) => {
       >
         {errorMessage}
       </div>
-      <button
-        className={'clickable'}
+      <div
         style={{
-          width: '100%',
-          textAlign: 'center',
-          backgroundColor: 'black',
-          color: 'white',
-          padding: '8px',
-          borderRadius: '5px',
+          display: 'flex',
+          gap: '16px',
         }}
-        onClick={handleClickConfirm}
       >
-        확인
-      </button>
+        <button
+          className={'clickable'}
+          style={{
+            width: '100%',
+            textAlign: 'center',
+            backgroundColor: '#F1F1F1',
+            color: 'black',
+            padding: '8px',
+            borderRadius: '5px',
+          }}
+          onClick={handleClickCancel}
+        >
+          취소
+        </button>
+        <button
+          className={'clickable'}
+          style={{
+            width: '100%',
+            textAlign: 'center',
+            backgroundColor: 'black',
+            color: 'white',
+            padding: '8px',
+            borderRadius: '5px',
+          }}
+          onClick={handleClickConfirm}
+        >
+          확인
+        </button>
+      </div>
     </div>
   );
 };
