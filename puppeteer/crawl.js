@@ -151,9 +151,15 @@ const crawl = async (keyword, maxPage) => {
           // 쿼리 파라미터 값 가져오기
           const company = urlParams.get('adQuery');
 
-          const imageUrl = item.querySelector(
-            'div.product_img_area__cUrko > div > a > img'
-          )?.src;
+          let imageUrl =
+            item.querySelector('div.product_img_area__cUrko > div > a > img')
+              ?.src ?? '';
+
+          if (imageUrl) {
+            const urlObject = new URL(imageUrl);
+            urlObject.searchParams.set('type', 'f640');
+            imageUrl = urlObject.toString();
+          }
 
           return {
             name,
