@@ -1,4 +1,4 @@
-import { FC } from 'react';
+import React, { FC } from 'react';
 import Warehouse from './Warehouse';
 import Gear from '../model/Gear';
 import GearImageView from './GearImageView.tsx';
@@ -13,7 +13,8 @@ const WarehouseGearView: FC<Props> = ({ gear, warehouse }) => {
   const imageUrl = gear.getImageUrl();
   const warehouseEdit = app.getWarehouseEdit();
 
-  const handleClick = () => {
+  const handleClick = (e: React.MouseEvent) => {
+    e.stopPropagation();
     warehouse.remove(gear);
   };
 
