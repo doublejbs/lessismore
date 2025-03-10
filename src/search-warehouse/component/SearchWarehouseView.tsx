@@ -1,9 +1,9 @@
 import React, { FC, useEffect, useState } from 'react';
-import SearchWarehouse from './SearchWarehouse';
+import SearchWarehouse from '../model/SearchWarehouse';
 import SearchGearView from './SearchGearView';
-import Layout from '../Layout';
-import Bottom from '../Bottom';
-import LoadingView from '../LoadingView.tsx';
+import Layout from '../../Layout';
+import Bottom from '../../Bottom';
+import LoadingView from '../../LoadingView.tsx';
 import { debounce } from 'lodash';
 import { observer } from 'mobx-react-lite';
 import InfinityScroll from './InfinityScroll.tsx';

@@ -11,7 +11,7 @@ import { liteClient } from 'algoliasearch/lite';
 import { SearchResponse } from 'algoliasearch';
 import GearType from '../warehouse/type/GearType';
 import Firebase from './Firebase';
-import Gear from '../search-warehouse/Gear';
+import Gear from '../model/Gear';
 import {
   addDoc,
   deleteDoc,
@@ -103,6 +103,21 @@ class GearStore {
       }
     } catch (e) {
       console.log(e);
+    }
+  }
+
+  public async update(gear: Gear) {
+    try {
+      const gearRef = doc(
+        this.getStore(),
+        'users',
+        this.getUserId(),
+        'gears',
+        gear.getId()
+      );
+      await setDoc(gearRef, gear.getData());
+    } catch (error) {
+      console.error('Error updating gear:', error);
     }
   }
 

@@ -68,22 +68,10 @@ const crawl = async (keyword, maxPage) => {
               };
             }
             case '캠핑가구': {
-              if (subCategory === '캠핑의자') {
-                return {
-                  category1: 'furniture',
-                  category2: 'chair',
-                };
-              } else if (subCategory === '캠핑테이블') {
-                return {
-                  category1: 'furniture',
-                  category2: 'table',
-                };
-              } else {
-                return {
-                  category1: 'furniture',
-                  category2: 'furniture',
-                };
-              }
+              return {
+                category1: 'furniture',
+                category2: 'furniture',
+              };
             }
             case '랜턴': {
               return {

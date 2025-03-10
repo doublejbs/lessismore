@@ -16,7 +16,7 @@ import {
 } from 'firebase/firestore';
 import GearStore, { GearData } from './GearStore.ts';
 import dayjs from 'dayjs';
-import Gear from '../search-warehouse/Gear';
+import Gear from '../model/Gear';
 import BagItem from '../bag/model/BagItem';
 
 class BagStore {

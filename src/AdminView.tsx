@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import * as XLSX from 'xlsx';
 import app from './App';
-import Gear from './search-warehouse/Gear';
+import Gear from './model/Gear';
 
 const AdminView = () => {
   const [file, setFile] = useState<null | File>(null);

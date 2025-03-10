@@ -1,7 +1,7 @@
 import { makeAutoObservable } from 'mobx';
 import app from '../App';
 import GearStore from '../firebase/GearStore';
-import Gear from '../search-warehouse/Gear';
+import Gear from '../model/Gear';
 import GearFilter from './GearFilter';
 import WarehouseFilter from './WarehouseFilter.ts';
 
@@ -97,6 +97,18 @@ class Warehouse {
     return (
       this.filters.find((filter) => filter.isSelected())?.getFilter() ??
       GearFilter.All
+    );
+  }
+
+  public async updateGear(gear: Gear) {
+    this.setGears(
+      this.gears.map((currentGear) => {
+        if (currentGear.isSame(gear)) {
+          return gear;
+        } else {
+          return currentGear;
+        }
+      })
     );
   }
 }

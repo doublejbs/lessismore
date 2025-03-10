@@ -1,13 +1,13 @@
 import React, { FC } from 'react';
-import CustomGear from '../model/CustomGear';
+import WarehouseEdit from '../model/WarehouseEdit';
 import { observer } from 'mobx-react-lite';
 
 interface Props {
-  customGear: CustomGear;
+  warehouseEdit: WarehouseEdit;
 }
 
-const CustomGearWeightView: FC<Props> = ({ customGear }) => {
-  const weight = customGear.getWeight();
+const WarehouseEditWeightView: FC<Props> = ({ warehouseEdit }) => {
+  const weight = warehouseEdit.getWeight();
 
   const handleChangeWeight = (e: React.ChangeEvent<HTMLInputElement>) => {
     const trimmedValue = e.target.value.trim();
@@ -18,10 +18,10 @@ const CustomGearWeightView: FC<Props> = ({ customGear }) => {
       if (isNaN(number)) {
         return;
       } else {
-        customGear.setWeight(String(number));
+        warehouseEdit.setWeight(String(number));
       }
     } else {
-      customGear.setWeight(trimmedValue);
+      warehouseEdit.setWeight(trimmedValue);
     }
   };
 
@@ -47,4 +47,4 @@ const CustomGearWeightView: FC<Props> = ({ customGear }) => {
   );
 };
 
-export default observer(CustomGearWeightView);
+export default observer(WarehouseEditWeightView);

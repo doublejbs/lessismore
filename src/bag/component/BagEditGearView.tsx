@@ -1,6 +1,6 @@
 import { FC } from 'react';
 import BagEditImageView from './BagEditImageView';
-import Gear from '../../search-warehouse/Gear';
+import Gear from '../../model/Gear';
 import BagEdit from '../model/BagEdit';
 
 interface Props {

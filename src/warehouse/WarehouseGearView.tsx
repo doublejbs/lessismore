@@ -1,9 +1,8 @@
 import { FC } from 'react';
-import GearView from './GearView';
 import Warehouse from './Warehouse';
-import Gear from '../search-warehouse/Gear';
+import Gear from '../model/Gear';
 import GearImageView from './GearImageView.tsx';
-import { useNavigate } from 'react-router-dom';
+import app from '../App';
 
 interface Props {
   gear: Gear;
@@ -12,19 +11,20 @@ interface Props {
 
 const WarehouseGearView: FC<Props> = ({ gear, warehouse }) => {
   const imageUrl = gear.getImageUrl();
-  const navigate = useNavigate();
+  const warehouseEdit = app.getWarehouseEdit();
 
   const handleClick = () => {
     warehouse.remove(gear);
   };
 
   const handleClickEdit = () => {
-    // navigate(`/warehouse/edit/${gear.getId()}`);
+    warehouseEdit.open(gear, async (updatedGear) => {
+      await warehouse.updateGear(updatedGear);
+    });
   };
 
   return (
     <li
-      className={'clickable'}
       style={{
         backgroundColor: 'white',
       }}

@@ -83,7 +83,7 @@ const CustomGearView: FC<Props> = ({ customGear }) => {
             alignItems: 'center',
           }}
         >
-          <ImageUploadView customGear={customGear} />
+          <ImageUploadView fileUpload={customGear} />
         </div>
         <div
           style={{

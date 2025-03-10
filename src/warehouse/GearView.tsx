@@ -1,6 +1,6 @@
 import { FC, ReactNode } from 'react';
 import GearImageView from './GearImageView.tsx';
-import Gear from '../search-warehouse/Gear';
+import Gear from '../model/Gear';
 
 interface Props {
   gear: Gear;

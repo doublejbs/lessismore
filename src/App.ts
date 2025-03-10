@@ -3,12 +3,14 @@ import Firebase from './firebase/Firebase.ts';
 import GearStore from './firebase/GearStore.ts';
 import BagStore from './firebase/BagStore.ts';
 import SearchStore from './firebase/SearchStore.ts';
+import WarehouseEdit from './warehouse/edit/model/WarehouseEdit';
 
 class App {
   private readonly firebase = new Firebase();
   private gearStore!: GearStore;
   private bagStore!: BagStore;
   private searchStore!: SearchStore;
+  private warehouseEdit!: WarehouseEdit;
   private initialized = false;
 
   public constructor() {
@@ -20,6 +22,7 @@ class App {
     this.gearStore = new GearStore(this.firebase);
     this.bagStore = new BagStore(this.firebase, this.gearStore);
     this.searchStore = new SearchStore(this.firebase);
+    this.warehouseEdit = WarehouseEdit.new(this.gearStore);
     this.setInitialized(true);
   }
 
@@ -45,6 +48,10 @@ class App {
 
   public getSearchStore() {
     return this.searchStore;
+  }
+
+  public getWarehouseEdit() {
+    return this.warehouseEdit;
   }
 
   private setInitialized(value: boolean) {

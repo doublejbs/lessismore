@@ -2,7 +2,6 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { FC, useEffect, useState } from 'react';
 import { observer } from 'mobx-react-lite';
 import BagEditWarehouseView from './BagEditAddGearView.tsx';
-import BagEditImageView from './BagEditImageView';
 import BagEdit from '../model/BagEdit';
 import BagEditGearView from './BagEditGearView';
 
