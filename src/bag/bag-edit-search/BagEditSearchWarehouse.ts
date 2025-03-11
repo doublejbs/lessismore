@@ -16,6 +16,14 @@ class BagEditSearchWarehouse extends Search {
     super();
   }
 
+  public async toggle(gear: Gear) {
+    if (gear.isAdded()) {
+      await this.deselect(gear);
+    } else {
+      await this.select(gear);
+    }
+  }
+
   public async select(gear: Gear): Promise<void> {
     await this.bagEdit.addGear(gear);
     await this.refresh();

@@ -20,7 +20,7 @@ class App {
   public async initialize() {
     await this.firebase.initialize();
     this.gearStore = new GearStore(this.firebase);
-    this.bagStore = new BagStore(this.firebase, this.gearStore);
+    this.setBagStore(new BagStore(this.firebase, this.gearStore));
     this.searchStore = new SearchStore(this.firebase);
     this.warehouseEdit = WarehouseEdit.new(this.gearStore);
     this.setInitialized(true);
@@ -40,6 +40,10 @@ class App {
 
   public getStorage() {
     return this.firebase.getStorage();
+  }
+
+  private setBagStore(value: BagStore) {
+    this.bagStore = value;
   }
 
   public getGearStore() {

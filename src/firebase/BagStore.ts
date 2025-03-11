@@ -18,6 +18,7 @@ import GearStore, { GearData } from './GearStore.ts';
 import dayjs from 'dayjs';
 import Gear from '../model/Gear';
 import BagItem from '../bag/model/BagItem';
+import { deleteField } from '@firebase/firestore';
 
 class BagStore {
   public constructor(
@@ -46,15 +47,23 @@ class BagStore {
   }
 
   public async getBag(id: string) {
-    const { name, weight, gears } = (
+    const { name, weight, gearMap } = (
       await getDoc(doc(this.getStore(), 'bag', id))
-    ).data() as { name: string; weight: string; gears: GearData[] };
+    ).data() as {
+      name: string;
+      weight: string;
+      gearMap: { [key: string]: { id: string; weight: string } };
+    };
+
+    const gearData = await this.getGearsWithIDs(
+      Object.entries(gearMap).map(([, { id }]) => id)
+    );
 
     return {
       name,
       weight,
-      gears: gears.length
-        ? gears.map(
+      gears: gearData.length
+        ? gearData.map(
             ({
               id,
               name,
@@ -78,6 +87,52 @@ class BagStore {
           )
         : [],
     };
+  }
+
+  private async getGearsWithIDs(gearIDs: string[]) {
+    /*
+    todo: 현재는 gear 컬렉션에서 데이터를 가져온다.
+
+    창고에서 추가한 아이템은 사용자의 창고 컬렉션에서 가져와야한다.
+    검색에서 추가한 아이템은 전체 gear 컬렉션에서 가져와야한다.
+
+
+    오히려 bag gears에는 데이터 복사에서 저장해놓고,
+    gear 수정시에 bag를 조회해가며 데이터 업데이트를 하는게 나을수도...
+    단 조회 성능을 높이기 위해 bag > gearIds로 저장해두는게 좋겠다.
+    혹은 gear > bagIds로 저장해두는게 좋겠다.
+     */
+
+    if (!gearIDs.length) {
+      return [];
+    }
+
+    if (gearIDs.length > 10) {
+      const gearPromises = gearIDs.map((gearId: string) =>
+        getDoc(doc(this.getStore(), 'gear', gearId))
+      );
+      const result = await Promise.all(gearPromises);
+      const gearData: GearData[] = result
+        .filter((gear) => gear.exists())
+        .map((docData) => {
+          return { ...docData.data(), id: docData.id } as GearData;
+        });
+
+      return gearData;
+    } else {
+      return (
+        await getDocs(
+          query(
+            collection(this.getStore(), 'gear'),
+            where('__name__', 'in', gearIDs)
+          )
+        )
+      ).docs
+        .filter((gear) => gear.exists())
+        .map((doc) => {
+          return { ...doc.data(), id: doc.id } as GearData;
+        });
+    }
   }
 
   private convertToArray(data: QuerySnapshot<DocumentData, DocumentData>) {
@@ -104,14 +159,17 @@ class BagStore {
 
   public async addGear(id: string, gear: Gear) {
     await updateDoc(doc(this.getStore(), 'bag', id), {
-      gears: arrayUnion({ ...gear.getData() }),
+      [`gearMap.${gear.getId()}`]: {
+        id: gear.getId(),
+        weight: gear.getWeight(),
+      },
     });
     await this.updateWeight(id);
   }
 
   public async removeGear(id: string, gear: Gear) {
     await updateDoc(doc(this.getStore(), 'bag', id), {
-      gears: arrayRemove({ ...gear.getData() }),
+      [`gearMap.${gear.getId()}`]: deleteField(),
     });
     await this.updateWeight(id);
   }
