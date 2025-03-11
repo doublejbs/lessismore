@@ -1,4 +1,4 @@
-import { FC } from 'react';
+import React, { FC } from 'react';
 import BagEditImageView from './BagEditImageView';
 import Gear from '../../model/Gear';
 import BagEdit from '../model/BagEdit';
@@ -13,11 +13,12 @@ const BagEditWarehouseGearView: FC<Props> = ({ gear, bagEdit }) => {
   const imageUrl = gear.getImageUrl();
   const isAdded = bagEdit.hasGear(gear);
 
-  const handleClick = async () => {
+  const handleClick = (e: React.MouseEvent) => {
+    e.stopPropagation();
     if (isAdded) {
-      await bagEdit.removeGear(gear);
+      bagEdit.removeGear(gear);
     } else {
-      await bagEdit.addGear(gear);
+      bagEdit.addGear(gear);
     }
   };
 
@@ -29,7 +30,6 @@ const BagEditWarehouseGearView: FC<Props> = ({ gear, bagEdit }) => {
         gap: '8px',
       }}
       key={gear.getId()}
-      onClick={handleClick}
     >
       <div
         style={{

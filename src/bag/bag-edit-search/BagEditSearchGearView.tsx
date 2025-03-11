@@ -12,12 +12,9 @@ interface Props {
 const BagEditSearchGearView: FC<Props> = ({ bagEditSearchWarehouse, gear }) => {
   const isAdded = gear.isAdded();
 
-  const handleClick = () => {
-    if (isAdded) {
-      bagEditSearchWarehouse.deselect(gear);
-    } else {
-      bagEditSearchWarehouse.select(gear);
-    }
+  const handleClick = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    bagEditSearchWarehouse.toggle(gear);
   };
 
   const renderButton = () => {
