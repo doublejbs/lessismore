@@ -11,6 +11,9 @@ class BagEdit {
   private name: string = '';
   private weight: string = '';
   private gears: Gear[] = [];
+  private warehouseVisible = false;
+  private searchVisible = false;
+  private initialized = false;
 
   private constructor(
     private readonly id: string,
@@ -24,6 +27,7 @@ class BagEdit {
     this.setName(name);
     this.setWeight(weight);
     this.setGears(gears);
+    this.setInitialized(true);
   }
 
   private setName(value: string) {
@@ -66,6 +70,42 @@ class BagEdit {
 
   public hasGearWith(id: string) {
     return this.gears.some((gear) => gear.hasId(id));
+  }
+
+  public showWarehouse() {
+    this.warehouseVisible = true;
+    this.searchVisible = false;
+  }
+
+  public showSearch() {
+    this.warehouseVisible = false;
+    this.searchVisible = true;
+  }
+
+  public hideWarehouse() {
+    this.warehouseVisible = false;
+    this.searchVisible = false;
+  }
+
+  public hideSearch() {
+    this.warehouseVisible = false;
+    this.searchVisible = false;
+  }
+
+  public shouldShowWarehouse() {
+    return this.warehouseVisible;
+  }
+
+  public shouldShowSearch() {
+    return this.searchVisible;
+  }
+
+  private setInitialized(value: boolean) {
+    this.initialized = value;
+  }
+
+  public isInitialized() {
+    return this.initialized;
   }
 }
 

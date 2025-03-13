@@ -9,8 +9,8 @@ import WarehouseWrapper from './warehouse/WarehouseWrapper.tsx';
 import AdminView from './AdminView.tsx';
 import LoadingView from './LoadingView.tsx';
 import SearchWarehouseView from './search-warehouse/component/SearchWarehouseView';
-import BagEditView from './bag/component/BagEditView';
 import BagView from './bag/component/BagView';
+import BagEditWrapper from './bag/component/BagEditWrapper';
 
 const ROUTES = [
   {
@@ -23,7 +23,7 @@ const ROUTES = [
   },
   {
     path: '/bag/:id',
-    element: <BagEditView />,
+    element: <BagEditWrapper />,
   },
   {
     path: '/bag',

@@ -3,9 +3,10 @@ import LoadingIconView from '../../LoadingIconView';
 
 interface Props {
   imageUrl: string;
+  shadow?: boolean;
 }
 
-const BagEditImageView: FC<Props> = ({ imageUrl }) => {
+const BagEditImageView: FC<Props> = ({ imageUrl, shadow }) => {
   const [loading, setLoading] = useState(true);
 
   const handleLoad = () => {
@@ -23,6 +24,7 @@ const BagEditImageView: FC<Props> = ({ imageUrl }) => {
         style={{
           display: loading ? 'none' : 'block',
           objectFit: 'cover',
+          filter: shadow ? 'brightness(0.5)' : 'brightness(1)',
         }}
       />
     </>
