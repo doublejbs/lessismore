@@ -20,10 +20,10 @@ const BagEditWarehouseView: FC<Props> = ({ bagEdit }) => {
   return (
     <ul
       style={{
-        display: 'flex',
-        flexDirection: 'column',
-        padding: '0 16px',
-        gap: '16px',
+        display: 'grid',
+        gridTemplateColumns: 'repeat(auto-fill,minmax(min(100px,100%),1fr))',
+        rowGap: '1.25rem',
+        columnGap: '0.625rem',
       }}
     >
       {gears.map((gear) => {
