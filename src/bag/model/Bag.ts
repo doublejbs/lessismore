@@ -26,8 +26,14 @@ class Bag {
   }
 
   public async add(value: string) {
-    await this.bagStore.add(value);
-    await this.getList();
+    const trimmedValue = value.trim();
+
+    if (trimmedValue.length) {
+      return await this.bagStore.add(value);
+    } else {
+      window.alert('배낭 이름을 입력해주세요');
+      return '';
+    }
   }
 
   public async delete(bagItem: BagItem) {

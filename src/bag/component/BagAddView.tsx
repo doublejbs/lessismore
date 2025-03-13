@@ -1,5 +1,6 @@
 import React, { FC, useState } from 'react';
 import Bag from '../model/Bag';
+import { useNavigate } from 'react-router-dom';
 
 interface Props {
   bag: Bag;
@@ -8,6 +9,7 @@ interface Props {
 const BagAddView: FC<Props> = ({ bag }) => {
   const [shouldShowAdd, setShouldShowAdd] = useState(false);
   const [inputValue, setInputValue] = useState('');
+  const navigate = useNavigate();
 
   const showAdd = () => {
     setShouldShowAdd(true);
@@ -18,9 +20,13 @@ const BagAddView: FC<Props> = ({ bag }) => {
   };
 
   const handleClickConfirm = async () => {
-    await bag.add(inputValue);
-    setInputValue('');
-    setShouldShowAdd(false);
+    const bagID = await bag.add(inputValue);
+
+    if (bagID) {
+      setInputValue('');
+      setShouldShowAdd(false);
+      navigate(`/bag/${bagID}`);
+    }
   };
 
   const handleClickCancel = () => {
