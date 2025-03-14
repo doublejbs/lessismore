@@ -48,7 +48,7 @@ const Bottom = () => {
           fontWeight: isWarehouse ? 'bold' : 'normal',
         }}
       >
-        창고
+        내 장비
       </button>
       <button
         onClick={handleClickBag}

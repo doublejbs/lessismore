@@ -13,14 +13,14 @@ const CustomGearAddButtonView: FC<Props> = ({ customGear }) => {
   return (
     <div
       style={{
-        position: 'fixed',
-        bottom: '56px',
+        position: 'sticky',
+        bottom: '0',
         width: '100%',
         left: 0,
         display: 'flex',
         justifyContent: 'center',
         flexDirection: 'row',
-        paddingBottom: '16px',
+        marginTop: '16px',
       }}
     >
       <button

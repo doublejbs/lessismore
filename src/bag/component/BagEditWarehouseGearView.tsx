@@ -62,15 +62,15 @@ const BagEditWarehouseGearView: FC<Props> = ({ gear, bagEdit }) => {
                 cy="13"
                 r="12"
                 stroke="white"
-                stroke-width="2"
+                strokeWidth="2"
                 fill="none"
               />
               <path
                 d="M8 13L12 17L18 9"
                 stroke="white"
-                stroke-width="2"
-                stroke-linecap="round"
-                stroke-linejoin="round"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
               />
             </svg>
           </div>
