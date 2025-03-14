@@ -5,9 +5,10 @@ import Gear from '../model/Gear';
 interface Props {
   gear: Gear;
   children?: ReactNode;
+  onClick?: () => void;
 }
 
-const GearView: FC<Props> = ({ gear, children }) => {
+const GearView: FC<Props> = ({ gear, children, onClick }) => {
   const imageUrl = gear.getImageUrl();
 
   return (
@@ -16,7 +17,9 @@ const GearView: FC<Props> = ({ gear, children }) => {
         display: 'flex',
         padding: '16px 0px',
         borderBottom: '1px solid #F1F1F1',
+        gap: '8px',
       }}
+      onClick={onClick}
     >
       <div
         style={{
@@ -56,6 +59,7 @@ const GearView: FC<Props> = ({ gear, children }) => {
               flexDirection: 'column',
               height: '100%',
               justifyContent: 'space-between',
+              fontSize: '14px',
             }}
           >
             <div
@@ -73,18 +77,12 @@ const GearView: FC<Props> = ({ gear, children }) => {
               >
                 {gear.getCompany()}
               </div>
-              <p
-                className={'text-ellipsis'}
-                style={{
-                  fontSize: '16px',
-                }}
-              >
+              <p className={'text-ellipsis'} style={{}}>
                 {gear.getName()}
               </p>
             </div>
             <div
               style={{
-                fontSize: '16px',
                 fontWeight: 'bold',
               }}
             >

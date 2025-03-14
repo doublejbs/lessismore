@@ -3,6 +3,7 @@ import Warehouse from './Warehouse';
 import Gear from '../model/Gear';
 import GearImageView from './GearImageView.tsx';
 import app from '../App';
+import GearView from './GearView.tsx';
 
 interface Props {
   gear: Gear;
@@ -25,92 +26,30 @@ const WarehouseGearView: FC<Props> = ({ gear, warehouse }) => {
   };
 
   return (
-    <li
-      style={{
-        backgroundColor: 'white',
-      }}
-      onClick={handleClickEdit}
-    >
+    <GearView gear={gear} onClick={handleClickEdit}>
       <div
         style={{
           display: 'flex',
           flexDirection: 'column',
-          position: 'relative',
-          gap: '8px',
+          minWidth: '40px',
+          height: '80px',
+          justifyContent: 'center',
         }}
       >
-        <div
+        <button
           style={{
-            height: '100%',
             backgroundColor: '#F1F1F1',
-            display: 'flex',
-            flexDirection: 'column',
-            justifyContent: 'center',
-            aspectRatio: '2000 / 2000',
-            borderRadius: '4px',
-            position: 'relative',
-            overflow: 'hidden',
+            padding: '0 4px',
+            height: '32px',
+            fontSize: '14px',
+            borderRadius: '8px',
           }}
+          onClick={handleClick}
         >
-          <div
-            style={{
-              width: '32px',
-              position: 'absolute',
-              bottom: '8px',
-              right: '8px',
-              borderRadius: '0.25rem',
-              overflow: 'hidden',
-            }}
-          >
-            <button
-              style={{
-                width: '32px',
-                backgroundColor: '#F1F1F1',
-                borderRadius: '5px',
-              }}
-              onClick={handleClick}
-            >
-              🗑️
-            </button>
-          </div>
-          <GearImageView imageUrl={imageUrl} />
-        </div>
-        <div
-          style={{
-            display: 'flex',
-            height: '100%',
-            flexDirection: 'column',
-            gap: '.125rem',
-            fontSize: '12px',
-          }}
-        >
-          <span
-            style={{
-              fontWeight: 'bold',
-            }}
-          >
-            {gear.getCompany()}
-          </span>
-          <p
-            className={'text-ellipsis'}
-            style={{
-              textOverflow: 'ellipsis',
-              overflow: 'hidden',
-              fontSize: '16px',
-            }}
-          >
-            {gear.getName()}
-          </p>
-          <span
-            style={{
-              fontWeight: 'bold',
-            }}
-          >
-            {gear.getWeight()}g
-          </span>
-        </div>
+          삭제
+        </button>
       </div>
-    </li>
+    </GearView>
   );
 };
 

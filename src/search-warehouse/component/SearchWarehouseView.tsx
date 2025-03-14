@@ -40,7 +40,7 @@ const SearchWarehouseView: FC<Props> = () => {
             position: 'fixed',
             top: 0,
             left: 0,
-            padding: '16px 16px 0 16px',
+            padding: '16px',
             backgroundColor: 'white',
             zIndex: 10,
           }}

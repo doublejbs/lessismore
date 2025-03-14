@@ -27,7 +27,7 @@ const WarehouseView: FC<Props> = ({ warehouse, customGear }) => {
         style={{
           display: 'flex',
           flexDirection: 'column',
-          gap: '8px',
+          gap: '16px',
           marginTop: '8px',
           marginBottom: '16px',
         }}
@@ -35,7 +35,7 @@ const WarehouseView: FC<Props> = ({ warehouse, customGear }) => {
         <div
           style={{
             fontWeight: '1000',
-            fontSize: '32px',
+            fontSize: '48px',
             textAlign: 'center',
             display: 'inline-block',
             lineHeight: 1,
@@ -55,12 +55,9 @@ const WarehouseView: FC<Props> = ({ warehouse, customGear }) => {
       >
         <ul
           style={{
-            display: 'grid',
-            gridTemplateColumns:
-              'repeat(auto-fill,minmax(min(128px,100%),1fr))',
-            rowGap: '1.25rem',
-            columnGap: '0.625rem',
             width: '100%',
+            display: 'flex',
+            flexDirection: 'column',
           }}
         >
           {gears.map((gear) => (
@@ -71,8 +68,8 @@ const WarehouseView: FC<Props> = ({ warehouse, customGear }) => {
             />
           ))}
         </ul>
+        <CustomGearAddButtonView customGear={customGear} />
       </div>
-      <CustomGearAddButtonView customGear={customGear} />
       <Bottom />
       <WarehouseEditWrapperView />
     </Layout>
