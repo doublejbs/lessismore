@@ -5,7 +5,7 @@ import {
   getAuth,
   GoogleAuthProvider,
   signInWithEmailAndPassword,
-  signInWithPopup,
+  signInWithRedirect,
   signOut,
 } from 'firebase/auth';
 import { makeAutoObservable } from 'mobx';
@@ -98,7 +98,7 @@ class Firebase {
   }
 
   public async logInWithGoogle() {
-    await signInWithPopup(this.auth, this.googleProvider);
+    await signInWithRedirect(this.auth, this.googleProvider);
   }
 
   public getStore() {
