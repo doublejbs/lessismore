@@ -39,6 +39,7 @@ const WarehouseView: FC<Props> = ({ warehouse, customGear }) => {
             textAlign: 'center',
             display: 'inline-block',
             lineHeight: 1,
+            letterSpacing: '-4.5px',
           }}
         >
           useless
