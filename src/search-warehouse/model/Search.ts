@@ -1,11 +1,11 @@
 import Gear from '../../model/Gear';
-import GearStore from '../../firebase/GearStore';
 import { action, makeObservable, observable } from 'mobx';
 
 abstract class Search {
   @observable private keyword: string = '';
   @observable private result: Array<Gear> = [];
   @observable private loading = false;
+  @observable private hasMore = false;
 
   protected constructor() {
     makeObservable(this);
@@ -13,39 +13,49 @@ abstract class Search {
 
   public abstract select(gear: Gear): Promise<void>;
   public abstract deselect(gear: Gear): Promise<void>;
-  public abstract searchList(keyword: string): Promise<Gear[]>;
-  public abstract searchAll(): Promise<Gear[]>;
-  public abstract searchAllMore(): Promise<Gear[]>;
-  public abstract searchListMore(keyword: string): Promise<Gear[]>;
+  public abstract searchList(
+    keyword: string
+  ): Promise<{ gears: Gear[]; hasMore: boolean }>;
+  public abstract searchListMore(
+    keyword: string
+  ): Promise<{ gears: Gear[]; hasMore: boolean }>;
 
   public async search(keyword: string) {
     this.setLoading(true);
     this.setKeyword(keyword.trim());
 
     if (this.keyword) {
-      this.setResult(await this.searchList(keyword));
+      const { gears, hasMore } = await this.searchList(keyword);
+
+      this.setResult(gears);
+      this.setHasMore(hasMore);
     } else {
-      this.setResult(await this.searchAll());
+      this.setResult([]);
     }
     this.setLoading(false);
   }
 
   public async searchMore() {
-    this.setLoading(true);
-    if (this.keyword) {
-      this.appendResult(await this.searchListMore(this.keyword));
-    } else {
-      this.appendResult(await this.searchAllMore());
+    if (this.hasMore) {
+      this.setLoading(true);
+      if (this.keyword) {
+        const { gears, hasMore } = await this.searchListMore(this.keyword);
+        this.appendResult(gears);
+        this.setHasMore(hasMore);
+      } else {
+        this.appendResult([]);
+      }
+      this.setLoading(false);
     }
-    this.setLoading(false);
   }
 
+  @action
   private appendResult(value: Array<Gear>) {
     this.result.push(...value);
   }
 
   @action
-  public setKeyword(value: string) {
+  private setKeyword(value: string) {
     this.keyword = value;
   }
 
@@ -58,12 +68,8 @@ abstract class Search {
     return this.result;
   }
 
-  protected getKeyword() {
+  public getKeyword() {
     return this.keyword;
-  }
-
-  protected async refresh() {
-    await this.search(this.getKeyword());
   }
 
   @action
@@ -73,6 +79,19 @@ abstract class Search {
 
   public isLoading() {
     return this.loading;
+  }
+
+  public isEmpty() {
+    return !this.result.length;
+  }
+
+  @action
+  private setHasMore(value: boolean) {
+    this.hasMore = value;
+  }
+
+  public canLoadMore() {
+    return this.hasMore;
   }
 }
 

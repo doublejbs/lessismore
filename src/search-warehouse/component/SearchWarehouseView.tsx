@@ -3,10 +3,10 @@ import SearchWarehouse from '../model/SearchWarehouse';
 import SearchGearView from './SearchGearView';
 import Layout from '../../Layout';
 import Bottom from '../../Bottom';
-import LoadingView from '../../LoadingView.tsx';
 import { debounce } from 'lodash';
 import { observer } from 'mobx-react-lite';
 import InfinityScroll from './InfinityScroll.tsx';
+import LoadingView from '../../LoadingView.tsx';
 
 interface Props {}
 
@@ -14,6 +14,9 @@ const SearchWarehouseView: FC<Props> = () => {
   const [searchWarehouse] = useState(() => SearchWarehouse.new());
   const result = searchWarehouse.getResult();
   const isLoading = searchWarehouse.isLoading();
+  const keyword = searchWarehouse.getKeyword();
+  const isEmpty = searchWarehouse.isEmpty();
+  const canLoadMore = searchWarehouse.canLoadMore();
 
   const handleChange = debounce((e: React.ChangeEvent<HTMLInputElement>) => {
     searchWarehouse.search(e.target.value);
@@ -23,15 +26,81 @@ const SearchWarehouseView: FC<Props> = () => {
     searchWarehouse.searchMore();
   };
 
-  useEffect(() => {
-    searchWarehouse.search('');
-  }, []);
+  const render = () => {
+    switch (true) {
+      case !keyword.length: {
+        return (
+          <div
+            style={{
+              paddingTop: '16px',
+            }}
+          >
+            검색어를 입력해주세요
+          </div>
+        );
+      }
+      case isEmpty: {
+        return (
+          <div
+            style={{
+              paddingTop: '16px',
+            }}
+          >
+            검색 결과가 없습니다
+          </div>
+        );
+      }
+      default: {
+        return (
+          <div
+            style={{
+              height: '100%',
+              overflowY: 'auto',
+              transform: 'translateZ(0)',
+              paddingBottom: '56px',
+            }}
+          >
+            <ul
+              style={{
+                display: 'flex',
+                flexDirection: 'column',
+              }}
+            >
+              <InfinityScroll
+                loadMore={handleLoadMore}
+                isLoading={isLoading}
+                hasMore={canLoadMore}
+              >
+                {result.map((gear) => (
+                  <SearchGearView
+                    key={gear.getId()}
+                    gear={gear}
+                    searchWarehouse={searchWarehouse}
+                  />
+                ))}
+              </InfinityScroll>
+            </ul>
+            {isLoading && (
+              <div
+                style={{
+                  height: '100%',
+                }}
+              >
+                <LoadingView />
+              </div>
+            )}
+          </div>
+        );
+      }
+    }
+  };
 
   return (
     <Layout>
       <div
         style={{
           paddingTop: '56px',
+          height: '100%',
         }}
       >
         <div
@@ -57,32 +126,7 @@ const SearchWarehouseView: FC<Props> = () => {
             onChange={handleChange}
           />
         </div>
-
-        <div
-          style={{
-            height: '100%',
-            overflowY: 'auto',
-            marginBottom: '54px',
-            transform: 'translateZ(0)',
-          }}
-        >
-          <ul
-            style={{
-              display: 'flex',
-              flexDirection: 'column',
-            }}
-          >
-            <InfinityScroll loadMore={handleLoadMore} isLoading={isLoading}>
-              {result.map((gear) => (
-                <SearchGearView
-                  key={gear.getId()}
-                  gear={gear}
-                  searchWarehouse={searchWarehouse}
-                />
-              ))}
-            </InfinityScroll>
-          </ul>
-        </div>
+        {render()}
       </div>
       <Bottom />
     </Layout>

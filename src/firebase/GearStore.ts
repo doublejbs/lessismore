@@ -12,15 +12,7 @@ import { SearchResponse } from 'algoliasearch';
 import GearType from '../warehouse/type/GearType';
 import Firebase from './Firebase';
 import Gear from '../model/Gear';
-import {
-  addDoc,
-  deleteDoc,
-  limit,
-  orderBy,
-  setDoc,
-  startAfter,
-  where,
-} from '@firebase/firestore';
+import { addDoc, deleteDoc, orderBy, setDoc, where } from '@firebase/firestore';
 import GearFilter from '../warehouse/GearFilter.ts';
 
 export interface GearData {
@@ -136,27 +128,9 @@ class GearStore {
     }
   }
 
-  public async searchAll() {
-    const gears = await getDocs(
-      query(collection(this.getStore(), 'gear'), limit(100))
-    );
-    this.lastDoc = gears.docs[gears.docs.length - 1];
-    return this.convertWithMyGears(this.convertToArray(gears));
-  }
-
-  public async searchAllMore() {
-    const gears = await getDocs(
-      query(
-        collection(this.getStore(), 'gear'),
-        startAfter(this.lastDoc),
-        limit(100)
-      )
-    );
-    this.lastDoc = gears.docs[gears.docs.length - 1];
-    return this.convertWithMyGears(this.convertToArray(gears));
-  }
-
-  public async searchList(value: string): Promise<Gear[]> {
+  public async searchList(
+    value: string
+  ): Promise<{ gears: Gear[]; hasMore: boolean }> {
     const keyword = value.trim();
     this.searchPage = 0;
     const { results } = await this.searchClient.search<GearType>({
@@ -169,23 +143,27 @@ class GearStore {
         },
       ],
     });
+    const { hits, page, nbPages } = results[0] as SearchResponse<GearType>;
 
     this.searchPage += 1;
 
-    return this.convertWithMyGears(
-      (results[0] as SearchResponse<GearType>).hits.map(
-        ({ name, weight, company, objectID, imageUrl }) => ({
+    return {
+      gears: await this.convertWithMyGears(
+        hits.map(({ name, weight, company, objectID, imageUrl }) => ({
           name,
           weight,
           company,
           id: objectID,
           imageUrl,
-        })
-      )
-    );
+        }))
+      ),
+      hasMore: page + 1 < nbPages,
+    };
   }
 
-  public async searchListMore(value: string): Promise<Gear[]> {
+  public async searchListMore(
+    value: string
+  ): Promise<{ gears: Gear[]; hasMore: boolean }> {
     const keyword = value.trim();
     const { results } = await this.searchClient.search<GearType>({
       requests: [
@@ -197,19 +175,22 @@ class GearStore {
         },
       ],
     });
+    const { hits, page, nbPages } = results[0] as SearchResponse<GearType>;
+
     this.searchPage += 1;
 
-    return this.convertWithMyGears(
-      (results[0] as SearchResponse<GearType>).hits.map(
-        ({ name, weight, company, objectID, imageUrl }) => ({
+    return {
+      gears: await this.convertWithMyGears(
+        hits.map(({ name, weight, company, objectID, imageUrl }) => ({
           name,
           weight,
           company,
           id: objectID,
           imageUrl,
-        })
-      )
-    );
+        }))
+      ),
+      hasMore: page + 1 < nbPages,
+    };
   }
 
   private async convertWithMyGears(data: Array<GearType>) {

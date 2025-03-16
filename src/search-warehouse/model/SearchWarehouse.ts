@@ -22,19 +22,15 @@ class SearchWarehouse extends Search {
     await this.search(this.getKeyword());
   }
 
-  public async searchAll(): Promise<Gear[]> {
-    return await this.gearStore.searchAll();
-  }
-
-  public async searchAllMore(): Promise<Gear[]> {
-    return await this.gearStore.searchAllMore();
-  }
-
-  public async searchList(keyword: string): Promise<Gear[]> {
+  public async searchList(
+    keyword: string
+  ): Promise<{ gears: Gear[]; hasMore: boolean }> {
     return await this.gearStore.searchList(keyword);
   }
 
-  public async searchListMore(keyword: string): Promise<Gear[]> {
+  public async searchListMore(
+    keyword: string
+  ): Promise<{ gears: Gear[]; hasMore: boolean }> {
     return await this.gearStore.searchListMore(keyword);
   }
 }
