@@ -10,9 +10,14 @@ interface Props {
 
 const BagEditGearView: FC<Props> = ({ gear, bagEdit }) => {
   const imageUrl = gear.getImageUrl();
+  const isUseless = bagEdit.isUseless(gear);
 
   const handleClick = () => {
     bagEdit.removeGear(gear);
+  };
+
+  const handleClickUseless = () => {
+    bagEdit.toggleUseless(gear);
   };
 
   return (
@@ -32,9 +37,28 @@ const BagEditGearView: FC<Props> = ({ gear, bagEdit }) => {
           backgroundColor: '#F1F1F1',
           borderRadius: '4px',
           overflow: 'hidden',
+          position: 'relative',
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
         }}
       >
-        <BagEditImageView imageUrl={imageUrl} />
+        <BagEditImageView imageUrl={imageUrl} shadow={isUseless} />
+        {isUseless && (
+          <div
+            style={{
+              fontSize: '24px',
+              fontWeight: 'bold',
+              position: 'absolute',
+              transform:
+                'translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y))',
+              rotate: '-10.78deg',
+              letterSpacing: '-2px',
+            }}
+          >
+            useless
+          </div>
+        )}
       </div>
       <div
         style={{
@@ -58,7 +82,7 @@ const BagEditGearView: FC<Props> = ({ gear, bagEdit }) => {
           height: '100%',
           display: 'flex',
           flexDirection: 'column',
-          justifyContent: 'center',
+          justifyContent: 'space-between',
           alignItems: 'end',
         }}
       >
@@ -66,7 +90,7 @@ const BagEditGearView: FC<Props> = ({ gear, bagEdit }) => {
           style={{
             backgroundColor: '#F1F1F1',
             color: 'black',
-            padding: '12px',
+            padding: '8px',
             borderRadius: '8px',
             fontSize: '12px',
           }}
@@ -74,18 +98,37 @@ const BagEditGearView: FC<Props> = ({ gear, bagEdit }) => {
         >
           🗑️
         </button>
-        {/*<button*/}
-        {/*  style={{*/}
-        {/*    width: '64px',*/}
-        {/*    backgroundColor: 'black',*/}
-        {/*    color: 'white',*/}
-        {/*    padding: '8px',*/}
-        {/*    borderRadius: '8px',*/}
-        {/*    fontSize: '12px',*/}
-        {/*  }}*/}
-        {/*>*/}
-        {/*  Useful*/}
-        {/*</button>*/}
+        {isUseless ? (
+          <button
+            style={{
+              width: '64px',
+              backgroundColor: 'white',
+              color: 'black',
+              padding: '4px',
+              borderRadius: '8px',
+              fontSize: '12px',
+              border: '1px solid black',
+            }}
+            onClick={handleClickUseless}
+          >
+            useless
+          </button>
+        ) : (
+          <button
+            style={{
+              width: '64px',
+              backgroundColor: 'black',
+              color: 'white',
+              padding: '4px',
+              borderRadius: '8px',
+              fontSize: '12px',
+              border: '1px solid black',
+            }}
+            onClick={handleClickUseless}
+          >
+            used
+          </button>
+        )}
       </div>
     </div>
   );

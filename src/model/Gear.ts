@@ -8,7 +8,8 @@ class Gear {
     private readonly added: boolean,
     private readonly isCustom: boolean,
     private readonly category: string,
-    private readonly subCategory: string
+    private readonly subCategory: string,
+    private useless: string[]
   ) {}
 
   public hasId(value: string) {
@@ -57,11 +58,34 @@ class Gear {
       isCustom: this.isCustom,
       category: this.category,
       subCategory: this.subCategory,
+      useless: this.useless,
     };
   }
 
   public isAdded() {
     return this.added;
+  }
+
+  public removeUseless(value: string) {
+    this.useless = this.useless.filter((useless) => useless !== value);
+    return this;
+  }
+
+  public appendUseless(value: string) {
+    if (this.useless.includes(value)) {
+      return this;
+    } else {
+      this.useless.push(value);
+      return this;
+    }
+  }
+
+  public hasUseless(value: string) {
+    return this.useless.includes(value);
+  }
+
+  public getUseless() {
+    return this.useless;
   }
 }
 

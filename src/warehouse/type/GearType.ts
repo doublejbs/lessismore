@@ -6,6 +6,7 @@ interface GearType {
   imageUrl: string;
   category?: string;
   subCategory?: string;
+  useless: string[];
 }
 
 export default GearType;

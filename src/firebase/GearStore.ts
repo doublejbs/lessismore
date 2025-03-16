@@ -24,6 +24,7 @@ export interface GearData {
   isCustom?: boolean;
   category?: string;
   subCategory?: string;
+  useless: string[];
 }
 
 class GearStore {
@@ -59,6 +60,7 @@ class GearStore {
           isCustom,
           category,
           subCategory,
+          useless,
         } = doc.data();
 
         return new Gear(
@@ -70,7 +72,8 @@ class GearStore {
           true,
           isCustom,
           category,
-          subCategory
+          subCategory,
+          useless
         );
       });
     } else {
@@ -155,6 +158,7 @@ class GearStore {
           company,
           id: objectID,
           imageUrl,
+          useless: [],
         }))
       ),
       hasMore: page + 1 < nbPages,
@@ -187,6 +191,7 @@ class GearStore {
           company,
           id: objectID,
           imageUrl,
+          useless: [],
         }))
       ),
       hasMore: page + 1 < nbPages,
@@ -207,6 +212,7 @@ class GearStore {
           imageUrl,
           category = '',
           subCategory = '',
+          useless,
         }) => {
           return new Gear(
             id,
@@ -217,7 +223,8 @@ class GearStore {
             this.hasGear(id, myGears),
             false,
             category,
-            subCategory
+            subCategory,
+            useless
           );
         }
       );
@@ -227,28 +234,6 @@ class GearStore {
     return myGears.some((myGear) => {
       return myGear.hasId(id);
     });
-  }
-
-  private convertToArray(
-    data: QuerySnapshot<DocumentData, DocumentData>
-  ): GearType[] {
-    const result: GearType[] = [];
-
-    data.forEach((doc) => {
-      const { name, company, weight, imageUrl, category, subCategory } =
-        doc.data();
-      result.push({
-        id: doc.id,
-        name,
-        company,
-        weight,
-        imageUrl,
-        category,
-        subCategory,
-      });
-    });
-
-    return result;
   }
 
   private getStore() {

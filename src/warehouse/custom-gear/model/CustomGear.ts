@@ -42,7 +42,8 @@ class CustomGear extends GearEdit {
           true,
           true,
           this.getSelectedFirstCategory(),
-          this.getSelectedFilter()
+          this.getSelectedFilter(),
+          []
         ),
       ]);
       this.setLoading(false);
