@@ -68,6 +68,7 @@ const BagEditGearView: FC<Props> = ({ gear, bagEdit }) => {
           justifyContent: 'center',
           fontSize: '14px',
           flexGrow: 1,
+          color: isUseless ? 'grey' : 'black',
         }}
       >
         <div className={'text-ellipsis'} style={{ fontWeight: 'bold' }}>
