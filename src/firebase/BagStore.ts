@@ -18,8 +18,7 @@ import GearStore, { GearData } from './GearStore.ts';
 import dayjs from 'dayjs';
 import Gear from '../model/Gear';
 import BagItem from '../bag/model/BagItem';
-import { deleteField, runTransaction } from '@firebase/firestore';
-import bag from '../bag/model/Bag.ts';
+import { runTransaction } from '@firebase/firestore';
 
 class BagStore {
   public constructor(
@@ -58,7 +57,7 @@ class BagStore {
     ).data() as {
       name: string;
       weight: string;
-      gears: { id: string; fromWarehouse: boolean }[];
+      gears: string[];
     };
     const warehouseSnapshot = await (gears.length
       ? getDocs(
@@ -71,7 +70,6 @@ class BagStore {
     const warehouseGears = warehouseSnapshot.docs.map((doc) => ({
       ...(doc.data() as GearData),
       id: doc.id,
-      fromWarehouse: true,
     }));
 
     return {
@@ -87,6 +85,7 @@ class BagStore {
               imageUrl,
               category = '',
               subCategory = '',
+              useless,
             }) =>
               new Gear(
                 id,
@@ -97,7 +96,8 @@ class BagStore {
                 true,
                 false,
                 category,
-                subCategory
+                subCategory,
+                useless
               )
           )
         : [],

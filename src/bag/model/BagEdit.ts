@@ -2,10 +2,11 @@ import { makeAutoObservable } from 'mobx';
 import app from '../../App';
 import Gear from '../../model/Gear';
 import BagStore from '../../firebase/BagStore';
+import GearStore from '../../firebase/GearStore';
 
 class BagEdit {
   public static from(id: string) {
-    return new BagEdit(id, app.getBagStore());
+    return new BagEdit(id, app.getBagStore(), app.getGearStore());
   }
 
   private name: string = '';
@@ -17,7 +18,8 @@ class BagEdit {
 
   private constructor(
     private readonly id: string,
-    private readonly bagStore: BagStore
+    private readonly bagStore: BagStore,
+    private readonly gearStore: GearStore
   ) {
     makeAutoObservable(this);
   }
@@ -106,6 +108,27 @@ class BagEdit {
 
   public isInitialized() {
     return this.initialized;
+  }
+
+  public async toggleUseless(gear: Gear) {
+    if (this.isUseless(gear)) {
+      await this.setUseful(gear);
+    } else {
+      await this.setUseless(gear);
+    }
+    await this.initialize();
+  }
+
+  private async setUseful(gear: Gear) {
+    await this.gearStore.update(gear.removeUseless(this.id));
+  }
+
+  private async setUseless(gear: Gear) {
+    await this.gearStore.update(gear.appendUseless(this.id));
+  }
+
+  public isUseless(gear: Gear) {
+    return gear.hasUseless(this.id);
   }
 }
 

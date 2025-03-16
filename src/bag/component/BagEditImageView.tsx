@@ -24,7 +24,7 @@ const BagEditImageView: FC<Props> = ({ imageUrl, shadow }) => {
         style={{
           display: loading ? 'none' : 'block',
           objectFit: 'cover',
-          filter: shadow ? 'brightness(0.5)' : 'brightness(1)',
+          filter: shadow ? 'brightness(0.9)' : 'brightness(1)',
         }}
       />
     </>
