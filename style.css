@@ -14,3 +14,13 @@
     -webkit-line-clamp: 2;
     display: -webkit-box;
 }
+
+.safe-padding {
+    padding-bottom: 0px; /* 기본값 */
+}
+
+@supports (padding-bottom: env(safe-area-inset-bottom)) {
+    .safe-padding {
+        padding-bottom: env(safe-area-inset-bottom);
+    }
+}

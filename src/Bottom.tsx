@@ -25,12 +25,12 @@ const Bottom = () => {
         position: 'fixed',
         width: '100%',
         bottom: '0px',
-        height: '56px',
+        height: 'calc(56px + env(safe-area-inset-bottom))',
+        paddingBottom: 'env(safe-area-inset-bottom)',
         display: 'flex',
         flexDirection: 'row',
         justifyContent: 'space-around',
-        left: '50%',
-        transform: 'translateX(-50%)',
+        left: 0,
         backgroundColor: '#F0F0F0',
       }}
     >
