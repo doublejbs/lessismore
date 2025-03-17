@@ -5,7 +5,7 @@ import CustomGearConfirmView from './CustomGearConfirmView.tsx';
 import Layout from '../../../Layout';
 import CustomGear from '../model/CustomGear';
 import LoadingIconView from '../../../LoadingIconView';
-import WarehouseFilter from '../../WarehouseFilter';
+import WarehouseFilter from '../../model/WarehouseFilter.ts';
 import CustomGearWeightView from './CustomGearWeightView';
 
 interface Props {

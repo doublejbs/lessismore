@@ -5,7 +5,7 @@ import LogIn from './LogIn.tsx';
 import Join from './Join.tsx';
 import { observer } from 'mobx-react-lite';
 import app from './App.ts';
-import WarehouseWrapper from './warehouse/WarehouseWrapper.tsx';
+import WarehouseWrapper from './warehouse/component/WarehouseWrapper.tsx';
 import AdminView from './AdminView.tsx';
 import LoadingView from './LoadingView.tsx';
 import SearchWarehouseView from './search-warehouse/component/SearchWarehouseView';

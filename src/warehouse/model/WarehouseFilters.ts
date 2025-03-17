@@ -1,13 +1,9 @@
-import { makeAutoObservable } from 'mobx';
-import app from '../App';
-import GearStore from '../firebase/GearStore';
-import Gear from '../model/Gear';
-import GearFilter from './GearFilter';
 import WarehouseFilter from './WarehouseFilter.ts';
+import GearFilter from './GearFilter.ts';
 
-class Warehouse {
+class WarehouseFilters {
   public static new() {
-    return new Warehouse(app.getGearStore());
+    return new WarehouseFilters();
   }
 
   private readonly filters: WarehouseFilter[] = [
@@ -52,37 +48,24 @@ class Warehouse {
       name: '기타',
     },
   ].map(({ filter, name }) => WarehouseFilter.from(filter, name));
-  private gears: Gear[] = [];
 
-  private constructor(private readonly gearStore: GearStore) {
-    makeAutoObservable(this);
-    this.filters[0].select();
-  }
-
-  public async getList() {
-    this.setGears(await this.gearStore.getList(this.getSelectedFilter()));
-  }
-
-  public async remove(value: Gear) {
-    await this.gearStore.remove(value);
-    await this.getList();
-  }
-
-  private setGears(value: Gear[]) {
-    this.gears = value;
-  }
-
-  public getGears() {
-    return this.gears;
-  }
-
-  public edit(gear: Gear) {}
+  private constructor() {}
 
   public mapFilters<R>(callback: (filter: WarehouseFilter) => R) {
     return this.filters.map(callback);
   }
 
-  public async selectFilter(filter: WarehouseFilter) {
+  public selectFilterWith(filter: GearFilter) {
+    this.filters.forEach((currentFilter) => {
+      if (currentFilter.isSame(filter)) {
+        currentFilter.select();
+      } else {
+        currentFilter.deselect();
+      }
+    });
+  }
+
+  public selectFilter(filter: WarehouseFilter) {
     this.filters.forEach((currentFilter) => {
       if (currentFilter === filter) {
         currentFilter.select();
@@ -90,27 +73,30 @@ class Warehouse {
         currentFilter.deselect();
       }
     });
-    await this.getList();
   }
 
-  private getSelectedFilter() {
+  public getSelectedFilter() {
     return (
       this.filters.find((filter) => filter.isSelected())?.getFilter() ??
       GearFilter.All
     );
   }
 
-  public async updateGear(gear: Gear) {
-    this.setGears(
-      this.gears.map((currentGear) => {
-        if (currentGear.isSame(gear)) {
-          return gear;
-        } else {
-          return currentGear;
-        }
-      })
-    );
+  public getSelectedFirstCategory() {
+    const selectedFilter = this.getSelectedFilter();
+
+    switch (selectedFilter) {
+      case GearFilter.Tent:
+      case GearFilter.SleepingBag:
+      case GearFilter.Backpack:
+      case GearFilter.Mat: {
+        return 'big4';
+      }
+      default: {
+        return selectedFilter;
+      }
+    }
   }
 }
 
-export default Warehouse;
+export default WarehouseFilters;

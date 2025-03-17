@@ -13,7 +13,7 @@ import GearType from '../warehouse/type/GearType';
 import Firebase from './Firebase';
 import Gear from '../model/Gear';
 import { addDoc, deleteDoc, orderBy, setDoc, where } from '@firebase/firestore';
-import GearFilter from '../warehouse/GearFilter.ts';
+import GearFilter from '../warehouse/model/GearFilter.ts';
 
 export interface GearData {
   id: string;

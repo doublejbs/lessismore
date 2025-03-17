@@ -3,7 +3,7 @@ import LoadingIconView from '../../../LoadingIconView';
 import { observer } from 'mobx-react-lite';
 import WarehouseEdit from '../model/WarehouseEdit';
 import ImageUploadView from '../../custom-gear/component/ImageUploadView';
-import WarehouseFilter from '../../WarehouseFilter';
+import WarehouseFilter from '../../model/WarehouseFilter.ts';
 import WarehouseEditWeightView from './WarehouseEditWeightView';
 import WarehouseEditConfirmView from './WarehouseEditConfirmView';
 

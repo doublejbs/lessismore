@@ -152,10 +152,18 @@ class BagStore {
 
   public async removeGear(id: string, gear: Gear) {
     const bagRef = doc(this.getStore(), 'bag', id);
+    const gearRef = doc(
+      this.getStore(),
+      'users',
+      this.getUserID(),
+      'gears',
+      gear.getId()
+    );
 
     try {
       await runTransaction(this.getStore(), async (transaction) => {
         const bagSnap = await transaction.get(bagRef);
+        const gearSnap = await transaction.get(gearRef);
 
         if (bagSnap.exists()) {
           const bagData = bagSnap.data();
@@ -164,6 +172,12 @@ class BagStore {
           transaction.update(bagRef, {
             weight: currentWeight - (parseInt(gear.getWeight()) || 0),
             gears: arrayRemove(gear.getId()),
+          });
+        }
+
+        if (gearSnap.exists()) {
+          transaction.update(gearRef, {
+            useless: arrayRemove(id),
           });
         }
       });

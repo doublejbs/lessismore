@@ -1,7 +1,7 @@
 import BagEditImageView from './BagEditImageView';
 import { FC, useEffect, useState } from 'react';
 import { observer } from 'mobx-react-lite';
-import Warehouse from '../../warehouse/Warehouse';
+import Warehouse from '../../warehouse/model/Warehouse.ts';
 import BagEdit from '../model/BagEdit';
 import BagEditWarehouseGearView from './BagEditWarehouseGearView';
 

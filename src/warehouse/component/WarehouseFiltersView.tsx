@@ -1,6 +1,6 @@
 import { FC } from 'react';
-import Warehouse from './Warehouse';
-import WarehouseFilter from './WarehouseFilter.ts';
+import Warehouse from '../model/Warehouse.ts';
+import WarehouseFilter from '../model/WarehouseFilter.ts';
 import { observer } from 'mobx-react-lite';
 
 interface Props {
