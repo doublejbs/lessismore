@@ -41,7 +41,7 @@ const WarehouseEditView: FC<Props> = ({ warehouseEdit }) => {
         padding: '16px',
         display: 'flex',
         flexDirection: 'column',
-        gap: '16px',
+        justifyContent: 'space-between',
       }}
     >
       <div
@@ -50,6 +50,7 @@ const WarehouseEditView: FC<Props> = ({ warehouseEdit }) => {
           display: 'flex',
           flexDirection: 'column',
           gap: '16px',
+          overflowY: 'auto',
         }}
       >
         <div
@@ -62,6 +63,90 @@ const WarehouseEditView: FC<Props> = ({ warehouseEdit }) => {
         >
           장비 정보 수정하기
         </div>
+        <div
+          style={{
+            width: '100%',
+            display: 'flex',
+            flexDirection: 'row',
+            height: '80px',
+            alignItems: 'center',
+          }}
+        >
+          <ImageUploadView fileUpload={warehouseEdit} />
+        </div>
+        <div
+          style={{
+            display: 'flex',
+            flexDirection: 'column',
+            gap: '8px',
+          }}
+        >
+          <span>제품명</span>
+          <input
+            style={{
+              borderRadius: '5px',
+              backgroundColor: '#F1F1F1',
+              border: 'none',
+            }}
+            placeholder={'제품명을 입력해주세요'}
+            onChange={handleChangeName}
+            value={name}
+          />
+        </div>
+        <div
+          style={{
+            display: 'flex',
+            flexDirection: 'column',
+            gap: '8px',
+          }}
+        >
+          <span>브랜드</span>
+          <input
+            style={{
+              borderRadius: '5px',
+              backgroundColor: '#F1F1F1',
+              border: 'none',
+            }}
+            placeholder={'브랜드를 입력해주세요'}
+            onChange={handleChangeCompany}
+            value={company}
+          />
+        </div>
+        <div
+          style={{
+            display: 'flex',
+            flexDirection: 'column',
+            gap: '8px',
+          }}
+        >
+          <span>카테고리</span>
+          <div
+            style={{
+              display: 'flex',
+              flexWrap: 'wrap',
+              gap: '8px',
+            }}
+          >
+            {warehouseEdit.mapFilters((filter) => {
+              return (
+                <button
+                  style={{
+                    backgroundColor: filter.isSelected() ? 'black' : '#F1F1F1',
+                    color: filter.isSelected() ? 'white' : 'black',
+                    borderRadius: '16px',
+                    padding: '8px 16px',
+                    fontSize: '14px',
+                  }}
+                  key={filter.getFilter()}
+                  onClick={() => handleClickSelectFilter(filter)}
+                >
+                  {filter.getName()}
+                </button>
+              );
+            })}
+          </div>
+        </div>
+        <WarehouseEditWeightView warehouseEdit={warehouseEdit} />
       </div>
       {isLoading && (
         <div
@@ -76,90 +161,6 @@ const WarehouseEditView: FC<Props> = ({ warehouseEdit }) => {
           <LoadingIconView />
         </div>
       )}
-      <div
-        style={{
-          width: '100%',
-          display: 'flex',
-          flexDirection: 'row',
-          height: '80px',
-          alignItems: 'center',
-        }}
-      >
-        <ImageUploadView fileUpload={warehouseEdit} />
-      </div>
-      <div
-        style={{
-          display: 'flex',
-          flexDirection: 'column',
-          gap: '8px',
-        }}
-      >
-        <span>제품명</span>
-        <input
-          style={{
-            borderRadius: '5px',
-            backgroundColor: '#F1F1F1',
-            border: 'none',
-          }}
-          placeholder={'제품명을 입력해주세요'}
-          onChange={handleChangeName}
-          value={name}
-        />
-      </div>
-      <div
-        style={{
-          display: 'flex',
-          flexDirection: 'column',
-          gap: '8px',
-        }}
-      >
-        <span>브랜드</span>
-        <input
-          style={{
-            borderRadius: '5px',
-            backgroundColor: '#F1F1F1',
-            border: 'none',
-          }}
-          placeholder={'브랜드를 입력해주세요'}
-          onChange={handleChangeCompany}
-          value={company}
-        />
-      </div>
-      <div
-        style={{
-          display: 'flex',
-          flexDirection: 'column',
-          gap: '8px',
-        }}
-      >
-        <span>카테고리</span>
-        <div
-          style={{
-            display: 'flex',
-            flexWrap: 'wrap',
-            gap: '8px',
-          }}
-        >
-          {warehouseEdit.mapFilters((filter) => {
-            return (
-              <button
-                style={{
-                  backgroundColor: filter.isSelected() ? 'black' : '#F1F1F1',
-                  color: filter.isSelected() ? 'white' : 'black',
-                  borderRadius: '16px',
-                  padding: '8px 16px',
-                  fontSize: '14px',
-                }}
-                key={filter.getFilter()}
-                onClick={() => handleClickSelectFilter(filter)}
-              >
-                {filter.getName()}
-              </button>
-            );
-          })}
-        </div>
-      </div>
-      <WarehouseEditWeightView warehouseEdit={warehouseEdit} />
       <WarehouseEditConfirmView warehouseEdit={warehouseEdit} />
     </div>
   );
