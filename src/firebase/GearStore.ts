@@ -206,35 +206,33 @@ class GearStore {
   private async convertWithMyGears(data: Array<GearType>) {
     const myGears = await this.getList(GearFilter.All);
 
-    return data
-      .filter(({ id }) => !this.hasGear(id, myGears))
-      .map(
-        ({
-          name,
-          weight,
-          company,
+    return data.map(
+      ({
+        name,
+        weight,
+        company,
+        id,
+        imageUrl,
+        category = '',
+        subCategory = '',
+        useless,
+        bags,
+      }) => {
+        return new Gear(
           id,
+          name,
+          company,
+          weight,
           imageUrl,
-          category = '',
-          subCategory = '',
+          this.hasGear(id, myGears),
+          false,
+          category,
+          subCategory,
           useless,
-          bags,
-        }) => {
-          return new Gear(
-            id,
-            name,
-            company,
-            weight,
-            imageUrl,
-            this.hasGear(id, myGears),
-            false,
-            category,
-            subCategory,
-            useless,
-            bags
-          );
-        }
-      );
+          bags
+        );
+      }
+    );
   }
 
   private hasGear(id: string, myGears: Gear[]) {
