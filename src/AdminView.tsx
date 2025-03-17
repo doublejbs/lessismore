@@ -48,6 +48,7 @@ const AdminView = () => {
               false,
               item.category,
               item.subCategory,
+              [],
               []
             )
           );

@@ -10,7 +10,7 @@ interface Props {
 }
 
 const WarehouseGearView: FC<Props> = ({ gear, warehouse }) => {
-  const warehouseEdit = app.getWarehouseEdit();
+  const warehouseDetail = app.getWarehouseDetail();
 
   const handleClick = (e: React.MouseEvent) => {
     e.stopPropagation();
@@ -18,7 +18,7 @@ const WarehouseGearView: FC<Props> = ({ gear, warehouse }) => {
   };
 
   const handleClickEdit = () => {
-    warehouseEdit.open(gear, async (updatedGear) => {
+    warehouseDetail.open(gear, async (updatedGear) => {
       await warehouse.updateGear(updatedGear);
     });
   };

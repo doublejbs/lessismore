@@ -31,9 +31,9 @@ const WarehouseFiltersView: FC<Props> = ({ warehouse }) => {
             className={'clickable'}
             style={{
               height: '30px',
-              borderRadius: '12px',
+              borderRadius: '16px',
               fontSize: '14px',
-              padding: '0 8px',
+              padding: '0 16px',
               display: 'flex',
               justifyContent: 'center',
               alignItems: 'center',
