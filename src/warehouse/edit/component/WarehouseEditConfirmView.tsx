@@ -20,13 +20,9 @@ const WarehouseEditConfirmView: FC<Props> = ({ warehouseEdit }) => {
   return (
     <div
       style={{
-        position: 'fixed',
-        bottom: '16px',
-        left: 0,
         width: '100%',
         display: 'flex',
         flexDirection: 'column',
-        padding: '0 16px',
         gap: '16px',
       }}
     >

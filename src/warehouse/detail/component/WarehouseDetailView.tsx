@@ -45,6 +45,7 @@ const WarehouseDetailView: FC<Props> = ({ warehouseDetail }) => {
             display: 'flex',
             flexDirection: 'column',
             gap: '16px',
+            overflowY: 'auto',
           }}
         >
           <div>
