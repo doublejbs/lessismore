@@ -7,6 +7,7 @@ interface GearType {
   category?: string;
   subCategory?: string;
   useless: string[];
+  bags: string[];
 }
 
 export default GearType;

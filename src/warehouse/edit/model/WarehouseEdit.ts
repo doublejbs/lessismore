@@ -43,7 +43,8 @@ class WarehouseEdit extends GearEdit {
       false,
       this.getSelectedFirstCategory(),
       this.getSelectedFilter(),
-      this.gear?.getUseless() ?? []
+      this.gear?.getUseless() ?? [],
+      this.gear?.getBags() ?? []
     );
 
     await this.gearStore.update(updatedGear);

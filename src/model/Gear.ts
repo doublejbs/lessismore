@@ -9,7 +9,8 @@ class Gear {
     private readonly isCustom: boolean,
     private readonly category: string,
     private readonly subCategory: string,
-    private useless: string[]
+    private useless: string[],
+    private bags: string[]
   ) {}
 
   public hasId(value: string) {
@@ -59,6 +60,7 @@ class Gear {
       category: this.category,
       subCategory: this.subCategory,
       useless: this.useless,
+      bags: this.bags,
     };
   }
 
@@ -86,6 +88,10 @@ class Gear {
 
   public getUseless() {
     return this.useless;
+  }
+
+  public getBags() {
+    return this.bags;
   }
 }
 

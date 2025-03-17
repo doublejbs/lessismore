@@ -25,6 +25,7 @@ export interface GearData {
   category?: string;
   subCategory?: string;
   useless: string[];
+  bags: string[];
 }
 
 class GearStore {
@@ -61,6 +62,7 @@ class GearStore {
           category,
           subCategory,
           useless,
+          bags,
         } = doc.data();
 
         return new Gear(
@@ -73,7 +75,8 @@ class GearStore {
           isCustom,
           category,
           subCategory,
-          useless
+          useless,
+          bags
         );
       });
     } else {
@@ -159,6 +162,7 @@ class GearStore {
           id: objectID,
           imageUrl,
           useless: [],
+          bags: [],
         }))
       ),
       hasMore: page + 1 < nbPages,
@@ -192,6 +196,7 @@ class GearStore {
           id: objectID,
           imageUrl,
           useless: [],
+          bags: [],
         }))
       ),
       hasMore: page + 1 < nbPages,
@@ -213,6 +218,7 @@ class GearStore {
           category = '',
           subCategory = '',
           useless,
+          bags,
         }) => {
           return new Gear(
             id,
@@ -224,7 +230,8 @@ class GearStore {
             false,
             category,
             subCategory,
-            useless
+            useless,
+            bags
           );
         }
       );

@@ -86,6 +86,7 @@ class BagStore {
               category = '',
               subCategory = '',
               useless,
+              bags,
             }) =>
               new Gear(
                 id,
@@ -97,7 +98,8 @@ class BagStore {
                 false,
                 category,
                 subCategory,
-                useless
+                useless,
+                bags
               )
           )
         : [],
@@ -130,10 +132,18 @@ class BagStore {
 
   public async addGear(id: string, gear: Gear) {
     const bagRef = doc(this.getStore(), 'bag', id);
+    const gearRef = doc(
+      this.getStore(),
+      'users',
+      this.getUserID(),
+      'gears',
+      gear.getId()
+    );
 
     try {
       await runTransaction(this.getStore(), async (transaction) => {
         const bagSnap = await transaction.get(bagRef);
+        const gearSnap = await transaction.get(gearRef);
 
         if (bagSnap.exists()) {
           const bagData = bagSnap.data();
@@ -142,6 +152,12 @@ class BagStore {
           transaction.update(bagRef, {
             weight: currentWeight + (parseInt(gear.getWeight()) || 0),
             gears: arrayUnion(gear.getId()),
+          });
+        }
+
+        if (gearSnap.exists()) {
+          transaction.update(gearRef, {
+            bags: arrayUnion(id),
           });
         }
       });
@@ -178,6 +194,7 @@ class BagStore {
         if (gearSnap.exists()) {
           transaction.update(gearRef, {
             useless: arrayRemove(id),
+            bags: arrayRemove(id),
           });
         }
       });
@@ -198,6 +215,21 @@ class BagStore {
 
   private getUserID() {
     return this.firebase.getUserId();
+  }
+
+  public async getBags(bagIDs: string[]) {
+    if (bagIDs.length) {
+      return this.convertToArray(
+        await getDocs(
+          query(
+            collection(this.getStore(), 'bag'),
+            where('__name__', 'in', bagIDs)
+          )
+        )
+      );
+    } else {
+      return [];
+    }
   }
 }
 
