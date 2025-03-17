@@ -2,7 +2,7 @@ import { action, makeObservable } from 'mobx';
 import GearEdit from '../../custom-gear/model/GearEdit';
 import CustomGearCategory from '../../custom-gear/model/CustomGearCategory';
 import Gear from '../../../model/Gear';
-import GearFilter from '../../GearFilter';
+import GearFilter from '../../model/GearFilter.ts';
 import GearStore from '../../../firebase/GearStore';
 
 class WarehouseEdit extends GearEdit {

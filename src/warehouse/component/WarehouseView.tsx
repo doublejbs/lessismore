@@ -1,13 +1,13 @@
 import { FC, useEffect } from 'react';
-import Layout from '../Layout.tsx';
-import Bottom from '../Bottom.tsx';
-import Warehouse from './Warehouse.ts';
+import Layout from '../../Layout.tsx';
+import Bottom from '../../Bottom.tsx';
+import Warehouse from '../model/Warehouse.ts';
 import { observer } from 'mobx-react-lite';
 import WarehouseGearView from './WarehouseGearView.tsx';
-import WarehouseFiltersView from './WarehouseFiltersView';
-import CustomGear from './custom-gear/model/CustomGear';
-import CustomGearAddButtonView from './custom-gear/component/CustomGearAddButtonView';
-import WarehouseEditWrapperView from './edit/component/WarehouseEditWrapperView';
+import WarehouseFiltersView from './WarehouseFiltersView.tsx';
+import CustomGear from '../custom-gear/model/CustomGear.ts';
+import CustomGearAddButtonView from '../custom-gear/component/CustomGearAddButtonView.tsx';
+import WarehouseEditWrapperView from '../edit/component/WarehouseEditWrapperView.tsx';
 
 interface Props {
   warehouse: Warehouse;

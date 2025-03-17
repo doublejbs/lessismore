@@ -1,8 +1,7 @@
 import React, { FC } from 'react';
-import Warehouse from './Warehouse';
-import Gear from '../model/Gear';
-import GearImageView from './GearImageView.tsx';
-import app from '../App';
+import Warehouse from '../model/Warehouse.ts';
+import Gear from '../../model/Gear.ts';
+import app from '../../App.ts';
 import GearView from './GearView.tsx';
 
 interface Props {
@@ -11,7 +10,6 @@ interface Props {
 }
 
 const WarehouseGearView: FC<Props> = ({ gear, warehouse }) => {
-  const imageUrl = gear.getImageUrl();
   const warehouseEdit = app.getWarehouseEdit();
 
   const handleClick = (e: React.MouseEvent) => {
