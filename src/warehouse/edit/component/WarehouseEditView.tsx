@@ -35,7 +35,7 @@ const WarehouseEditView: FC<Props> = ({ warehouseEdit }) => {
         backgroundColor: 'white',
         width: '100%',
         height: '100%',
-        position: 'absolute',
+        position: 'fixed',
         top: 0,
         left: 0,
         padding: '16px',
