@@ -12,7 +12,7 @@ const BagEditAddGearView: FC = ({}) => {
   const weight = bagEdit.getWeight();
 
   const handleClickBack = () => {
-    navigate(`/bag/${id}`);
+    navigate(`/bag/${id}`, { replace: true });
   };
 
   useEffect(() => {
