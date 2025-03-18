@@ -130,6 +130,10 @@ class BagEdit {
   public isUseless(gear: Gear) {
     return gear.hasUseless(this.id);
   }
+
+  public getId() {
+    return this.id;
+  }
 }
 
 export default BagEdit;

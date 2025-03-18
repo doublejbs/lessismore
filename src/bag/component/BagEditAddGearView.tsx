@@ -1,24 +1,23 @@
-import { FC } from 'react';
+import { FC, useEffect, useState } from 'react';
 import { observer } from 'mobx-react-lite';
 import BagEditWarehouseView from './BagEditWarehouseView';
 import BagEdit from '../model/BagEdit';
 import Layout from '../../Layout';
+import { useNavigate, useParams } from 'react-router-dom';
 
-interface Props {
-  bagEdit: BagEdit;
-}
-
-const BagEditAddGearView: FC<Props> = ({ bagEdit }) => {
-  const name = bagEdit.getName();
+const BagEditAddGearView: FC = ({}) => {
+  const { id = '' } = useParams();
+  const [bagEdit] = useState(() => BagEdit.from(id));
+  const navigate = useNavigate();
   const weight = bagEdit.getWeight();
 
-  const handleClickClose = () => {
-    bagEdit.hideWarehouse();
+  const handleClickBack = () => {
+    navigate(`/bag/${id}`);
   };
 
-  const handleClickBack = () => {
-    bagEdit.hideWarehouse();
-  };
+  useEffect(() => {
+    bagEdit.initialize();
+  }, []);
 
   return (
     <>

@@ -11,6 +11,7 @@ import LoadingView from './LoadingView.tsx';
 import SearchWarehouseView from './search-warehouse/component/SearchWarehouseView';
 import BagView from './bag/component/BagView';
 import BagEditWrapper from './bag/component/BagEditWrapper';
+import BagEditAddGearView from './bag/component/BagEditAddGearView.tsx';
 
 const ROUTES = [
   {
@@ -20,6 +21,10 @@ const ROUTES = [
   {
     path: '/join',
     element: <Join />,
+  },
+  {
+    path: '/bag/:id/edit',
+    element: <BagEditAddGearView />,
   },
   {
     path: '/bag/:id',
