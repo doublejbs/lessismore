@@ -13,7 +13,7 @@ const BagEditView: FC<Props> = ({ bagEdit }) => {
   const initialized = bagEdit.isInitialized();
 
   const handleClickAdd = () => {
-    bagEdit.showWarehouse();
+    navigate(`/bag/${bagEdit.getId()}/edit`);
   };
 
   const handleClickBack = () => {

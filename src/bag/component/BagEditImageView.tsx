@@ -7,7 +7,7 @@ interface Props {
 }
 
 const BagEditImageView: FC<Props> = ({ imageUrl, shadow }) => {
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(!!imageUrl);
 
   const handleLoad = () => {
     setLoading(false);
@@ -16,17 +16,19 @@ const BagEditImageView: FC<Props> = ({ imageUrl, shadow }) => {
   return (
     <>
       {loading && <LoadingIconView />}
-      <img
-        src={imageUrl}
-        width={2000}
-        height={2000}
-        onLoad={handleLoad}
-        style={{
-          display: loading ? 'none' : 'block',
-          objectFit: 'cover',
-          filter: shadow ? 'brightness(0.9)' : 'brightness(1)',
-        }}
-      />
+      {imageUrl && (
+        <img
+          src={imageUrl}
+          width={2000}
+          height={2000}
+          onLoad={handleLoad}
+          style={{
+            display: loading ? 'none' : 'block',
+            objectFit: 'cover',
+            filter: shadow ? 'brightness(0.9)' : 'brightness(1)',
+          }}
+        />
+      )}
     </>
   );
 };

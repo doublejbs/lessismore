@@ -25,7 +25,7 @@ const Bottom = () => {
         position: 'fixed',
         width: '100%',
         bottom: '0px',
-        height: 'calc(56px + env(safe-area-inset-bottom))',
+        height: 'calc(48px + env(safe-area-inset-bottom))',
         paddingBottom: 'env(safe-area-inset-bottom)',
         display: 'flex',
         flexDirection: 'row',

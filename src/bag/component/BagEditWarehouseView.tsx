@@ -13,6 +13,8 @@ const BagEditWarehouseView: FC<Props> = ({ bagEdit }) => {
   const [warehouse] = useState(() => Warehouse.new());
   const gears = warehouse.getGears();
 
+  const handleClickSearch = () => {};
+
   useEffect(() => {
     warehouse.getList();
   }, []);
@@ -26,6 +28,67 @@ const BagEditWarehouseView: FC<Props> = ({ bagEdit }) => {
         columnGap: '0.625rem',
       }}
     >
+      <li
+        style={{
+          width: '100%',
+          display: 'flex',
+          flexDirection: 'column',
+          gap: '8px',
+        }}
+      >
+        <div
+          style={{
+            aspectRatio: '1/1',
+            border: '1px solid grey',
+            borderRadius: '8px',
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center',
+          }}
+          onClick={handleClickSearch}
+        >
+          <svg
+            width="30"
+            height="30"
+            viewBox="0 0 100 100"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <circle
+              cx="50"
+              cy="50"
+              r="45"
+              stroke="black"
+              stroke-width="5"
+              fill="white"
+            />
+            <line
+              x1="50"
+              y1="30"
+              x2="50"
+              y2="70"
+              stroke="black"
+              stroke-width="8"
+              stroke-linecap="round"
+            />
+            <line
+              x1="30"
+              y1="50"
+              x2="70"
+              y2="50"
+              stroke="black"
+              stroke-width="8"
+              stroke-linecap="round"
+            />
+          </svg>
+        </div>
+        <div
+          style={{
+            fontWeight: 'bold',
+          }}
+        >
+          <span>장비 추가</span>
+        </div>
+      </li>
       {gears.map((gear) => {
         return (
           <BagEditWarehouseGearView
