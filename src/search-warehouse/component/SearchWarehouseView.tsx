@@ -1,14 +1,14 @@
-import React, { FC, useEffect, useState } from 'react';
-import SearchWarehouse from '../model/SearchWarehouse';
-import SearchGearView from './SearchGearView';
-import Layout from '../../Layout';
-import Bottom from '../../Bottom';
+import React, { FC, useState } from 'react';
 import { debounce } from 'lodash';
+import SearchWarehouse from '../model/SearchWarehouse';
+import InfinityScroll from './InfinityScroll';
+import SearchGearView from './SearchGearView';
+import LoadingView from '../../LoadingView';
 import { observer } from 'mobx-react-lite';
-import InfinityScroll from './InfinityScroll.tsx';
-import LoadingView from '../../LoadingView.tsx';
 
-interface Props {}
+interface Props {
+  children?: React.ReactNode;
+}
 
 const SearchWarehouseView: FC<Props> = () => {
   const [searchWarehouse] = useState(() => SearchWarehouse.new());
@@ -29,26 +29,10 @@ const SearchWarehouseView: FC<Props> = () => {
   const render = () => {
     switch (true) {
       case !keyword.length: {
-        return (
-          <div
-            style={{
-              paddingTop: '16px',
-            }}
-          >
-            검색어를 입력해주세요
-          </div>
-        );
+        return <div>검색어를 입력해주세요</div>;
       }
-      case isEmpty: {
-        return (
-          <div
-            style={{
-              paddingTop: '16px',
-            }}
-          >
-            검색 결과가 없습니다
-          </div>
-        );
+      case isEmpty && !isLoading: {
+        return <div>검색 결과가 없습니다</div>;
       }
       default: {
         return (
@@ -96,40 +80,29 @@ const SearchWarehouseView: FC<Props> = () => {
   };
 
   return (
-    <Layout>
+    <>
       <div
         style={{
-          paddingTop: '56px',
-          height: '100%',
+          width: '100%',
+          backgroundColor: 'white',
+          zIndex: 10,
         }}
       >
-        <div
+        <input
           style={{
             width: '100%',
-            position: 'fixed',
-            top: 0,
-            left: 0,
-            padding: '16px',
-            backgroundColor: 'white',
+            borderRadius: '5px',
+            backgroundColor: '#F1F1F1',
+            border: 'none',
             zIndex: 10,
           }}
-        >
-          <input
-            style={{
-              width: '100%',
-              borderRadius: '5px',
-              backgroundColor: '#F1F1F1',
-              border: 'none',
-            }}
-            type="text"
-            placeholder="제품 혹은 브랜드명으로 검색해보세요"
-            onChange={handleChange}
-          />
-        </div>
-        {render()}
+          type="text"
+          placeholder="제품 혹은 브랜드명으로 검색해보세요"
+          onChange={handleChange}
+        />
       </div>
-      <Bottom />
-    </Layout>
+      {render()}
+    </>
   );
 };
 

@@ -1,8 +1,7 @@
 import { FC, useEffect, useState } from 'react';
 import { observer } from 'mobx-react-lite';
 import BagEditWarehouseView from './BagEditWarehouseView';
-import BagEdit from '../model/BagEdit';
-import Layout from '../../Layout';
+import BagEdit from '../bag/model/BagEdit';
 import { useNavigate, useParams } from 'react-router-dom';
 
 const BagEditAddGearView: FC = ({}) => {

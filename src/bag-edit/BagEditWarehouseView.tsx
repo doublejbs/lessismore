@@ -1,9 +1,9 @@
-import BagEditImageView from './BagEditImageView';
 import { FC, useEffect, useState } from 'react';
 import { observer } from 'mobx-react-lite';
-import Warehouse from '../../warehouse/model/Warehouse.ts';
-import BagEdit from '../model/BagEdit';
+import Warehouse from '../warehouse/model/Warehouse.ts';
+import BagEdit from '../bag/model/BagEdit';
 import BagEditWarehouseGearView from './BagEditWarehouseGearView';
+import { useNavigate } from 'react-router-dom';
 
 interface Props {
   bagEdit: BagEdit;
@@ -11,9 +11,12 @@ interface Props {
 
 const BagEditWarehouseView: FC<Props> = ({ bagEdit }) => {
   const [warehouse] = useState(() => Warehouse.new());
+  const navigate = useNavigate();
   const gears = warehouse.getGears();
 
-  const handleClickSearch = () => {};
+  const handleClickSearch = () => {
+    navigate(`/bag/${bagEdit.getId()}/edit/search`);
+  };
 
   useEffect(() => {
     warehouse.getList();
@@ -35,6 +38,7 @@ const BagEditWarehouseView: FC<Props> = ({ bagEdit }) => {
           flexDirection: 'column',
           gap: '8px',
         }}
+        onClick={handleClickSearch}
       >
         <div
           style={{
@@ -45,7 +49,6 @@ const BagEditWarehouseView: FC<Props> = ({ bagEdit }) => {
             justifyContent: 'center',
             alignItems: 'center',
           }}
-          onClick={handleClickSearch}
         >
           <svg
             width="30"

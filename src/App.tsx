@@ -8,10 +8,11 @@ import app from './App.ts';
 import WarehouseWrapper from './warehouse/component/WarehouseWrapper.tsx';
 import AdminView from './AdminView.tsx';
 import LoadingView from './LoadingView.tsx';
-import SearchWarehouseView from './search-warehouse/component/SearchWarehouseView';
+import SearchWarehouseView from './search-warehouse/component/SearchWarehouseWrapper';
 import BagView from './bag/component/BagView';
 import BagEditWrapper from './bag/component/BagEditWrapper';
-import BagEditAddGearView from './bag/component/BagEditAddGearView.tsx';
+import BagEditAddGearView from './bag-edit/BagEditAddGearView.tsx';
+import BagEditSearchWarehouseView from './bag-edit-search/BagEditSearchWarehouseView';
 
 const ROUTES = [
   {
@@ -21,6 +22,10 @@ const ROUTES = [
   {
     path: '/join',
     element: <Join />,
+  },
+  {
+    path: 'bag/:id/edit/search',
+    element: <BagEditSearchWarehouseView />,
   },
   {
     path: '/bag/:id/edit',
