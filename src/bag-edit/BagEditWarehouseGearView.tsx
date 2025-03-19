@@ -1,7 +1,7 @@
 import React, { FC } from 'react';
-import BagEditImageView from './BagEditImageView';
-import Gear from '../../model/Gear';
-import BagEdit from '../model/BagEdit';
+import BagEditImageView from '../bag/component/BagEditImageView';
+import Gear from '../model/Gear';
+import BagEdit from '../bag/model/BagEdit';
 import { observer } from 'mobx-react-lite';
 
 interface Props {
