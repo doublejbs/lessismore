@@ -23,24 +23,47 @@ const BagEditSearchWarehouseView: FC = () => {
       <div
         style={{
           display: 'flex',
+          flexDirection: 'row',
           alignItems: 'center',
+          justifyContent: 'center',
         }}
-        onClick={handleClickBack}
       >
-        <svg
-          width="30"
-          height="30"
-          viewBox="0 0 30 30"
-          fill="none"
-          xmlns="http://www.w3.org/2000/svg"
+        <div
+          style={{
+            position: 'absolute',
+            left: '16px',
+            width: '30px',
+            height: '30px',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+          }}
+          onClick={handleClickBack}
         >
-          <path
-            d="M15 5L8 12L15 19"
-            stroke="black"
-            strokeWidth="2"
-            strokeLinejoin="round"
-          />
-        </svg>
+          <svg
+            width="24"
+            height="24"
+            viewBox="0 0 24 24"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              d="M15 5L8 12L15 19"
+              stroke="black"
+              strokeWidth="2"
+              strokeLinejoin="round"
+            />
+          </svg>
+        </div>
+        <div
+          style={{
+            textAlign: 'center',
+            fontWeight: 'bold',
+            fontSize: '20px',
+          }}
+        >
+          내 장비 추가
+        </div>
       </div>
       <SearchWarehouseView />
     </div>
