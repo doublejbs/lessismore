@@ -1,14 +1,16 @@
 import { liteClient } from 'algoliasearch/lite';
 import {
   collection,
-  DocumentData,
   getDocs,
+  orderBy,
   query,
-  QuerySnapshot,
+  where,
 } from '@firebase/firestore';
 import Firebase from './Firebase.ts';
 import GearType from '../warehouse/type/GearType.ts';
 import { SearchResponse } from 'algoliasearch';
+import Gear from '../model/Gear';
+import GearFilter from '../warehouse/model/GearFilter';
 
 class SearchStore {
   private readonly searchClient = liteClient(
@@ -17,6 +19,130 @@ class SearchStore {
   );
 
   public constructor(private readonly firebase: Firebase) {}
+
+  public async searchList(
+    value: string,
+    index: number
+  ): Promise<{ gears: Gear[]; hasMore: boolean }> {
+    const keyword = value.trim();
+    const { results } = await this.searchClient.search<GearType>({
+      requests: [
+        {
+          indexName: 'useless-lessismore-gear',
+          query: keyword,
+          page: index,
+          hitsPerPage: 100,
+        },
+      ],
+    });
+    const { hits, page, nbPages } = results[0] as SearchResponse<GearType>;
+
+    return {
+      gears: await this.convertWithMyGears(
+        hits.map(({ name, weight, company, objectID, imageUrl }) => ({
+          name,
+          weight,
+          company,
+          id: objectID,
+          imageUrl,
+          useless: [],
+          bags: [],
+        }))
+      ),
+      hasMore: page + 1 < nbPages,
+    };
+  }
+
+  private async convertWithMyGears(data: Array<GearType>) {
+    const myGears = await this.getList(GearFilter.All);
+
+    return data.map(
+      ({
+        name,
+        weight,
+        company,
+        id,
+        imageUrl,
+        category = '',
+        subCategory = '',
+        useless,
+        bags,
+      }) => {
+        return new Gear(
+          id,
+          name,
+          company,
+          weight,
+          imageUrl,
+          this.hasGear(id, myGears),
+          false,
+          category,
+          subCategory,
+          useless,
+          bags
+        );
+      }
+    );
+  }
+
+  private async getList(filter: GearFilter): Promise<Gear[]> {
+    const filterQuery =
+      filter === GearFilter.All
+        ? collection(this.getStore(), 'users', this.getUserId(), 'gears')
+        : query(
+            collection(this.getStore(), 'users', this.getUserId(), 'gears'),
+            where('subCategory', '==', filter),
+            orderBy('name', 'desc')
+          );
+    const gears = (await getDocs(filterQuery)).docs;
+
+    if (!!gears?.length) {
+      return gears.map((doc) => {
+        const {
+          id,
+          name,
+          company,
+          weight,
+          imageUrl,
+          isCustom,
+          category,
+          subCategory,
+          useless,
+          bags,
+        } = doc.data();
+
+        return new Gear(
+          id,
+          name,
+          company,
+          weight,
+          imageUrl,
+          true,
+          isCustom,
+          category,
+          subCategory,
+          useless,
+          bags
+        );
+      });
+    } else {
+      return [];
+    }
+  }
+
+  private hasGear(id: string, myGears: Gear[]) {
+    return myGears.some((myGear) => {
+      return myGear.hasId(id);
+    });
+  }
+
+  private getStore() {
+    return this.firebase.getStore();
+  }
+
+  private getUserId() {
+    return this.firebase.getUserId();
+  }
 }
 
 export default SearchStore;
