@@ -1,13 +1,14 @@
 import { makeAutoObservable } from 'mobx';
 import app from '../../App.ts';
-import GearStore from '../../firebase/GearStore.ts';
 import Gear from '../../model/Gear.ts';
 import GearFilter from './GearFilter.ts';
 import WarehouseFilter from './WarehouseFilter.ts';
+import WarehouseDispatcherType from './WarehouseDispatcherType.ts';
+import WarehouseDispatcher from './WarehouseDispatcher.ts';
 
 class Warehouse {
-  public static new() {
-    return new Warehouse(app.getGearStore());
+  public static from(dispatcher: WarehouseDispatcher) {
+    return new Warehouse(dispatcher);
   }
 
   private readonly filters: WarehouseFilter[] = [
@@ -54,17 +55,17 @@ class Warehouse {
   ].map(({ filter, name }) => WarehouseFilter.from(filter, name));
   private gears: Gear[] = [];
 
-  private constructor(private readonly gearStore: GearStore) {
+  private constructor(private readonly dispatcher: WarehouseDispatcherType) {
     makeAutoObservable(this);
     this.filters[0].select();
   }
 
   public async getList() {
-    this.setGears(await this.gearStore.getList(this.getSelectedFilter()));
+    this.setGears(await this.dispatcher.getList(this.getSelectedFilter()));
   }
 
   public async remove(value: Gear) {
-    await this.gearStore.remove(value);
+    await this.dispatcher.remove(value);
     await this.getList();
   }
 
@@ -75,8 +76,6 @@ class Warehouse {
   public getGears() {
     return this.gears;
   }
-
-  public edit(gear: Gear) {}
 
   public mapFilters<R>(callback: (filter: WarehouseFilter) => R) {
     return this.filters.map(callback);

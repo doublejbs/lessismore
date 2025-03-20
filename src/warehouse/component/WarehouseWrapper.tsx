@@ -4,11 +4,12 @@ import Warehouse from '../model/Warehouse.ts';
 import { observer } from 'mobx-react-lite';
 import CustomGear from '../custom-gear/model/CustomGear.ts';
 import CustomGearView from '../custom-gear/component/CustomGearView.tsx';
+import WarehouseDispatcher from '../model/WarehouseDispatcher.ts';
 
 interface Props {}
 
 const WarehouseWrapper: FC<Props> = () => {
-  const [warehouse] = useState(() => Warehouse.new());
+  const [warehouse] = useState(() => Warehouse.from(WarehouseDispatcher.new()));
   const [customGear] = useState(() => CustomGear.new());
   const shouldShowCustom = customGear.isVisible();
 

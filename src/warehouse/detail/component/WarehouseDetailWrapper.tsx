@@ -7,9 +7,8 @@ import WarehouseDetailView from './WarehouseDetailView';
 const WarehouseDetailWrapper: FC = () => {
   const warehouseDetail = app.getWarehouseDetail();
   const isVisible = warehouseDetail.isVisible();
-  const gear = warehouseDetail.getGear();
 
-  if (isVisible && gear) {
+  if (isVisible) {
     return createPortal(
       <WarehouseDetailView warehouseDetail={warehouseDetail} />,
       document.body

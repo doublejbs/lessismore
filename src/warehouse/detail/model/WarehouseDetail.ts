@@ -57,7 +57,7 @@ class WarehouseDetail {
   }
 
   public isVisible() {
-    return this.visible;
+    return this.visible && this.gear;
   }
 
   private setBags(value: BagItem[]) {
