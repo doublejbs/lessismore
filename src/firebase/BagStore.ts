@@ -87,6 +87,7 @@ class BagStore {
               subCategory = '',
               useless,
               bags,
+              isCustom,
             }) =>
               new Gear(
                 id,
@@ -95,7 +96,7 @@ class BagStore {
                 weight,
                 imageUrl,
                 true,
-                false,
+                isCustom,
                 category,
                 subCategory,
                 useless,

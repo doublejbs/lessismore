@@ -21,7 +21,7 @@ export interface GearData {
   company: string;
   weight: string;
   imageUrl: string;
-  isCustom?: boolean;
+  isCustom: boolean;
   category?: string;
   subCategory?: string;
   useless: string[];

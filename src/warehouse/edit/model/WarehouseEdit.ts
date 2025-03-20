@@ -3,18 +3,21 @@ import GearEdit from '../../custom-gear/model/GearEdit';
 import CustomGearCategory from '../../custom-gear/model/CustomGearCategory';
 import Gear from '../../../model/Gear';
 import GearFilter from '../../model/GearFilter.ts';
-import GearStore from '../../../firebase/GearStore';
+import WarehouseEditDispatcher from './WarehouseEditDispatcher.ts';
 
 class WarehouseEdit extends GearEdit {
-  public static new(gearStore: GearStore) {
-    return new WarehouseEdit(gearStore, CustomGearCategory.new());
+  public static from(
+    dispatcher: WarehouseEditDispatcher,
+    category: CustomGearCategory
+  ) {
+    return new WarehouseEdit(dispatcher, category);
   }
 
   private gear: Gear | null = null;
   private onRegister: (gear: Gear) => Promise<void> = async () => {};
 
   private constructor(
-    private readonly gearStore: GearStore,
+    private readonly dispatcher: WarehouseEditDispatcher,
     category: CustomGearCategory
   ) {
     super(category, '', '', '');
@@ -47,7 +50,7 @@ class WarehouseEdit extends GearEdit {
       this.gear?.getBags() ?? []
     );
 
-    await this.gearStore.update(updatedGear);
+    await this.dispatcher.update(updatedGear);
     await this.onRegister(updatedGear);
   }
 

@@ -5,6 +5,8 @@ import BagStore from './firebase/BagStore.ts';
 import SearchStore from './firebase/SearchStore.ts';
 import WarehouseEdit from './warehouse/edit/model/WarehouseEdit';
 import WarehouseDetail from './warehouse/detail/model/WarehouseDetail';
+import CustomGearCategory from './warehouse/custom-gear/model/CustomGearCategory.ts';
+import WarehouseEditDispatcher from './warehouse/edit/model/WarehouseEditDispatcher.ts';
 
 class App {
   private readonly firebase = new Firebase();
@@ -24,7 +26,10 @@ class App {
     this.gearStore = new GearStore(this.firebase);
     this.setBagStore(new BagStore(this.firebase, this.gearStore));
     this.searchStore = new SearchStore(this.firebase);
-    this.warehouseEdit = WarehouseEdit.new(this.gearStore);
+    this.warehouseEdit = WarehouseEdit.from(
+      WarehouseEditDispatcher.from(this.gearStore),
+      CustomGearCategory.new()
+    );
     this.warehouseDetail = WarehouseDetail.new();
     this.setInitialized(true);
   }

@@ -1,0 +1,23 @@
+import WarehouseDispatcherType from './WarehouseDispatcherType.ts';
+import GearFilter from './GearFilter.ts';
+import Gear from '../../model/Gear.ts';
+import GearStore from '../../firebase/GearStore.ts';
+import app from '../../App.ts';
+
+class WarehouseDispatcher implements WarehouseDispatcherType {
+  public static new() {
+    return new WarehouseDispatcher(app.getGearStore());
+  }
+
+  private constructor(private readonly gearStore: GearStore) {}
+
+  public async getList(filter: GearFilter): Promise<Gear[]> {
+    return await this.gearStore.getList(filter);
+  }
+
+  public async remove(gear: Gear): Promise<void> {
+    return await this.gearStore.remove(gear);
+  }
+}
+
+export default WarehouseDispatcher;
