@@ -55,6 +55,8 @@ class Warehouse {
   ].map(({ filter, name }) => WarehouseFilter.from(filter, name));
   private gears: Gear[] = [];
 
+  private loading = false;
+
   private constructor(private readonly dispatcher: WarehouseDispatcherType) {
     makeAutoObservable(this);
     this.filters[0].select();
@@ -82,6 +84,7 @@ class Warehouse {
   }
 
   public async selectFilter(filter: WarehouseFilter) {
+    this.setLoading(true);
     this.filters.forEach((currentFilter) => {
       if (currentFilter === filter) {
         currentFilter.select();
@@ -90,6 +93,7 @@ class Warehouse {
       }
     });
     await this.getList();
+    this.setLoading(false);
   }
 
   private getSelectedFilter() {
@@ -112,7 +116,21 @@ class Warehouse {
   }
 
   public isEmpty() {
-    return this.gears.length === 0;
+    return (
+      this.gears.length === 0 && this.isAllFilterSelected() && !this.isLoading()
+    );
+  }
+
+  private isAllFilterSelected() {
+    return this.filters[0].isSelected();
+  }
+
+  private setLoading(value: boolean) {
+    this.loading = value;
+  }
+
+  private isLoading() {
+    return this.loading;
   }
 }
 
