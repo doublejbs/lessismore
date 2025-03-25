@@ -7,6 +7,8 @@ import WarehouseEdit from './warehouse/edit/model/WarehouseEdit';
 import WarehouseDetail from './warehouse/detail/model/WarehouseDetail';
 import CustomGearCategory from './warehouse/custom-gear/model/CustomGearCategory.ts';
 import WarehouseEditDispatcher from './warehouse/edit/model/WarehouseEditDispatcher.ts';
+import AlertManager from './alert/AlertManager';
+import ToastManager from './toast/ToastManager';
 
 class App {
   private readonly firebase = new Firebase();
@@ -15,6 +17,8 @@ class App {
   private searchStore!: SearchStore;
   private warehouseEdit!: WarehouseEdit;
   private warehouseDetail!: WarehouseDetail;
+  private alertManager!: AlertManager;
+  private toastManager!: ToastManager;
   private initialized = false;
 
   public constructor() {
@@ -31,6 +35,8 @@ class App {
       CustomGearCategory.new()
     );
     this.warehouseDetail = WarehouseDetail.new();
+    this.alertManager = AlertManager.new();
+    this.toastManager = ToastManager.new();
     this.setInitialized(true);
   }
 
@@ -76,6 +82,14 @@ class App {
 
   public getWarehouseDetail() {
     return this.warehouseDetail;
+  }
+
+  public getAlertManager() {
+    return this.alertManager;
+  }
+
+  public getToastManager() {
+    return this.toastManager;
   }
 }
 

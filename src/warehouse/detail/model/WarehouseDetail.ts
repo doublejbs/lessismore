@@ -29,6 +29,12 @@ class WarehouseDetail {
     this.setVisible(true);
   }
 
+  public editWith(gear: Gear, onRegister: (gear: Gear) => Promise<void>) {
+    this.setGear(gear);
+    this.setOnRegister(onRegister);
+    this.edit();
+  }
+
   public edit() {
     if (this.gear) {
       this.warehouseEdit.open(this.gear, async (gear: Gear) => {

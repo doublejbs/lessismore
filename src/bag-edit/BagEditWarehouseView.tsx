@@ -5,13 +5,16 @@ import BagEdit from '../bag/model/BagEdit';
 import BagEditWarehouseGearView from './BagEditWarehouseGearView';
 import { useNavigate } from 'react-router-dom';
 import WarehouseDispatcher from '../warehouse/model/WarehouseDispatcher.ts';
+import app from '../App';
 
 interface Props {
   bagEdit: BagEdit;
 }
 
 const BagEditWarehouseView: FC<Props> = ({ bagEdit }) => {
-  const [warehouse] = useState(() => Warehouse.from(WarehouseDispatcher.new()));
+  const [warehouse] = useState(() =>
+    Warehouse.from(WarehouseDispatcher.new(), app.getToastManager())
+  );
   const navigate = useNavigate();
   const gears = warehouse.getGears();
 

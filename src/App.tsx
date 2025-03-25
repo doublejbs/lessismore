@@ -13,6 +13,7 @@ import BagView from './bag/component/BagView';
 import BagEditWrapper from './bag/component/BagEditWrapper';
 import BagEditAddGearView from './bag-edit/BagEditAddGearView.tsx';
 import BagEditSearchWarehouseView from './bag-edit-search/BagEditSearchWarehouseView';
+import AlertView from './alert/AlertView';
 
 const ROUTES = [
   {
@@ -49,6 +50,7 @@ const App = () => {
   const navigate = useNavigate();
   const isLoggedIn = firebase.isLoggedIn();
   const isInitialized = app.isInitialized();
+  const alertManager = app.getAlertManager();
 
   useEffect(() => {
     if (isInitialized) {
@@ -66,11 +68,14 @@ const App = () => {
 
   if (isInitialized) {
     return (
-      <Routes>
-        {ROUTES.map(({ path, element }) => (
-          <Route key={path} path={path} element={element} />
-        ))}
-      </Routes>
+      <>
+        <Routes>
+          {ROUTES.map(({ path, element }) => (
+            <Route key={path} path={path} element={element} />
+          ))}
+        </Routes>
+        <AlertView alertManager={alertManager} />
+      </>
     );
   } else {
     return <LoadingView />;

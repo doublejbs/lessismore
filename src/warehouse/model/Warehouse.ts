@@ -5,10 +5,14 @@ import GearFilter from './GearFilter.ts';
 import WarehouseFilter from './WarehouseFilter.ts';
 import WarehouseDispatcherType from './WarehouseDispatcherType.ts';
 import WarehouseDispatcher from './WarehouseDispatcher.ts';
+import ToastManager from '../../toast/ToastManager';
 
 class Warehouse {
-  public static from(dispatcher: WarehouseDispatcher) {
-    return new Warehouse(dispatcher);
+  public static from(
+    dispatcher: WarehouseDispatcher,
+    toastManager: ToastManager
+  ) {
+    return new Warehouse(dispatcher, toastManager);
   }
 
   private readonly filters: WarehouseFilter[] = [
@@ -57,7 +61,10 @@ class Warehouse {
 
   private loading = false;
 
-  private constructor(private readonly dispatcher: WarehouseDispatcherType) {
+  private constructor(
+    private readonly dispatcher: WarehouseDispatcherType,
+    private readonly toastManager: ToastManager
+  ) {
     makeAutoObservable(this);
     this.filters[0].select();
   }
@@ -69,6 +76,7 @@ class Warehouse {
   public async remove(value: Gear) {
     await this.dispatcher.remove(value);
     await this.getList();
+    this.toastManager.show({ message: '삭제 되었습니다.' });
   }
 
   private setGears(value: Gear[]) {

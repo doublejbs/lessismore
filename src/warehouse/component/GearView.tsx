@@ -1,11 +1,11 @@
-import { FC, ReactNode } from 'react';
+import React, { FC, ReactNode } from 'react';
 import GearImageView from './GearImageView.tsx';
 import Gear from '../../model/Gear.ts';
 
 interface Props {
   gear: Gear;
   children?: ReactNode;
-  onClick?: () => void;
+  onClick?: (e: React.MouseEvent) => void;
 }
 
 const GearView: FC<Props> = ({ gear, children, onClick }) => {
