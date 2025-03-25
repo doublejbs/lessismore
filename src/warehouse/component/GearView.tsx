@@ -15,9 +15,8 @@ const GearView: FC<Props> = ({ gear, children, onClick }) => {
     <li
       style={{
         display: 'flex',
-        padding: '16px 0px',
-        borderBottom: '1px solid #F1F1F1',
-        gap: '8px',
+        padding: '12px 0px',
+        gap: '16px',
       }}
       onClick={onClick}
     >
@@ -26,68 +25,75 @@ const GearView: FC<Props> = ({ gear, children, onClick }) => {
           display: 'flex',
           flexDirection: 'row',
           gap: '8px',
-          flexGrow: 1,
-          minWidth: 0,
         }}
       >
         <div
           style={{
-            width: '80px',
-            height: '80px',
+            width: '100px',
+            height: '100px',
             backgroundColor: '#F1F1F1',
             display: 'flex',
             alignItems: 'center',
-            minWidth: '80px',
+            minWidth: '100px',
             borderRadius: '4px',
             justifyContent: 'center',
+            overflow: 'hidden',
           }}
         >
           <GearImageView imageUrl={imageUrl} />
         </div>
+      </div>
+      <div
+        style={{
+          display: 'flex',
+          flexDirection: 'column',
+          overflow: 'hidden',
+          paddingTop: '4px',
+          flexGrow: 1,
+        }}
+      >
         <div
           style={{
             display: 'flex',
             flexDirection: 'column',
-            flexGrow: 1,
-            minWidth: 0,
-            overflow: 'hidden',
+            height: '100%',
+            fontSize: '14px',
+            gap: '12px',
           }}
         >
           <div
             style={{
               display: 'flex',
               flexDirection: 'column',
-              height: '100%',
-              justifyContent: 'space-between',
-              fontSize: '14px',
+              overflow: 'hidden',
+              gap: '9px',
+              lineHeight: '1',
             }}
           >
             <div
+              className={'text-ellipsis'}
               style={{
-                display: 'flex',
-                flexDirection: 'column',
-                overflow: 'hidden',
-              }}
-            >
-              <div
-                style={{
-                  fontSize: '14px',
-                  fontWeight: 'bold',
-                }}
-              >
-                {gear.getCompany()}
-              </div>
-              <p className={'text-ellipsis'} style={{}}>
-                {gear.getName()}
-              </p>
-            </div>
-            <div
-              style={{
+                fontSize: '16px',
                 fontWeight: 'bold',
               }}
             >
-              {gear.getWeight() ? `${gear.getWeight()}g` : ''}
+              {gear.getName()}
             </div>
+            <div
+              style={{
+                fontSize: '12px',
+              }}
+            >
+              {gear.getCompany()}
+            </div>
+          </div>
+          <div
+            style={{
+              fontSize: '16px',
+              fontWeight: 'bold',
+            }}
+          >
+            {gear.getWeight() ? `${gear.getWeight()}g` : ''}
           </div>
         </div>
       </div>

@@ -110,6 +110,10 @@ class Warehouse {
       })
     );
   }
+
+  public isEmpty() {
+    return this.gears.length === 0;
+  }
 }
 
 export default Warehouse;

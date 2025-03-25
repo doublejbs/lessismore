@@ -15,37 +15,27 @@ const Bottom = () => {
     navigate('/bag');
   };
 
-  const handleClickSearch = () => {
-    navigate('/search');
-  };
-
   return (
     <div
       style={{
         position: 'fixed',
         width: '100%',
         bottom: '0px',
-        height: 'calc(48px + env(safe-area-inset-bottom))',
+        height: 'calc(53px + env(safe-area-inset-bottom))',
         paddingBottom: 'env(safe-area-inset-bottom)',
         display: 'flex',
         flexDirection: 'row',
         justifyContent: 'space-around',
         left: 0,
-        backgroundColor: '#F0F0F0',
+        borderTop: '2px solid #EAEAEA',
+        backgroundColor: 'white',
       }}
     >
-      <button
-        onClick={handleClickSearch}
-        style={{
-          fontWeight: isSearch ? 'bold' : 'normal',
-        }}
-      >
-        검색
-      </button>
       <button
         onClick={handleClickWarehouse}
         style={{
           fontWeight: isWarehouse ? 'bold' : 'normal',
+          width: '100%',
         }}
       >
         내 장비
@@ -54,6 +44,7 @@ const Bottom = () => {
         onClick={handleClickBag}
         style={{
           fontWeight: isBag ? 'bold' : 'normal',
+          width: '100%',
         }}
       >
         배낭

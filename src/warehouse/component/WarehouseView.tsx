@@ -6,9 +6,10 @@ import { observer } from 'mobx-react-lite';
 import WarehouseGearView from './WarehouseGearView.tsx';
 import WarehouseFiltersView from './WarehouseFiltersView.tsx';
 import CustomGear from '../custom-gear/model/CustomGear.ts';
-import CustomGearAddButtonView from '../custom-gear/component/CustomGearAddButtonView.tsx';
 import WarehouseEditWrapperView from '../edit/component/WarehouseEditWrapperView.tsx';
 import WarehouseDetailWrapper from '../detail/component/WarehouseDetailWrapper';
+import WarehouseEmptyView from './WarehouseEmptyView';
+import AddButtonView from './AddButtonView';
 
 interface Props {
   warehouse: Warehouse;
@@ -17,66 +18,72 @@ interface Props {
 
 const WarehouseView: FC<Props> = ({ warehouse, customGear }) => {
   const gears = warehouse.getGears();
+  const isEmpty = warehouse.isEmpty();
 
   useEffect(() => {
     warehouse.getList();
   }, []);
 
-  return (
-    <Layout>
-      <div
-        style={{
-          display: 'flex',
-          flexDirection: 'column',
-          gap: '16px',
-          marginTop: '8px',
-          marginBottom: '16px',
-        }}
-      >
+  if (isEmpty) {
+    return <WarehouseEmptyView />;
+  } else {
+    return (
+      <Layout>
         <div
           style={{
-            fontWeight: '1000',
-            fontSize: '48px',
-            textAlign: 'center',
-            display: 'inline-block',
-            lineHeight: 1,
-            letterSpacing: '-4.5px',
-          }}
-        >
-          useless
-        </div>
-        <WarehouseFiltersView warehouse={warehouse} />
-      </div>
-      <div
-        style={{
-          width: '100%',
-          height: '100%',
-          overflowY: 'auto',
-          marginBottom: '60px',
-        }}
-      >
-        <ul
-          style={{
-            width: '100%',
             display: 'flex',
             flexDirection: 'column',
+            gap: '16px',
+            marginTop: '8px',
+            marginBottom: '16px',
           }}
         >
-          {gears.map((gear) => (
-            <WarehouseGearView
-              key={gear.getId()}
-              gear={gear}
-              warehouse={warehouse}
-            />
-          ))}
-        </ul>
-        <CustomGearAddButtonView customGear={customGear} />
-      </div>
-      <Bottom />
-      <WarehouseEditWrapperView />
-      <WarehouseDetailWrapper />
-    </Layout>
-  );
+          <div
+            style={{
+              fontWeight: '1000',
+              fontSize: '48px',
+              textAlign: 'center',
+              display: 'inline-block',
+              lineHeight: 1,
+              letterSpacing: '-4.5px',
+            }}
+          >
+            useless
+          </div>
+          <WarehouseFiltersView warehouse={warehouse} />
+        </div>
+        <div
+          style={{
+            width: '100%',
+            height: '100%',
+            overflowY: 'auto',
+            paddingBottom: '53px',
+          }}
+        >
+          <ul
+            style={{
+              width: '100%',
+              display: 'flex',
+              flexDirection: 'column',
+              gap: '4px',
+            }}
+          >
+            {gears.map((gear) => (
+              <WarehouseGearView
+                key={gear.getId()}
+                gear={gear}
+                warehouse={warehouse}
+              />
+            ))}
+          </ul>
+        </div>
+        <AddButtonView customGear={customGear} />
+        <Bottom />
+        <WarehouseEditWrapperView />
+        <WarehouseDetailWrapper />
+      </Layout>
+    );
+  }
 };
 
 export default observer(WarehouseView);
