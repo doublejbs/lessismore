@@ -15,11 +15,11 @@ const WarehouseFiltersView: FC<Props> = ({ warehouse }) => {
   return (
     <div
       style={{
-        height: '100%',
+        height: '36px',
         width: '100%',
         display: 'flex',
         flexDirection: 'row',
-        gap: '4px',
+        gap: '8px',
         overflowX: 'scroll',
         scrollbarWidth: 'none',
       }}
@@ -30,10 +30,10 @@ const WarehouseFiltersView: FC<Props> = ({ warehouse }) => {
             key={filter.getName()}
             className={'clickable'}
             style={{
-              height: '30px',
-              borderRadius: '16px',
-              fontSize: '14px',
-              padding: '0 16px',
+              height: '100%',
+              borderRadius: '26px',
+              fontSize: '16px',
+              padding: '10px 18px',
               display: 'flex',
               justifyContent: 'center',
               alignItems: 'center',
