@@ -7,6 +7,14 @@
     filter: brightness(0.8);
 }
 
+.text-ellipsis-single {
+    text-overflow: ellipsis;
+    overflow: hidden;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 1;
+    display: -webkit-box;
+}
+
 .text-ellipsis {
     text-overflow: ellipsis;
     overflow: hidden;
