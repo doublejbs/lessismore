@@ -22,22 +22,50 @@ export interface GearData {
   weight: string;
   imageUrl: string;
   isCustom: boolean;
-  category?: string;
-  subCategory?: string;
+  category: string;
+  subCategory: string;
   useless: string[];
   bags: string[];
 }
 
 class GearStore {
-  private readonly searchClient = liteClient(
-    'RSDA6EDQZP',
-    'e6231534c3832c1253d08ce1f2d3aaa7'
-  );
-
-  private lastDoc: DocumentData | null = null;
-  private searchPage = 0;
-
   public constructor(private readonly firebase: Firebase) {}
+
+  public async getGear(id: string): Promise<Gear> {
+    const docData = await getDoc(
+      doc(this.getStore(), 'users', this.getUserId(), 'gears', id)
+    );
+
+    if (docData.exists()) {
+      const {
+        name,
+        company,
+        weight,
+        imageUrl,
+        isCustom,
+        category,
+        subCategory,
+        useless,
+        bags,
+      } = docData.data() as GearData;
+
+      return new Gear(
+        id,
+        name,
+        company,
+        weight,
+        imageUrl,
+        true,
+        isCustom,
+        category,
+        subCategory,
+        useless,
+        bags
+      );
+    } else {
+      throw Error('No Gear data found.');
+    }
+  }
 
   public async getList(filter: GearFilter): Promise<Gear[]> {
     const filterQuery =

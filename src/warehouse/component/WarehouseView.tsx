@@ -5,9 +5,7 @@ import Warehouse from '../model/Warehouse.ts';
 import { observer } from 'mobx-react-lite';
 import WarehouseGearView from './WarehouseGearView.tsx';
 import WarehouseFiltersView from './WarehouseFiltersView.tsx';
-import CustomGear from '../../custom-gear/model/CustomGear.ts';
 import WarehouseEditWrapperView from '../edit/component/WarehouseEditWrapperView.tsx';
-import WarehouseDetailWrapper from '../detail/component/WarehouseDetailWrapper';
 import WarehouseEmptyView from './WarehouseEmptyView';
 import AddButtonView from './AddButtonView';
 
@@ -79,7 +77,6 @@ const WarehouseView: FC<Props> = ({ warehouse }) => {
         <AddButtonView />
         <Bottom />
         <WarehouseEditWrapperView />
-        <WarehouseDetailWrapper />
       </Layout>
     );
   }

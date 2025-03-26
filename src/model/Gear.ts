@@ -93,6 +93,18 @@ class Gear {
   public getBags() {
     return this.bags;
   }
+
+  public getBagCount() {
+    return this.bags.length;
+  }
+
+  public getUsedCount() {
+    return this.bags.length - this.getUselessCount();
+  }
+
+  public getUselessCount() {
+    return this.useless.length;
+  }
 }
 
 export default Gear;
