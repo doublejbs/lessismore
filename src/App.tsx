@@ -15,6 +15,7 @@ import BagEditAddGearView from './bag-edit/BagEditAddGearView.tsx';
 import BagEditSearchWarehouseView from './bag-edit-search/BagEditSearchWarehouseView';
 import AlertView from './alert/AlertView';
 import CustomGearWrapper from './custom-gear/component/CustomGearWrapper';
+import WarehouseDetailWrapper from './warehouse-detail/component/WarehouseDetailWrapper';
 
 const ROUTES = [
   {
@@ -41,11 +42,15 @@ const ROUTES = [
     path: '/bag',
     element: <BagView />,
   },
+  { path: '/warehouse', element: <WarehouseWrapper /> },
+  {
+    path: '/warehouse/detail/:id',
+    element: <WarehouseDetailWrapper />,
+  },
   {
     path: '/warehouse/custom',
     element: <CustomGearWrapper />,
   },
-  { path: '/warehouse', element: <WarehouseWrapper /> },
   { path: '/admin', element: <AdminView /> },
   { path: '/search', element: <SearchWarehouseView /> },
 ];
