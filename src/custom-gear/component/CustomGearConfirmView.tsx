@@ -1,6 +1,7 @@
 import React, { FC } from 'react';
 import { observer } from 'mobx-react-lite';
 import CustomGear from '../model/CustomGear';
+import { useNavigate } from 'react-router-dom';
 
 interface Props {
   customGear: CustomGear;
@@ -8,6 +9,7 @@ interface Props {
 
 const CustomGearConfirmView: FC<Props> = ({ customGear }) => {
   const errorMessage = customGear.getErrorMessage();
+  const navigate = useNavigate();
 
   const handleClickConfirm = async () => {
     await customGear.register();
@@ -35,14 +37,13 @@ const CustomGearConfirmView: FC<Props> = ({ customGear }) => {
         {errorMessage}
       </div>
       <button
-        className={'clickable'}
         style={{
           width: '100%',
           textAlign: 'center',
           backgroundColor: 'black',
           color: 'white',
-          padding: '8px',
-          borderRadius: '5px',
+          padding: '18px 133px',
+          borderRadius: '10px',
         }}
         onClick={handleClickConfirm}
       >

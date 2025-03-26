@@ -1,8 +1,8 @@
 import CustomGearCategory from './CustomGearCategory';
 import { action, makeObservable, observable } from 'mobx';
-import WarehouseFilter from '../../model/WarehouseFilter.ts';
-import FileUpload from '../../model/FileUpload';
-import GearFilter from '../../model/GearFilter.ts';
+import WarehouseFilter from '../../warehouse/model/WarehouseFilter.ts';
+import FileUpload from '../../warehouse/model/FileUpload';
+import GearFilter from '../../warehouse/model/GearFilter.ts';
 import dayjs from 'dayjs';
 
 abstract class GearEdit extends FileUpload {

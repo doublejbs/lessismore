@@ -30,18 +30,27 @@ const CustomGearWeightView: FC<Props> = ({ customGear }) => {
       style={{
         display: 'flex',
         flexDirection: 'column',
-        gap: '8px',
+        gap: '12px',
       }}
     >
-      <span>무게(g)</span>
+      <span
+        style={{
+          fontSize: '14px',
+          fontWeight: 500,
+        }}
+      >
+        무게(g)
+      </span>
       <input
         style={{
-          borderRadius: '5px',
-          backgroundColor: 'lightgray',
+          borderRadius: '10px',
+          backgroundColor: '#F6F6F6',
           border: 'none',
+          padding: '16px',
         }}
         onChange={handleChangeWeight}
         value={weight}
+        placeholder={'무게를 입력해주세요'}
       />
     </div>
   );

@@ -1,6 +1,6 @@
 import { action, makeObservable } from 'mobx';
-import GearEdit from '../../custom-gear/model/GearEdit';
-import CustomGearCategory from '../../custom-gear/model/CustomGearCategory';
+import GearEdit from '../../../custom-gear/model/GearEdit';
+import CustomGearCategory from '../../../custom-gear/model/CustomGearCategory';
 import Gear from '../../../model/Gear';
 import GearFilter from '../../model/GearFilter.ts';
 import WarehouseEditDispatcher from './WarehouseEditDispatcher.ts';

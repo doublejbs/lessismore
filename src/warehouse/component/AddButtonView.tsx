@@ -1,12 +1,7 @@
 import { FC, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import CustomGear from '../custom-gear/model/CustomGear';
 
-interface Props {
-  customGear: CustomGear;
-}
-
-const AddButtonView: FC<Props> = ({ customGear }) => {
+const AddButtonView: FC = () => {
   const [showMenu, setShowMenu] = useState(false);
   const navigate = useNavigate();
 
@@ -20,7 +15,7 @@ const AddButtonView: FC<Props> = ({ customGear }) => {
     };
 
     const handleClickCustom = () => {
-      customGear.show();
+      navigate('/warehouse/custom', { state: { from: '/warehouse' } });
     };
 
     return (
