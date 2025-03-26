@@ -5,7 +5,7 @@ import BagStore from './firebase/BagStore.ts';
 import SearchStore from './firebase/SearchStore.ts';
 import WarehouseEdit from './warehouse/edit/model/WarehouseEdit';
 import WarehouseDetail from './warehouse/detail/model/WarehouseDetail';
-import CustomGearCategory from './warehouse/custom-gear/model/CustomGearCategory.ts';
+import CustomGearCategory from './custom-gear/model/CustomGearCategory.ts';
 import WarehouseEditDispatcher from './warehouse/edit/model/WarehouseEditDispatcher.ts';
 import AlertManager from './alert/AlertManager';
 import ToastManager from './toast/ToastManager';

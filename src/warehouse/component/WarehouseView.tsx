@@ -5,7 +5,7 @@ import Warehouse from '../model/Warehouse.ts';
 import { observer } from 'mobx-react-lite';
 import WarehouseGearView from './WarehouseGearView.tsx';
 import WarehouseFiltersView from './WarehouseFiltersView.tsx';
-import CustomGear from '../custom-gear/model/CustomGear.ts';
+import CustomGear from '../../custom-gear/model/CustomGear.ts';
 import WarehouseEditWrapperView from '../edit/component/WarehouseEditWrapperView.tsx';
 import WarehouseDetailWrapper from '../detail/component/WarehouseDetailWrapper';
 import WarehouseEmptyView from './WarehouseEmptyView';
@@ -13,10 +13,9 @@ import AddButtonView from './AddButtonView';
 
 interface Props {
   warehouse: Warehouse;
-  customGear: CustomGear;
 }
 
-const WarehouseView: FC<Props> = ({ warehouse, customGear }) => {
+const WarehouseView: FC<Props> = ({ warehouse }) => {
   const gears = warehouse.getGears();
   const isEmpty = warehouse.isEmpty();
 
@@ -77,7 +76,7 @@ const WarehouseView: FC<Props> = ({ warehouse, customGear }) => {
             ))}
           </ul>
         </div>
-        <AddButtonView customGear={customGear} />
+        <AddButtonView />
         <Bottom />
         <WarehouseEditWrapperView />
         <WarehouseDetailWrapper />

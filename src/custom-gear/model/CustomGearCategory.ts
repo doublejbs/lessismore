@@ -1,5 +1,5 @@
-import WarehouseFilter from '../../model/WarehouseFilter.ts';
-import GearFilter from '../../model/GearFilter.ts';
+import WarehouseFilter from '../../warehouse/model/WarehouseFilter.ts';
+import GearFilter from '../../warehouse/model/GearFilter.ts';
 
 class CustomGearCategory {
   public static new() {

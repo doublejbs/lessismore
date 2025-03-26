@@ -14,6 +14,7 @@ import BagEditWrapper from './bag/component/BagEditWrapper';
 import BagEditAddGearView from './bag-edit/BagEditAddGearView.tsx';
 import BagEditSearchWarehouseView from './bag-edit-search/BagEditSearchWarehouseView';
 import AlertView from './alert/AlertView';
+import CustomGearWrapper from './custom-gear/component/CustomGearWrapper';
 
 const ROUTES = [
   {
@@ -39,6 +40,10 @@ const ROUTES = [
   {
     path: '/bag',
     element: <BagView />,
+  },
+  {
+    path: '/warehouse/custom',
+    element: <CustomGearWrapper />,
   },
   { path: '/warehouse', element: <WarehouseWrapper /> },
   { path: '/admin', element: <AdminView /> },
