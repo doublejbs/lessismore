@@ -5,7 +5,7 @@ import Warehouse from '../model/Warehouse.ts';
 import { observer } from 'mobx-react-lite';
 import WarehouseGearView from './WarehouseGearView.tsx';
 import WarehouseFiltersView from './WarehouseFiltersView.tsx';
-import WarehouseEditWrapperView from '../edit/component/WarehouseEditWrapperView.tsx';
+import WarehouseEditWrapperView from '../../gear-edit/component/GearEditWrapperView.tsx';
 import WarehouseEmptyView from './WarehouseEmptyView';
 import AddButtonView from './AddButtonView';
 

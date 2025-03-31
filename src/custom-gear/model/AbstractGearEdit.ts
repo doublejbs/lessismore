@@ -5,12 +5,11 @@ import FileUpload from '../../warehouse/model/FileUpload';
 import GearFilter from '../../warehouse/model/GearFilter.ts';
 import dayjs from 'dayjs';
 
-abstract class GearEdit extends FileUpload {
+abstract class AbstractGearEdit extends FileUpload {
   @observable private name = '';
   @observable private company = '';
   @observable private weight = '';
   @observable private loading = false;
-  @observable private visible = false;
   @observable private errorMessage = '';
 
   protected constructor(
@@ -27,6 +26,8 @@ abstract class GearEdit extends FileUpload {
   }
 
   protected abstract _register(): Promise<void>;
+
+  protected abstract hide(): void;
 
   @action
   public setName(value: string) {
@@ -93,15 +94,6 @@ abstract class GearEdit extends FileUpload {
     return this.loading;
   }
 
-  public show() {
-    this.setVisible(true);
-  }
-
-  public hide() {
-    this.setVisible(false);
-    this.clear();
-  }
-
   private clear() {
     this.setName('');
     this.setWeight('');
@@ -109,15 +101,6 @@ abstract class GearEdit extends FileUpload {
     this.setErrorMessage('');
     this.setCompany('');
     this.category.clear();
-  }
-
-  @action
-  private setVisible(value: boolean) {
-    this.visible = value;
-  }
-
-  public isVisible() {
-    return this.visible;
   }
 
   @action
@@ -154,4 +137,4 @@ abstract class GearEdit extends FileUpload {
   }
 }
 
-export default GearEdit;
+export default AbstractGearEdit;

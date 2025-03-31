@@ -4,10 +4,10 @@ import GearStore from '../../firebase/GearStore';
 import Gear from '../../model/Gear';
 import { uuidv4 } from '@firebase/util';
 import CustomGearCategory from './CustomGearCategory';
-import GearEdit from './GearEdit';
+import AbstractGearEdit from './AbstractGearEdit';
 import { Location, NavigateFunction } from 'react-router-dom';
 
-class CustomGear extends GearEdit {
+class CustomGear extends AbstractGearEdit {
   public static new(navigate: NavigateFunction, location: Location<any>) {
     return new CustomGear(
       navigate,

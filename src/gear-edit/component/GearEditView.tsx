@@ -1,36 +1,36 @@
 import React, { FC } from 'react';
-import { observer } from 'mobx-react-lite';
-import ImageUploadView from './ImageUploadView.tsx';
-import CustomGearConfirmView from './CustomGearConfirmView.tsx';
-import Layout from '../../Layout';
-import CustomGear from '../model/CustomGear';
 import LoadingIconView from '../../LoadingIconView';
+import { observer } from 'mobx-react-lite';
+import GearEdit from '../model/GearEdit';
+import ImageUploadView from '../../custom-gear/component/ImageUploadView';
 import WarehouseFilter from '../../warehouse/model/WarehouseFilter.ts';
-import CustomGearWeightView from './CustomGearWeightView';
+import Layout from '../../Layout';
+import GearEditWeightView from './GearEditWeightView';
+import GearEditConfirmView from './GearEditConfirmView';
 
 interface Props {
-  customGear: CustomGear;
+  gearEdit: GearEdit;
 }
 
-const CustomGearView: FC<Props> = ({ customGear }) => {
-  const name = customGear.getName();
-  const company = customGear.getCompany();
-  const isLoading = customGear.isLoading();
+const GearEditView: FC<Props> = ({ gearEdit }) => {
+  const name = gearEdit.getName();
+  const company = gearEdit.getCompany();
+  const isLoading = gearEdit.isLoading();
 
   const handleChangeName = (e: React.ChangeEvent<HTMLInputElement>) => {
-    customGear.setName(e.target.value);
+    gearEdit.setName(e.target.value);
   };
 
   const handleChangeCompany = (e: React.ChangeEvent<HTMLInputElement>) => {
-    customGear.setCompany(e.target.value);
+    gearEdit.setCompany(e.target.value);
   };
 
   const handleClickHide = () => {
-    customGear.hide();
+    gearEdit.hide();
   };
 
   const handleClickSelectFilter = (filter: WarehouseFilter) => {
-    customGear.selectFilter(filter);
+    gearEdit.selectFilter(filter);
   };
 
   return (
@@ -91,7 +91,7 @@ const CustomGearView: FC<Props> = ({ customGear }) => {
             fontWeight: 'bold',
           }}
         >
-          직접 작성하기
+          수정하기
         </div>
       </div>
       <div
@@ -113,7 +113,7 @@ const CustomGearView: FC<Props> = ({ customGear }) => {
             alignItems: 'center',
           }}
         >
-          <ImageUploadView fileUpload={customGear} />
+          <ImageUploadView fileUpload={gearEdit} />
         </div>
         <div
           style={{
@@ -191,7 +191,7 @@ const CustomGearView: FC<Props> = ({ customGear }) => {
               gap: '8px',
             }}
           >
-            {customGear.mapFilters((filter) => {
+            {gearEdit.mapFilters((filter) => {
               return (
                 <button
                   style={{
@@ -210,11 +210,11 @@ const CustomGearView: FC<Props> = ({ customGear }) => {
             })}
           </div>
         </div>
-        <CustomGearWeightView customGear={customGear} />
+        <GearEditWeightView gearEdit={gearEdit} />
       </div>
-      <CustomGearConfirmView customGear={customGear} />
+      <GearEditConfirmView gearEdit={gearEdit} />
     </Layout>
   );
 };
 
-export default observer(CustomGearView);
+export default observer(GearEditView);

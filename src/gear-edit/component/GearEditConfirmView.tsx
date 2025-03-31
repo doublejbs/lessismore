@@ -1,16 +1,16 @@
 import React, { FC } from 'react';
 import { observer } from 'mobx-react-lite';
-import CustomGear from '../model/CustomGear';
+import GearEdit from '../model/GearEdit';
 
 interface Props {
-  customGear: CustomGear;
+  gearEdit: GearEdit;
 }
 
-const CustomGearConfirmView: FC<Props> = ({ customGear }) => {
-  const errorMessage = customGear.getErrorMessage();
+const GearEditConfirmView: FC<Props> = ({ gearEdit }) => {
+  const errorMessage = gearEdit.getErrorMessage();
 
   const handleClickConfirm = async () => {
-    await customGear.register();
+    await gearEdit.register();
   };
 
   return (
@@ -51,4 +51,4 @@ const CustomGearConfirmView: FC<Props> = ({ customGear }) => {
   );
 };
 
-export default observer(CustomGearConfirmView);
+export default observer(GearEditConfirmView);
