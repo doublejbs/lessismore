@@ -1,6 +1,7 @@
 import React, { FC } from 'react';
 import Gear from '../../model/Gear';
 import WarehouseDetail from '../model/WarehouseDetail';
+import { useNavigate } from 'react-router-dom';
 
 interface Props {
   gear: Gear;
@@ -9,6 +10,7 @@ interface Props {
 
 const WarehouseDetailBagRecordView: FC<Props> = ({ gear, warehouseDetail }) => {
   const bagCount = gear.getBagCount();
+  const navigate = useNavigate();
 
   return (
     <div
@@ -40,6 +42,10 @@ const WarehouseDetailBagRecordView: FC<Props> = ({ gear, warehouseDetail }) => {
           {warehouseDetail.mapBags((bag) => {
             const isUseless = gear.hasUseless(bag.getID());
 
+            const handleClick = () => {
+              navigate(`/bag/${bag.getID()}`);
+            };
+
             return (
               <li
                 key={bag.getID()}
@@ -50,6 +56,7 @@ const WarehouseDetailBagRecordView: FC<Props> = ({ gear, warehouseDetail }) => {
                   display: 'flex',
                   justifyContent: 'space-between',
                 }}
+                onClick={handleClick}
               >
                 <div
                   style={{

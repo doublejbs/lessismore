@@ -3,9 +3,6 @@ import Firebase from './firebase/Firebase.ts';
 import GearStore from './firebase/GearStore.ts';
 import BagStore from './firebase/BagStore.ts';
 import SearchStore from './firebase/SearchStore.ts';
-import WarehouseEdit from './warehouse/edit/model/WarehouseEdit';
-import CustomGearCategory from './custom-gear/model/CustomGearCategory.ts';
-import WarehouseEditDispatcher from './warehouse/edit/model/WarehouseEditDispatcher.ts';
 import AlertManager from './alert/AlertManager';
 import ToastManager from './toast/ToastManager';
 
@@ -14,7 +11,6 @@ class App {
   private gearStore!: GearStore;
   private bagStore!: BagStore;
   private searchStore!: SearchStore;
-  private warehouseEdit!: WarehouseEdit;
   private alertManager!: AlertManager;
   private toastManager!: ToastManager;
   private initialized = false;
@@ -28,10 +24,6 @@ class App {
     this.gearStore = new GearStore(this.firebase);
     this.setBagStore(new BagStore(this.firebase, this.gearStore));
     this.searchStore = new SearchStore(this.firebase);
-    this.warehouseEdit = WarehouseEdit.from(
-      WarehouseEditDispatcher.from(this.gearStore),
-      CustomGearCategory.new()
-    );
     this.alertManager = AlertManager.new();
     this.toastManager = ToastManager.new();
     this.setInitialized(true);
@@ -63,10 +55,6 @@ class App {
 
   public getSearchStore() {
     return this.searchStore;
-  }
-
-  public getWarehouseEdit() {
-    return this.warehouseEdit;
   }
 
   private setInitialized(value: boolean) {

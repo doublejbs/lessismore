@@ -55,12 +55,9 @@ class WarehouseDetail {
   }
 
   public edit() {
-    // if (this.gear) {
-    //   this.warehouseEdit.open(this.gear, async (gear: Gear) => {
-    //     this.setGear(gear);
-    //     await this.onRegister(gear);
-    //   });
-    // }
+    if (this.getGear()) {
+      this.navigate(`/gear/edit/${this.getGear()?.getId()}`);
+    }
   }
 
   public async delete(gear: Gear) {

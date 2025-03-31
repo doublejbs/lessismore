@@ -8,7 +8,6 @@ import app from './App.ts';
 import WarehouseWrapper from './warehouse/component/WarehouseWrapper.tsx';
 import AdminView from './AdminView.tsx';
 import LoadingView from './LoadingView.tsx';
-import SearchWarehouseView from './search-warehouse/component/SearchWarehouseWrapper';
 import BagView from './bag/component/BagView';
 import BagEditWrapper from './bag/component/BagEditWrapper';
 import BagEditAddGearView from './bag-edit/BagEditAddGearView.tsx';
@@ -16,6 +15,8 @@ import BagEditSearchWarehouseView from './bag-edit-search/BagEditSearchWarehouse
 import AlertView from './alert/AlertView';
 import CustomGearWrapper from './custom-gear/component/CustomGearWrapper';
 import WarehouseDetailWrapper from './warehouse-detail/component/WarehouseDetailWrapper';
+import GearEditWrapperView from './gear-edit/component/GearEditWrapperView';
+import SearchWarehouseView from './search-warehouse/component/SearchWarehouseView';
 
 const ROUTES = [
   {
@@ -50,6 +51,10 @@ const ROUTES = [
   {
     path: '/warehouse/custom',
     element: <CustomGearWrapper />,
+  },
+  {
+    path: '/gear/edit/:id',
+    element: <GearEditWrapperView />,
   },
   { path: '/admin', element: <AdminView /> },
   { path: '/search', element: <SearchWarehouseView /> },

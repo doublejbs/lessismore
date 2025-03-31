@@ -1,13 +1,13 @@
 import React, { FC } from 'react';
-import WarehouseEdit from '../model/WarehouseEdit';
+import GearEdit from '../model/GearEdit';
 import { observer } from 'mobx-react-lite';
 
 interface Props {
-  warehouseEdit: WarehouseEdit;
+  gearEdit: GearEdit;
 }
 
-const WarehouseEditWeightView: FC<Props> = ({ warehouseEdit }) => {
-  const weight = warehouseEdit.getWeight();
+const GearEditWeightView: FC<Props> = ({ gearEdit }) => {
+  const weight = gearEdit.getWeight();
 
   const handleChangeWeight = (e: React.ChangeEvent<HTMLInputElement>) => {
     const trimmedValue = e.target.value.trim();
@@ -18,10 +18,10 @@ const WarehouseEditWeightView: FC<Props> = ({ warehouseEdit }) => {
       if (isNaN(number)) {
         return;
       } else {
-        warehouseEdit.setWeight(String(number));
+        gearEdit.setWeight(String(number));
       }
     } else {
-      warehouseEdit.setWeight(trimmedValue);
+      gearEdit.setWeight(trimmedValue);
     }
   };
 
@@ -30,21 +30,30 @@ const WarehouseEditWeightView: FC<Props> = ({ warehouseEdit }) => {
       style={{
         display: 'flex',
         flexDirection: 'column',
-        gap: '8px',
+        gap: '12px',
       }}
     >
-      <span>무게(g)</span>
+      <span
+        style={{
+          fontSize: '14px',
+          fontWeight: 500,
+        }}
+      >
+        무게(g)
+      </span>
       <input
         style={{
-          borderRadius: '5px',
+          borderRadius: '10px',
+          backgroundColor: '#F6F6F6',
           border: 'none',
-          backgroundColor: '#F1F1F1',
+          padding: '16px',
         }}
         onChange={handleChangeWeight}
         value={weight}
+        placeholder={'무게를 입력해주세요'}
       />
     </div>
   );
 };
 
-export default observer(WarehouseEditWeightView);
+export default observer(GearEditWeightView);
