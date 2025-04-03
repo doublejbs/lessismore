@@ -10,7 +10,8 @@ class Gear {
     private readonly category: string,
     private readonly subCategory: string,
     private useless: string[],
-    private bags: string[]
+    private used: string[],
+    private bags: string[],
   ) {}
 
   public hasId(value: string) {
@@ -60,6 +61,7 @@ class Gear {
       category: this.category,
       subCategory: this.subCategory,
       useless: this.useless,
+      used: this.used,
       bags: this.bags,
     };
   }
@@ -70,10 +72,18 @@ class Gear {
 
   public removeUseless(value: string) {
     this.useless = this.useless.filter((useless) => useless !== value);
-    return this;
+
+    if (this.used.includes(value)) {
+      return this;
+    } else {
+      this.used.push(value);
+      return this;
+    }
   }
 
   public appendUseless(value: string) {
+    this.used = this.used.filter((used) => used !== value);
+
     if (this.useless.includes(value)) {
       return this;
     } else {
@@ -84,6 +94,10 @@ class Gear {
 
   public hasUseless(value: string) {
     return this.useless.includes(value);
+  }
+
+  public hasUsed(value: string) {
+    return this.used.includes(value);
   }
 
   public getUseless() {
@@ -104,6 +118,10 @@ class Gear {
 
   public getUselessCount() {
     return this.useless.length;
+  }
+
+  public getUsed() {
+    return this.used;
   }
 }
 

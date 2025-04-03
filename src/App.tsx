@@ -17,6 +17,7 @@ import CustomGearWrapper from './custom-gear/component/CustomGearWrapper';
 import WarehouseDetailWrapper from './warehouse-detail/component/WarehouseDetailWrapper';
 import GearEditWrapperView from './gear-edit/component/GearEditWrapperView';
 import SearchWarehouseView from './search-warehouse/component/SearchWarehouseView';
+import BagUselessView from './bag-useless/component/BagUselessView';
 
 const ROUTES = [
   {
@@ -30,6 +31,10 @@ const ROUTES = [
   {
     path: 'bag/:id/edit/search',
     element: <BagEditSearchWarehouseView />,
+  },
+  {
+    path: '/bag/:id/useless',
+    element: <BagUselessView />,
   },
   {
     path: '/bag/:id/edit',

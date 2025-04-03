@@ -23,7 +23,7 @@ import { runTransaction } from '@firebase/firestore';
 class BagStore {
   public constructor(
     private readonly firebase: Firebase,
-    private readonly gearStore: GearStore
+    private readonly gearStore: GearStore,
   ) {}
 
   public async getList(): Promise<BagItem[]> {
@@ -37,8 +37,8 @@ class BagStore {
           query(
             collection(this.getStore(), 'bag'),
             where('__name__', 'in', bagIDs),
-            orderBy('editDate', 'desc')
-          )
+            orderBy('editDate', 'desc'),
+          ),
         );
 
         return this.convertToArray(bags);
@@ -52,19 +52,20 @@ class BagStore {
   }
 
   public async getBag(id: string) {
-    const { name, weight, gears } = (
+    const { name, weight, gears, editDate } = (
       await getDoc(doc(this.getStore(), 'bag', id))
     ).data() as {
       name: string;
       weight: string;
+      editDate: string;
       gears: string[];
     };
     const warehouseSnapshot = await (gears.length
       ? getDocs(
           query(
             collection(this.getStore(), 'users', this.getUserID(), 'gears'),
-            where('__name__', 'in', gears)
-          )
+            where('__name__', 'in', gears),
+          ),
         )
       : Promise.resolve({ docs: [] }));
     const warehouseGears = warehouseSnapshot.docs.map((doc) => ({
@@ -75,6 +76,7 @@ class BagStore {
     return {
       name,
       weight,
+      editDate,
       gears: warehouseGears.length
         ? warehouseGears.map(
             ({
@@ -86,6 +88,7 @@ class BagStore {
               category = '',
               subCategory = '',
               useless,
+              used,
               bags,
               isCustom,
             }) =>
@@ -100,8 +103,9 @@ class BagStore {
                 category,
                 subCategory,
                 useless,
-                bags
-              )
+                used,
+                bags,
+              ),
           )
         : [],
     };
@@ -133,13 +137,7 @@ class BagStore {
 
   public async addGear(id: string, gear: Gear) {
     const bagRef = doc(this.getStore(), 'bag', id);
-    const gearRef = doc(
-      this.getStore(),
-      'users',
-      this.getUserID(),
-      'gears',
-      gear.getId()
-    );
+    const gearRef = doc(this.getStore(), 'users', this.getUserID(), 'gears', gear.getId());
 
     try {
       await runTransaction(this.getStore(), async (transaction) => {
@@ -169,13 +167,7 @@ class BagStore {
 
   public async removeGear(id: string, gear: Gear) {
     const bagRef = doc(this.getStore(), 'bag', id);
-    const gearRef = doc(
-      this.getStore(),
-      'users',
-      this.getUserID(),
-      'gears',
-      gear.getId()
-    );
+    const gearRef = doc(this.getStore(), 'users', this.getUserID(), 'gears', gear.getId());
 
     try {
       await runTransaction(this.getStore(), async (transaction) => {
@@ -221,12 +213,7 @@ class BagStore {
   public async getBags(bagIDs: string[]) {
     if (bagIDs.length) {
       return this.convertToArray(
-        await getDocs(
-          query(
-            collection(this.getStore(), 'bag'),
-            where('__name__', 'in', bagIDs)
-          )
-        )
+        await getDocs(query(collection(this.getStore(), 'bag'), where('__name__', 'in', bagIDs))),
       );
     } else {
       return [];

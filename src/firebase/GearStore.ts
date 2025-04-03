@@ -1,18 +1,15 @@
-import {
-  collection,
-  doc,
-  DocumentData,
-  getDoc,
-  getDocs,
-  query,
-  QuerySnapshot,
-} from 'firebase/firestore';
-import { liteClient } from 'algoliasearch/lite';
-import { SearchResponse } from 'algoliasearch';
-import GearType from '../warehouse/type/GearType';
+import { collection, doc, getDoc, getDocs, query } from 'firebase/firestore';
 import Firebase from './Firebase';
 import Gear from '../model/Gear';
-import { addDoc, deleteDoc, orderBy, setDoc, where } from '@firebase/firestore';
+import {
+  addDoc,
+  arrayRemove,
+  deleteDoc,
+  orderBy,
+  setDoc,
+  where,
+  writeBatch,
+} from '@firebase/firestore';
 import GearFilter from '../warehouse/model/GearFilter.ts';
 
 export interface GearData {
@@ -25,6 +22,7 @@ export interface GearData {
   category: string;
   subCategory: string;
   useless: string[];
+  used: string[];
   bags: string[];
 }
 
@@ -32,9 +30,7 @@ class GearStore {
   public constructor(private readonly firebase: Firebase) {}
 
   public async getGear(id: string): Promise<Gear> {
-    const docData = await getDoc(
-      doc(this.getStore(), 'users', this.getUserId(), 'gears', id)
-    );
+    const docData = await getDoc(doc(this.getStore(), 'users', this.getUserId(), 'gears', id));
 
     if (docData.exists()) {
       const {
@@ -46,6 +42,7 @@ class GearStore {
         category,
         subCategory,
         useless,
+        used,
         bags,
       } = docData.data() as GearData;
 
@@ -60,7 +57,8 @@ class GearStore {
         category,
         subCategory,
         useless,
-        bags
+        used,
+        bags,
       );
     } else {
       throw Error('No Gear data found.');
@@ -74,7 +72,7 @@ class GearStore {
         : query(
             collection(this.getStore(), 'users', this.getUserId(), 'gears'),
             where('subCategory', '==', filter),
-            orderBy('name', 'desc')
+            orderBy('name', 'desc'),
           );
     const gears = (await getDocs(filterQuery)).docs;
 
@@ -90,6 +88,7 @@ class GearStore {
           category,
           subCategory,
           useless,
+          used,
           bags,
         } = doc.data();
 
@@ -104,7 +103,8 @@ class GearStore {
           category,
           subCategory,
           useless,
-          bags
+          used,
+          bags,
         );
       });
     } else {
@@ -114,19 +114,17 @@ class GearStore {
 
   public async register(value: Gear[]) {
     try {
+      const batch = writeBatch(this.getStore());
+
       for (const gear of value) {
-        const gearRef = doc(
-          this.getStore(),
-          'users',
-          this.getUserId(),
-          'gears',
-          gear.getId()
-        );
+        const gearRef = doc(this.getStore(), 'users', this.getUserId(), 'gears', gear.getId());
         if ((await getDoc(gearRef)).exists()) {
         } else {
-          return await setDoc(gearRef, gear.getData());
+          batch.set(gearRef, gear.getData());
         }
       }
+
+      await batch.commit();
     } catch (e) {
       console.log(e);
     }
@@ -134,28 +132,50 @@ class GearStore {
 
   public async update(gear: Gear) {
     try {
-      const gearRef = doc(
-        this.getStore(),
-        'users',
-        this.getUserId(),
-        'gears',
-        gear.getId()
-      );
+      const gearRef = doc(this.getStore(), 'users', this.getUserId(), 'gears', gear.getId());
       await setDoc(gearRef, gear.getData());
     } catch (error) {
       console.error('Error updating gear:', error);
     }
   }
 
+  public async updateGears(gears: Gear[]) {
+    const batch = writeBatch(this.getStore());
+    for (const gear of gears) {
+      const gearRef = doc(this.getStore(), 'users', this.getUserId(), 'gears', gear.getId());
+      batch.update(gearRef, gear.getData());
+    }
+    await batch.commit();
+  }
+
   public async remove(gear: Gear) {
     try {
-      const gearRef = doc(
-        this.getStore(),
-        'users',
-        this.getUserId(),
-        'gears',
-        gear.getId()
-      );
+      const gearRef = doc(this.getStore(), 'users', this.getUserId(), 'gears', gear.getId());
+      const gearSnap = await getDoc(gearRef);
+
+      if (!gearSnap.exists()) {
+        console.error('Gear does not exist:', gear.getId());
+        return;
+      }
+
+      const { bags, weight } = gearSnap.data() as GearData;
+      const batch = writeBatch(this.getStore());
+
+      for (const bagId of bags) {
+        const bagRef = doc(this.getStore(), 'bag', bagId);
+        const bagSnap = await getDoc(bagRef);
+
+        if (bagSnap.exists()) {
+          const bagData = bagSnap.data();
+          const newWeight = Math.max(0, (bagData.weight || 0) - +weight);
+
+          batch.update(bagRef, {
+            weight: newWeight,
+            gears: arrayRemove(gear.getId()),
+          });
+        }
+      }
+      await batch.commit();
       await deleteDoc(gearRef);
     } catch (error) {
       console.error('Error deleting gear:', error);

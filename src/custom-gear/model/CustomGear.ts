@@ -16,7 +16,7 @@ class CustomGear extends AbstractGearEdit {
       CustomGearCategory.new().selectFirst(),
       '',
       '',
-      ''
+      '',
     );
   }
 
@@ -27,7 +27,7 @@ class CustomGear extends AbstractGearEdit {
     category: CustomGearCategory,
     name: string,
     company: string,
-    weight: string
+    weight: string,
   ) {
     super(category, name, company, weight);
     makeObservable(this);
@@ -46,7 +46,8 @@ class CustomGear extends AbstractGearEdit {
         this.getSelectedFirstCategory(),
         this.getSelectedFilter(),
         [],
-        []
+        [],
+        [],
       ),
     ]);
   }

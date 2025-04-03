@@ -13,7 +13,7 @@ interface Props {
 
 const BagEditWarehouseView: FC<Props> = ({ bagEdit }) => {
   const [warehouse] = useState(() =>
-    Warehouse.from(WarehouseDispatcher.new(), app.getToastManager())
+    Warehouse.from(WarehouseDispatcher.new(), app.getToastManager()),
   );
   const navigate = useNavigate();
   const gears = warehouse.getGears();
@@ -54,37 +54,25 @@ const BagEditWarehouseView: FC<Props> = ({ bagEdit }) => {
             alignItems: 'center',
           }}
         >
-          <svg
-            width="30"
-            height="30"
-            viewBox="0 0 100 100"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <circle
-              cx="50"
-              cy="50"
-              r="45"
-              stroke="black"
-              stroke-width="5"
-              fill="white"
+          <svg width='30' height='30' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'>
+            <circle cx='50' cy='50' r='45' stroke='black' strokeWidth='5' fill='white' />
+            <line
+              x1='50'
+              y1='30'
+              x2='50'
+              y2='70'
+              stroke='black'
+              strokeWidth='8'
+              strokeLinecap='round'
             />
             <line
-              x1="50"
-              y1="30"
-              x2="50"
-              y2="70"
-              stroke="black"
-              stroke-width="8"
-              stroke-linecap="round"
-            />
-            <line
-              x1="30"
-              y1="50"
-              x2="70"
-              y2="50"
-              stroke="black"
-              stroke-width="8"
-              stroke-linecap="round"
+              x1='30'
+              y1='50'
+              x2='70'
+              y2='50'
+              stroke='black'
+              strokeWidth='8'
+              strokeLinecap='round'
             />
           </svg>
         </div>
@@ -97,13 +85,7 @@ const BagEditWarehouseView: FC<Props> = ({ bagEdit }) => {
         </div>
       </li>
       {gears.map((gear) => {
-        return (
-          <BagEditWarehouseGearView
-            key={gear.getId()}
-            gear={gear}
-            bagEdit={bagEdit}
-          />
-        );
+        return <BagEditWarehouseGearView key={gear.getId()} gear={gear} bagEdit={bagEdit} />;
       })}
     </ul>
   );

@@ -12,7 +12,7 @@ const BagItemView: FC<Props> = ({ bagItem, bag }) => {
   const id = bagItem.getID();
 
   const handleClick = () => {
-    navigate(`/bag/${id}`);
+    navigate(`/bag/${id}`, { state: { from: '/bag' } });
   };
 
   const handleClickDelete = (e: React.MouseEvent) => {
@@ -25,47 +25,51 @@ const BagItemView: FC<Props> = ({ bagItem, bag }) => {
       style={{
         width: '100%',
         display: 'flex',
-        justifyContent: 'space-between',
+        flexDirection: 'column',
+        padding: '12px 0',
+        gap: '20px',
       }}
       onClick={handleClick}
     >
-      <div>
-        <div
+      <div
+        style={{
+          display: 'flex',
+          flexDirection: 'row',
+          justifyContent: 'space-between',
+          alignItems: 'center',
+        }}
+      >
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '9px' }}>
+            <div style={{ fontWeight: 'bold', fontSize: '16px' }}>{bagItem.getName()}</div>
+            <div style={{ fontSize: '12px' }}>최근 수정일시 {bagItem.getEditDate()}</div>
+          </div>
+          <div style={{ fontSize: '16px', fontWeight: 'bold' }}>{bagItem.getWeight()}kg</div>
+        </div>
+        <button
           style={{
-            fontWeight: 'bold',
+            height: '32px',
+            width: '32px',
+            padding: '4px',
+            backgroundColor: '#F1F1F1',
             fontSize: '16px',
+            borderRadius: '4px',
           }}
+          onClick={handleClickDelete}
         >
-          {bagItem.getName()}
-        </div>
-        <div
-          style={{
-            fontSize: '12px',
-          }}
-        >
-          최근 수정일시 {bagItem.getEditDate()}
-        </div>
-        <div
-          style={{
-            fontSize: '16px',
-            fontWeight: 'bold',
-          }}
-        >
-          {bagItem.getWeight()}kg
-        </div>
+          🗑️
+        </button>
       </div>
       <button
         style={{
-          height: '32px',
-          width: '32px',
-          padding: '4px',
-          backgroundColor: '#F1F1F1',
-          fontSize: '16px',
-          borderRadius: '4px',
+          backgroundColor: '#F5F7FB',
+          fontSize: '14px',
+          padding: '10px 0',
+          borderRadius: '8px',
+          fontWeight: '500',
         }}
-        onClick={handleClickDelete}
       >
-        🗑️
+        사용 여부 입력하기
       </button>
     </div>
   );
