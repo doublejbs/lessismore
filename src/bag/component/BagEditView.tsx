@@ -228,7 +228,7 @@ const BagEditView: FC<Props> = ({ bagEdit }) => {
             style={{
               backgroundColor: 'black',
               width: '100%',
-              padding: '18px 133px',
+              padding: '18px',
               color: 'white',
               borderRadius: '10px',
             }}
