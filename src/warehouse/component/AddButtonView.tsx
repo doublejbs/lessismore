@@ -11,7 +11,7 @@ const AddButtonView: FC = () => {
 
   if (showMenu) {
     const handleClickSearch = () => {
-      navigate('/search');
+      navigate('/search', { state: { from: '/warehouse' } });
     };
 
     const handleClickCustom = () => {

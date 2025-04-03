@@ -10,7 +10,7 @@ class GearEdit extends AbstractGearEdit {
   public static from(
     dispatcher: GearEditDispatcher,
     navigate: NavigateFunction,
-    category: CustomGearCategory
+    category: CustomGearCategory,
   ) {
     return new GearEdit(dispatcher, navigate, category);
   }
@@ -22,7 +22,7 @@ class GearEdit extends AbstractGearEdit {
   private constructor(
     private readonly dispatcher: GearEditDispatcher,
     private readonly navigate: NavigateFunction,
-    category: CustomGearCategory
+    category: CustomGearCategory,
   ) {
     super(category, '', '', '');
     makeObservable(this);
@@ -53,7 +53,8 @@ class GearEdit extends AbstractGearEdit {
       this.getSelectedFirstCategory(),
       this.getSelectedFilter(),
       this.gear?.getUseless() ?? [],
-      this.gear?.getBags() ?? []
+      this.gear?.getUsed() ?? [],
+      this.gear?.getBags() ?? [],
     );
 
     await this.dispatcher.update(updatedGear);
@@ -75,7 +76,7 @@ class GearEdit extends AbstractGearEdit {
   }
 
   public override hide(): void {
-    this.navigate(`/warehouse/detail/${this.gear?.getId()}`);
+    this.navigate(-1);
   }
 }
 

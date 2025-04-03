@@ -49,8 +49,9 @@ const AdminView = () => {
               item.category,
               item.subCategory,
               [],
-              []
-            )
+              [],
+              [],
+            ),
           );
       }
 
@@ -66,7 +67,7 @@ const AdminView = () => {
   return (
     <div>
       <h2>엑셀 파일 업로드</h2>
-      <input type="file" accept=".xlsx, .xls" onChange={handleFileChange} />
+      <input type='file' accept='.xlsx, .xls' onChange={handleFileChange} />
       <button onClick={handleFileUpload}>업로드</button>
     </div>
   );

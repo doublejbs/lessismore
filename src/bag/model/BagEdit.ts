@@ -3,6 +3,7 @@ import app from '../../App';
 import Gear from '../../model/Gear';
 import BagStore from '../../firebase/BagStore';
 import GearStore from '../../firebase/GearStore';
+import dayjs from 'dayjs';
 
 class BagEdit {
   public static from(id: string) {
@@ -15,19 +16,21 @@ class BagEdit {
   private warehouseVisible = false;
   private searchVisible = false;
   private initialized = false;
+  private editDate = dayjs();
 
   private constructor(
     private readonly id: string,
     private readonly bagStore: BagStore,
-    private readonly gearStore: GearStore
+    private readonly gearStore: GearStore,
   ) {
     makeAutoObservable(this);
   }
 
   public async initialize() {
-    const { name, weight, gears } = await this.bagStore.getBag(this.id);
+    const { name, weight, editDate, gears } = await this.bagStore.getBag(this.id);
     this.setName(name);
     this.setWeight(weight);
+    this.setEditDate(editDate);
     this.setGears(gears);
     this.setInitialized(true);
   }
@@ -133,6 +136,14 @@ class BagEdit {
 
   public getId() {
     return this.id;
+  }
+
+  private setEditDate(value: string) {
+    this.editDate = dayjs(value);
+  }
+
+  public getEditDate() {
+    return this.editDate;
   }
 }
 

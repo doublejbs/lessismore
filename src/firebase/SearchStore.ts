@@ -1,11 +1,5 @@
 import { liteClient } from 'algoliasearch/lite';
-import {
-  collection,
-  getDocs,
-  orderBy,
-  query,
-  where,
-} from '@firebase/firestore';
+import { collection, getDocs, orderBy, query, where } from '@firebase/firestore';
 import Firebase from './Firebase.ts';
 import GearType from '../warehouse/type/GearType.ts';
 import { SearchResponse } from 'algoliasearch';
@@ -13,16 +7,13 @@ import Gear from '../model/Gear';
 import GearFilter from '../warehouse/model/GearFilter';
 
 class SearchStore {
-  private readonly searchClient = liteClient(
-    'RSDA6EDQZP',
-    'e6231534c3832c1253d08ce1f2d3aaa7'
-  );
+  private readonly searchClient = liteClient('RSDA6EDQZP', 'e6231534c3832c1253d08ce1f2d3aaa7');
 
   public constructor(private readonly firebase: Firebase) {}
 
   public async searchList(
     value: string,
-    index: number
+    index: number,
   ): Promise<{ gears: Gear[]; hasMore: boolean }> {
     const keyword = value.trim();
     const { results } = await this.searchClient.search<GearType>({
@@ -46,8 +37,9 @@ class SearchStore {
           id: objectID,
           imageUrl,
           useless: [],
+          used: [],
           bags: [],
-        }))
+        })),
       ),
       hasMore: page + 1 < nbPages,
     };
@@ -66,6 +58,7 @@ class SearchStore {
         category = '',
         subCategory = '',
         useless,
+        used,
         bags,
       }) => {
         return new Gear(
@@ -79,9 +72,10 @@ class SearchStore {
           category,
           subCategory,
           useless,
-          bags
+          used,
+          bags,
         );
-      }
+      },
     );
   }
 
@@ -92,7 +86,7 @@ class SearchStore {
         : query(
             collection(this.getStore(), 'users', this.getUserId(), 'gears'),
             where('subCategory', '==', filter),
-            orderBy('name', 'desc')
+            orderBy('name', 'desc'),
           );
     const gears = (await getDocs(filterQuery)).docs;
 
@@ -108,6 +102,7 @@ class SearchStore {
           category,
           subCategory,
           useless,
+          used,
           bags,
         } = doc.data();
 
@@ -122,7 +117,8 @@ class SearchStore {
           category,
           subCategory,
           useless,
-          bags
+          used,
+          bags,
         );
       });
     } else {
