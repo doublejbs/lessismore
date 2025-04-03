@@ -83,6 +83,7 @@ const BagUselessView: FC = () => {
             paddingTop: '24px',
             flexDirection: 'column',
             height: '100%',
+            overflowY: 'auto',
           }}
         >
           <div
@@ -119,6 +120,7 @@ const BagUselessView: FC = () => {
           <ul
             style={{
               height: '100%',
+              overflowY: 'auto',
             }}
           >
             {gears.map((gear) => {
