@@ -4,21 +4,26 @@ import Gear from '../../model/Gear';
 import BagStore from '../../firebase/BagStore';
 import GearStore from '../../firebase/GearStore';
 import dayjs from 'dayjs';
+import { Location, NavigateFunction } from 'react-router-dom';
 
 class BagEdit {
-  public static from(id: string) {
-    return new BagEdit(id, app.getBagStore(), app.getGearStore());
+  public static from(navigate: NavigateFunction, location: Location, id: string) {
+    return new BagEdit(navigate, location, id, app.getBagStore(), app.getGearStore());
   }
 
   private name: string = '';
   private weight: string = '';
   private gears: Gear[] = [];
+  private toRemoveGears: Gear[] = [];
+  private toAddGears: Gear[] = [];
   private warehouseVisible = false;
   private searchVisible = false;
   private initialized = false;
   private editDate = dayjs();
 
   private constructor(
+    private readonly navigate: NavigateFunction,
+    private readonly location: Location,
     private readonly id: string,
     private readonly bagStore: BagStore,
     private readonly gearStore: GearStore,
@@ -59,14 +64,27 @@ class BagEdit {
     return this.gears;
   }
 
-  public async addGear(gear: Gear) {
-    await this.bagStore.addGear(this.id, gear);
-    await this.initialize();
+  public addGear(gear: Gear) {
+    if (this.hasGear(gear)) {
+      return;
+    }
+
+    this.gears.push(gear);
+    this.toAddGears.push(gear);
+    this.toRemoveGears = this.toRemoveGears.filter((g) => !g.isSame(gear));
+    this.updateWeight();
   }
 
-  public async removeGear(gear: Gear) {
-    await this.bagStore.removeGear(this.id, gear);
-    await this.initialize();
+  public removeGear(gear: Gear) {
+    this.gears = this.gears.filter((g) => !g.isSame(gear));
+    this.toAddGears = this.toAddGears.filter((g) => !g.isSame(gear));
+    this.toRemoveGears.push(gear);
+    this.updateWeight();
+  }
+
+  private updateWeight() {
+    const totalWeight = this.gears.reduce((acc: number, gear) => acc + Number(gear.getWeight()), 0);
+    this.setWeight(totalWeight.toString());
   }
 
   public hasGear(gear: Gear) {
@@ -75,26 +93,6 @@ class BagEdit {
 
   public hasGearWith(id: string) {
     return this.gears.some((gear) => gear.hasId(id));
-  }
-
-  public showWarehouse() {
-    this.warehouseVisible = true;
-    this.searchVisible = false;
-  }
-
-  public showSearch() {
-    this.warehouseVisible = false;
-    this.searchVisible = true;
-  }
-
-  public hideWarehouse() {
-    this.warehouseVisible = false;
-    this.searchVisible = false;
-  }
-
-  public hideSearch() {
-    this.warehouseVisible = false;
-    this.searchVisible = false;
   }
 
   public shouldShowWarehouse() {
@@ -144,6 +142,31 @@ class BagEdit {
 
   public getEditDate() {
     return this.editDate;
+  }
+
+  public getCount() {
+    return this.gears.length;
+  }
+
+  public async save() {
+    await this.bagStore.save(this.id, this.gears);
+    this.back();
+  }
+
+  public back() {
+    if (this.location.state?.from === '/bag') {
+      this.navigate(`/bag/${this.id}/edit`);
+    } else {
+      this.navigate(-1);
+    }
+  }
+
+  public showSearch() {
+    this.navigate(`/bag/${this.id}/edit/search`, { state: { from: '/bag' } });
+  }
+
+  public showWrite() {
+    this.navigate(`/warehouse/custom`, { state: { from: '/bag' } });
   }
 }
 

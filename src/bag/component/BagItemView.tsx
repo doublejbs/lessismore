@@ -20,14 +20,20 @@ const BagItemView: FC<Props> = ({ bagItem, bag }) => {
     bag.delete(bagItem);
   };
 
+  const handleClickUseless = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    navigate(`/bag/${id}/useless`, { state: { from: '/bag' } });
+  };
+
   return (
     <div
       style={{
         width: '100%',
         display: 'flex',
         flexDirection: 'column',
-        padding: '12px 0',
+        padding: '12px 0 20px',
         gap: '20px',
+        borderBottom: '1px solid #F2F4F6',
       }}
       onClick={handleClick}
     >
@@ -68,6 +74,7 @@ const BagItemView: FC<Props> = ({ bagItem, bag }) => {
           borderRadius: '8px',
           fontWeight: '500',
         }}
+        onClick={handleClickUseless}
       >
         사용 여부 입력하기
       </button>

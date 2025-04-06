@@ -65,6 +65,7 @@ class BagStore {
           query(
             collection(this.getStore(), 'users', this.getUserID(), 'gears'),
             where('__name__', 'in', gears),
+            orderBy('createDate', 'desc'),
           ),
         )
       : Promise.resolve({ docs: [] }));
@@ -91,6 +92,7 @@ class BagStore {
               used,
               bags,
               isCustom,
+              createDate,
             }) =>
               new Gear(
                 id,
@@ -105,6 +107,7 @@ class BagStore {
                 useless,
                 used,
                 bags,
+                createDate,
               ),
           )
         : [],
@@ -133,6 +136,15 @@ class BagStore {
     });
 
     return docRef.id;
+  }
+
+  public async save(id: string, gears: Gear[]) {
+    const bagRef = doc(this.getStore(), 'bag', id);
+
+    await updateDoc(bagRef, {
+      gears: gears.map((gear) => gear.getId()),
+      weight: gears.reduce((acc, gear) => acc + parseInt(gear.getWeight() || '0'), 0),
+    });
   }
 
   public async addGear(id: string, gear: Gear) {

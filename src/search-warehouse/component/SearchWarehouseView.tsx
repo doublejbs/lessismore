@@ -4,7 +4,7 @@ import { observer } from 'mobx-react-lite';
 import SearchBarView from './SearchBarView';
 import SearchResultView from './SearchResultView';
 import SearchBottomView from './SearchBottomView';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 
 interface Props {
   children?: React.ReactNode;
@@ -12,7 +12,8 @@ interface Props {
 
 const SearchWarehouseView: FC<Props> = () => {
   const navigate = useNavigate();
-  const [searchWarehouse] = useState(() => SearchWarehouse.new(navigate));
+  const location = useLocation();
+  const [searchWarehouse] = useState(() => SearchWarehouse.new(navigate, location));
   const selectedCount = searchWarehouse.getSelectedCount();
 
   return (

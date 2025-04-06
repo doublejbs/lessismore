@@ -55,6 +55,7 @@ class GearEdit extends AbstractGearEdit {
       this.gear?.getUseless() ?? [],
       this.gear?.getUsed() ?? [],
       this.gear?.getBags() ?? [],
+      this.gear?.getCreateDate() ?? Date.now(),
     );
 
     await this.dispatcher.update(updatedGear);

@@ -1,8 +1,8 @@
 import React, { FC } from 'react';
-import BagEditImageView from '../bag/component/BagEditImageView';
 import Gear from '../model/Gear';
 import BagEdit from '../bag/model/BagEdit';
 import { observer } from 'mobx-react-lite';
+import GearView from '../warehouse/component/GearView';
 
 interface Props {
   gear: Gear;
@@ -11,123 +11,71 @@ interface Props {
 
 const BagEditWarehouseGearView: FC<Props> = ({ gear, bagEdit }) => {
   const imageUrl = gear.getImageUrl();
-  const isAdded = bagEdit.hasGear(gear);
+  const isSelected = bagEdit.hasGear(gear);
 
-  const handleClick = async (e: React.MouseEvent) => {
+  const handleChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     e.stopPropagation();
-    if (isAdded) {
-      await bagEdit.removeGear(gear);
+    if (isSelected) {
+      bagEdit.removeGear(gear);
     } else {
-      await bagEdit.addGear(gear);
+      bagEdit.addGear(gear);
     }
   };
 
   return (
-    <li
-      style={{
-        display: 'flex',
-        flexDirection: 'column',
-        gap: '8px',
-      }}
-      key={gear.getId()}
-      onClick={handleClick}
-    >
-      <div
-        style={{
-          position: 'relative',
-          aspectRatio: '2000 / 2000',
-          width: '100%',
-        }}
-      >
-        <BagEditImageView imageUrl={imageUrl} shadow={isAdded} />
-        {isAdded && (
-          <div
-            style={{
-              position: 'absolute',
-              bottom: '4px',
-              right: '4px',
-              zIndex: 10,
-            }}
-          >
-            <svg
-              width="26"
-              height="26"
-              viewBox="0 0 26 26"
-              fill="none"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <circle cx="13" cy="13" r="13" fill="black" />
-              <circle
-                cx="13"
-                cy="13"
-                r="12"
-                stroke="white"
-                strokeWidth="2"
-                fill="none"
-              />
-              <path
-                d="M8 13L12 17L18 9"
-                stroke="white"
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              />
-            </svg>
-          </div>
-        )}
-      </div>
-      <div
+    <GearView gear={gear}>
+      <label
         style={{
           display: 'flex',
-          flexDirection: 'column',
+          alignItems: 'center',
+          justifyContent: 'center',
+          width: '24px',
+          height: '24px',
+          position: 'relative',
+          cursor: 'pointer',
         }}
       >
-        <span
-          className={'text-ellipsis'}
+        <input
+          type='checkbox'
+          checked={isSelected}
+          onChange={handleChange}
           style={{
-            fontWeight: 'bold',
+            position: 'absolute',
+            opacity: 0,
+            width: 0,
+            height: 0,
+          }}
+        />
+        <span
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            width: '24px',
+            height: '24px',
+            backgroundColor: isSelected ? '#000' : '#fff',
+            border: '2px solid #000',
+            borderRadius: '4px',
+            transition: 'all 0.2s',
           }}
         >
-          {gear.getName()}
+          {isSelected && (
+            <svg
+              width='16'
+              height='16'
+              viewBox='0 0 24 24'
+              fill='none'
+              stroke='white'
+              strokeWidth='2'
+              strokeLinecap='round'
+              strokeLinejoin='round'
+            >
+              <polyline points='20 6 9 17 4 12' />
+            </svg>
+          )}
         </span>
-        <div style={{}}>
-          <span>{gear.getWeight() ? `${gear.getWeight()}g` : ' '}</span>
-          {/*useless 몇회 추가*/}
-        </div>
-      </div>
-      {/*<div*/}
-      {/*  style={{*/}
-      {/*    fontSize: '12px',*/}
-      {/*    display: 'flex',*/}
-      {/*    justifyContent: 'center',*/}
-      {/*  }}*/}
-      {/*>*/}
-      {/*  {isAdded ? (*/}
-      {/*    <button*/}
-      {/*      style={{*/}
-      {/*        backgroundColor: 'black',*/}
-      {/*        color: 'white',*/}
-      {/*        padding: '8px',*/}
-      {/*        borderRadius: '5px',*/}
-      {/*      }}*/}
-      {/*      onClick={handleClick}*/}
-      {/*    >*/}
-      {/*      삭제*/}
-      {/*    </button>*/}
-      {/*  ) : (*/}
-      {/*    <button*/}
-      {/*      style={{*/}
-      {/*        backgroundColor: '#F1F1F1',*/}
-      {/*        borderRadius: '5px',*/}
-      {/*        padding: '8px',*/}
-      {/*      }}*/}
-      {/*      onClick={handleClick}*/}
-      {/*    >*/}
-      {/*      추가*/}
-      {/*    </button>*/}
-      {/*  )}*/}
-      {/*</div>*/}
-    </li>
+      </label>
+    </GearView>
   );
 };
 

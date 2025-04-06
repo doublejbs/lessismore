@@ -24,6 +24,7 @@ export interface GearData {
   useless: string[];
   used: string[];
   bags: string[];
+  createDate: number;
 }
 
 class GearStore {
@@ -44,6 +45,7 @@ class GearStore {
         useless,
         used,
         bags,
+        createDate,
       } = docData.data() as GearData;
 
       return new Gear(
@@ -59,6 +61,7 @@ class GearStore {
         useless,
         used,
         bags,
+        createDate,
       );
     } else {
       throw Error('No Gear data found.');
@@ -68,11 +71,14 @@ class GearStore {
   public async getList(filter: GearFilter): Promise<Gear[]> {
     const filterQuery =
       filter === GearFilter.All
-        ? collection(this.getStore(), 'users', this.getUserId(), 'gears')
+        ? query(
+            collection(this.getStore(), 'users', this.getUserId(), 'gears'),
+            orderBy('createDate', 'desc'),
+          )
         : query(
             collection(this.getStore(), 'users', this.getUserId(), 'gears'),
             where('subCategory', '==', filter),
-            orderBy('name', 'desc'),
+            orderBy('createDate', 'desc'),
           );
     const gears = (await getDocs(filterQuery)).docs;
 
@@ -90,6 +96,7 @@ class GearStore {
           useless,
           used,
           bags,
+          createDate,
         } = doc.data();
 
         return new Gear(
@@ -105,6 +112,7 @@ class GearStore {
           useless,
           used,
           bags,
+          createDate,
         );
       });
     } else {

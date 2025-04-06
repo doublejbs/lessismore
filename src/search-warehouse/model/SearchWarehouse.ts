@@ -5,15 +5,11 @@ import SearchDispatcher from './SearchDispatcher';
 import { debounce } from 'lodash';
 import ToastManager from '../../toast/ToastManager';
 import app from '../../App';
-import { NavigateFunction } from 'react-router-dom';
+import { Location, NavigateFunction } from 'react-router-dom';
 
 class SearchWarehouse {
-  public static new(navigate: NavigateFunction) {
-    return new SearchWarehouse(
-      SearchDispatcher.new(),
-      app.getToastManager(),
-      navigate
-    );
+  public static new(navigate: NavigateFunction, location: Location) {
+    return new SearchWarehouse(SearchDispatcher.new(), app.getToastManager(), navigate, location);
   }
 
   @observable private keyword: string = '';
@@ -22,14 +18,13 @@ class SearchWarehouse {
   @observable private loading = false;
   @observable private hasMore = false;
   private page = 0;
-  private readonly debouncedSearch = debounce(this.executeSearch, 300).bind(
-    this
-  );
+  private readonly debouncedSearch = debounce(this.executeSearch, 300).bind(this);
 
   protected constructor(
     private readonly searchDispatcher: SearchDispatcherType,
     private readonly toastManager: ToastManager,
-    private readonly navigate: NavigateFunction
+    private readonly navigate: NavigateFunction,
+    private readonly location: Location,
   ) {
     makeObservable(this);
   }
@@ -65,7 +60,7 @@ class SearchWarehouse {
       if (this.getKeyword()) {
         const { gears, hasMore } = await this.searchDispatcher.searchList(
           this.getKeyword(),
-          this.plusPage()
+          this.plusPage(),
         );
 
         this.appendResult(gears);
@@ -84,7 +79,7 @@ class SearchWarehouse {
     if (this.getKeyword()) {
       const { gears, hasMore } = await this.searchDispatcher.searchList(
         this.getKeyword(),
-        this.plusPage()
+        this.plusPage(),
       );
 
       this.setResult(gears);
@@ -163,7 +158,15 @@ class SearchWarehouse {
   public async register() {
     await this.searchDispatcher.register(this.selected);
     this.toastManager.show({ message: '내 장비 추가가 완료됐어요' });
-    this.navigate('/warehouse');
+    this.back();
+  }
+
+  public back() {
+    if (this.location.state?.from === '/bag' || this.location.state?.from === 'warehouse') {
+      this.navigate(-1);
+    } else {
+      this.navigate('/warehouse');
+    }
   }
 }
 
