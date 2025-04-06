@@ -149,7 +149,7 @@ class BagEdit {
   }
 
   public async save() {
-    await this.bagStore.save(this.id, this.gears);
+    await this.bagStore.save(this.id, this.toAddGears, this.toRemoveGears, this.gears);
     this.back();
   }
 
