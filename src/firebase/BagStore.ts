@@ -138,13 +138,72 @@ class BagStore {
     return docRef.id;
   }
 
-  public async save(id: string, gears: Gear[]) {
+  public async save(id: string, toAddGears: Gear[], toRemoveGears: Gear[], allGears: Gear[]) {
     const bagRef = doc(this.getStore(), 'bag', id);
 
-    await updateDoc(bagRef, {
-      gears: gears.map((gear) => gear.getId()),
-      weight: gears.reduce((acc, gear) => acc + parseInt(gear.getWeight() || '0'), 0),
-    });
+    try {
+      await runTransaction(this.getStore(), async (transaction) => {
+        // 1. 모든 읽기 작업을 먼저 수행
+        const bagSnap = await transaction.get(bagRef);
+        if (!bagSnap.exists()) {
+          throw new Error('Bag document does not exist!');
+        }
+
+        // toAddGears 문서 읽기
+        const addGearSnapPromises = toAddGears.map((gear) => {
+          const gearRef = doc(this.getStore(), 'users', this.getUserID(), 'gears', gear.getId());
+          return transaction.get(gearRef);
+        });
+        const addGearSnaps = await Promise.all(addGearSnapPromises);
+
+        // toRemoveGears 문서 읽기
+        const removeGearSnapPromises = toRemoveGears.map((gear) => {
+          const gearRef = doc(this.getStore(), 'users', this.getUserID(), 'gears', gear.getId());
+          return transaction.get(gearRef);
+        });
+        const removeGearSnaps = await Promise.all(removeGearSnapPromises);
+
+        // 2. 데이터 처리
+        const gears = bagSnap.data()?.gears || [];
+        const gearsSet = new Set(gears);
+        toAddGears.forEach((gear) => gearsSet.add(gear.getId()));
+        toRemoveGears.forEach((gear) => gearsSet.delete(gear.getId()));
+
+        // 3. 모든 쓰기 작업 수행
+        // Update bag document
+        transaction.update(bagRef, {
+          gears: Array.from(gearsSet),
+          weight: allGears.reduce((acc, gear) => acc + parseInt(gear.getWeight() || '0'), 0),
+        });
+
+        // Update toAddGears documents
+        addGearSnaps.forEach((gearSnap, index) => {
+          if (gearSnap.exists()) {
+            const gear = toAddGears[index];
+            const gearRef = doc(this.getStore(), 'users', this.getUserID(), 'gears', gear.getId());
+            transaction.update(gearRef, {
+              bags: arrayUnion(id),
+            });
+          }
+        });
+
+        // Update toRemoveGears documents
+        removeGearSnaps.forEach((gearSnap, index) => {
+          if (gearSnap.exists()) {
+            const gear = toRemoveGears[index];
+            const gearRef = doc(this.getStore(), 'users', this.getUserID(), 'gears', gear.getId());
+            transaction.update(gearRef, {
+              bags: arrayRemove(id),
+              used: arrayRemove(id),
+              useless: arrayRemove(id),
+            });
+          }
+        });
+      });
+    } catch (e) {
+      console.error('Transaction failed:', e);
+      throw e;
+    }
   }
 
   public async addGear(id: string, gear: Gear) {
