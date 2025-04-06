@@ -8,7 +8,7 @@ import AbstractGearEdit from './AbstractGearEdit';
 import { Location, NavigateFunction } from 'react-router-dom';
 
 class CustomGear extends AbstractGearEdit {
-  public static new(navigate: NavigateFunction, location: Location<any>) {
+  public static new(navigate: NavigateFunction, location: Location) {
     return new CustomGear(
       navigate,
       location,
@@ -22,7 +22,7 @@ class CustomGear extends AbstractGearEdit {
 
   private constructor(
     private readonly navigate: NavigateFunction,
-    private readonly location: Location<any>,
+    private readonly location: Location,
     private readonly gearStore: GearStore,
     category: CustomGearCategory,
     name: string,
@@ -48,6 +48,7 @@ class CustomGear extends AbstractGearEdit {
         [],
         [],
         [],
+        Date.now(),
       ),
     ]);
   }
@@ -57,7 +58,11 @@ class CustomGear extends AbstractGearEdit {
   }
 
   public override hide() {
-    this.navigate('/warehouse');
+    if (this.location.state?.from === '/bag' || this.location.state?.from === '/warehouse') {
+      this.navigate(-1);
+    } else {
+      this.navigate('/warehouse');
+    }
   }
 }
 

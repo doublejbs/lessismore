@@ -39,6 +39,7 @@ class SearchStore {
           useless: [],
           used: [],
           bags: [],
+          createDate: Date.now(),
         })),
       ),
       hasMore: page + 1 < nbPages,
@@ -60,6 +61,7 @@ class SearchStore {
         useless,
         used,
         bags,
+        createDate,
       }) => {
         return new Gear(
           id,
@@ -74,6 +76,7 @@ class SearchStore {
           useless,
           used,
           bags,
+          createDate,
         );
       },
     );
@@ -104,6 +107,7 @@ class SearchStore {
           useless,
           used,
           bags,
+          createDate,
         } = doc.data();
 
         return new Gear(
@@ -119,6 +123,7 @@ class SearchStore {
           useless,
           used,
           bags,
+          createDate,
         );
       });
     } else {

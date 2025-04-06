@@ -9,6 +9,7 @@ interface GearType {
   useless: string[];
   used: string[];
   bags: string[];
+  createDate: number;
 }
 
 export default GearType;

@@ -58,9 +58,9 @@ const BagEditView: FC<Props> = ({ bagEdit }) => {
             justifyContent: 'center',
             width: '100%',
             backgroundColor: 'white',
-            paddingTop: '16px',
+            paddingTop: '0.5rem',
             zIndex: 20,
-            gap: '16px',
+            gap: '0rem',
           }}
         >
           <div>
@@ -69,14 +69,14 @@ const BagEditView: FC<Props> = ({ bagEdit }) => {
                 display: 'flex',
                 alignItems: 'center',
                 position: 'absolute',
-                left: '20px',
-                top: '20px',
+                left: '1rem',
+                top: '0.5rem',
               }}
               onClick={handleClickBack}
             >
               <svg
-                width='24'
-                height='24'
+                width='1.5rem'
+                height='1.5rem'
                 viewBox='0 0 24 24'
                 fill='none'
                 xmlns='http://www.w3.org/2000/svg'
@@ -89,7 +89,8 @@ const BagEditView: FC<Props> = ({ bagEdit }) => {
                 width: '100%',
                 textAlign: 'center',
                 fontWeight: 'bold',
-                fontSize: '20px',
+                fontSize: '1.25rem',
+                lineHeight: '1.5rem',
               }}
             >
               {name}
@@ -100,7 +101,7 @@ const BagEditView: FC<Props> = ({ bagEdit }) => {
               width: '100%',
               textAlign: 'center',
               fontWeight: 'bold',
-              fontSize: '40px',
+              fontSize: '2.5rem',
             }}
           >
             {weight}kg
@@ -109,7 +110,7 @@ const BagEditView: FC<Props> = ({ bagEdit }) => {
             style={{
               width: '100%',
               textAlign: 'center',
-              fontSize: '14px',
+              fontSize: '0.875rem',
               color: '#9B9B9B',
             }}
           >
@@ -119,7 +120,7 @@ const BagEditView: FC<Props> = ({ bagEdit }) => {
             style={{
               width: '100%',
               display: 'flex',
-              padding: '0 20px',
+              padding: '0 1.25rem',
             }}
           >
             <div
@@ -127,8 +128,8 @@ const BagEditView: FC<Props> = ({ bagEdit }) => {
                 width: '100%',
                 display: 'flex',
                 flexDirection: 'column',
-                padding: '8px 0',
-                fontSize: '14px',
+                padding: '0.5rem 0',
+                fontSize: '0.875rem',
                 fontWeight: 'bold',
               }}
               onClick={handleClickUseless}
@@ -143,8 +144,8 @@ const BagEditView: FC<Props> = ({ bagEdit }) => {
               }}
             >
               <svg
-                width='24'
-                height='24'
+                width='1.5rem'
+                height='1.5rem'
                 viewBox='0 0 24 24'
                 fill='none'
                 xmlns='http://www.w3.org/2000/svg'
@@ -163,7 +164,7 @@ const BagEditView: FC<Props> = ({ bagEdit }) => {
             style={{
               width: '100%',
               backgroundColor: '#F2F4F6',
-              height: '16px',
+              height: '0.625rem',
             }}
           ></div>
         </div>
@@ -171,9 +172,9 @@ const BagEditView: FC<Props> = ({ bagEdit }) => {
           style={{
             width: '100%',
             display: 'flex',
-            padding: '15px 20px',
+            padding: '0.9375rem 1.25rem',
             justifyContent: 'space-between',
-            fontSize: '17px',
+            fontSize: '1.0625rem',
           }}
         >
           <span
@@ -187,7 +188,7 @@ const BagEditView: FC<Props> = ({ bagEdit }) => {
             style={{
               fontWeight: '500',
               color: '#505967',
-              fontSize: '16px',
+              fontSize: '1rem',
             }}
           >
             정렬
@@ -198,9 +199,9 @@ const BagEditView: FC<Props> = ({ bagEdit }) => {
             display: 'flex',
             flexDirection: 'column',
             alignItems: 'center',
-            gap: '8px',
+            gap: '0.5rem',
             height: '100%',
-            padding: '0px 20px 0',
+            padding: '0 1.25rem 0',
             overflowY: 'auto',
           }}
         >
@@ -209,8 +210,8 @@ const BagEditView: FC<Props> = ({ bagEdit }) => {
               display: 'flex',
               flexDirection: 'column',
               width: '100%',
-              gap: '8px',
-              paddingBottom: '16px',
+              gap: '0.5rem',
+              paddingBottom: '1rem',
             }}
           >
             {gears.map((gear) => {
@@ -221,16 +222,16 @@ const BagEditView: FC<Props> = ({ bagEdit }) => {
         <div
           style={{
             width: '100%',
-            padding: '12px 24px',
+            padding: '0.75rem 1.5rem',
           }}
         >
           <button
             style={{
               backgroundColor: 'black',
               width: '100%',
-              padding: '18px',
+              padding: '1.125rem',
               color: 'white',
-              borderRadius: '10px',
+              borderRadius: '0.625rem',
             }}
             onClick={handleClickAdd}
           >

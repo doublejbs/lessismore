@@ -12,6 +12,7 @@ class Gear {
     private useless: string[],
     private used: string[],
     private bags: string[],
+    private createDate: number,
   ) {}
 
   public hasId(value: string) {
@@ -63,6 +64,7 @@ class Gear {
       useless: this.useless,
       used: this.used,
       bags: this.bags,
+      createDate: this.createDate,
     };
   }
 
@@ -113,7 +115,7 @@ class Gear {
   }
 
   public getUsedCount() {
-    return this.bags.length - this.getUselessCount();
+    return this.used.length;
   }
 
   public getUselessCount() {
@@ -122,6 +124,10 @@ class Gear {
 
   public getUsed() {
     return this.used;
+  }
+
+  public getCreateDate() {
+    return this.createDate;
   }
 }
 
