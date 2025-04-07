@@ -15,20 +15,13 @@ const BagEditGearView: FC<Props> = ({ gear, bagEdit }) => {
   const [showMenu, setShowMenu] = useState(false);
   const navigate = useNavigate();
 
-  const handleClick = () => {
-    bagEdit.removeGear(gear);
-  };
-
-  const handleClickUseless = () => {
-    bagEdit.toggleUseless(gear);
-  };
-
   const handleClickMenu = (e: React.MouseEvent) => {
     setShowMenu(true);
   };
 
   const handleClickDelete = (e: React.MouseEvent) => {
     e.stopPropagation();
+    bagEdit.delete(gear);
     setShowMenu(false);
   };
 
@@ -154,6 +147,8 @@ const BagEditGearView: FC<Props> = ({ gear, bagEdit }) => {
             left: 0,
             width: '100%',
             height: '100%',
+            backgroundColor: 'rgba(0, 0, 0, 0.5)',
+            zIndex: 20,
           }}
           onClick={handleClickBack}
         >
@@ -167,7 +162,7 @@ const BagEditGearView: FC<Props> = ({ gear, bagEdit }) => {
               position: 'fixed',
               width: '100%',
               height: 229,
-              left: 0.51,
+              left: 0,
               bottom: 0,
               backgroundColor: 'white',
               borderRadius: '16px 16px 0 0',

@@ -54,13 +54,18 @@ const BagView = () => {
   }, []);
 
   return (
-    <div>
+    <div
+      style={{
+        position: 'relative',
+        height: '100%',
+      }}
+    >
       <div
         style={{
           height: '100%',
           display: 'flex',
           flexDirection: 'column',
-          padding: '0 20px 52px 20px',
+          padding: '0 20px 0 20px',
           overflowY: 'auto',
         }}
       >
@@ -68,6 +73,11 @@ const BagView = () => {
           <span>총 {bags.length}개의 배낭이 있어요</span>
         </div>
         {render()}
+        <div
+          style={{
+            minHeight: '106px',
+          }}
+        ></div>
         <Bottom />
         <BagAddView bag={bag} />
       </div>

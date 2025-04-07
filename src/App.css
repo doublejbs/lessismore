@@ -10,7 +10,12 @@ body {
 }
 
 #root {
-    display: flex;
-    flex-direction: column;
-    height: 100%;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.no-outline:focus {
+  outline: none;
+  box-shadow: none;
 }

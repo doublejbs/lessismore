@@ -68,16 +68,16 @@ class GearStore {
     }
   }
 
-  public async getList(filter: GearFilter): Promise<Gear[]> {
+  public async getList(filters: GearFilter[]): Promise<Gear[]> {
     const filterQuery =
-      filter === GearFilter.All
+      filters.length === 1 && filters[0] === GearFilter.All
         ? query(
             collection(this.getStore(), 'users', this.getUserId(), 'gears'),
             orderBy('createDate', 'desc'),
           )
         : query(
             collection(this.getStore(), 'users', this.getUserId(), 'gears'),
-            where('subCategory', '==', filter),
+            where('subCategory', 'in', filters),
             orderBy('createDate', 'desc'),
           );
     const gears = (await getDocs(filterQuery)).docs;

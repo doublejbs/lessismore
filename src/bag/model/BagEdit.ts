@@ -5,10 +5,20 @@ import BagStore from '../../firebase/BagStore';
 import GearStore from '../../firebase/GearStore';
 import dayjs from 'dayjs';
 import { Location, NavigateFunction } from 'react-router-dom';
+import FilterManager from '../../warehouse/model/FilterManager';
+import WarehouseFilter from '../../warehouse/model/WarehouseFilter';
+import GearFilter from '../../warehouse/model/GearFilter';
 
 class BagEdit {
   public static from(navigate: NavigateFunction, location: Location, id: string) {
-    return new BagEdit(navigate, location, id, app.getBagStore(), app.getGearStore());
+    return new BagEdit(
+      navigate,
+      location,
+      id,
+      app.getBagStore(),
+      app.getGearStore(),
+      FilterManager.from(),
+    );
   }
 
   private name: string = '';
@@ -20,6 +30,9 @@ class BagEdit {
   private searchVisible = false;
   private initialized = false;
   private editDate = dayjs();
+  private usedWeight = 0;
+  private uselessChecked = false;
+  private loading = false;
 
   private constructor(
     private readonly navigate: NavigateFunction,
@@ -27,17 +40,37 @@ class BagEdit {
     private readonly id: string,
     private readonly bagStore: BagStore,
     private readonly gearStore: GearStore,
+    private readonly filterManager: FilterManager,
   ) {
     makeAutoObservable(this);
   }
 
   public async initialize() {
-    const { name, weight, editDate, gears } = await this.bagStore.getBag(this.id);
+    const { name, weight, editDate, gears } = await this.bagStore.getBag(
+      this.id,
+      this.filterManager.getSelectedFilters(),
+    );
     this.setName(name);
     this.setWeight(weight);
     this.setEditDate(editDate);
     this.setGears(gears);
+    this.calculateUsedWeight();
+    this.updateUselessChecked();
     this.setInitialized(true);
+  }
+
+  private updateUselessChecked() {
+    this.setUselessChecked(
+      this.gears.some((gear) => gear.hasUseless(this.id) || gear.hasUsed(this.id)),
+    );
+  }
+
+  private calculateUsedWeight() {
+    const usedWeight = this.gears.reduce(
+      (acc: number, gear) => (gear.hasUsed(this.id) ? acc + Number(gear.getWeight()) : acc),
+      0,
+    );
+    this.setUsedWeight(usedWeight);
   }
 
   private setName(value: string) {
@@ -167,6 +200,72 @@ class BagEdit {
 
   public showWrite() {
     this.navigate(`/warehouse/custom`, { state: { from: '/bag' } });
+  }
+
+  public async delete(gear: Gear) {
+    const filteredGears = this.gears.filter((g) => !g.isSame(gear));
+
+    await this.bagStore.save(this.id, this.toAddGears, [gear], filteredGears);
+    this.setGears(filteredGears);
+    this.updateWeight();
+  }
+
+  private setUsedWeight(value: number) {
+    this.usedWeight = value;
+  }
+
+  public getUsedWeight() {
+    return Number(this.usedWeight) / 1000;
+  }
+
+  private setUselessChecked(value: boolean) {
+    this.uselessChecked = value;
+  }
+
+  public isUselessChecked() {
+    return this.uselessChecked;
+  }
+
+  public async selectFilter(filter: WarehouseFilter) {
+    this.setLoading(true);
+    this.filterManager.selectFilter(filter);
+    this.setLoading(false);
+  }
+
+  public async deselectFilter(filter: WarehouseFilter) {
+    if (this.filterManager.isAllFilterSelected()) {
+      return;
+    } else {
+      this.setLoading(true);
+      this.filterManager.deselectFilter(filter);
+      this.setLoading(false);
+    }
+  }
+
+  public isLoading() {
+    return this.loading;
+  }
+
+  private setLoading(value: boolean) {
+    this.loading = value;
+  }
+
+  public mapFilters<R>(callback: (filter: WarehouseFilter) => R) {
+    return this.filterManager.mapFilters(callback);
+  }
+
+  public toggleFilter(filter: WarehouseFilter) {
+    if (filter.isSelected()) {
+      this.deselectFilter(filter);
+    } else {
+      this.selectFilter(filter);
+    }
+  }
+
+  public mapGears<R>(callback: (gear: Gear) => R) {
+    return this.gears
+      .filter((gear) => this.filterManager.hasFilter(gear.getSubCategory() as GearFilter))
+      .map(callback);
   }
 }
 

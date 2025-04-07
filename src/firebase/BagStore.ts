@@ -19,7 +19,7 @@ import dayjs from 'dayjs';
 import Gear from '../model/Gear';
 import BagItem from '../bag/model/BagItem';
 import { runTransaction } from '@firebase/firestore';
-
+import GearFilter from '../warehouse/model/GearFilter';
 class BagStore {
   public constructor(
     private readonly firebase: Firebase,
@@ -51,7 +51,7 @@ class BagStore {
     }
   }
 
-  public async getBag(id: string) {
+  public async getBag(id: string, filters: GearFilter[]) {
     const { name, weight, gears, editDate } = (
       await getDoc(doc(this.getStore(), 'bag', id))
     ).data() as {
@@ -60,19 +60,24 @@ class BagStore {
       editDate: string;
       gears: string[];
     };
-    const warehouseSnapshot = await (gears.length
-      ? getDocs(
-          query(
-            collection(this.getStore(), 'users', this.getUserID(), 'gears'),
-            where('__name__', 'in', gears),
-            orderBy('createDate', 'desc'),
-          ),
-        )
-      : Promise.resolve({ docs: [] }));
-    const warehouseGears = warehouseSnapshot.docs.map((doc) => ({
-      ...(doc.data() as GearData),
-      id: doc.id,
-    }));
+
+    const warehouseSnapshot = await getDocs(
+      query(
+        collection(this.getStore(), 'users', this.getUserID(), 'gears'),
+        where('__name__', 'in', gears),
+        orderBy('createDate', 'desc'),
+      ),
+    );
+    const warehouseGears = warehouseSnapshot.docs
+      .filter((doc) =>
+        filters.length === 1 && filters[0] === GearFilter.All
+          ? true
+          : filters.some((filter) => (doc.data() as GearData).subCategory.includes(filter)),
+      )
+      .map((doc) => ({
+        ...(doc.data() as GearData),
+        id: doc.id,
+      }));
 
     return {
       name,
@@ -203,67 +208,6 @@ class BagStore {
     } catch (e) {
       console.error('Transaction failed:', e);
       throw e;
-    }
-  }
-
-  public async addGear(id: string, gear: Gear) {
-    const bagRef = doc(this.getStore(), 'bag', id);
-    const gearRef = doc(this.getStore(), 'users', this.getUserID(), 'gears', gear.getId());
-
-    try {
-      await runTransaction(this.getStore(), async (transaction) => {
-        const bagSnap = await transaction.get(bagRef);
-        const gearSnap = await transaction.get(gearRef);
-
-        if (bagSnap.exists()) {
-          const bagData = bagSnap.data();
-          const currentWeight = bagData.weight || 0;
-
-          transaction.update(bagRef, {
-            weight: currentWeight + (parseInt(gear.getWeight()) || 0),
-            gears: arrayUnion(gear.getId()),
-          });
-        }
-
-        if (gearSnap.exists()) {
-          transaction.update(gearRef, {
-            bags: arrayUnion(id),
-          });
-        }
-      });
-    } catch (e) {
-      console.log(e);
-    }
-  }
-
-  public async removeGear(id: string, gear: Gear) {
-    const bagRef = doc(this.getStore(), 'bag', id);
-    const gearRef = doc(this.getStore(), 'users', this.getUserID(), 'gears', gear.getId());
-
-    try {
-      await runTransaction(this.getStore(), async (transaction) => {
-        const bagSnap = await transaction.get(bagRef);
-        const gearSnap = await transaction.get(gearRef);
-
-        if (bagSnap.exists()) {
-          const bagData = bagSnap.data();
-          const currentWeight = bagData.weight || 0;
-
-          transaction.update(bagRef, {
-            weight: currentWeight - (parseInt(gear.getWeight()) || 0),
-            gears: arrayRemove(gear.getId()),
-          });
-        }
-
-        if (gearSnap.exists()) {
-          transaction.update(gearRef, {
-            useless: arrayRemove(id),
-            bags: arrayRemove(id),
-          });
-        }
-      });
-    } catch (e) {
-      console.log(e);
     }
   }
 

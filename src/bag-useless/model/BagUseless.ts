@@ -4,7 +4,7 @@ import app from '../../App';
 import Gear from '../../model/Gear';
 import GearStore from '../../firebase/GearStore';
 import { Location, NavigateFunction } from 'react-router-dom';
-
+import GearFilter from '../../warehouse/model/GearFilter';
 class BagUseless {
   public static new(navigate: NavigateFunction, location: Location) {
     return new BagUseless(navigate, location, app.getBagStore(), app.getGearStore());
@@ -31,7 +31,7 @@ class BagUseless {
     }
 
     this.setId(id);
-    const { gears } = await this.bagStore.getBag(this.id);
+    const { gears } = await this.bagStore.getBag(this.id, [GearFilter.All]);
     this.setGears(gears);
     gears.forEach((gear) => {
       if (gear.hasUseless(this.id)) {
