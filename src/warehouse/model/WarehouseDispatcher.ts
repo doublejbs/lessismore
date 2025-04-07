@@ -11,8 +11,8 @@ class WarehouseDispatcher implements WarehouseDispatcherType {
 
   private constructor(private readonly gearStore: GearStore) {}
 
-  public async getList(filter: GearFilter): Promise<Gear[]> {
-    return await this.gearStore.getList(filter);
+  public async getList(filters: GearFilter[]): Promise<Gear[]> {
+    return await this.gearStore.getList(filters);
   }
 
   public async remove(gear: Gear): Promise<void> {

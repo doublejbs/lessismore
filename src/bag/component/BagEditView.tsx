@@ -3,6 +3,8 @@ import { FC, useEffect } from 'react';
 import { observer } from 'mobx-react-lite';
 import BagEdit from '../model/BagEdit';
 import BagEditGearView from './BagEditGearView';
+import BagEditUselessDescriptionView from './BagEditUselessDescriptionView';
+import BagEditFiltersView from './BagEditFiltersView';
 
 interface Props {
   bagEdit: BagEdit;
@@ -26,10 +28,6 @@ const BagEditView: FC<Props> = ({ bagEdit }) => {
     } else {
       navigate('/bag');
     }
-  };
-
-  const handleClickUseless = () => {
-    navigate(`/bag/${bagEdit.getId()}/useless`, { state: { from: '/bag' } });
   };
 
   useEffect(() => {
@@ -116,50 +114,7 @@ const BagEditView: FC<Props> = ({ bagEdit }) => {
           >
             {editDate}
           </div>
-          <div
-            style={{
-              width: '100%',
-              display: 'flex',
-              padding: '0 1.25rem',
-            }}
-          >
-            <div
-              style={{
-                width: '100%',
-                display: 'flex',
-                flexDirection: 'column',
-                padding: '0.5rem 0',
-                fontSize: '0.875rem',
-                fontWeight: 'bold',
-              }}
-              onClick={handleClickUseless}
-            >
-              <span>사용 여부 기록하고</span>
-              <span>무게 확인하기</span>
-            </div>
-            <div
-              style={{
-                display: 'flex',
-                alignItems: 'center',
-              }}
-            >
-              <svg
-                width='1.5rem'
-                height='1.5rem'
-                viewBox='0 0 24 24'
-                fill='none'
-                xmlns='http://www.w3.org/2000/svg'
-              >
-                <path
-                  d='M10 7L15 12L10 17'
-                  stroke='black'
-                  strokeWidth='2'
-                  strokeLinecap='round'
-                  strokeLinejoin='round'
-                />
-              </svg>
-            </div>
-          </div>
+          <BagEditUselessDescriptionView bagEdit={bagEdit} />
           <div
             style={{
               width: '100%',
@@ -194,6 +149,7 @@ const BagEditView: FC<Props> = ({ bagEdit }) => {
             정렬
           </span>
         </div>
+        <BagEditFiltersView bagEdit={bagEdit} />
         <div
           style={{
             display: 'flex',
@@ -214,7 +170,7 @@ const BagEditView: FC<Props> = ({ bagEdit }) => {
               paddingBottom: '1rem',
             }}
           >
-            {gears.map((gear) => {
+            {bagEdit.mapGears((gear) => {
               return <BagEditGearView key={gear.getId()} gear={gear} bagEdit={bagEdit} />;
             })}
           </ul>

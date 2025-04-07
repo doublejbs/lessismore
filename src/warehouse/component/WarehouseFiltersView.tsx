@@ -9,7 +9,7 @@ interface Props {
 
 const WarehouseFiltersView: FC<Props> = ({ warehouse }) => {
   const handleClick = (filter: WarehouseFilter) => {
-    warehouse.selectFilter(filter);
+    warehouse.toggleFilter(filter);
   };
 
   return (

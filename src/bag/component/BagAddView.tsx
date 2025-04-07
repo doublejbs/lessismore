@@ -19,7 +19,8 @@ const BagAddView: FC<Props> = ({ bag }) => {
     setInputValue(e.target.value);
   };
 
-  const handleClickConfirm = async () => {
+  const handleClickConfirm = async (e: React.MouseEvent) => {
+    e.stopPropagation();
     const bagID = await bag.add(inputValue);
 
     if (bagID) {
@@ -29,7 +30,8 @@ const BagAddView: FC<Props> = ({ bag }) => {
     }
   };
 
-  const handleClickCancel = () => {
+  const handleClickCancel = (e: React.MouseEvent) => {
+    e.stopPropagation();
     setInputValue('');
     setShouldShowAdd(false);
   };
@@ -39,51 +41,48 @@ const BagAddView: FC<Props> = ({ bag }) => {
       <button
         style={{
           position: 'fixed',
-          right: '10px',
-          bottom: '90px',
-          borderRadius: '12px',
+          right: '20px',
+          bottom: '80px',
+          borderRadius: '32px',
           border: '1px solid black',
-          width: '64px',
-          height: '64px',
+          height: '48px',
           background: 'black',
           display: 'flex',
-          justifyContent: 'center',
+          gap: '8px',
           alignItems: 'center',
           overflow: 'hidden',
+          color: 'white',
+          padding: '12px 16px',
+          width: '127px',
         }}
         onClick={showAdd}
       >
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          viewBox="0 0 24 24"
-          width="40"
-          height="40"
-          className="svg-cross"
-        >
-          <line
-            x1="4"
-            y1="12"
-            x2="20"
-            y2="12"
-            stroke="white"
-            strokeWidth="0.5"
-          />
-          <line
-            x1="12"
-            y1="4"
-            x2="12"
-            y2="20"
-            stroke="white"
-            strokeWidth="0.5"
-          />
-        </svg>
+        <div>
+          <svg
+            width='24'
+            height='24'
+            viewBox='0 0 24 24'
+            fill='none'
+            xmlns='http://www.w3.org/2000/svg'
+          >
+            <g clip-path='url(#clip0_491_9402)'>
+              <path d='M19 13H13V19H11V13H5V11H11V5H13V11H19V13Z' fill='white' />
+            </g>
+            <defs>
+              <clipPath id='clip0_491_9402'>
+                <rect width='24' height='24' fill='white' />
+              </clipPath>
+            </defs>
+          </svg>
+        </div>
+        <div style={{ fontSize: '16px' }}>배낭 추가</div>
       </button>
       {shouldShowAdd && (
         <div
           style={{
             position: 'absolute',
             width: '100%',
-            height: '100%',
+            height: '100vh',
             top: 0,
             left: 0,
             background: 'white',
@@ -92,6 +91,7 @@ const BagAddView: FC<Props> = ({ bag }) => {
             justifyContent: 'end',
             backgroundColor: 'rgba(0, 0, 0, 0.3)',
           }}
+          onClick={handleClickCancel}
         >
           <div
             style={{
@@ -114,14 +114,15 @@ const BagAddView: FC<Props> = ({ bag }) => {
             <div>
               <input
                 style={{
-                  borderRadius: '4px',
-                  backgroundColor: 'rgba(211, 211, 211, 0.5)',
+                  borderRadius: '10px',
+                  backgroundColor: '#EEEEEE',
                   border: 'none',
                   width: '100%',
                 }}
                 placeholder={'배낭 이름을 입력해주세요'}
                 value={inputValue}
                 onChange={handleChange}
+                onClick={(e) => e.stopPropagation()}
               />
             </div>
             <div
@@ -134,9 +135,9 @@ const BagAddView: FC<Props> = ({ bag }) => {
               <button
                 style={{
                   width: '100%',
-                  backgroundColor: 'lightgray',
-                  borderRadius: '4px',
-                  padding: '4px',
+                  backgroundColor: '#EEEEEE',
+                  borderRadius: '10px',
+                  padding: '12px 0',
                 }}
                 onClick={handleClickCancel}
               >
@@ -147,8 +148,8 @@ const BagAddView: FC<Props> = ({ bag }) => {
                   width: '100%',
                   backgroundColor: 'black',
                   color: 'white',
-                  borderRadius: '4px',
-                  padding: '4px',
+                  borderRadius: '10px',
+                  padding: '12px 0',
                 }}
                 onClick={handleClickConfirm}
               >
