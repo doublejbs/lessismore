@@ -5,12 +5,19 @@ import BagEdit from '../bag/model/BagEdit';
 import { useNavigate, useParams, useLocation } from 'react-router-dom';
 import BagEditWarehouseAddMenuView from './BagEditWarehouseAddMenuView';
 import usePreventScroll from '../hooks/usePreventScroll';
+import Warehouse from '../warehouse/model/Warehouse';
+import WarehouseDispatcher from '../warehouse/model/WarehouseDispatcher';
+import app from '../App';
+import BagEditWarehouseFiltersView from './BagEditWarehouseFiltersView';
 
-const BagEditAddGearView: FC = ({}) => {
+const BagEditAddGearView: FC = () => {
   const { id = '' } = useParams();
   const navigate = useNavigate();
   const location = useLocation();
   const [bagEdit] = useState(() => BagEdit.from(navigate, location, id));
+  const [warehouse] = useState(() =>
+    Warehouse.from(WarehouseDispatcher.new(), app.getToastManager()),
+  );
   const weight = bagEdit.getWeight();
   const count = bagEdit.getCount();
   const [showMenu, setShowMenu] = useState(false);
@@ -36,7 +43,11 @@ const BagEditAddGearView: FC = ({}) => {
   };
 
   useEffect(() => {
-    bagEdit.initialize();
+    const initialize = async () => {
+      await bagEdit.initialize();
+      await warehouse.initializeWithSelectedGears(bagEdit.getGears());
+    };
+    initialize();
   }, []);
 
   return (
@@ -146,6 +157,7 @@ const BagEditAddGearView: FC = ({}) => {
               </span>
             </button>
           </div>
+          <BagEditWarehouseFiltersView warehouse={warehouse} />
         </div>
       </div>
       <div
@@ -159,10 +171,10 @@ const BagEditAddGearView: FC = ({}) => {
         <div
           style={{
             width: '100%',
-            minHeight: '149px',
+            minHeight: '204px',
           }}
         ></div>
-        <BagEditWarehouseView bagEdit={bagEdit} />
+        <BagEditWarehouseView bagEdit={bagEdit} warehouse={warehouse} />
         <div
           style={{
             minHeight: '72px',

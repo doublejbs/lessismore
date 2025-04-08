@@ -47,6 +47,7 @@ const WarehouseGearView: FC<Props> = ({ gear, warehouse }) => {
   const handleClickEdit = (e: React.MouseEvent) => {
     e.stopPropagation();
     setShowMenu(false);
+    navigate(`/gear/edit/${gear.getId()}`, { state: { from: '/warehous' } });
   };
 
   return (

@@ -1,6 +1,8 @@
 import GearFilter from './GearFilter';
 import WarehouseFilter from './WarehouseFilter';
 import { makeAutoObservable } from 'mobx';
+import Gear from '../../model/Gear';
+
 class FilterManager {
   public static from() {
     return new FilterManager();
@@ -52,6 +54,14 @@ class FilterManager {
   private constructor() {
     makeAutoObservable(this);
     this.selectAllFilter();
+  }
+
+  public initializeWithSelectedGears(selectedGears: Gear[]) {
+    selectedGears.forEach((gear) => {
+      this.filters
+        .find((currentFilter) => currentFilter.getFilter() === gear.getSubCategory())
+        ?.plusCount();
+    });
   }
 
   public getFilters() {

@@ -1,5 +1,5 @@
 import { FC, useState } from 'react';
-import LoadingIconView from '../../LoadingIconView';
+import LoadingIconView from '../LoadingIconView';
 
 interface Props {
   imageUrl: string;

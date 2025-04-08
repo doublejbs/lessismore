@@ -1,7 +1,7 @@
 import { FC } from 'react';
-import WarehouseFilter from '../../warehouse/model/WarehouseFilter';
-import BagEdit from '../model/BagEdit';
-
+import WarehouseFilter from '../warehouse/model/WarehouseFilter';
+import BagEdit from '../bag/model/BagEdit';
+import { observer } from 'mobx-react-lite';
 interface Props {
   bagEdit: BagEdit;
 }
@@ -59,4 +59,4 @@ const BagEditFiltersView: FC<Props> = ({ bagEdit }) => {
   );
 };
 
-export default BagEditFiltersView;
+export default observer(BagEditFiltersView);
