@@ -1,25 +1,16 @@
 import { FC, useEffect, useState } from 'react';
 import { observer } from 'mobx-react-lite';
 import Warehouse from '../warehouse/model/Warehouse.ts';
-import BagEdit from '../bag/model/BagEdit';
-import BagEditWarehouseGearView from './BagEditWarehouseGearView';
-import { useNavigate } from 'react-router-dom';
-import WarehouseDispatcher from '../warehouse/model/WarehouseDispatcher.ts';
-import app from '../App';
+import BagEdit from '../bag/model/BagEdit.ts';
+import BagEditWarehouseGearView from './BagEditWarehouseGearView.tsx';
 
 interface Props {
   bagEdit: BagEdit;
+  warehouse: Warehouse;
 }
 
-const BagEditWarehouseView: FC<Props> = ({ bagEdit }) => {
-  const [warehouse] = useState(() =>
-    Warehouse.from(WarehouseDispatcher.new(), app.getToastManager()),
-  );
+const BagEditWarehouseView: FC<Props> = ({ bagEdit, warehouse }) => {
   const gears = warehouse.getGears();
-
-  useEffect(() => {
-    warehouse.getList();
-  }, []);
 
   return (
     <ul

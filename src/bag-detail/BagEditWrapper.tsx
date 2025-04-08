@@ -1,6 +1,6 @@
 import { FC, useState } from 'react';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
-import BagEdit from '../model/BagEdit';
+import BagEdit from '../bag/model/BagEdit';
 import { observer } from 'mobx-react-lite';
 import BagEditView from './BagEditView';
 

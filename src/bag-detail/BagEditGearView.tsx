@@ -1,7 +1,7 @@
 import React, { FC, useState } from 'react';
 import BagEditImageView from './BagEditImageView';
-import Gear from '../../model/Gear';
-import BagEdit from '../model/BagEdit';
+import Gear from '../model/Gear';
+import BagEdit from '../bag/model/BagEdit';
 import { useNavigate } from 'react-router-dom';
 
 interface Props {

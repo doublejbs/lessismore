@@ -61,62 +61,71 @@ class BagStore {
       gears: string[];
     };
 
-    const warehouseSnapshot = await getDocs(
-      query(
-        collection(this.getStore(), 'users', this.getUserID(), 'gears'),
-        where('__name__', 'in', gears),
-        orderBy('createDate', 'desc'),
-      ),
-    );
-    const warehouseGears = warehouseSnapshot.docs
-      .filter((doc) =>
-        filters.length === 1 && filters[0] === GearFilter.All
-          ? true
-          : filters.some((filter) => (doc.data() as GearData).subCategory.includes(filter)),
-      )
-      .map((doc) => ({
-        ...(doc.data() as GearData),
-        id: doc.id,
-      }));
+    if (gears.length === 0) {
+      return {
+        name,
+        weight,
+        editDate,
+        gears: [],
+      };
+    } else {
+      const warehouseSnapshot = await getDocs(
+        query(
+          collection(this.getStore(), 'users', this.getUserID(), 'gears'),
+          where('__name__', 'in', gears),
+          orderBy('createDate', 'desc'),
+        ),
+      );
+      const warehouseGears = warehouseSnapshot.docs
+        .filter((doc) =>
+          filters.length === 1 && filters[0] === GearFilter.All
+            ? true
+            : filters.some((filter) => (doc.data() as GearData).subCategory.includes(filter)),
+        )
+        .map((doc) => ({
+          ...(doc.data() as GearData),
+          id: doc.id,
+        }));
 
-    return {
-      name,
-      weight,
-      editDate,
-      gears: warehouseGears.length
-        ? warehouseGears.map(
-            ({
-              id,
-              name,
-              company,
-              weight,
-              imageUrl,
-              category = '',
-              subCategory = '',
-              useless,
-              used,
-              bags,
-              isCustom,
-              createDate,
-            }) =>
-              new Gear(
+      return {
+        name,
+        weight,
+        editDate,
+        gears: warehouseGears.length
+          ? warehouseGears.map(
+              ({
                 id,
                 name,
                 company,
                 weight,
                 imageUrl,
-                true,
-                isCustom,
-                category,
-                subCategory,
+                category = '',
+                subCategory = '',
                 useless,
                 used,
                 bags,
+                isCustom,
                 createDate,
-              ),
-          )
-        : [],
-    };
+              }) =>
+                new Gear(
+                  id,
+                  name,
+                  company,
+                  weight,
+                  imageUrl,
+                  true,
+                  isCustom,
+                  category,
+                  subCategory,
+                  useless,
+                  used,
+                  bags,
+                  createDate,
+                ),
+            )
+          : [],
+      };
+    }
   }
 
   private convertToArray(data: QuerySnapshot<DocumentData, DocumentData>) {

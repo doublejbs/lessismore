@@ -43,6 +43,11 @@ const BagView = () => {
             {bags.map((bagItem: BagItem) => (
               <BagItemView key={bagItem.getID()} bag={bag} bagItem={bagItem} />
             ))}
+            <div
+              style={{
+                minHeight: '52px',
+              }}
+            ></div>
           </div>
         );
       }
@@ -66,7 +71,6 @@ const BagView = () => {
           display: 'flex',
           flexDirection: 'column',
           padding: '0 20px 0 20px',
-          overflowY: 'auto',
         }}
       >
         <div style={{ padding: '24px 0', fontSize: '20px', fontWeight: 'bold' }}>

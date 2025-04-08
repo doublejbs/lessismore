@@ -1,5 +1,5 @@
 import { FC } from 'react';
-import BagEdit from '../model/BagEdit';
+import BagEdit from '../bag/model/BagEdit';
 import { useNavigate } from 'react-router-dom';
 import { observer } from 'mobx-react-lite';
 

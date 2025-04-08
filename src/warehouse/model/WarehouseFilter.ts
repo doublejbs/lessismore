@@ -7,10 +7,11 @@ class WarehouseFilter {
   }
 
   private selected = false;
+  private count = 0;
 
   private constructor(
     private readonly filter: GearFilter,
-    private readonly name: string
+    private readonly name: string,
   ) {
     makeAutoObservable(this);
   }
@@ -37,6 +38,26 @@ class WarehouseFilter {
 
   public isSame(filter: GearFilter) {
     return this.filter === filter;
+  }
+
+  private setCount(value: number) {
+    this.count = value;
+  }
+
+  public getCount() {
+    return this.count;
+  }
+
+  public plusCount() {
+    this.setCount(this.count + 1);
+  }
+
+  public minusCount() {
+    this.setCount(this.count - 1);
+  }
+
+  public resetCount() {
+    this.setCount(0);
   }
 }
 
