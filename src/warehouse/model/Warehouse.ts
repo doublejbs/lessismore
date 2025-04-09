@@ -13,7 +13,6 @@ class Warehouse {
   }
 
   private gears: Gear[] = [];
-  private initialized = false;
   private loading = false;
 
   private constructor(
@@ -22,18 +21,6 @@ class Warehouse {
     private readonly filterManager: FilterManager,
   ) {
     makeAutoObservable(this);
-  }
-
-  public async initializeWithSelectedGears(selectedGears: Gear[]) {
-    if (this.initialized || this.isLoading()) {
-      return;
-    } else {
-      this.setLoading(true);
-      this.filterManager.initializeWithSelectedGears(selectedGears);
-      await this.getList();
-      this.setInitialized(true);
-      this.setLoading(false);
-    }
   }
 
   public async initialize() {
@@ -110,10 +97,6 @@ class Warehouse {
 
   private isLoading() {
     return this.loading;
-  }
-
-  private setInitialized(value: boolean) {
-    this.initialized = value;
   }
 }
 

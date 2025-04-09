@@ -1,26 +1,20 @@
 import { FC, useEffect, useState } from 'react';
 import { observer } from 'mobx-react-lite';
 import BagEditWarehouseView from './BagEditWarehouseView';
-import BagEdit from '../bag/model/BagEdit';
 import { useNavigate, useParams, useLocation } from 'react-router-dom';
 import BagEditWarehouseAddMenuView from './BagEditWarehouseAddMenuView';
 import usePreventScroll from '../hooks/usePreventScroll';
-import Warehouse from '../warehouse/model/Warehouse';
-import WarehouseDispatcher from '../warehouse/model/WarehouseDispatcher';
-import app from '../App';
 import BagEditWarehouseFiltersView from './BagEditWarehouseFiltersView';
+import BagEdit from './model/BagEdit';
 
-const BagEditAddGearView: FC = () => {
+const BagEditView: FC = () => {
   const { id = '' } = useParams();
   const navigate = useNavigate();
   const location = useLocation();
   const [bagEdit] = useState(() => BagEdit.from(navigate, location, id));
-  const [warehouse] = useState(() =>
-    Warehouse.from(WarehouseDispatcher.new(), app.getToastManager()),
-  );
+  const [showMenu, setShowMenu] = useState(false);
   const weight = bagEdit.getWeight();
   const count = bagEdit.getCount();
-  const [showMenu, setShowMenu] = useState(false);
 
   usePreventScroll(showMenu);
 
@@ -43,11 +37,7 @@ const BagEditAddGearView: FC = () => {
   };
 
   useEffect(() => {
-    const initialize = async () => {
-      await bagEdit.initialize();
-      await warehouse.initializeWithSelectedGears(bagEdit.getGears());
-    };
-    initialize();
+    bagEdit.initialize();
   }, []);
 
   return (
@@ -157,7 +147,7 @@ const BagEditAddGearView: FC = () => {
               </span>
             </button>
           </div>
-          <BagEditWarehouseFiltersView warehouse={warehouse} />
+          <BagEditWarehouseFiltersView bagEdit={bagEdit} />
         </div>
       </div>
       <div
@@ -174,7 +164,7 @@ const BagEditAddGearView: FC = () => {
             minHeight: '204px',
           }}
         ></div>
-        <BagEditWarehouseView bagEdit={bagEdit} warehouse={warehouse} />
+        <BagEditWarehouseView bagEdit={bagEdit} />
         <div
           style={{
             minHeight: '72px',
@@ -211,4 +201,4 @@ const BagEditAddGearView: FC = () => {
   );
 };
 
-export default observer(BagEditAddGearView);
+export default observer(BagEditView);

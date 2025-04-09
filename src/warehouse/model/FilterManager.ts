@@ -64,6 +64,14 @@ class FilterManager {
     });
   }
 
+  public addFilterCount(filter: GearFilter) {
+    this.filters.find((currentFilter) => currentFilter.getFilter() === filter)?.plusCount();
+  }
+
+  public minusFilterCount(filter: GearFilter) {
+    this.filters.find((currentFilter) => currentFilter.getFilter() === filter)?.minusCount();
+  }
+
   public getFilters() {
     return this.filters;
   }

@@ -1,19 +1,19 @@
 import { FC } from 'react';
-import BagEdit from '../bag/model/BagEdit';
+import BagDetail from './model/BagDetail';
 import { useNavigate } from 'react-router-dom';
 import { observer } from 'mobx-react-lite';
 
 interface Props {
-  bagEdit: BagEdit;
+  bagDetail: BagDetail;
 }
 
-const BagEditUselessDescriptionView: FC<Props> = ({ bagEdit }) => {
+const BagDetailUselessDescriptionView: FC<Props> = ({ bagDetail }) => {
   const navigate = useNavigate();
-  const isUselessChecked = bagEdit.isUselessChecked();
-  const usedWeight = bagEdit.getUsedWeight();
+  const isUselessChecked = bagDetail.isUselessChecked();
+  const usedWeight = bagDetail.getUsedWeight();
 
   const handleClickUseless = () => {
-    navigate(`/bag/${bagEdit.getId()}/useless`, { state: { from: '/bag' } });
+    navigate(`/bag/${bagDetail.getId()}/useless`, { state: { from: '/bag' } });
   };
 
   const render = () => {
@@ -92,4 +92,4 @@ const BagEditUselessDescriptionView: FC<Props> = ({ bagEdit }) => {
   );
 };
 
-export default observer(BagEditUselessDescriptionView);
+export default observer(BagDetailUselessDescriptionView);

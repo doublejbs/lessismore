@@ -9,9 +9,9 @@ import FilterManager from '../../warehouse/model/FilterManager';
 import WarehouseFilter from '../../warehouse/model/WarehouseFilter';
 import GearFilter from '../../warehouse/model/GearFilter';
 
-class BagEdit {
+class BagDetail {
   public static from(navigate: NavigateFunction, location: Location, id: string) {
-    return new BagEdit(
+    return new BagDetail(
       navigate,
       location,
       id,
@@ -97,31 +97,9 @@ class BagEdit {
     return this.gears;
   }
 
-  public addGear(gear: Gear) {
-    if (this.hasGear(gear)) {
-      return;
-    }
-
-    this.gears.push(gear);
-    this.toAddGears.push(gear);
-    this.toRemoveGears = this.toRemoveGears.filter((g) => !g.isSame(gear));
-    this.updateWeight();
-  }
-
-  public removeGear(gear: Gear) {
-    this.gears = this.gears.filter((g) => !g.isSame(gear));
-    this.toAddGears = this.toAddGears.filter((g) => !g.isSame(gear));
-    this.toRemoveGears.push(gear);
-    this.updateWeight();
-  }
-
   private updateWeight() {
     const totalWeight = this.gears.reduce((acc: number, gear) => acc + Number(gear.getWeight()), 0);
     this.setWeight(totalWeight.toString());
-  }
-
-  public hasGear(gear: Gear) {
-    return this.gears.some((g) => g.isSame(gear));
   }
 
   public hasGearWith(id: string) {
@@ -179,19 +157,6 @@ class BagEdit {
 
   public getCount() {
     return this.gears.length;
-  }
-
-  public async save() {
-    await this.bagStore.save(this.id, this.toAddGears, this.toRemoveGears, this.gears);
-    this.back();
-  }
-
-  public back() {
-    if (this.location.state?.from === '/bag') {
-      this.navigate(`/bag/${this.id}/edit`);
-    } else {
-      this.navigate(-1);
-    }
   }
 
   public showSearch() {
@@ -269,4 +234,4 @@ class BagEdit {
   }
 }
 
-export default BagEdit;
+export default BagDetail;

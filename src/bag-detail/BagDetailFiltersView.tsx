@@ -1,14 +1,15 @@
 import { FC } from 'react';
 import WarehouseFilter from '../warehouse/model/WarehouseFilter';
-import BagEdit from '../bag/model/BagEdit';
+import BagDetail from './model/BagDetail';
 import { observer } from 'mobx-react-lite';
+
 interface Props {
-  bagEdit: BagEdit;
+  bagDetail: BagDetail;
 }
 
-const BagEditFiltersView: FC<Props> = ({ bagEdit }) => {
+const BagDetailFiltersView: FC<Props> = ({ bagDetail }) => {
   const handleClick = (filter: WarehouseFilter) => {
-    bagEdit.toggleFilter(filter);
+    bagDetail.toggleFilter(filter);
   };
 
   return (
@@ -30,7 +31,7 @@ const BagEditFiltersView: FC<Props> = ({ bagEdit }) => {
           scrollbarWidth: 'none',
         }}
       >
-        {bagEdit.mapFilters((filter) => {
+        {bagDetail.mapFilters((filter) => {
           return (
             <button
               key={filter.getName()}
@@ -59,4 +60,4 @@ const BagEditFiltersView: FC<Props> = ({ bagEdit }) => {
   );
 };
 
-export default observer(BagEditFiltersView);
+export default observer(BagDetailFiltersView);

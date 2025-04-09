@@ -1,6 +1,6 @@
 import React, { FC } from 'react';
 import Gear from '../model/Gear';
-import BagEdit from '../bag/model/BagEdit';
+import BagEdit from './model/BagEdit';
 import { observer } from 'mobx-react-lite';
 import GearView from '../warehouse/component/GearView';
 
@@ -10,7 +10,6 @@ interface Props {
 }
 
 const BagEditWarehouseGearView: FC<Props> = ({ gear, bagEdit }) => {
-  const imageUrl = gear.getImageUrl();
   const isSelected = bagEdit.hasGear(gear);
 
   const handleChange = async (e: React.ChangeEvent<HTMLInputElement>) => {

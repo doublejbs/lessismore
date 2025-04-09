@@ -1,5 +1,5 @@
 import { FC } from 'react';
-import BagEdit from '../bag/model/BagEdit';
+import BagEdit from './model/BagEdit';
 
 interface Props {
   bagEdit: BagEdit;
