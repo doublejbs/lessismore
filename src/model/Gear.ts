@@ -129,6 +129,10 @@ class Gear {
   public getCreateDate() {
     return this.createDate;
   }
+
+  public getIsCustom() {
+    return this.isCustom;
+  }
 }
 
 export default Gear;

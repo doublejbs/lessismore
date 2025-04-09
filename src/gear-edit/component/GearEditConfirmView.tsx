@@ -40,7 +40,7 @@ const GearEditConfirmView: FC<Props> = ({ gearEdit }) => {
           textAlign: 'center',
           backgroundColor: 'black',
           color: 'white',
-          padding: '18px 133px',
+          padding: '12px 0px',
           borderRadius: '10px',
         }}
         onClick={handleClickConfirm}

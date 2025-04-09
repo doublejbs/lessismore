@@ -30,7 +30,7 @@ const GearEditWeightView: FC<Props> = ({ gearEdit }) => {
       style={{
         display: 'flex',
         flexDirection: 'column',
-        gap: '12px',
+        gap: '6px',
       }}
     >
       <span
@@ -46,7 +46,8 @@ const GearEditWeightView: FC<Props> = ({ gearEdit }) => {
           borderRadius: '10px',
           backgroundColor: '#F6F6F6',
           border: 'none',
-          padding: '16px',
+          padding: '12px',
+          boxShadow: 'none',
         }}
         onChange={handleChangeWeight}
         value={weight}

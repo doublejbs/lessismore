@@ -17,6 +17,7 @@ class GearEdit extends AbstractGearEdit {
 
   private gear: Gear | null = null;
   @observable private initialized = false;
+  @observable private initialWeight = '';
   private onRegister: (gear: Gear) => Promise<void> = async () => {};
 
   private constructor(
@@ -34,6 +35,7 @@ class GearEdit extends AbstractGearEdit {
     if (this.gear) {
       this.setName(this.gear.getName());
       this.setWeight(this.gear.getWeight());
+      this.setInitialWeight(this.gear.getWeight());
       this.setCompany(this.gear.getCompany());
       this.setPreviewSrc(this.gear.getImageUrl());
       this.selectFilterWith(this.gear.getSubCategory() as GearFilter);
@@ -49,7 +51,7 @@ class GearEdit extends AbstractGearEdit {
       this.getWeight(),
       ((await this.getFileUrl()) || this.gear?.getImageUrl()) ?? '',
       true,
-      false,
+      this.gear?.getIsCustom() ?? false,
       this.getSelectedFirstCategory(),
       this.getSelectedFilter(),
       this.gear?.getUseless() ?? [],
@@ -59,6 +61,11 @@ class GearEdit extends AbstractGearEdit {
     );
 
     await this.dispatcher.update(updatedGear);
+
+    if (this.initialWeight !== updatedGear.getWeight()) {
+      await this.dispatcher.updateBagWeight(this.gear?.getBags() ?? [], updatedGear);
+    }
+
     await this.onRegister(updatedGear);
   }
 
@@ -78,6 +85,11 @@ class GearEdit extends AbstractGearEdit {
 
   public override hide(): void {
     this.navigate(-1);
+  }
+
+  @action
+  private setInitialWeight(weight: string) {
+    this.initialWeight = weight;
   }
 }
 
