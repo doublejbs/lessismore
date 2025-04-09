@@ -1,17 +1,17 @@
 import React, { FC, useState } from 'react';
-import BagEditImageView from './BagEditImageView';
 import Gear from '../model/Gear';
-import BagEdit from '../bag/model/BagEdit';
+import BagDetail from './model/BagDetail';
 import { useNavigate } from 'react-router-dom';
+import BagDetailImageView from './BagDetailImageView';
 
 interface Props {
   gear: Gear;
-  bagEdit: BagEdit;
+  bagDetail: BagDetail;
 }
 
-const BagEditGearView: FC<Props> = ({ gear, bagEdit }) => {
+const BagDetailGearView: FC<Props> = ({ gear, bagDetail }) => {
   const imageUrl = gear.getImageUrl();
-  const isUseless = bagEdit.isUseless(gear);
+  const isUseless = bagDetail.isUseless(gear);
   const [showMenu, setShowMenu] = useState(false);
   const navigate = useNavigate();
 
@@ -21,7 +21,7 @@ const BagEditGearView: FC<Props> = ({ gear, bagEdit }) => {
 
   const handleClickDelete = (e: React.MouseEvent) => {
     e.stopPropagation();
-    bagEdit.delete(gear);
+    bagDetail.delete(gear);
     setShowMenu(false);
   };
 
@@ -61,7 +61,7 @@ const BagEditGearView: FC<Props> = ({ gear, bagEdit }) => {
             alignItems: 'center',
           }}
         >
-          <BagEditImageView imageUrl={imageUrl} shadow={isUseless} />
+          <BagDetailImageView imageUrl={imageUrl} shadow={isUseless} />
           {isUseless && (
             <div
               style={{
@@ -265,4 +265,4 @@ const BagEditGearView: FC<Props> = ({ gear, bagEdit }) => {
   );
 };
 
-export default BagEditGearView;
+export default BagDetailGearView;

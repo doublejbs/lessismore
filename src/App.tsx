@@ -9,8 +9,7 @@ import WarehouseWrapper from './warehouse/component/WarehouseWrapper.tsx';
 import AdminView from './AdminView.tsx';
 import LoadingView from './LoadingView.tsx';
 import BagView from './bag/component/BagView';
-import BagEditWrapper from './bag-detail/BagEditWrapper.tsx';
-import BagEditAddGearView from './bag-edit-add-gear/BagEditAddGearView.tsx';
+import BagEditAddGearView from './bag-edit-add-gear/BagEditView.tsx';
 import BagEditSearchWarehouseView from './bag-edit-search/BagEditSearchWarehouseView';
 import AlertView from './alert/AlertView';
 import CustomGearWrapper from './custom-gear/component/CustomGearWrapper';
@@ -18,6 +17,7 @@ import WarehouseDetailWrapper from './warehouse-detail/component/WarehouseDetail
 import GearEditWrapperView from './gear-edit/component/GearEditWrapperView';
 import SearchWarehouseView from './search-warehouse/component/SearchWarehouseView';
 import BagUselessView from './bag-useless/component/BagUselessView';
+import BagDetailWrapper from './bag-detail/BagDetailWrapper.tsx';
 
 const ROUTES = [
   {
@@ -42,7 +42,7 @@ const ROUTES = [
   },
   {
     path: '/bag/:id',
-    element: <BagEditWrapper />,
+    element: <BagDetailWrapper />,
   },
   {
     path: '/bag',

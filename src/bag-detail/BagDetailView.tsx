@@ -1,22 +1,22 @@
 import { useLocation, useNavigate } from 'react-router-dom';
 import { FC, useEffect } from 'react';
 import { observer } from 'mobx-react-lite';
-import BagEdit from '../bag/model/BagEdit';
-import BagEditGearView from './BagEditGearView';
-import BagEditUselessDescriptionView from './BagEditUselessDescriptionView';
-import BagEditFiltersView from './BagEditFiltersView';
+import BagDetailGearView from './BagDetailGearView';
+import BagDetailUselessDescriptionView from './BagDetailUselessDescriptionView';
+import BagDetailFiltersView from './BagDetailFiltersView';
+import BagDetail from './model/BagDetail';
 
 interface Props {
-  bagEdit: BagEdit;
+  bagDetail: BagDetail;
 }
 
-const BagEditView: FC<Props> = ({ bagEdit }) => {
+const BagDetailView: FC<Props> = ({ bagDetail }) => {
   const navigate = useNavigate();
   const location = useLocation();
-  const initialized = bagEdit.isInitialized();
+  const initialized = bagDetail.isInitialized();
 
   const handleClickAdd = () => {
-    navigate(`/bag/${bagEdit.getId()}/edit`);
+    navigate(`/bag/${bagDetail.getId()}/edit`, { state: { from: `/bag/${bagDetail.getId()}` } });
   };
 
   const handleClickBack = () => {
@@ -31,14 +31,14 @@ const BagEditView: FC<Props> = ({ bagEdit }) => {
   };
 
   useEffect(() => {
-    bagEdit.initialize();
+    bagDetail.initialize();
   }, []);
 
   if (initialized) {
-    const name = bagEdit.getName();
-    const weight = bagEdit.getWeight();
-    const gears = bagEdit.getGears();
-    const editDate = bagEdit.getEditDate().format('YYYY.M.DD');
+    const name = bagDetail.getName();
+    const weight = bagDetail.getWeight();
+    const gears = bagDetail.getGears();
+    const editDate = bagDetail.getEditDate().format('YYYY.M.DD');
 
     return (
       <div
@@ -114,7 +114,7 @@ const BagEditView: FC<Props> = ({ bagEdit }) => {
           >
             {editDate}
           </div>
-          <BagEditUselessDescriptionView bagEdit={bagEdit} />
+          <BagDetailUselessDescriptionView bagDetail={bagDetail} />
           <div
             style={{
               width: '100%',
@@ -149,7 +149,7 @@ const BagEditView: FC<Props> = ({ bagEdit }) => {
             정렬
           </span>
         </div>
-        <BagEditFiltersView bagEdit={bagEdit} />
+        <BagDetailFiltersView bagDetail={bagDetail} />
         <div
           style={{
             display: 'flex',
@@ -170,8 +170,8 @@ const BagEditView: FC<Props> = ({ bagEdit }) => {
               paddingBottom: '1rem',
             }}
           >
-            {bagEdit.mapGears((gear) => {
-              return <BagEditGearView key={gear.getId()} gear={gear} bagEdit={bagEdit} />;
+            {bagDetail.mapGears((gear) => {
+              return <BagDetailGearView key={gear.getId()} gear={gear} bagDetail={bagDetail} />;
             })}
           </ul>
         </div>
@@ -199,4 +199,4 @@ const BagEditView: FC<Props> = ({ bagEdit }) => {
   }
 };
 
-export default observer(BagEditView);
+export default observer(BagDetailView);

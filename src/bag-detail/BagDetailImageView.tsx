@@ -6,7 +6,7 @@ interface Props {
   shadow?: boolean;
 }
 
-const BagEditImageView: FC<Props> = ({ imageUrl, shadow }) => {
+const BagDetailImageView: FC<Props> = ({ imageUrl, shadow }) => {
   const [loading, setLoading] = useState(!!imageUrl);
 
   const handleLoad = () => {
@@ -33,4 +33,4 @@ const BagEditImageView: FC<Props> = ({ imageUrl, shadow }) => {
   );
 };
 
-export default BagEditImageView;
+export default BagDetailImageView;

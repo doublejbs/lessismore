@@ -3,13 +3,15 @@ import Warehouse from '../warehouse/model/Warehouse';
 import { FC } from 'react';
 import GearFilter from '../warehouse/model/GearFilter';
 import { observer } from 'mobx-react-lite';
+import BagEdit from './model/BagEdit';
+
 interface Props {
-  warehouse: Warehouse;
+  bagEdit: BagEdit;
 }
 
-const BagEditWarehouseFiltersView: FC<Props> = ({ warehouse }) => {
+const BagEditWarehouseFiltersView: FC<Props> = ({ bagEdit }) => {
   const handleClick = (filter: WarehouseFilter) => {
-    warehouse.toggleFilter(filter);
+    bagEdit.toggleFilter(filter);
   };
 
   return (
@@ -24,7 +26,7 @@ const BagEditWarehouseFiltersView: FC<Props> = ({ warehouse }) => {
         scrollbarWidth: 'none',
       }}
     >
-      {warehouse.mapFilters((filter) => {
+      {bagEdit.mapFilters((filter) => {
         return filter.getFilter() === GearFilter.All ? (
           <button
             key={filter.getName()}
