@@ -59,6 +59,7 @@ const GearEditView: FC<Props> = ({ gearEdit }) => {
           height: '41px',
           padding: '8px 20px',
           backgroundColor: 'white',
+          zIndex: 20,
         }}
       >
         <button
@@ -72,15 +73,15 @@ const GearEditView: FC<Props> = ({ gearEdit }) => {
           onClick={handleClickHide}
         >
           <svg
-            width="11"
-            height="18"
-            viewBox="0 0 11 18"
-            fill="none"
-            xmlns="http://www.w3.org/2000/svg"
+            width='11'
+            height='18'
+            viewBox='0 0 11 18'
+            fill='none'
+            xmlns='http://www.w3.org/2000/svg'
           >
             <path
-              d="M9.28437 17.475C8.98437 17.475 8.68437 17.375 8.48438 17.075L0.984375 9.575C0.484375 9.075 0.484375 8.375 0.984375 7.875L8.48438 0.375C8.98438 -0.125 9.68438 -0.125 10.1844 0.375C10.6844 0.875 10.6844 1.575 10.1844 2.075L3.38437 8.775L10.0844 15.475C10.5844 15.975 10.5844 16.675 10.0844 17.175C9.88438 17.375 9.58437 17.475 9.28437 17.475Z"
-              fill="#191F28"
+              d='M9.28437 17.475C8.98437 17.475 8.68437 17.375 8.48438 17.075L0.984375 9.575C0.484375 9.075 0.484375 8.375 0.984375 7.875L8.48438 0.375C8.98438 -0.125 9.68438 -0.125 10.1844 0.375C10.6844 0.875 10.6844 1.575 10.1844 2.075L3.38437 8.775L10.0844 15.475C10.5844 15.975 10.5844 16.675 10.0844 17.175C9.88438 17.375 9.58437 17.475 9.28437 17.475Z'
+              fill='#191F28'
             />
           </svg>
         </button>
@@ -97,11 +98,15 @@ const GearEditView: FC<Props> = ({ gearEdit }) => {
       <div
         style={{
           width: '100%',
+          minHeight: '57px',
+        }}
+      ></div>
+      <div
+        style={{
+          width: '100%',
           display: 'flex',
           flexDirection: 'column',
-          gap: '28px',
-          marginTop: '61px',
-          paddingBottom: '84px',
+          gap: '16px',
         }}
       >
         <div
@@ -119,7 +124,7 @@ const GearEditView: FC<Props> = ({ gearEdit }) => {
           style={{
             display: 'flex',
             flexDirection: 'column',
-            gap: '12px',
+            gap: '6px',
           }}
         >
           <span
@@ -135,7 +140,8 @@ const GearEditView: FC<Props> = ({ gearEdit }) => {
               borderRadius: '10px',
               backgroundColor: '#F6F6F6',
               border: 'none',
-              padding: '16px',
+              padding: '12px',
+              boxShadow: 'none',
             }}
             placeholder={'제품명을 입력해주세요'}
             onChange={handleChangeName}
@@ -146,7 +152,7 @@ const GearEditView: FC<Props> = ({ gearEdit }) => {
           style={{
             display: 'flex',
             flexDirection: 'column',
-            gap: '12px',
+            gap: '6px',
           }}
         >
           <span
@@ -162,7 +168,8 @@ const GearEditView: FC<Props> = ({ gearEdit }) => {
               borderRadius: '10px',
               backgroundColor: '#F6F6F6',
               border: 'none',
-              padding: '16px',
+              padding: '12px',
+              boxShadow: 'none',
             }}
             placeholder={'브랜드를 입력해주세요'}
             onChange={handleChangeCompany}
@@ -173,7 +180,7 @@ const GearEditView: FC<Props> = ({ gearEdit }) => {
           style={{
             display: 'flex',
             flexDirection: 'column',
-            gap: '12px',
+            gap: '6px',
           }}
         >
           <span
@@ -188,7 +195,7 @@ const GearEditView: FC<Props> = ({ gearEdit }) => {
             style={{
               display: 'flex',
               flexWrap: 'wrap',
-              gap: '8px',
+              gap: '4px',
             }}
           >
             {gearEdit.mapFilters((filter) => {
@@ -212,6 +219,12 @@ const GearEditView: FC<Props> = ({ gearEdit }) => {
         </div>
         <GearEditWeightView gearEdit={gearEdit} />
       </div>
+      <div
+        style={{
+          width: '100%',
+          minHeight: '80px',
+        }}
+      ></div>
       <GearEditConfirmView gearEdit={gearEdit} />
     </Layout>
   );

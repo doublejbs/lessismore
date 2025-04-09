@@ -18,7 +18,7 @@ import GearStore, { GearData } from './GearStore.ts';
 import dayjs from 'dayjs';
 import Gear from '../model/Gear';
 import BagItem from '../bag/model/BagItem';
-import { runTransaction } from '@firebase/firestore';
+import { runTransaction, writeBatch } from '@firebase/firestore';
 import GearFilter from '../warehouse/model/GearFilter';
 class BagStore {
   public constructor(
@@ -242,6 +242,15 @@ class BagStore {
     } else {
       return [];
     }
+  }
+
+  public async updateBagsWeight(bags: string[], weight: number) {
+    const batch = writeBatch(this.getStore());
+    bags.forEach((bag) => {
+      const bagRef = doc(this.getStore(), 'bag', bag);
+      batch.update(bagRef, { weight });
+    });
+    await batch.commit();
   }
 }
 
