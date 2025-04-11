@@ -49,6 +49,8 @@ class Firebase {
     await this.auth.authStateReady();
 
     this.auth.onAuthStateChanged(async (user) => {
+
+  
       if (user?.uid) {
         this.setUserId(user.uid);
         await this.initializeStore();
