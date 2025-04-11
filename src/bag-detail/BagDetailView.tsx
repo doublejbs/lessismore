@@ -5,6 +5,7 @@ import BagDetailGearView from './BagDetailGearView';
 import BagDetailUselessDescriptionView from './BagDetailUselessDescriptionView';
 import BagDetailFiltersView from './BagDetailFiltersView';
 import BagDetail from './model/BagDetail';
+import { FlipCounter } from '../bag-edit-add-gear/components/FlipCounter';
 
 interface Props {
   bagDetail: BagDetail;
@@ -102,7 +103,7 @@ const BagDetailView: FC<Props> = ({ bagDetail }) => {
               fontSize: '2.5rem',
             }}
           >
-            {weight}kg
+            <FlipCounter value={weight} />
           </div>
           <div
             style={{

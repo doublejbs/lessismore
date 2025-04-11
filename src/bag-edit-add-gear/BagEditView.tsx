@@ -6,6 +6,7 @@ import BagEditWarehouseAddMenuView from './BagEditWarehouseAddMenuView';
 import usePreventScroll from '../hooks/usePreventScroll';
 import BagEditWarehouseFiltersView from './BagEditWarehouseFiltersView';
 import BagEdit from './model/BagEdit';
+import { FlipCounter } from './components/FlipCounter';
 
 const BagEditView: FC = () => {
   const { id = '' } = useParams();
@@ -82,16 +83,7 @@ const BagEditView: FC = () => {
             gap: '19px',
           }}
         >
-          <div
-            style={{
-              width: '100%',
-              textAlign: 'center',
-              fontWeight: 'bold',
-              fontSize: '40px',
-            }}
-          >
-            총 {weight}kg
-          </div>
+          <FlipCounter value={weight} />
           <div
             style={{
               width: '100%',

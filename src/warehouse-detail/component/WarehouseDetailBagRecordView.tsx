@@ -41,9 +41,53 @@ const WarehouseDetailBagRecordView: FC<Props> = ({ gear, warehouseDetail }) => {
         >
           {warehouseDetail.mapBags((bag) => {
             const isUseless = gear.hasUseless(bag.getID());
+            const isUsed = gear.hasUsed(bag.getID());
 
             const handleClick = () => {
               navigate(`/bag/${bag.getID()}`);
+            };
+
+            const renderButton = () => {
+              if (isUseless) {
+                return (
+                  <button
+                    style={{
+                      fontSize: '11px',
+                      backgroundColor: 'white',
+                      borderRadius: '12px',
+                      padding: '4px 12px',
+                      color: '#505967',
+                    }}
+                  >
+                    USELESS
+                  </button>
+                );
+              } else if (isUsed) {
+                return (
+                  <button
+                    style={{
+                      fontSize: '11px',
+                      backgroundColor: '#5F5F5F',
+                      borderRadius: '12px',
+                      padding: '4px 12px',
+                      color: 'white',
+                    }}
+                  >
+                    USED
+                  </button>
+                );
+              } else {
+                return (
+                  <div
+                    style={{
+                      color: '#9BA2AD',
+                      fontSize: '11px',
+                    }}
+                  >
+                    사용 여부를 입력해주세요
+                  </div>
+                );
+              }
             };
 
             return (
@@ -87,38 +131,28 @@ const WarehouseDetailBagRecordView: FC<Props> = ({ gear, warehouseDetail }) => {
                     alignItems: 'center',
                   }}
                 >
-                  <button
-                    style={{
-                      fontSize: '11px',
-                      backgroundColor: isUseless ? 'white' : '#5F5F5F',
-                      borderRadius: '12px',
-                      padding: '4px 12px',
-                      color: isUseless ? '#505967' : 'white',
-                    }}
-                  >
-                    {isUseless ? 'USELESS' : 'USED'}
-                  </button>
+                  {renderButton()}
                   <div>
                     <svg
-                      width="24"
-                      height="25"
-                      viewBox="0 0 24 25"
-                      fill="none"
-                      xmlns="http://www.w3.org/2000/svg"
+                      width='24'
+                      height='25'
+                      viewBox='0 0 24 25'
+                      fill='none'
+                      xmlns='http://www.w3.org/2000/svg'
                     >
-                      <g clip-path="url(#clip0_390_5729)">
+                      <g clip-path='url(#clip0_390_5729)'>
                         <path
-                          d="M8.58984 16.922L13.1698 12.332L8.58984 7.74203L9.99984 6.33203L15.9998 12.332L9.99984 18.332L8.58984 16.922Z"
-                          fill="#505967"
+                          d='M8.58984 16.922L13.1698 12.332L8.58984 7.74203L9.99984 6.33203L15.9998 12.332L9.99984 18.332L8.58984 16.922Z'
+                          fill='#505967'
                         />
                       </g>
                       <defs>
-                        <clipPath id="clip0_390_5729">
+                        <clipPath id='clip0_390_5729'>
                           <rect
-                            width="24"
-                            height="24"
-                            fill="white"
-                            transform="translate(0 0.332031)"
+                            width='24'
+                            height='24'
+                            fill='white'
+                            transform='translate(0 0.332031)'
                           />
                         </clipPath>
                       </defs>
