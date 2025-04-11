@@ -5,19 +5,21 @@ interface DigitProps {
 }
 
 export const Digit: FC<DigitProps> = ({ digit }) => {
-  const [currentDigit, setCurrentDigit] = useState('0');
-  const [isAnimating, setIsAnimating] = useState(false);
+  const [currentDigit, setCurrentDigit] = useState(digit);
+  const [isAnimating, setIsAnimating] = useState(true);
 
   useEffect(() => {
-    if (currentDigit !== digit) {
-      setIsAnimating(true);
-      setCurrentDigit(digit);
-      const timer = setTimeout(() => {
-        setIsAnimating(false);
-      }, 500);
-      return () => clearTimeout(timer);
-    }
-  }, [digit, currentDigit]);
+    setIsAnimating(true);
+    setCurrentDigit(digit);
+  }, [digit]);
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setIsAnimating(false);
+    }, 500);
+
+    return () => clearTimeout(timer);
+  }, [currentDigit]);
 
   return (
     <div

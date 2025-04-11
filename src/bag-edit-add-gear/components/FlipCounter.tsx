@@ -7,25 +7,18 @@ interface FlipCounterProps {
 }
 
 export const FlipCounter: FC<FlipCounterProps> = ({ value }) => {
-  const [displayValue, setDisplayValue] = useState(0);
+  const [integerPart, setIntegerPart] = useState('');
+  const [decimalParts, setDecimalParts] = useState<string[]>([]);
 
   useEffect(() => {
-    setDisplayValue(value);
-  }, [value]);
-
-  const formatWeight = (weight: number) => {
-    const str = weight.toString();
+    const str = value.toString();
     const parts = str.split('.');
-    const integerPart = parts[0].replace(/^0+/, '') || '0';
-    const decimalPart = parts[1] || '';
+    const newIntegerPart = parts[0].replace(/^0+/, '') || '0';
+    const newDecimalPart = parts[1] || '';
 
-    return {
-      integer: integerPart,
-      decimal: decimalPart,
-    };
-  };
-
-  const { integer, decimal } = formatWeight(displayValue);
+    setIntegerPart(newIntegerPart);
+    setDecimalParts(newDecimalPart.split(''));
+  }, [value]);
 
   return (
     <div
@@ -38,13 +31,13 @@ export const FlipCounter: FC<FlipCounterProps> = ({ value }) => {
         gap: '0px',
       }}
     >
-      {integer.split('').map((digit, index) => (
+      {integerPart.split('').map((digit, index) => (
         <Digit key={`int-${index}`} digit={digit} />
       ))}
-      {decimal && (
+      {decimalParts.length > 0 && (
         <>
           <DecimalPoint />
-          {decimal.split('').map((digit, index) => (
+          {decimalParts.map((digit, index) => (
             <Digit key={`dec-${index}`} digit={digit} />
           ))}
         </>

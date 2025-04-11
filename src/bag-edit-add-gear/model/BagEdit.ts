@@ -16,7 +16,7 @@ class BagEdit {
       id,
       app.getBagStore(),
       WarehouseDispatcher.new(),
-      FilterManager.from(),
+      FilterManager.from()
     );
   }
 
@@ -26,6 +26,7 @@ class BagEdit {
   private toAddGears: Gear[] = [];
   private warehouseGears: Gear[] = [];
   private loading = false;
+  private initialized = false;
 
   private constructor(
     private readonly navigate: NavigateFunction,
@@ -33,7 +34,7 @@ class BagEdit {
     private readonly id: string,
     private readonly bagStore: BagStore,
     private readonly dispatcher: WarehouseDispatcherType,
-    private readonly filterManager: FilterManager,
+    private readonly filterManager: FilterManager
   ) {
     makeAutoObservable(this);
   }
@@ -46,7 +47,7 @@ class BagEdit {
 
       const { weight, gears } = await this.bagStore.getBag(
         this.id,
-        this.filterManager.getSelectedFilters(),
+        this.filterManager.getSelectedFilters()
       );
 
       this.setSelectedGears(gears);
@@ -55,6 +56,7 @@ class BagEdit {
       await this.getList();
       this.filterManager.initializeWithSelectedGears(this.selectedGears);
       this.setLoading(false);
+      this.setInitialized(true);
     }
   }
 
@@ -114,7 +116,7 @@ class BagEdit {
   private updateWeight() {
     const totalWeight = this.selectedGears.reduce(
       (acc: number, gear) => acc + Number(gear.getWeight()),
-      0,
+      0
     );
     this.setWeight(totalWeight);
   }
@@ -175,6 +177,14 @@ class BagEdit {
 
   public isLoading() {
     return this.loading;
+  }
+
+  private setInitialized(value: boolean) {
+    this.initialized = value;
+  }
+
+  public isInitialized() {
+    return this.initialized;
   }
 }
 

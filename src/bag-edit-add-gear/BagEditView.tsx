@@ -41,6 +41,10 @@ const BagEditView: FC = () => {
     bagEdit.initialize();
   }, []);
 
+  if (!bagEdit.isInitialized()) {
+    return null;
+  }
+
   return (
     <>
       <div
