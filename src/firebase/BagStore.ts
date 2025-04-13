@@ -15,7 +15,7 @@ import {
   where,
 } from 'firebase/firestore';
 import GearStore, { GearData } from './GearStore.ts';
-import dayjs from 'dayjs';
+import dayjs, { Dayjs } from 'dayjs';
 import Gear from '../model/Gear';
 import BagItem from '../bag/model/BagItem';
 import { runTransaction, writeBatch } from '@firebase/firestore';
@@ -37,7 +37,7 @@ class BagStore {
           query(
             collection(this.getStore(), 'bag'),
             where('__name__', 'in', bagIDs),
-            orderBy('editDate', 'desc')
+            orderBy('startDate', 'desc')
           )
         );
 
@@ -52,12 +52,14 @@ class BagStore {
   }
 
   public async getBag(id: string, filters: GearFilter[]) {
-    const { name, weight, gears, editDate } = (
+    const { name, weight, gears, editDate, startDate, endDate } = (
       await getDoc(doc(this.getStore(), 'bag', id))
     ).data() as {
       name: string;
       weight: string;
       editDate: string;
+      startDate: string;
+      endDate: string;
       gears: string[];
     };
 
@@ -66,6 +68,8 @@ class BagStore {
         name,
         weight,
         editDate,
+        startDate,
+        endDate,
         gears: [],
       };
     } else {
@@ -91,6 +95,8 @@ class BagStore {
         name,
         weight,
         editDate,
+        startDate,
+        endDate,
         gears: warehouseGears.length
           ? warehouseGears.map(
               ({
@@ -133,20 +139,25 @@ class BagStore {
   private convertToArray(data: QuerySnapshot<DocumentData, DocumentData>) {
     const result: BagItem[] = [];
     data.forEach((doc) => {
-      const { name, weight, editDate } = doc.data();
+      const { name, weight, editDate, startDate, endDate } = doc.data();
 
-      result.push(new BagItem(doc.id, name, weight, dayjs(editDate)));
+      result.push(
+        new BagItem(doc.id, name, weight, dayjs(editDate), dayjs(startDate), dayjs(endDate))
+      );
     });
     return result;
   }
 
-  public async add(value: string) {
+  public async add(name: string, startDate: Dayjs, endDate: Dayjs) {
     const docRef = await addDoc(collection(this.getStore(), 'bag'), {
-      name: value,
+      name,
       weight: 0,
       gears: [],
       editDate: new Date().toISOString(),
+      startDate: startDate.toISOString(),
+      endDate: endDate.toISOString(),
     });
+
     await updateDoc(doc(this.getStore(), 'users', this.getUserID()), {
       bags: arrayUnion(docRef.id),
     });

@@ -2,6 +2,7 @@ import BagItem from './BagItem.ts';
 import { makeAutoObservable } from 'mobx';
 import app from '../../App';
 import BagStore from '../../firebase/BagStore.ts';
+import { Dayjs } from 'dayjs';
 
 class Bag {
   public static new() {
@@ -25,11 +26,11 @@ class Bag {
     this.bags = value;
   }
 
-  public async add(value: string) {
-    const trimmedValue = value.trim();
+  public async add(name: string, startDate: Dayjs, endDate: Dayjs) {
+    const trimmedValue = name.trim();
 
     if (trimmedValue.length) {
-      return await this.bagStore.add(value);
+      return await this.bagStore.add(trimmedValue, startDate, endDate);
     } else {
       window.alert('배낭 이름을 입력해주세요');
       return '';

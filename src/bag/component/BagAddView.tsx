@@ -1,7 +1,7 @@
 import React, { FC, useState } from 'react';
 import Bag from '../model/Bag';
 import { useNavigate } from 'react-router-dom';
-
+import dayjs from 'dayjs';
 interface Props {
   bag: Bag;
 }
@@ -9,6 +9,8 @@ interface Props {
 const BagAddView: FC<Props> = ({ bag }) => {
   const [shouldShowAdd, setShouldShowAdd] = useState(false);
   const [inputValue, setInputValue] = useState('');
+  const [startDate, setStartDate] = useState(dayjs());
+  const [endDate, setEndDate] = useState(dayjs().add(1, 'day'));
   const navigate = useNavigate();
 
   const showAdd = () => {
@@ -21,11 +23,13 @@ const BagAddView: FC<Props> = ({ bag }) => {
 
   const handleClickConfirm = async (e: React.MouseEvent) => {
     e.stopPropagation();
-    const bagID = await bag.add(inputValue);
+    const bagID = await bag.add(inputValue, startDate, endDate);
 
     if (bagID) {
       setInputValue('');
       setShouldShowAdd(false);
+      setStartDate(dayjs());
+      setEndDate(dayjs());
       navigate(`/bag/${bagID}`);
     }
   };
@@ -36,6 +40,13 @@ const BagAddView: FC<Props> = ({ bag }) => {
     setShouldShowAdd(false);
   };
 
+  const handleStartDateChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setStartDate(dayjs(e.target.value));
+  };
+
+  const handleEndDateChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setEndDate(dayjs(e.target.value));
+  };
   return (
     <>
       <button
@@ -102,29 +113,84 @@ const BagAddView: FC<Props> = ({ bag }) => {
               borderRadius: '8px 8px 0 0',
               padding: '16px',
             }}
+            onClick={(e) => e.stopPropagation()}
           >
-            <div
-              style={{
-                fontWeight: 'bold',
-                fontSize: '20px',
-              }}
-            >
-              배낭 이름
-            </div>
-            <div>
-              <input
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+              <div
                 style={{
-                  borderRadius: '10px',
-                  backgroundColor: '#EEEEEE',
-                  border: 'none',
-                  width: '100%',
+                  fontWeight: 'bold',
+                  fontSize: '20px',
                 }}
-                placeholder={'배낭 이름을 입력해주세요'}
-                value={inputValue}
-                onChange={handleChange}
-                onClick={(e) => e.stopPropagation()}
-              />
+              >
+                배낭 이름
+              </div>
+              <div>
+                <input
+                  style={{
+                    borderRadius: '10px',
+                    backgroundColor: '#EEEEEE',
+                    border: 'none',
+                    width: '100%',
+                  }}
+                  placeholder={'배낭 이름을 입력해주세요'}
+                  value={inputValue}
+                  onChange={handleChange}
+                  onClick={(e) => e.stopPropagation()}
+                />
+              </div>
             </div>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+              <div
+                style={{
+                  fontWeight: 'bold',
+                  fontSize: '20px',
+                }}
+              >
+                날짜
+              </div>
+              <div
+                style={{
+                  display: 'flex',
+                  justifyContent: 'space-between',
+                }}
+              >
+                <div>
+                  <input
+                    type='date'
+                    value={startDate.format('YYYY-MM-DD')}
+                    onChange={handleStartDateChange}
+                    style={{
+                      borderRadius: '10px',
+                      backgroundColor: '#EEEEEE',
+                      border: 'none',
+                      width: '100%',
+                    }}
+                  />
+                </div>
+                <div
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                  }}
+                >
+                  <span>~</span>
+                </div>
+                <div>
+                  <input
+                    type='date'
+                    value={endDate.format('YYYY-MM-DD')}
+                    onChange={handleEndDateChange}
+                    style={{
+                      borderRadius: '10px',
+                      backgroundColor: '#EEEEEE',
+                      border: 'none',
+                      width: '100%',
+                    }}
+                  />
+                </div>
+              </div>
+            </div>
+
             <div
               style={{
                 display: 'flex',

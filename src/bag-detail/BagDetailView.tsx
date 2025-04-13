@@ -39,7 +39,7 @@ const BagDetailView: FC<Props> = ({ bagDetail }) => {
     const name = bagDetail.getName();
     const weight = bagDetail.getWeight();
     const gears = bagDetail.getGears();
-    const editDate = bagDetail.getEditDate().format('YYYY.M.DD');
+    const date = bagDetail.getDate();
 
     return (
       <div
@@ -113,7 +113,7 @@ const BagDetailView: FC<Props> = ({ bagDetail }) => {
               color: '#9B9B9B',
             }}
           >
-            {editDate}
+            {date}
           </div>
           <BagDetailUselessDescriptionView bagDetail={bagDetail} />
           <div

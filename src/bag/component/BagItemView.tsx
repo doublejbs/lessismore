@@ -48,7 +48,9 @@ const BagItemView: FC<Props> = ({ bagItem, bag }) => {
         <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
           <div style={{ display: 'flex', flexDirection: 'column', gap: '9px' }}>
             <div style={{ fontWeight: 'bold', fontSize: '16px' }}>{bagItem.getName()}</div>
-            <div style={{ fontSize: '12px' }}>최근 수정일시 {bagItem.getEditDate()}</div>
+            <div style={{ fontSize: '12px' }}>
+              {bagItem.getStartDate()} ~ {bagItem.getEndDate()}
+            </div>
           </div>
           <div style={{ fontSize: '16px', fontWeight: 'bold' }}>{bagItem.getWeight()}kg</div>
         </div>
