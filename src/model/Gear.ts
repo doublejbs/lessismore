@@ -13,6 +13,7 @@ class Gear {
     private used: string[],
     private bags: string[],
     private createDate: number,
+    private color: string
   ) {}
 
   public hasId(value: string) {
@@ -65,6 +66,7 @@ class Gear {
       used: this.used,
       bags: this.bags,
       createDate: this.createDate,
+      color: this.color,
     };
   }
 
@@ -132,6 +134,10 @@ class Gear {
 
   public getIsCustom() {
     return this.isCustom;
+  }
+
+  public getColor() {
+    return this.color;
   }
 }
 

@@ -7,7 +7,7 @@ import WarehouseFilter from '../../warehouse/model/WarehouseFilter.ts';
 import Layout from '../../Layout';
 import GearEditWeightView from './GearEditWeightView';
 import GearEditConfirmView from './GearEditConfirmView';
-
+import GearEditColorView from './GearEditColorView';
 interface Props {
   gearEdit: GearEdit;
 }
@@ -176,6 +176,7 @@ const GearEditView: FC<Props> = ({ gearEdit }) => {
             value={company}
           />
         </div>
+        <GearEditColorView gearEdit={gearEdit} />
         <div
           style={{
             display: 'flex',

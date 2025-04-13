@@ -11,17 +11,20 @@ abstract class AbstractGearEdit extends FileUpload {
   @observable private weight = '';
   @observable private loading = false;
   @observable private errorMessage = '';
+  @observable private color = '';
 
   protected constructor(
     private readonly category: CustomGearCategory,
     name: string,
     company: string,
-    weight: string
+    weight: string,
+    color: string
   ) {
     super();
     this.name = name;
     this.company = company;
     this.weight = weight;
+    this.color = color;
     makeObservable(this);
   }
 
@@ -44,6 +47,11 @@ abstract class AbstractGearEdit extends FileUpload {
     this.weight = value;
   }
 
+  @action
+  public setColor(value: string) {
+    this.color = value;
+  }
+
   public getName() {
     return this.name;
   }
@@ -54,6 +62,10 @@ abstract class AbstractGearEdit extends FileUpload {
 
   public getWeight() {
     return this.weight;
+  }
+
+  public getColor() {
+    return this.color;
   }
 
   public async register() {
@@ -100,6 +112,7 @@ abstract class AbstractGearEdit extends FileUpload {
     this.clearFile();
     this.setErrorMessage('');
     this.setCompany('');
+    this.setColor('');
     this.category.clear();
   }
 

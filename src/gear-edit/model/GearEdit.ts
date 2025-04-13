@@ -10,7 +10,7 @@ class GearEdit extends AbstractGearEdit {
   public static from(
     dispatcher: GearEditDispatcher,
     navigate: NavigateFunction,
-    category: CustomGearCategory,
+    category: CustomGearCategory
   ) {
     return new GearEdit(dispatcher, navigate, category);
   }
@@ -23,9 +23,9 @@ class GearEdit extends AbstractGearEdit {
   private constructor(
     private readonly dispatcher: GearEditDispatcher,
     private readonly navigate: NavigateFunction,
-    category: CustomGearCategory,
+    category: CustomGearCategory
   ) {
-    super(category, '', '', '');
+    super(category, '', '', '', '');
     makeObservable(this);
   }
 
@@ -39,6 +39,7 @@ class GearEdit extends AbstractGearEdit {
       this.setCompany(this.gear.getCompany());
       this.setPreviewSrc(this.gear.getImageUrl());
       this.selectFilterWith(this.gear.getSubCategory() as GearFilter);
+      this.setColor(this.gear.getColor());
       this.setInitialized(true);
     }
   }
@@ -58,6 +59,7 @@ class GearEdit extends AbstractGearEdit {
       this.gear?.getUsed() ?? [],
       this.gear?.getBags() ?? [],
       this.gear?.getCreateDate() ?? Date.now(),
+      this.getColor()
     );
 
     await this.dispatcher.update(updatedGear);

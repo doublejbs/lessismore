@@ -17,6 +17,7 @@ class CustomGear extends AbstractGearEdit {
       '',
       '',
       '',
+      ''
     );
   }
 
@@ -28,8 +29,9 @@ class CustomGear extends AbstractGearEdit {
     name: string,
     company: string,
     weight: string,
+    color: string
   ) {
-    super(category, name, company, weight);
+    super(category, name, company, weight, color);
     makeObservable(this);
   }
 
@@ -49,6 +51,7 @@ class CustomGear extends AbstractGearEdit {
         [],
         [],
         Date.now(),
+        this.getColor()
       ),
     ]);
   }
