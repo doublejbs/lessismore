@@ -1,4 +1,4 @@
-import { FC, useEffect, useState } from 'react';
+import { FC, useEffect, useState, useRef } from 'react';
 import { Digit } from './Digit';
 import { DecimalPoint } from './DecimalPoint';
 
@@ -9,8 +9,19 @@ interface FlipCounterProps {
 export const FlipCounter: FC<FlipCounterProps> = ({ value }) => {
   const [integerPart, setIntegerPart] = useState('');
   const [decimalParts, setDecimalParts] = useState<string[]>([]);
+  const [direction, setDirection] = useState<'up' | 'down'>('up');
+  const prevValueRef = useRef(value);
 
   useEffect(() => {
+    console.log(value, prevValueRef.current);
+    
+    if (value > prevValueRef.current) {
+      setDirection('up');
+    } else if (value < prevValueRef.current) {
+      setDirection('down');
+    }
+    prevValueRef.current = value;
+
     const str = value.toString();
     const parts = str.split('.');
     const newIntegerPart = parts[0].replace(/^0+/, '') || '0';
@@ -32,13 +43,13 @@ export const FlipCounter: FC<FlipCounterProps> = ({ value }) => {
       }}
     >
       {integerPart.split('').map((digit, index) => (
-        <Digit key={`int-${index}`} digit={digit} />
+        <Digit key={`int-${index}`} digit={digit} direction={direction} />
       ))}
       {decimalParts.length > 0 && (
         <>
           <DecimalPoint />
           {decimalParts.map((digit, index) => (
-            <Digit key={`dec-${index}`} digit={digit} />
+            <Digit key={`dec-${index}`} digit={digit} direction={direction} />
           ))}
         </>
       )}
