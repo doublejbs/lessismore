@@ -17,7 +17,7 @@ class BagDetail {
       id,
       app.getBagStore(),
       app.getGearStore(),
-      FilterManager.from(),
+      FilterManager.from()
     );
   }
 
@@ -33,6 +33,8 @@ class BagDetail {
   private usedWeight = 0;
   private uselessChecked = false;
   private loading = false;
+  private startDate = dayjs();
+  private endDate = dayjs();
 
   private constructor(
     private readonly navigate: NavigateFunction,
@@ -40,20 +42,22 @@ class BagDetail {
     private readonly id: string,
     private readonly bagStore: BagStore,
     private readonly gearStore: GearStore,
-    private readonly filterManager: FilterManager,
+    private readonly filterManager: FilterManager
   ) {
     makeAutoObservable(this);
   }
 
   public async initialize() {
-    const { name, weight, editDate, gears } = await this.bagStore.getBag(
+    const { name, weight, editDate, gears, startDate, endDate } = await this.bagStore.getBag(
       this.id,
-      this.filterManager.getSelectedFilters(),
+      this.filterManager.getSelectedFilters()
     );
     this.setName(name);
     this.setWeight(weight);
     this.setEditDate(editDate);
     this.setGears(gears);
+    this.setStartDate(startDate);
+    this.setEndDate(endDate);
     this.calculateUsedWeight();
     this.updateUselessChecked();
     this.setInitialized(true);
@@ -61,14 +65,14 @@ class BagDetail {
 
   private updateUselessChecked() {
     this.setUselessChecked(
-      this.gears.some((gear) => gear.hasUseless(this.id) || gear.hasUsed(this.id)),
+      this.gears.some((gear) => gear.hasUseless(this.id) || gear.hasUsed(this.id))
     );
   }
 
   private calculateUsedWeight() {
     const usedWeight = this.gears.reduce(
       (acc: number, gear) => (gear.hasUsed(this.id) ? acc + Number(gear.getWeight()) : acc),
-      0,
+      0
     );
     this.setUsedWeight(usedWeight);
   }
@@ -231,6 +235,30 @@ class BagDetail {
     return this.gears
       .filter((gear) => this.filterManager.hasFilter(gear.getSubCategory() as GearFilter))
       .map(callback);
+  }
+
+  private setStartDate(value: string) {
+    this.startDate = dayjs(value);
+  }
+
+  public getStartDate() {
+    return this.startDate;
+  }
+
+  private setEndDate(value: string) {
+    this.endDate = dayjs(value);
+  }
+
+  public getEndDate() {
+    return this.endDate;
+  }
+
+  public getDate() {
+    if (this.startDate.isSame(this.endDate, 'day')) {
+      return this.startDate.format('YYYY.MM.DD');
+    } else {
+      return `${this.startDate.format('YYYY.MM.DD')} ~ ${this.endDate.format('YYYY.MM.DD')}`;
+    }
   }
 }
 

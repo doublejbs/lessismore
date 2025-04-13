@@ -7,6 +7,7 @@ import CustomGear from '../model/CustomGear';
 import LoadingIconView from '../../LoadingIconView';
 import WarehouseFilter from '../../warehouse/model/WarehouseFilter.ts';
 import CustomGearWeightView from './CustomGearWeightView';
+import CustomGearColorView from './CustomGearColorView';
 
 interface Props {
   customGear: CustomGear;
@@ -72,15 +73,15 @@ const CustomGearView: FC<Props> = ({ customGear }) => {
           onClick={handleClickHide}
         >
           <svg
-            width="11"
-            height="18"
-            viewBox="0 0 11 18"
-            fill="none"
-            xmlns="http://www.w3.org/2000/svg"
+            width='11'
+            height='18'
+            viewBox='0 0 11 18'
+            fill='none'
+            xmlns='http://www.w3.org/2000/svg'
           >
             <path
-              d="M9.28437 17.475C8.98437 17.475 8.68437 17.375 8.48438 17.075L0.984375 9.575C0.484375 9.075 0.484375 8.375 0.984375 7.875L8.48438 0.375C8.98438 -0.125 9.68438 -0.125 10.1844 0.375C10.6844 0.875 10.6844 1.575 10.1844 2.075L3.38437 8.775L10.0844 15.475C10.5844 15.975 10.5844 16.675 10.0844 17.175C9.88438 17.375 9.58437 17.475 9.28437 17.475Z"
-              fill="#191F28"
+              d='M9.28437 17.475C8.98437 17.475 8.68437 17.375 8.48438 17.075L0.984375 9.575C0.484375 9.075 0.484375 8.375 0.984375 7.875L8.48438 0.375C8.98438 -0.125 9.68438 -0.125 10.1844 0.375C10.6844 0.875 10.6844 1.575 10.1844 2.075L3.38437 8.775L10.0844 15.475C10.5844 15.975 10.5844 16.675 10.0844 17.175C9.88438 17.375 9.58437 17.475 9.28437 17.475Z'
+              fill='#191F28'
             />
           </svg>
         </button>
@@ -169,6 +170,7 @@ const CustomGearView: FC<Props> = ({ customGear }) => {
             value={company}
           />
         </div>
+        <CustomGearColorView customGear={customGear} />
         <div
           style={{
             display: 'flex',
