@@ -23,7 +23,7 @@ import GearFilter from '../warehouse/model/GearFilter';
 class BagStore {
   public constructor(
     private readonly firebase: Firebase,
-    private readonly gearStore: GearStore,
+    private readonly gearStore: GearStore
   ) {}
 
   public async getList(): Promise<BagItem[]> {
@@ -37,8 +37,8 @@ class BagStore {
           query(
             collection(this.getStore(), 'bag'),
             where('__name__', 'in', bagIDs),
-            orderBy('editDate', 'desc'),
-          ),
+            orderBy('editDate', 'desc')
+          )
         );
 
         return this.convertToArray(bags);
@@ -73,14 +73,14 @@ class BagStore {
         query(
           collection(this.getStore(), 'users', this.getUserID(), 'gears'),
           where('__name__', 'in', gears),
-          orderBy('createDate', 'desc'),
-        ),
+          orderBy('createDate', 'desc')
+        )
       );
       const warehouseGears = warehouseSnapshot.docs
         .filter((doc) =>
           filters.length === 1 && filters[0] === GearFilter.All
             ? true
-            : filters.some((filter) => (doc.data() as GearData).subCategory.includes(filter)),
+            : filters.some((filter) => (doc.data() as GearData).subCategory.includes(filter))
         )
         .map((doc) => ({
           ...(doc.data() as GearData),
@@ -106,6 +106,7 @@ class BagStore {
                 bags,
                 isCustom,
                 createDate,
+                color,
               }) =>
                 new Gear(
                   id,
@@ -121,7 +122,8 @@ class BagStore {
                   used,
                   bags,
                   createDate,
-                ),
+                  color
+                )
             )
           : [],
       };
@@ -237,7 +239,7 @@ class BagStore {
   public async getBags(bagIDs: string[]) {
     if (bagIDs.length) {
       return this.convertToArray(
-        await getDocs(query(collection(this.getStore(), 'bag'), where('__name__', 'in', bagIDs))),
+        await getDocs(query(collection(this.getStore(), 'bag'), where('__name__', 'in', bagIDs)))
       );
     } else {
       return [];

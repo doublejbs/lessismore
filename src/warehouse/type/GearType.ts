@@ -10,6 +10,7 @@ interface GearType {
   used: string[];
   bags: string[];
   createDate: number;
+  color: string;
 }
 
 export default GearType;

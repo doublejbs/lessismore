@@ -52,7 +52,8 @@ const AdminView = () => {
               [],
               [],
               Date.now(),
-            ),
+              item.color
+            )
           );
       }
 

@@ -13,7 +13,7 @@ class SearchStore {
 
   public async searchList(
     value: string,
-    index: number,
+    index: number
   ): Promise<{ gears: Gear[]; hasMore: boolean }> {
     const keyword = value.trim();
     const { results } = await this.searchClient.search<GearType>({
@@ -30,7 +30,7 @@ class SearchStore {
 
     return {
       gears: await this.convertWithMyGears(
-        hits.map(({ name, weight, company, objectID, imageUrl }) => ({
+        hits.map(({ name, weight, company, objectID, imageUrl, color }) => ({
           name,
           weight,
           company,
@@ -40,7 +40,8 @@ class SearchStore {
           used: [],
           bags: [],
           createDate: Date.now(),
-        })),
+          color,
+        }))
       ),
       hasMore: page + 1 < nbPages,
     };
@@ -62,6 +63,7 @@ class SearchStore {
         used,
         bags,
         createDate,
+        color,
       }) => {
         return new Gear(
           id,
@@ -77,8 +79,9 @@ class SearchStore {
           used,
           bags,
           createDate,
+          color
         );
-      },
+      }
     );
   }
 
@@ -89,7 +92,7 @@ class SearchStore {
         : query(
             collection(this.getStore(), 'users', this.getUserId(), 'gears'),
             where('subCategory', '==', filter),
-            orderBy('name', 'desc'),
+            orderBy('name', 'desc')
           );
     const gears = (await getDocs(filterQuery)).docs;
 
@@ -108,6 +111,7 @@ class SearchStore {
           used,
           bags,
           createDate,
+          color,
         } = doc.data();
 
         return new Gear(
@@ -124,6 +128,7 @@ class SearchStore {
           used,
           bags,
           createDate,
+          color
         );
       });
     } else {

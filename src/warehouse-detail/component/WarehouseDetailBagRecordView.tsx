@@ -140,7 +140,7 @@ const WarehouseDetailBagRecordView: FC<Props> = ({ gear, warehouseDetail }) => {
                       fill='none'
                       xmlns='http://www.w3.org/2000/svg'
                     >
-                      <g clip-path='url(#clip0_390_5729)'>
+                      <g clipPath='url(#clip0_390_5729)'>
                         <path
                           d='M8.58984 16.922L13.1698 12.332L8.58984 7.74203L9.99984 6.33203L15.9998 12.332L9.99984 18.332L8.58984 16.922Z'
                           fill='#505967'

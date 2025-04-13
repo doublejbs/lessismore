@@ -25,6 +25,7 @@ export interface GearData {
   used: string[];
   bags: string[];
   createDate: number;
+  color: string;
 }
 
 class GearStore {
@@ -46,6 +47,7 @@ class GearStore {
         used,
         bags,
         createDate,
+        color,
       } = docData.data() as GearData;
 
       return new Gear(
@@ -62,6 +64,7 @@ class GearStore {
         used,
         bags,
         createDate,
+        color
       );
     } else {
       throw Error('No Gear data found.');
@@ -73,12 +76,12 @@ class GearStore {
       filters.length === 1 && filters[0] === GearFilter.All
         ? query(
             collection(this.getStore(), 'users', this.getUserId(), 'gears'),
-            orderBy('createDate', 'desc'),
+            orderBy('createDate', 'desc')
           )
         : query(
             collection(this.getStore(), 'users', this.getUserId(), 'gears'),
             where('subCategory', 'in', filters),
-            orderBy('createDate', 'desc'),
+            orderBy('createDate', 'desc')
           );
     const gears = (await getDocs(filterQuery)).docs;
 
@@ -97,6 +100,7 @@ class GearStore {
           used,
           bags,
           createDate,
+          color,
         } = doc.data();
 
         return new Gear(
@@ -113,6 +117,7 @@ class GearStore {
           used,
           bags,
           createDate,
+          color
         );
       });
     } else {

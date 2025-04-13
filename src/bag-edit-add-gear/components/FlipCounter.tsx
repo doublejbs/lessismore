@@ -13,8 +13,6 @@ export const FlipCounter: FC<FlipCounterProps> = ({ value }) => {
   const prevValueRef = useRef(value);
 
   useEffect(() => {
-    console.log(value, prevValueRef.current);
-    
     if (value > prevValueRef.current) {
       setDirection('up');
     } else if (value < prevValueRef.current) {
