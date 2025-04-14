@@ -104,7 +104,7 @@ class WarehouseDetail {
   public close() {
     const fromPath = this.location.state?.from;
 
-    if (fromPath.includes('/warehouse')) {
+    if (fromPath?.includes('/warehouse')) {
       this.navigate(-1);
     } else {
       this.navigate('/warehouse');

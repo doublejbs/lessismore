@@ -260,7 +260,7 @@ class BagDetail {
   public back() {
     const fromPath = this.location.state?.from;
 
-    if (fromPath.includes('/bag')) {
+    if (fromPath?.includes('/bag')) {
       this.navigate(-1);
     } else {
       this.navigate('/bag');

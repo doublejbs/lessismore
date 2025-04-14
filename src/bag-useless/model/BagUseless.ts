@@ -130,7 +130,7 @@ class BagUseless {
   public back() {
     const fromPath = this.location.state?.from;
 
-    if (fromPath.includes('/bag') || fromPath.includes(`/bag/${this.id}`)) {
+    if (fromPath?.includes('/bag') || fromPath?.includes(`/bag/${this.id}`)) {
       this.navigate(-1);
     } else {
       this.navigate(`/bag/${this.id}`);
