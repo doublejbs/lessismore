@@ -26,6 +26,7 @@ export interface GearData {
   bags: string[];
   createDate: number;
   color: string;
+  companyKorean: string;
 }
 
 class GearStore {
@@ -48,6 +49,7 @@ class GearStore {
         bags,
         createDate,
         color,
+        companyKorean,
       } = docData.data() as GearData;
 
       return new Gear(
@@ -64,7 +66,8 @@ class GearStore {
         used,
         bags,
         createDate,
-        color
+        color,
+        companyKorean
       );
     } else {
       throw Error('No Gear data found.');
@@ -101,6 +104,7 @@ class GearStore {
           bags,
           createDate,
           color,
+          companyKorean,
         } = doc.data();
 
         return new Gear(
@@ -117,7 +121,8 @@ class GearStore {
           used,
           bags,
           createDate,
-          color
+          color,
+          companyKorean
         );
       });
     } else {
