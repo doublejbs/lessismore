@@ -56,6 +56,8 @@ const DateRangeCalendar: FC<DateRangeCalendarProps> = ({
     // 3. startDate만 있고, 선택한 날짜가 startDate보다 나중이면 - endDate 선택
     else if (startDate && !endDate && day.isAfter(startDate)) {
       onEndDateChange(day);
+    } else if (startDate && day.isSame(startDate)) {
+      onEndDateChange(day);
     }
     // 4. startDate가 없으면 (또는 기타 경우) - startDate 선택
     else {
