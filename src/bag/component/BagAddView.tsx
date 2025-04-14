@@ -2,6 +2,7 @@ import React, { FC, useState } from 'react';
 import Bag from '../model/Bag';
 import { useNavigate } from 'react-router-dom';
 import dayjs from 'dayjs';
+import BagAddDateView from './BagAddDateView';
 interface Props {
   bag: Bag;
 }
@@ -9,8 +10,8 @@ interface Props {
 const BagAddView: FC<Props> = ({ bag }) => {
   const [shouldShowAdd, setShouldShowAdd] = useState(false);
   const [inputValue, setInputValue] = useState('');
-  const [startDate, setStartDate] = useState(dayjs());
-  const [endDate, setEndDate] = useState(dayjs().add(1, 'day'));
+  const [startDate, setStartDate] = useState<dayjs.Dayjs | null>(dayjs());
+  const [endDate, setEndDate] = useState<dayjs.Dayjs | null>(dayjs().add(1, 'day'));
   const navigate = useNavigate();
 
   const showAdd = () => {
@@ -23,6 +24,10 @@ const BagAddView: FC<Props> = ({ bag }) => {
 
   const handleClickConfirm = async (e: React.MouseEvent) => {
     e.stopPropagation();
+    if (!startDate || !endDate) {
+      alert('날짜를 선택해주세요');
+      return;
+    }
     const bagID = await bag.add(inputValue, startDate, endDate);
 
     if (bagID) {
@@ -40,12 +45,12 @@ const BagAddView: FC<Props> = ({ bag }) => {
     setShouldShowAdd(false);
   };
 
-  const handleStartDateChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setStartDate(dayjs(e.target.value));
+  const handleStartDateChange = (date: dayjs.Dayjs) => {
+    setStartDate(date);
   };
 
-  const handleEndDateChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setEndDate(dayjs(e.target.value));
+  const handleEndDateChange = (date: dayjs.Dayjs | null) => {
+    setEndDate(date);
   };
   return (
     <>
@@ -139,58 +144,12 @@ const BagAddView: FC<Props> = ({ bag }) => {
                 />
               </div>
             </div>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-              <div
-                style={{
-                  fontWeight: 'bold',
-                  fontSize: '20px',
-                }}
-              >
-                날짜
-              </div>
-              <div
-                style={{
-                  display: 'flex',
-                  justifyContent: 'space-between',
-                }}
-              >
-                <div>
-                  <input
-                    type='date'
-                    value={startDate.format('YYYY-MM-DD')}
-                    onChange={handleStartDateChange}
-                    style={{
-                      borderRadius: '10px',
-                      backgroundColor: '#EEEEEE',
-                      border: 'none',
-                      width: '100%',
-                    }}
-                  />
-                </div>
-                <div
-                  style={{
-                    display: 'flex',
-                    alignItems: 'center',
-                  }}
-                >
-                  <span>~</span>
-                </div>
-                <div>
-                  <input
-                    type='date'
-                    value={endDate.format('YYYY-MM-DD')}
-                    onChange={handleEndDateChange}
-                    style={{
-                      borderRadius: '10px',
-                      backgroundColor: '#EEEEEE',
-                      border: 'none',
-                      width: '100%',
-                    }}
-                  />
-                </div>
-              </div>
-            </div>
-
+            <BagAddDateView
+              startDate={startDate}
+              endDate={endDate}
+              onStartDateChange={handleStartDateChange}
+              onEndDateChange={handleEndDateChange}
+            />
             <div
               style={{
                 display: 'flex',
