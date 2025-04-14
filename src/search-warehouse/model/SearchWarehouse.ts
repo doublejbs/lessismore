@@ -164,7 +164,7 @@ class SearchWarehouse {
   public back() {
     const fromPath = this.location.state?.from;
 
-    if (fromPath.includes('/bag') || fromPath.includes('/warehouse')) {
+    if (fromPath?.includes('/bag') || fromPath?.includes('/warehouse')) {
       this.navigate(-1);
     } else {
       this.navigate('/warehouse');

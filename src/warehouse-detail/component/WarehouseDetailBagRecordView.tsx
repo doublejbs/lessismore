@@ -44,7 +44,7 @@ const WarehouseDetailBagRecordView: FC<Props> = ({ gear, warehouseDetail }) => {
             const isUsed = gear.hasUsed(bag.getID());
 
             const handleClick = () => {
-              navigate(`/bag/${bag.getID()}`);
+              navigate(`/bag/${bag.getID()}`, { state: { from: '/warehouse/detail' } });
             };
 
             const renderButton = () => {

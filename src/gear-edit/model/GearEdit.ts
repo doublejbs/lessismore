@@ -91,9 +91,7 @@ class GearEdit extends AbstractGearEdit {
   public override hide(): void {
     const from = this.location.state?.from;
 
-    console.log(from);
-
-    if (from.includes('/warehouse') || from.includes('/bag')) {
+    if (from?.includes('/warehouse') || from?.includes('/bag')) {
       this.navigate(-1);
     } else {
       this.navigate('/warehouse');
