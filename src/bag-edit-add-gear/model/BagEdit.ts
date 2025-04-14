@@ -152,14 +152,10 @@ class BagEdit {
   }
 
   public async deselectFilter(filter: WarehouseFilter) {
-    if (this.filterManager.isAllFilterSelected()) {
-      return;
-    } else {
-      this.setLoading(true);
-      this.filterManager.deselectFilter(filter);
-      await this.getList();
-      this.setLoading(false);
-    }
+    this.setLoading(true);
+    this.filterManager.deselectFilter(filter);
+    await this.getList();
+    this.setLoading(false);
   }
 
   public async selectFilter(filter: WarehouseFilter) {

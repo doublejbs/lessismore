@@ -202,13 +202,9 @@ class BagDetail {
   }
 
   public async deselectFilter(filter: WarehouseFilter) {
-    if (this.filterManager.isAllFilterSelected()) {
-      return;
-    } else {
-      this.setLoading(true);
-      this.filterManager.deselectFilter(filter);
-      this.setLoading(false);
-    }
+    this.setLoading(true);
+    this.filterManager.deselectFilter(filter);
+    this.setLoading(false);
   }
 
   public isLoading() {
