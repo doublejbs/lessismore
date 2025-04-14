@@ -51,7 +51,8 @@ class CustomGear extends AbstractGearEdit {
         [],
         [],
         Date.now(),
-        this.getColor()
+        this.getColor(),
+        this.getCompany()
       ),
     ]);
   }

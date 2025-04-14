@@ -11,6 +11,7 @@ interface GearType {
   bags: string[];
   createDate: number;
   color: string;
+  companyKorean: string;
 }
 
 export default GearType;

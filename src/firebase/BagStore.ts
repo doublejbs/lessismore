@@ -113,6 +113,7 @@ class BagStore {
                 isCustom,
                 createDate,
                 color,
+                companyKorean,
               }) =>
                 new Gear(
                   id,
@@ -128,7 +129,8 @@ class BagStore {
                   used,
                   bags,
                   createDate,
-                  color
+                  color,
+                  companyKorean
                 )
             )
           : [],

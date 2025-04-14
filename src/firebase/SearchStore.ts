@@ -7,7 +7,7 @@ import Gear from '../model/Gear';
 import GearFilter from '../warehouse/model/GearFilter';
 
 class SearchStore {
-  private readonly searchClient = liteClient('RSDA6EDQZP', 'e6231534c3832c1253d08ce1f2d3aaa7');
+  private readonly searchClient = liteClient('BWS6CWRXRM', 'dafcc0c015856d4ca5fb6d0626cf8f9f');
 
   public constructor(private readonly firebase: Firebase) {}
 
@@ -19,7 +19,7 @@ class SearchStore {
     const { results } = await this.searchClient.search<GearType>({
       requests: [
         {
-          indexName: 'useless-lessismore-gear',
+          indexName: 'useless-gear-search',
           query: keyword,
           page: index,
           hitsPerPage: 100,
@@ -30,7 +30,7 @@ class SearchStore {
 
     return {
       gears: await this.convertWithMyGears(
-        hits.map(({ name, weight, company, objectID, imageUrl, color }) => ({
+        hits.map(({ name, weight, company, objectID, imageUrl, color, companyKorean }) => ({
           name,
           weight,
           company,
@@ -41,6 +41,7 @@ class SearchStore {
           bags: [],
           createDate: Date.now(),
           color,
+          companyKorean,
         }))
       ),
       hasMore: page + 1 < nbPages,
@@ -64,6 +65,7 @@ class SearchStore {
         bags,
         createDate,
         color,
+        companyKorean,
       }) => {
         return new Gear(
           id,
@@ -79,7 +81,8 @@ class SearchStore {
           used,
           bags,
           createDate,
-          color
+          color,
+          companyKorean
         );
       }
     );
@@ -112,6 +115,7 @@ class SearchStore {
           bags,
           createDate,
           color,
+          companyKorean,
         } = doc.data();
 
         return new Gear(
@@ -128,7 +132,8 @@ class SearchStore {
           used,
           bags,
           createDate,
-          color
+          color,
+          companyKorean
         );
       });
     } else {

@@ -2,9 +2,34 @@ import React, { useState } from 'react';
 import * as XLSX from 'xlsx';
 import app from './App';
 import Gear from './model/Gear';
+import FirebaseImageStorage from './firebase/FirebaseImageStorage';
+
+// URL에서 이미지를 다운로드하여 File 객체로 변환하는 함수
+const urlToFile = async (url: string, fileName: string): Promise<File | null> => {
+  try {
+    // Cloudflare Workers 프록시 서버를 통해 이미지 다운로드
+    const proxyUrl = 'https://image-proxy.doublejbs.workers.dev/proxy?url=';
+    const response = await fetch(`${proxyUrl}${url}`, {
+      headers: {
+        Accept: 'image/*',
+      },
+    });
+
+    if (!response.ok) {
+      throw new Error(`Failed to fetch image: ${response.status} ${response.statusText}`);
+    }
+
+    const blob = await response.blob();
+    return new File([blob], fileName, { type: blob.type });
+  } catch (error) {
+    console.error('Error downloading image:', error);
+    return null;
+  }
+};
 
 const AdminView = () => {
   const [file, setFile] = useState<null | File>(null);
+  const [imageStorage] = useState<FirebaseImageStorage | null>(() => FirebaseImageStorage.new());
 
   // 파일 선택 시 상태 업데이트
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -35,16 +60,31 @@ const AdminView = () => {
 
       for (let i = 0; i < jsonData.length; i++) {
         const item: any = jsonData[i];
-        await app
-          .getGearStore()
-          .add(
+        try {
+          console.log(item);
+          // imageUrl이 있는 경우 이미지 다운로드
+          let imageFile = null;
+          if (item.imageUrl) {
+            imageFile = await urlToFile(
+              item.imageUrl,
+              `${item.company}-${item.name}-${item.color}.jpg`
+            );
+          }
+
+          await app.getGearStore().add(
             new Gear(
               '',
               item.name,
               item.company,
               item.weight,
+              // imageFile
+              //   ? ((await imageStorage?.uploadFileToPublic(
+              //       imageFile,
+              //       `${item.company}-${item.name}-${item.color}.jpg`
+              //     )) ?? '')
+              //   : '',
               item.imageUrl,
-              true,
+              false,
               false,
               item.category,
               item.subCategory,
@@ -52,12 +92,14 @@ const AdminView = () => {
               [],
               [],
               Date.now(),
-              item.color
+              item.color ?? '',
+              item.companyKorean
             )
           );
+        } catch (error) {
+          console.error(`Error processing item ${item.name}:`, error);
+        }
       }
-
-      // Firestore에 데이터 업로드
 
       alert('데이터가 Firestore에 업로드되었습니다.');
     };
