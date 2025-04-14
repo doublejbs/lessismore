@@ -30,7 +30,7 @@ const BagAddView: FC<Props> = ({ bag }) => {
       setShouldShowAdd(false);
       setStartDate(dayjs());
       setEndDate(dayjs());
-      navigate(`/bag/${bagID}`);
+      navigate(`/bag/${bagID}`, { state: { from: '/bag' } });
     }
   };
 

@@ -260,6 +260,16 @@ class BagDetail {
       return `${this.startDate.format('YYYY.MM.DD')} ~ ${this.endDate.format('YYYY.MM.DD')}`;
     }
   }
+
+  public back() {
+    const fromPath = this.location.state?.from;
+
+    if (fromPath.includes('/bag')) {
+      this.navigate(-1);
+    } else {
+      this.navigate('/bag');
+    }
+  }
 }
 
 export default BagDetail;

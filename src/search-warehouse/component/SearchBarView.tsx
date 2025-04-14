@@ -1,5 +1,4 @@
 import React, { FC } from 'react';
-import { useNavigate, useLocation } from 'react-router-dom';
 import SearchWarehouse from '../model/SearchWarehouse';
 import { observer } from 'mobx-react-lite';
 
@@ -8,8 +7,6 @@ interface Props {
 }
 
 const SearchBarView: FC<Props> = ({ searchWarehouse }) => {
-  const navigate = useNavigate();
-  const location = useLocation();
   const keyword = searchWarehouse.getKeyword();
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -21,14 +18,7 @@ const SearchBarView: FC<Props> = ({ searchWarehouse }) => {
   };
 
   const handleClickBack = () => {
-    const state = location.state as { from?: string };
-    const fromPath = state?.from;
-
-    if (fromPath && (fromPath.includes('/warehouse') || fromPath.includes('/bag'))) {
-      navigate(-1);
-    } else {
-      navigate('/warehouse');
-    }
+    searchWarehouse.back();
   };
 
   return (

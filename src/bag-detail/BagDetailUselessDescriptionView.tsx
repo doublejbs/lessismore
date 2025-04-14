@@ -13,7 +13,7 @@ const BagDetailUselessDescriptionView: FC<Props> = ({ bagDetail }) => {
   const usedWeight = bagDetail.getUsedWeight();
 
   const handleClickUseless = () => {
-    navigate(`/bag/${bagDetail.getId()}/useless`, { state: { from: '/bag' } });
+    navigate(`/bag/${bagDetail.getId()}/useless`, { state: { from: `/bag/${bagDetail.getId()}` } });
   };
 
   const render = () => {

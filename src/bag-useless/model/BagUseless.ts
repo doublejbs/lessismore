@@ -20,7 +20,7 @@ class BagUseless {
     private readonly navigate: NavigateFunction,
     private readonly location: Location,
     private readonly bagStore: BagStore,
-    private readonly gearStore: GearStore,
+    private readonly gearStore: GearStore
   ) {
     makeAutoObservable(this);
   }
@@ -122,16 +122,15 @@ class BagUseless {
         } else {
           return gear.appendUseless(this.id);
         }
-      }),
+      })
     );
     this.back();
   }
 
   public back() {
-    const state = this.location.state as { from?: string };
-    const fromPath = state?.from;
+    const fromPath = this.location.state?.from;
 
-    if (fromPath && fromPath.includes('/bag')) {
+    if (fromPath.includes('/bag') || fromPath.includes(`/bag/${this.id}`)) {
       this.navigate(-1);
     } else {
       this.navigate(`/bag/${this.id}`);

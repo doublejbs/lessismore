@@ -86,7 +86,9 @@ class BagEdit {
   }
 
   public back() {
-    if (this.location.state?.from === `/bag/${this.id}`) {
+    const fromPath = this.location.state?.from;
+
+    if (fromPath.includes(`/bag/${this.id}`)) {
       this.navigate(-1);
     } else {
       this.navigate(`/bag/${this.id}`);
