@@ -4,7 +4,7 @@ import BagStore from '../../firebase/BagStore';
 import app from '../../App';
 import BagItem from '../../bag/model/BagItem';
 import GearStore from '../../firebase/GearStore';
-import { NavigateFunction } from 'react-router-dom';
+import { NavigateFunction, Location } from 'react-router-dom';
 import WarehouseDispatcherType from '../../warehouse/model/WarehouseDispatcherType';
 import AlertManager from '../../alert/AlertManager';
 import ToastManager from '../../toast/ToastManager';
@@ -12,7 +12,8 @@ import ToastManager from '../../toast/ToastManager';
 class WarehouseDetail {
   public static new(
     navigate: NavigateFunction,
-    dispatcher: WarehouseDispatcherType
+    dispatcher: WarehouseDispatcherType,
+    location: Location
   ) {
     return new WarehouseDetail(
       app.getBagStore(),
@@ -20,7 +21,8 @@ class WarehouseDetail {
       navigate,
       dispatcher,
       app.getAlertManager(),
-      app.getToastManager()
+      app.getToastManager(),
+      location
     );
   }
 
@@ -34,7 +36,8 @@ class WarehouseDetail {
     private readonly navigate: NavigateFunction,
     private readonly dispatcher: WarehouseDispatcherType,
     private readonly alertManager: AlertManager,
-    private readonly toastManager: ToastManager
+    private readonly toastManager: ToastManager,
+    private readonly location: Location
   ) {
     makeAutoObservable(this);
   }
@@ -45,9 +48,7 @@ class WarehouseDetail {
       const gear = await this.gearStore.getGear(id);
 
       this.setGear(gear);
-      this.setBags(
-        await this.bagStore.getBags(this.getGear()?.getBags() ?? [])
-      );
+      this.setBags(await this.bagStore.getBags(this.getGear()?.getBags() ?? []));
       this.setInitialized(true);
     } catch (e) {
       window.alert('잘못된 접근입니다');
@@ -101,7 +102,13 @@ class WarehouseDetail {
   }
 
   public close() {
-    this.navigate('/warehouse');
+    const fromPath = this.location.state?.from;
+
+    if (fromPath.includes('/warehouse')) {
+      this.navigate(-1);
+    } else {
+      this.navigate('/warehouse');
+    }
   }
 }
 

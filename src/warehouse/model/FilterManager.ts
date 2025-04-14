@@ -95,12 +95,8 @@ class FilterManager {
   }
 
   public selectFilter(filter: WarehouseFilter) {
-    if (filter.isSame(GearFilter.All)) {
-      this.selectAllFilter();
-    } else {
-      this.filters.find((currentFilter) => currentFilter.isSame(GearFilter.All))?.deselect();
-      filter.select();
-    }
+    this.deselectAll();
+    filter.select();
   }
 
   public deselectFilter(filter: WarehouseFilter) {
@@ -121,6 +117,14 @@ class FilterManager {
     } else {
       return this.getSelectedFilters().some((currentFilter) => currentFilter === filter);
     }
+  }
+
+  private deselectAll() {
+    this.filters.forEach((currentFilter) => {
+      if (currentFilter.isSelected()) {
+        currentFilter.deselect();
+      }
+    });
   }
 }
 

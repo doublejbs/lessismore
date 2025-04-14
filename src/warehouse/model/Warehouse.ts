@@ -18,7 +18,7 @@ class Warehouse {
   private constructor(
     private readonly dispatcher: WarehouseDispatcherType,
     private readonly toastManager: ToastManager,
-    private readonly filterManager: FilterManager,
+    private readonly filterManager: FilterManager
   ) {
     makeAutoObservable(this);
   }
@@ -58,14 +58,10 @@ class Warehouse {
   }
 
   public async deselectFilter(filter: WarehouseFilter) {
-    if (this.filterManager.isAllFilterSelected()) {
-      return;
-    } else {
-      this.setLoading(true);
-      this.filterManager.deselectFilter(filter);
-      await this.getList();
-      this.setLoading(false);
-    }
+    this.setLoading(true);
+    this.filterManager.deselectFilter(filter);
+    await this.getList();
+    this.setLoading(false);
   }
 
   public async selectFilter(filter: WarehouseFilter) {
@@ -83,7 +79,7 @@ class Warehouse {
         } else {
           return currentGear;
         }
-      }),
+      })
     );
   }
 
