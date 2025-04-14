@@ -62,7 +62,9 @@ class CustomGear extends AbstractGearEdit {
   }
 
   public override hide() {
-    if (this.location.state?.from === '/bag' || this.location.state?.from === '/warehouse') {
+    const fromPath = this.location.state?.from;
+
+    if (fromPath.includes('/bag') || fromPath.includes('/warehouse')) {
       this.navigate(-1);
     } else {
       this.navigate('/warehouse');

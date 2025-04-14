@@ -24,7 +24,7 @@ class SearchWarehouse {
     private readonly searchDispatcher: SearchDispatcherType,
     private readonly toastManager: ToastManager,
     private readonly navigate: NavigateFunction,
-    private readonly location: Location,
+    private readonly location: Location
   ) {
     makeObservable(this);
   }
@@ -60,7 +60,7 @@ class SearchWarehouse {
       if (this.getKeyword()) {
         const { gears, hasMore } = await this.searchDispatcher.searchList(
           this.getKeyword(),
-          this.plusPage(),
+          this.plusPage()
         );
 
         this.appendResult(gears);
@@ -79,7 +79,7 @@ class SearchWarehouse {
     if (this.getKeyword()) {
       const { gears, hasMore } = await this.searchDispatcher.searchList(
         this.getKeyword(),
-        this.plusPage(),
+        this.plusPage()
       );
 
       this.setResult(gears);
@@ -162,7 +162,9 @@ class SearchWarehouse {
   }
 
   public back() {
-    if (this.location.state?.from === '/bag' || this.location.state?.from === 'warehouse') {
+    const fromPath = this.location.state?.from;
+
+    if (fromPath.includes('/bag') || fromPath.includes('/warehouse')) {
       this.navigate(-1);
     } else {
       this.navigate('/warehouse');

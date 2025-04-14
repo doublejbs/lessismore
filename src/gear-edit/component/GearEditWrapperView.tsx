@@ -4,12 +4,13 @@ import GearEditView from './GearEditView';
 import GearEdit from '../model/GearEdit';
 import GearEditDispatcher from '../model/GearEditDispatcher';
 import CustomGearCategory from '../../custom-gear/model/CustomGearCategory';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useNavigate, useParams, useLocation   } from 'react-router-dom';
 
 const GearEditWrapperView: FC = () => {
   const navigate = useNavigate();
+  const location = useLocation();
   const [gearEdit] = useState(() =>
-    GearEdit.from(GearEditDispatcher.new(), navigate, CustomGearCategory.new())
+    GearEdit.from(GearEditDispatcher.new(), navigate, location, CustomGearCategory.new())
   );
   const { id } = useParams();
   const isInitialized = gearEdit.isInitialized();

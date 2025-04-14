@@ -28,7 +28,7 @@ const BagDetailGearView: FC<Props> = ({ gear, bagDetail }) => {
   const handleClickEdit = (e: React.MouseEvent) => {
     e.stopPropagation();
     setShowMenu(false);
-    navigate(`/gear/edit/${gear.getId()}`);
+    navigate(`/gear/edit/${gear.getId()}`, { state: { from: `/bag/${bagDetail.getId()}` } });
   };
 
   const handleClickBack = (e: React.MouseEvent) => {

@@ -21,14 +21,7 @@ const BagDetailView: FC<Props> = ({ bagDetail }) => {
   };
 
   const handleClickBack = () => {
-    const state = location.state as { from?: string };
-    const fromPath = state?.from;
-
-    if (fromPath && fromPath.includes('/bag')) {
-      navigate(-1);
-    } else {
-      navigate('/bag');
-    }
+    bagDetail.back();
   };
 
   useEffect(() => {
