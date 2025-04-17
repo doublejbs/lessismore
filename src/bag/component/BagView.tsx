@@ -24,7 +24,7 @@ const BagView = () => {
           <div
             style={{ height: '100%', fontSize: '30px', fontWeight: 'bold', position: 'relative' }}
           >
-            <span style={{ position: 'absolute', top: '20%', left: '20px' }}>
+            <span style={{ position: 'absolute', top: '30%', left: '20px' }}>
               아직 등록한
               <br /> 배낭이 없어요:(
             </span>
@@ -33,22 +33,27 @@ const BagView = () => {
       }
       default: {
         return (
-          <div
-            style={{
-              height: '100%',
-              display: 'flex',
-              flexDirection: 'column',
-            }}
-          >
-            {bags.map((bagItem: BagItem) => (
-              <BagItemView key={bagItem.getID()} bag={bag} bagItem={bagItem} />
-            ))}
+          <>
+            <div style={{ padding: '24px 0', fontSize: '20px', fontWeight: 'bold' }}>
+              <span>총 {bags.length}개의 배낭이 있어요</span>
+            </div>
             <div
               style={{
-                minHeight: '52px',
+                height: '100%',
+                display: 'flex',
+                flexDirection: 'column',
               }}
-            ></div>
-          </div>
+            >
+              {bags.map((bagItem: BagItem) => (
+                <BagItemView key={bagItem.getID()} bag={bag} bagItem={bagItem} />
+              ))}
+              <div
+                style={{
+                  minHeight: '52px',
+                }}
+              ></div>
+            </div>
+          </>
         );
       }
     }
@@ -73,9 +78,6 @@ const BagView = () => {
           padding: '0 20px 0 20px',
         }}
       >
-        <div style={{ padding: '24px 0', fontSize: '20px', fontWeight: 'bold' }}>
-          <span>총 {bags.length}개의 배낭이 있어요</span>
-        </div>
         {render()}
         <div
           style={{
