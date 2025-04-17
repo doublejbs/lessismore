@@ -6,16 +6,11 @@ import {
   GoogleAuthProvider,
   signInWithEmailAndPassword,
   signInWithRedirect,
+  signInWithPopup,
   signOut,
 } from 'firebase/auth';
 import { makeAutoObservable } from 'mobx';
-import {
-  doc,
-  Firestore,
-  getDoc,
-  getFirestore,
-  setDoc,
-} from 'firebase/firestore';
+import { doc, Firestore, getDoc, getFirestore, setDoc, updateDoc } from 'firebase/firestore';
 import { FirebaseStorage, getStorage } from 'firebase/storage';
 
 class Firebase {
@@ -35,6 +30,7 @@ class Firebase {
   private initialized = false;
   private store!: Firestore;
   private storage!: FirebaseStorage;
+  private hasAgreedToTerms = false;
 
   public constructor() {
     makeAutoObservable(this);
@@ -45,33 +41,68 @@ class Firebase {
     this.auth = getAuth(fireBaseApp);
     this.store = getFirestore(fireBaseApp);
     this.storage = getStorage(fireBaseApp);
-
     await this.auth.authStateReady();
+    await this.checkLoggedIn();
+    this.setInitialized(true);
 
     this.auth.onAuthStateChanged(async (user) => {
-
-  
       if (user?.uid) {
-        this.setUserId(user.uid);
-        await this.initializeStore();
+        await this.checkLoggedIn();
       } else {
         this.setUserId('');
+        this.setHasAgreedToTerms(false);
       }
     });
+  }
 
-    this.setInitialized(true);
+  private async checkLoggedIn() {
+    const userId = this.auth.currentUser;
+
+    if (userId) {
+      this.setUserId(userId.uid);
+      await this.initializeStore();
+      await this.checkTermsAgreement();
+    }
+  }
+
+  public async termsAgreed(marketingAgreed: boolean) {
+    const userDocRef = doc(this.getStore(), 'users', this.getUserId());
+
+    await updateDoc(userDocRef, {
+      termsAgreed: true,
+      privacyAgreed: true,
+      marketingAgreed: marketingAgreed,
+      agreedAt: new Date(),
+    });
+    this.setHasAgreedToTerms(true);
   }
 
   private async initializeStore() {
-    if (
-      (await getDoc(doc(this.getStore(), 'users', this.getUserId()))).data()
-    ) {
+    const userDocRef = doc(this.getStore(), 'users', this.getUserId());
+    const userDoc = await getDoc(userDocRef);
+
+    if (userDoc.exists()) {
       return;
     } else {
-      await setDoc(doc(this.getStore(), 'users', this.getUserId()), {
-        gears: [],
-        bags: [],
+      await setDoc(userDocRef, {
+        termsAgreed: false,
+        privacyAgreed: false,
+        marketingAgreed: false,
+        createdAt: new Date(),
       });
+    }
+  }
+
+  private async checkTermsAgreement() {
+    const userDocRef = doc(this.getStore(), 'users', this.getUserId());
+    const userDoc = await getDoc(userDocRef);
+
+    if (userDoc.exists()) {
+      const userData = userDoc.data();
+
+      this.setHasAgreedToTerms(userData.termsAgreed === true && userData.privacyAgreed === true);
+    } else {
+      this.setHasAgreedToTerms(false);
     }
   }
 
@@ -100,7 +131,13 @@ class Firebase {
   }
 
   public async logInWithGoogle() {
-    await signInWithRedirect(this.auth, this.googleProvider);
+    const isLocalhost = window.location.hostname === 'localhost';
+
+    if (isLocalhost) {
+      await signInWithPopup(this.auth, this.googleProvider);
+    } else {
+      await signInWithRedirect(this.auth, this.googleProvider);
+    }
   }
 
   public getStore() {
@@ -113,6 +150,14 @@ class Firebase {
 
   public getStorage() {
     return this.storage;
+  }
+
+  public hasUserAgreedToTerms() {
+    return this.hasAgreedToTerms;
+  }
+
+  private setHasAgreedToTerms(value: boolean) {
+    this.hasAgreedToTerms = value;
   }
 }
 

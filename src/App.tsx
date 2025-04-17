@@ -1,8 +1,9 @@
-import React, { useEffect } from 'react';
-import { Route, Routes, useNavigate } from 'react-router-dom';
+import React, { useEffect, useState } from 'react';
+import { Route, Routes, useNavigate, useLocation } from 'react-router-dom';
 import './App.css';
 import LogIn from './LogIn.tsx';
 import Join from './Join.tsx';
+import TermsAgreement from './TermsAgreement.tsx';
 import { observer } from 'mobx-react-lite';
 import app from './App.ts';
 import WarehouseWrapper from './warehouse/component/WarehouseWrapper.tsx';
@@ -21,12 +22,20 @@ import BagDetailWrapper from './bag-detail/BagDetailWrapper.tsx';
 
 const ROUTES = [
   {
+    path: '/',
+    element: <WarehouseWrapper />,
+  },
+  {
     path: '/login',
     element: <LogIn />,
   },
   {
     path: '/join',
     element: <Join />,
+  },
+  {
+    path: '/terms-agreement',
+    element: <TermsAgreement />,
   },
   {
     path: 'bag/:id/edit/search',
@@ -68,31 +77,49 @@ const ROUTES = [
 const App = () => {
   const firebase = app.getFirebase();
   const navigate = useNavigate();
+  const location = useLocation();
   const isLoggedIn = firebase.isLoggedIn();
+  const hasAgreed = firebase.hasUserAgreedToTerms();
   const isInitialized = app.isInitialized();
   const alertManager = app.getAlertManager();
 
   useEffect(() => {
     if (isInitialized) {
       if (isLoggedIn) {
-        if (location.pathname === '/login' || location.pathname === '/') {
-          navigate('/warehouse', { replace: true });
+        if (hasAgreed) {
+          if (
+            location.pathname === '/login' ||
+            location.pathname === '/' ||
+            location.pathname === '/terms-agreement'
+          ) {
+            navigate('/warehouse', { replace: true });
+          }
+        } else {
+          if (location.pathname !== '/terms-agreement') {
+            navigate('/terms-agreement', { replace: true });
+          }
         }
       } else {
-        navigate('/login');
+        if (location.pathname !== '/login' && location.pathname !== '/join') {
+          navigate('/login');
+        }
       }
     } else {
       app.initialize();
     }
-  }, [isLoggedIn, isInitialized]);
+  }, [isLoggedIn, isInitialized, location.pathname, hasAgreed]);
 
   if (isInitialized) {
     return (
       <>
         <Routes>
-          {ROUTES.map(({ path, element }) => (
-            <Route key={path} path={path} element={element} />
-          ))}
+          {ROUTES.map(({ path, element }) => {
+            if (path === '/terms-agreement') {
+              return <Route key={path} path={path} element={<TermsAgreement />} />;
+            }
+
+            return <Route key={path} path={path} element={element} />;
+          })}
         </Routes>
         <AlertView alertManager={alertManager} />
       </>
