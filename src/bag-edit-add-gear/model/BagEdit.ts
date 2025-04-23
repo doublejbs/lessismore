@@ -5,9 +5,12 @@ import app from '../../App';
 import Gear from '../../model/Gear';
 import WarehouseDispatcherType from '../../warehouse/model/WarehouseDispatcherType';
 import WarehouseDispatcher from '../../warehouse/model/WarehouseDispatcher';
-import { makeAutoObservable } from 'mobx';
+import { makeAutoObservable, reaction } from 'mobx';
 import WarehouseFilter from '../../warehouse/model/WarehouseFilter';
 import GearFilter from '../../warehouse/model/GearFilter';
+import Order from '../../order/Order';
+import OrderType from '../../order/OrderType';
+
 class BagEdit {
   public static from(navigate: NavigateFunction, location: Location, id: string) {
     return new BagEdit(
@@ -16,7 +19,8 @@ class BagEdit {
       id,
       app.getBagStore(),
       WarehouseDispatcher.new(),
-      FilterManager.from()
+      FilterManager.from(),
+      Order.new()
     );
   }
 
@@ -27,6 +31,7 @@ class BagEdit {
   private warehouseGears: Gear[] = [];
   private loading = false;
   private initialized = false;
+  private disposeReaction: () => void;
 
   private constructor(
     private readonly navigate: NavigateFunction,
@@ -34,9 +39,20 @@ class BagEdit {
     private readonly id: string,
     private readonly bagStore: BagStore,
     private readonly dispatcher: WarehouseDispatcherType,
-    private readonly filterManager: FilterManager
+    private readonly filterManager: FilterManager,
+    private readonly order: Order
   ) {
     makeAutoObservable(this);
+    this.disposeReaction = reaction(
+      () => this.order.getSelectedOrderType(),
+      async () => {
+        await this.initialize();
+      }
+    );
+  }
+
+  public dispose() {
+    this.disposeReaction();
   }
 
   public async initialize() {
@@ -47,7 +63,8 @@ class BagEdit {
 
       const { weight, gears } = await this.bagStore.getBag(
         this.id,
-        this.filterManager.getSelectedFilters()
+        this.filterManager.getSelectedFilters(),
+        this.order.getSelectedOrderType() ?? OrderType.NameAsc
       );
 
       this.setSelectedGears(gears);
@@ -61,7 +78,12 @@ class BagEdit {
   }
 
   private async getList() {
-    this.setWarehouseGears(await this.dispatcher.getList(this.filterManager.getSelectedFilters()));
+    this.setWarehouseGears(
+      await this.dispatcher.getList(
+        this.filterManager.getSelectedFilters(),
+        this.order.getSelectedOrderType() ?? OrderType.NameAsc
+      )
+    );
   }
 
   private setSelectedGears(gears: Gear[]) {
@@ -183,6 +205,10 @@ class BagEdit {
 
   public isInitialized() {
     return this.initialized;
+  }
+
+  public getOrder() {
+    return this.order;
   }
 }
 

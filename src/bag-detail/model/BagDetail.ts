@@ -1,4 +1,4 @@
-import { makeAutoObservable } from 'mobx';
+import { makeAutoObservable, reaction } from 'mobx';
 import app from '../../App';
 import Gear from '../../model/Gear';
 import BagStore from '../../firebase/BagStore';
@@ -8,7 +8,8 @@ import { Location, NavigateFunction } from 'react-router-dom';
 import FilterManager from '../../warehouse/model/FilterManager';
 import WarehouseFilter from '../../warehouse/model/WarehouseFilter';
 import GearFilter from '../../warehouse/model/GearFilter';
-
+import Order from '../../order/Order';
+import OrderType from '../../order/OrderType';
 class BagDetail {
   public static from(navigate: NavigateFunction, location: Location, id: string) {
     return new BagDetail(
@@ -17,7 +18,8 @@ class BagDetail {
       id,
       app.getBagStore(),
       app.getGearStore(),
-      FilterManager.from()
+      FilterManager.from(),
+      Order.new()
     );
   }
 
@@ -35,6 +37,7 @@ class BagDetail {
   private loading = false;
   private startDate = dayjs();
   private endDate = dayjs();
+  private disposeReaction: () => void;
 
   private constructor(
     private readonly navigate: NavigateFunction,
@@ -42,15 +45,23 @@ class BagDetail {
     private readonly id: string,
     private readonly bagStore: BagStore,
     private readonly gearStore: GearStore,
-    private readonly filterManager: FilterManager
+    private readonly filterManager: FilterManager,
+    private readonly order: Order
   ) {
     makeAutoObservable(this);
+    this.disposeReaction = reaction(
+      () => this.order.getSelectedOrderType(),
+      async () => {
+        await this.initialize();
+      }
+    );
   }
 
   public async initialize() {
     const { name, weight, editDate, gears, startDate, endDate } = await this.bagStore.getBag(
       this.id,
-      this.filterManager.getSelectedFilters()
+      this.filterManager.getSelectedFilters(),
+      this.order.getSelectedOrderType() ?? OrderType.NameAsc
     );
     this.setName(name);
     this.setWeight(weight);
@@ -265,6 +276,14 @@ class BagDetail {
     } else {
       this.navigate('/bag');
     }
+  }
+
+  public getOrder() {
+    return this.order;
+  }
+
+  public dispose() {
+    this.disposeReaction();
   }
 }
 

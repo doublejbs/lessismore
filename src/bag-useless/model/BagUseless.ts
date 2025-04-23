@@ -1,13 +1,15 @@
-import { makeAutoObservable } from 'mobx';
+import { makeAutoObservable, reaction } from 'mobx';
 import BagStore from '../../firebase/BagStore';
 import app from '../../App';
 import Gear from '../../model/Gear';
 import GearStore from '../../firebase/GearStore';
 import { Location, NavigateFunction } from 'react-router-dom';
 import GearFilter from '../../warehouse/model/GearFilter';
+import OrderType from '../../order/OrderType';
+import Order from '../../order/Order';
 class BagUseless {
   public static new(navigate: NavigateFunction, location: Location) {
-    return new BagUseless(navigate, location, app.getBagStore(), app.getGearStore());
+    return new BagUseless(navigate, location, app.getBagStore(), app.getGearStore(), Order.new());
   }
 
   private id = '';
@@ -15,14 +17,22 @@ class BagUseless {
   private selectedGears: Gear[] = [];
   private uselessGears: Gear[] = [];
   private initialized = false;
+  private disposeReaction: () => void;
 
   private constructor(
     private readonly navigate: NavigateFunction,
     private readonly location: Location,
     private readonly bagStore: BagStore,
-    private readonly gearStore: GearStore
+    private readonly gearStore: GearStore,
+    private readonly order: Order
   ) {
     makeAutoObservable(this);
+    this.disposeReaction = reaction(
+      () => this.order.getSelectedOrderType(),
+      async () => {
+        await this.fetchGears();
+      }
+    );
   }
 
   public async initialize(id: string) {
@@ -31,8 +41,7 @@ class BagUseless {
     }
 
     this.setId(id);
-    const { gears } = await this.bagStore.getBag(this.id, [GearFilter.All]);
-    this.setGears(gears);
+    const gears = await this.fetchGears();
     gears.forEach((gear) => {
       if (gear.hasUseless(this.id)) {
         this.uselessGears.push(gear);
@@ -46,6 +55,17 @@ class BagUseless {
     }
 
     this.setInitialized();
+  }
+
+  private async fetchGears() {
+    const { gears } = await this.bagStore.getBag(
+      this.id,
+      [GearFilter.All],
+      this.order.getSelectedOrderType() ?? OrderType.NameAsc
+    );
+    this.setGears(gears);
+
+    return gears;
   }
 
   private pushSelectedGear(gear: Gear) {
@@ -135,6 +155,14 @@ class BagUseless {
     } else {
       this.navigate(`/bag/${this.id}`);
     }
+  }
+
+  public getOrder() {
+    return this.order;
+  }
+
+  public dispose() {
+    this.disposeReaction();
   }
 }
 
