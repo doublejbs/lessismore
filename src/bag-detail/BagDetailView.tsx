@@ -133,15 +133,6 @@ const BagDetailView: FC<Props> = ({ bagDetail }) => {
           >
             총 {gears.length}개의 장비
           </span>
-          <span
-            style={{
-              fontWeight: '500',
-              color: '#505967',
-              fontSize: '1rem',
-            }}
-          >
-            정렬
-          </span>
         </div>
         <BagDetailFiltersView bagDetail={bagDetail} />
         <div

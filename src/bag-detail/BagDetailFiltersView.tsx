@@ -2,12 +2,15 @@ import { FC } from 'react';
 import WarehouseFilter from '../warehouse/model/WarehouseFilter';
 import BagDetail from './model/BagDetail';
 import { observer } from 'mobx-react-lite';
+import OrderButtonView from '../order/OrderButtonView';
 
 interface Props {
   bagDetail: BagDetail;
 }
 
 const BagDetailFiltersView: FC<Props> = ({ bagDetail }) => {
+  const order = bagDetail.getOrder();
+
   const handleClick = (filter: WarehouseFilter) => {
     bagDetail.toggleFilter(filter);
   };
@@ -18,6 +21,9 @@ const BagDetailFiltersView: FC<Props> = ({ bagDetail }) => {
         width: '100%',
         paddingBottom: '15px',
         paddingLeft: '20px',
+        display: 'flex',
+        flexDirection: 'row',
+        gap: '8px',
       }}
     >
       <div
@@ -56,6 +62,7 @@ const BagDetailFiltersView: FC<Props> = ({ bagDetail }) => {
           );
         })}
       </div>
+      <OrderButtonView order={order} />
     </div>
   );
 };

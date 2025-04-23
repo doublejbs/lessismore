@@ -11,7 +11,7 @@ import {
   writeBatch,
 } from '@firebase/firestore';
 import GearFilter from '../warehouse/model/GearFilter.ts';
-
+import OrderType from '../order/OrderType.ts';
 export interface GearData {
   id: string;
   name: string;
@@ -74,17 +74,17 @@ class GearStore {
     }
   }
 
-  public async getList(filters: GearFilter[]): Promise<Gear[]> {
+  public async getList(filters: GearFilter[], order: OrderType): Promise<Gear[]> {
     const filterQuery =
       filters.length === 1 && filters[0] === GearFilter.All
         ? query(
             collection(this.getStore(), 'users', this.getUserId(), 'gears'),
-            orderBy('createDate', 'desc')
+            this.getOrderQuery(order)
           )
         : query(
             collection(this.getStore(), 'users', this.getUserId(), 'gears'),
             where('subCategory', 'in', filters),
-            orderBy('createDate', 'desc')
+            this.getOrderQuery(order)
           );
     const gears = (await getDocs(filterQuery)).docs;
 
@@ -127,6 +127,25 @@ class GearStore {
       });
     } else {
       return [];
+    }
+  }
+
+  private getOrderQuery(order: OrderType) {
+    switch (order) {
+      case OrderType.NameAsc:
+        return orderBy('name', 'asc');
+      case OrderType.NameDesc:
+        return orderBy('name', 'desc');
+      case OrderType.WeightAsc:
+        return orderBy('weight', 'asc');
+      case OrderType.WeightDesc:
+        return orderBy('weight', 'desc');
+      case OrderType.CreatedAsc:
+        return orderBy('createDate', 'asc');
+      case OrderType.CreatedDesc:
+        return orderBy('createDate', 'desc');
+      default:
+        return orderBy('name', 'asc');
     }
   }
 

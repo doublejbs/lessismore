@@ -1,4 +1,4 @@
-import { makeAutoObservable } from 'mobx';
+import { action, makeAutoObservable, reaction } from 'mobx';
 import Gear from '../../model/Gear.ts';
 import GearFilter from './GearFilter.ts';
 import WarehouseFilter from './WarehouseFilter.ts';
@@ -6,21 +6,32 @@ import WarehouseDispatcherType from './WarehouseDispatcherType.ts';
 import WarehouseDispatcher from './WarehouseDispatcher.ts';
 import ToastManager from '../../toast/ToastManager';
 import FilterManager from './FilterManager';
+import Order from '../../order/Order';
+import OrderType from '../../order/OrderType';
 
 class Warehouse {
   public static from(dispatcher: WarehouseDispatcher, toastManager: ToastManager) {
-    return new Warehouse(dispatcher, toastManager, FilterManager.from());
+    return new Warehouse(dispatcher, toastManager, FilterManager.from(), Order.new());
   }
 
   private gears: Gear[] = [];
   private loading = false;
+  private disposeReaction: () => void;
 
   private constructor(
     private readonly dispatcher: WarehouseDispatcherType,
     private readonly toastManager: ToastManager,
-    private readonly filterManager: FilterManager
+    private readonly filterManager: FilterManager,
+    private readonly order: Order
   ) {
     makeAutoObservable(this);
+
+    this.disposeReaction = reaction(
+      () => this.order.getSelectedOrderType(),
+      async () => {
+        await this.getList();
+      }
+    );
   }
 
   public async initialize() {
@@ -28,7 +39,12 @@ class Warehouse {
   }
 
   public async getList() {
-    this.setGears(await this.dispatcher.getList(this.filterManager.getSelectedFilters()));
+    this.setGears(
+      await this.dispatcher.getList(
+        this.filterManager.getSelectedFilters(),
+        this.order.getSelectedOrderType() ?? OrderType.NameAsc
+      )
+    );
   }
 
   public async remove(value: Gear) {
@@ -93,6 +109,15 @@ class Warehouse {
 
   private isLoading() {
     return this.loading;
+  }
+
+  public getOrder() {
+    return this.order;
+  }
+
+  // 객체 소멸 시 reaction 정리
+  public dispose() {
+    this.disposeReaction();
   }
 }
 

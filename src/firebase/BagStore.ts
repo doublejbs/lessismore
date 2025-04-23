@@ -20,6 +20,7 @@ import Gear from '../model/Gear';
 import BagItem from '../bag/model/BagItem';
 import { runTransaction, writeBatch } from '@firebase/firestore';
 import GearFilter from '../warehouse/model/GearFilter';
+import OrderType from '../order/OrderType.ts';
 class BagStore {
   public constructor(
     private readonly firebase: Firebase,
@@ -51,7 +52,7 @@ class BagStore {
     }
   }
 
-  public async getBag(id: string, filters: GearFilter[]) {
+  public async getBag(id: string, filters: GearFilter[], order: OrderType) {
     const { name, weight, gears, editDate, startDate, endDate } = (
       await getDoc(doc(this.getStore(), 'bag', id))
     ).data() as {
@@ -77,7 +78,7 @@ class BagStore {
         query(
           collection(this.getStore(), 'users', this.getUserID(), 'gears'),
           where('__name__', 'in', gears),
-          orderBy('createDate', 'desc')
+          this.getOrderQuery(order)
         )
       );
       const warehouseGears = warehouseSnapshot.docs
@@ -135,6 +136,25 @@ class BagStore {
             )
           : [],
       };
+    }
+  }
+
+  private getOrderQuery(order: OrderType) {
+    switch (order) {
+      case OrderType.NameAsc:
+        return orderBy('name', 'asc');
+      case OrderType.NameDesc:
+        return orderBy('name', 'desc');
+      case OrderType.WeightAsc:
+        return orderBy('weight', 'asc');
+      case OrderType.WeightDesc:
+        return orderBy('weight', 'desc');
+      case OrderType.CreatedAsc:
+        return orderBy('createDate', 'asc');
+      case OrderType.CreatedDesc:
+        return orderBy('createDate', 'desc');
+      default:
+        return orderBy('name', 'asc');
     }
   }
 
