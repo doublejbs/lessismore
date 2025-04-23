@@ -7,6 +7,7 @@ import LoadingView from '../../LoadingView.tsx';
 import BagItem from '../model/BagItem';
 import Layout from '../../Layout';
 import Bottom from '../../Bottom';
+import KakaoAdView from '../../advertisement/KakaoAdView.tsx';
 
 const BagView = () => {
   const [bag] = useState(() => Bag.new());
@@ -78,6 +79,7 @@ const BagView = () => {
           padding: '0 20px 0 20px',
         }}
       >
+        <KakaoAdView />
         {render()}
         <div
           style={{
