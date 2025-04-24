@@ -41,7 +41,7 @@ class CustomGear extends AbstractGearEdit {
         uuidv4(),
         this.getName(),
         this.getCompany(),
-        String(this.getWeight() || 0),
+        this.getWeight(),
         await this.getFileUrl(),
         true,
         true,
