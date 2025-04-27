@@ -1,7 +1,6 @@
 import React, { FC, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import App from './App';
-import { doc, updateDoc } from 'firebase/firestore';
 import { observer } from 'mobx-react-lite';
 
 const TermsAgreement: FC = () => {
@@ -10,7 +9,6 @@ const TermsAgreement: FC = () => {
   const [marketingAgreed, setMarketingAgreed] = useState(false);
   const [error, setError] = useState('');
   const firebase = App.getFirebase();
-  const userId = firebase.getUserId();
   const navigate = useNavigate();
 
   const handleSubmit = async () => {

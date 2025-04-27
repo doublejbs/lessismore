@@ -89,55 +89,59 @@ class SearchStore {
   }
 
   private async getList(filter: GearFilter): Promise<Gear[]> {
-    const filterQuery =
-      filter === GearFilter.All
-        ? collection(this.getStore(), 'users', this.getUserId(), 'gears')
-        : query(
-            collection(this.getStore(), 'users', this.getUserId(), 'gears'),
-            where('subCategory', '==', filter),
-            orderBy('name', 'desc')
-          );
-    const gears = (await getDocs(filterQuery)).docs;
-
-    if (!!gears?.length) {
-      return gears.map((doc) => {
-        const {
-          id,
-          name,
-          company,
-          weight,
-          imageUrl,
-          isCustom,
-          category,
-          subCategory,
-          useless,
-          used,
-          bags,
-          createDate,
-          color,
-          companyKorean,
-        } = doc.data();
-
-        return new Gear(
-          id,
-          name,
-          company,
-          weight,
-          imageUrl,
-          true,
-          isCustom,
-          category,
-          subCategory,
-          useless,
-          used,
-          bags,
-          createDate,
-          color,
-          companyKorean
-        );
-      });
-    } else {
+    if (!this.firebase.isLoggedIn()) {
       return [];
+    } else {
+      const filterQuery =
+        filter === GearFilter.All
+          ? collection(this.getStore(), 'users', this.getUserId(), 'gears')
+          : query(
+              collection(this.getStore(), 'users', this.getUserId(), 'gears'),
+              where('subCategory', '==', filter),
+              orderBy('name', 'desc')
+            );
+      const gears = (await getDocs(filterQuery)).docs;
+
+      if (!!gears?.length) {
+        return gears.map((doc) => {
+          const {
+            id,
+            name,
+            company,
+            weight,
+            imageUrl,
+            isCustom,
+            category,
+            subCategory,
+            useless,
+            used,
+            bags,
+            createDate,
+            color,
+            companyKorean,
+          } = doc.data();
+
+          return new Gear(
+            id,
+            name,
+            company,
+            weight,
+            imageUrl,
+            true,
+            isCustom,
+            category,
+            subCategory,
+            useless,
+            used,
+            bags,
+            createDate,
+            color,
+            companyKorean
+          );
+        });
+      } else {
+        return [];
+      }
     }
   }
 
