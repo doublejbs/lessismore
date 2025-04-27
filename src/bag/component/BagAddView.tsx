@@ -3,6 +3,8 @@ import Bag from '../model/Bag';
 import { useNavigate } from 'react-router-dom';
 import dayjs from 'dayjs';
 import BagAddDateView from './BagAddDateView';
+import app from '../../App';
+
 interface Props {
   bag: Bag;
 }
@@ -15,7 +17,17 @@ const BagAddView: FC<Props> = ({ bag }) => {
   const navigate = useNavigate();
 
   const showAdd = () => {
-    setShouldShowAdd(true);
+    if (app.getFirebase().isLoggedIn()) {
+      setShouldShowAdd(true);
+    } else {
+      app.getAlertManager().show({
+        message: '로그인 후 추가 가능해요.',
+        confirmText: '로그인 하러 가기',
+        onConfirm: async () => {
+          navigate('/login');
+        },
+      });
+    }
   };
 
   const handleChange = (e: any) => {

@@ -8,10 +8,15 @@ import ToastManager from '../../toast/ToastManager';
 import FilterManager from './FilterManager';
 import Order from '../../order/Order';
 import OrderType from '../../order/OrderType';
+import Firebase from '../../firebase/Firebase.ts';
 
 class Warehouse {
-  public static from(dispatcher: WarehouseDispatcher, toastManager: ToastManager) {
-    return new Warehouse(dispatcher, toastManager, FilterManager.from(), Order.new());
+  public static from(
+    dispatcher: WarehouseDispatcher,
+    toastManager: ToastManager,
+    firebase: Firebase
+  ) {
+    return new Warehouse(dispatcher, toastManager, FilterManager.from(), Order.new(), firebase);
   }
 
   private gears: Gear[] = [];
@@ -22,7 +27,8 @@ class Warehouse {
     private readonly dispatcher: WarehouseDispatcherType,
     private readonly toastManager: ToastManager,
     private readonly filterManager: FilterManager,
-    private readonly order: Order
+    private readonly order: Order,
+    private readonly firebase: Firebase
   ) {
     makeAutoObservable(this);
 
@@ -35,7 +41,9 @@ class Warehouse {
   }
 
   public async initialize() {
-    await this.getList();
+    if (this.isLoggedIn()) {
+      await this.getList();
+    }
   }
 
   public async getList() {
@@ -118,6 +126,10 @@ class Warehouse {
   // 객체 소멸 시 reaction 정리
   public dispose() {
     this.disposeReaction();
+  }
+
+  private isLoggedIn() {
+    return this.firebase.isLoggedIn();
   }
 }
 

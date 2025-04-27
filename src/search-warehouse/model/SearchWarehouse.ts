@@ -6,10 +6,19 @@ import { debounce } from 'lodash';
 import ToastManager from '../../toast/ToastManager';
 import app from '../../App';
 import { Location, NavigateFunction } from 'react-router-dom';
+import Firebase from '../../firebase/Firebase';
+import AlertManager from '../../alert/AlertManager';
 
 class SearchWarehouse {
   public static new(navigate: NavigateFunction, location: Location) {
-    return new SearchWarehouse(SearchDispatcher.new(), app.getToastManager(), navigate, location);
+    return new SearchWarehouse(
+      SearchDispatcher.new(),
+      app.getToastManager(),
+      navigate,
+      location,
+      app.getFirebase(),
+      app.getAlertManager()
+    );
   }
 
   @observable private keyword: string = '';
@@ -24,7 +33,9 @@ class SearchWarehouse {
     private readonly searchDispatcher: SearchDispatcherType,
     private readonly toastManager: ToastManager,
     private readonly navigate: NavigateFunction,
-    private readonly location: Location
+    private readonly location: Location,
+    private readonly firebase: Firebase,
+    private readonly alertManager: AlertManager
   ) {
     makeObservable(this);
   }
@@ -40,8 +51,26 @@ class SearchWarehouse {
     if (this.isSelected(gear)) {
       this.deleteSelected(gear);
     } else {
-      this.selected.push(gear);
+      this.select(gear);
     }
+  }
+
+  private select(gear: Gear) {
+    if (this.firebase.isLoggedIn()) {
+      this.selected.push(gear);
+    } else {
+      this.alertManager.show({
+        message: '로그인 후 추가 가능해요.',
+        confirmText: '로그인 하러 가기',
+        onConfirm: async () => {
+          this.navigate('/login');
+        },
+      });
+    }
+  }
+
+  private deselect(gear: Gear) {
+    this.selected = this.selected.filter((item) => !item.isSame(gear));
   }
 
   @action

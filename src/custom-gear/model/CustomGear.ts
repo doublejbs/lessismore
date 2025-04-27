@@ -6,6 +6,8 @@ import { uuidv4 } from '@firebase/util';
 import CustomGearCategory from './CustomGearCategory';
 import AbstractGearEdit from './AbstractGearEdit';
 import { Location, NavigateFunction } from 'react-router-dom';
+import Firebase from '../../firebase/Firebase';
+import AlertManager from '../../alert/AlertManager';
 
 class CustomGear extends AbstractGearEdit {
   public static new(navigate: NavigateFunction, location: Location) {
@@ -13,6 +15,8 @@ class CustomGear extends AbstractGearEdit {
       navigate,
       location,
       app.getGearStore(),
+      app.getFirebase(),
+      app.getAlertManager(),
       CustomGearCategory.new().selectFirst(),
       '',
       '',
@@ -25,6 +29,8 @@ class CustomGear extends AbstractGearEdit {
     private readonly navigate: NavigateFunction,
     private readonly location: Location,
     private readonly gearStore: GearStore,
+    private readonly firebase: Firebase,
+    private readonly alertManager: AlertManager,
     category: CustomGearCategory,
     name: string,
     company: string,
@@ -35,6 +41,17 @@ class CustomGear extends AbstractGearEdit {
     makeObservable(this);
   }
 
+  public async initialize() {
+    if (!this.isLoggedIn()) {
+      this.alertManager.show({
+        message: '로그인 후 추가 가능해요.',
+        confirmText: '로그인 하러 가기',
+        onConfirm: async () => {
+          this.navigate('/login');
+        },
+      });
+    }
+  }
   public async _register() {
     await this.gearStore.register([
       new Gear(
@@ -69,6 +86,10 @@ class CustomGear extends AbstractGearEdit {
     } else {
       this.navigate('/warehouse');
     }
+  }
+
+  public isLoggedIn() {
+    return this.firebase.isLoggedIn();
   }
 }
 

@@ -2,7 +2,6 @@ import React, { useEffect, useState } from 'react';
 import { Route, Routes, useNavigate, useLocation } from 'react-router-dom';
 import './App.css';
 import LogIn from './LogIn.tsx';
-import Join from './Join.tsx';
 import TermsAgreement from './TermsAgreement.tsx';
 import { observer } from 'mobx-react-lite';
 import app from './App.ts';
@@ -28,10 +27,6 @@ const ROUTES = [
   {
     path: '/login',
     element: <LogIn />,
-  },
-  {
-    path: '/join',
-    element: <Join />,
   },
   {
     path: '/terms-agreement',
@@ -98,10 +93,6 @@ const App = () => {
           if (location.pathname !== '/terms-agreement') {
             navigate('/terms-agreement', { replace: true });
           }
-        }
-      } else {
-        if (location.pathname !== '/login' && location.pathname !== '/join') {
-          navigate('/login');
         }
       }
     } else {

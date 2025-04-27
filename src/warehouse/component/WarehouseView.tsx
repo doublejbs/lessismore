@@ -8,6 +8,7 @@ import WarehouseFiltersView from './WarehouseFiltersView.tsx';
 import WarehouseEditWrapperView from '../../gear-edit/component/GearEditWrapperView.tsx';
 import WarehouseEmptyView from './WarehouseEmptyView';
 import AddButtonView from './AddButtonView';
+import UserMenu from './UserMenu';
 
 interface Props {
   warehouse: Warehouse;
@@ -18,7 +19,7 @@ const WarehouseView: FC<Props> = ({ warehouse }) => {
   const isEmpty = warehouse.isEmpty();
 
   useEffect(() => {
-    warehouse.getList();
+    warehouse.initialize();
   }, []);
 
   if (isEmpty) {
@@ -26,6 +27,9 @@ const WarehouseView: FC<Props> = ({ warehouse }) => {
   } else {
     return (
       <Layout>
+        <div style={{ position: 'absolute', top: 20, right: 16, zIndex: 10 }}>
+          <UserMenu />
+        </div>
         <div
           style={{
             display: 'flex',
@@ -47,6 +51,7 @@ const WarehouseView: FC<Props> = ({ warehouse }) => {
           >
             useless
           </div>
+
           <WarehouseFiltersView warehouse={warehouse} />
         </div>
         <div
@@ -66,11 +71,7 @@ const WarehouseView: FC<Props> = ({ warehouse }) => {
             }}
           >
             {gears.map((gear) => (
-              <WarehouseGearView
-                key={gear.getId()}
-                gear={gear}
-                warehouse={warehouse}
-              />
+              <WarehouseGearView key={gear.getId()} gear={gear} warehouse={warehouse} />
             ))}
           </ul>
         </div>
