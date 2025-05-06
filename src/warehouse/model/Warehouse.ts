@@ -22,6 +22,7 @@ class Warehouse {
   private gears: Gear[] = [];
   private loading = false;
   private disposeReaction: () => void;
+  private disposeLoginReaction: () => void;
 
   private constructor(
     private readonly dispatcher: WarehouseDispatcherType,
@@ -34,6 +35,12 @@ class Warehouse {
 
     this.disposeReaction = reaction(
       () => this.order.getSelectedOrderType(),
+      async () => {
+        await this.getList();
+      }
+    );
+    this.disposeLoginReaction = reaction(
+      () => this.firebase.isLoggedIn(),
       async () => {
         await this.getList();
       }
@@ -126,10 +133,11 @@ class Warehouse {
   // 객체 소멸 시 reaction 정리
   public dispose() {
     this.disposeReaction();
+    this.disposeLoginReaction();
   }
 
   private isLoggedIn() {
-    return this.firebase.isLoggedIn();
+    return this.firebase.isLoggedIn;
   }
 }
 

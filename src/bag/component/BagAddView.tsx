@@ -20,13 +20,7 @@ const BagAddView: FC<Props> = ({ bag }) => {
     if (app.getFirebase().isLoggedIn()) {
       setShouldShowAdd(true);
     } else {
-      app.getAlertManager().show({
-        message: '로그인 후 추가 가능해요.',
-        confirmText: '로그인 하러 가기',
-        onConfirm: async () => {
-          navigate('/login');
-        },
-      });
+      app.getLogInAlertManager().show();
     }
   };
 

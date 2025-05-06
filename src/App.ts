@@ -5,6 +5,7 @@ import BagStore from './firebase/BagStore.ts';
 import SearchStore from './firebase/SearchStore.ts';
 import AlertManager from './alert/AlertManager';
 import ToastManager from './toast/ToastManager';
+import LogInAlertManager from './alert/login/LogInAlertManager';
 
 class App {
   private readonly firebase = new Firebase();
@@ -12,6 +13,7 @@ class App {
   private bagStore!: BagStore;
   private searchStore!: SearchStore;
   private alertManager!: AlertManager;
+  private logInAlertManager!: LogInAlertManager;
   private toastManager!: ToastManager;
   private initialized = false;
 
@@ -26,6 +28,7 @@ class App {
     this.searchStore = new SearchStore(this.firebase);
     this.alertManager = AlertManager.new();
     this.toastManager = ToastManager.new();
+    this.logInAlertManager = LogInAlertManager.new();
     this.setInitialized(true);
   }
 
@@ -71,6 +74,10 @@ class App {
 
   public getToastManager() {
     return this.toastManager;
+  }
+
+  public getLogInAlertManager() {
+    return this.logInAlertManager;
   }
 }
 

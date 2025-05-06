@@ -1,5 +1,5 @@
 import Gear from '../../model/Gear';
-import { action, makeObservable, observable } from 'mobx';
+import { action, makeObservable, observable, reaction } from 'mobx';
 import SearchDispatcherType from './SearchDispatcherType';
 import SearchDispatcher from './SearchDispatcher';
 import { debounce } from 'lodash';
@@ -8,6 +8,7 @@ import app from '../../App';
 import { Location, NavigateFunction } from 'react-router-dom';
 import Firebase from '../../firebase/Firebase';
 import AlertManager from '../../alert/AlertManager';
+import LogInAlertManager from '../../alert/login/LogInAlertManager';
 
 class SearchWarehouse {
   public static new(navigate: NavigateFunction, location: Location) {
@@ -17,7 +18,7 @@ class SearchWarehouse {
       navigate,
       location,
       app.getFirebase(),
-      app.getAlertManager()
+      app.getLogInAlertManager()
     );
   }
 
@@ -28,6 +29,7 @@ class SearchWarehouse {
   @observable private hasMore = false;
   private page = 0;
   private readonly debouncedSearch = debounce(this.executeSearch, 300).bind(this);
+  private disposeLoginReaction: () => void;
 
   protected constructor(
     private readonly searchDispatcher: SearchDispatcherType,
@@ -35,9 +37,15 @@ class SearchWarehouse {
     private readonly navigate: NavigateFunction,
     private readonly location: Location,
     private readonly firebase: Firebase,
-    private readonly alertManager: AlertManager
+    private readonly logInAlertManager: LogInAlertManager
   ) {
     makeObservable(this);
+    this.disposeLoginReaction = reaction(
+      () => this.firebase.isLoggedIn(),
+      async () => {
+        await this.executeSearch();
+      }
+    );
   }
 
   public changeKeyword(keyword: string) {
@@ -59,13 +67,7 @@ class SearchWarehouse {
     if (this.firebase.isLoggedIn()) {
       this.selected.push(gear);
     } else {
-      this.alertManager.show({
-        message: '로그인 후 추가 가능해요.',
-        confirmText: '로그인 하러 가기',
-        onConfirm: async () => {
-          this.navigate('/login');
-        },
-      });
+      this.logInAlertManager.show();
     }
   }
 

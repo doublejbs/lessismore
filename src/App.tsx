@@ -18,6 +18,8 @@ import GearEditWrapperView from './gear-edit/component/GearEditWrapperView';
 import SearchWarehouseView from './search-warehouse/component/SearchWarehouseView';
 import BagUselessView from './bag-useless/component/BagUselessView';
 import BagDetailWrapper from './bag-detail/BagDetailWrapper.tsx';
+import LogInView from './alert/login/LogInView';
+import LogInAlertManager from './alert/login/LogInAlertManager';
 
 const ROUTES = [
   {
@@ -77,6 +79,7 @@ const App = () => {
   const hasAgreed = firebase.hasUserAgreedToTerms();
   const isInitialized = app.isInitialized();
   const alertManager = app.getAlertManager();
+  const logInAlertManager = app.getLogInAlertManager();
 
   useEffect(() => {
     if (isInitialized) {
@@ -113,6 +116,7 @@ const App = () => {
           })}
         </Routes>
         <AlertView alertManager={alertManager} />
+        <LogInView logInAlertManager={logInAlertManager} />
       </>
     );
   } else {
