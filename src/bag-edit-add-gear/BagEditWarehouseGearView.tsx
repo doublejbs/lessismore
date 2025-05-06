@@ -12,17 +12,15 @@ interface Props {
 const BagEditWarehouseGearView: FC<Props> = ({ gear, bagEdit }) => {
   const isSelected = bagEdit.hasGear(gear);
 
-  const handleChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleChange = async (_: React.ChangeEvent<HTMLInputElement>) => {};
+
+  const handleClick = (e: React.MouseEvent) => {
     e.stopPropagation();
-    if (isSelected) {
-      bagEdit.removeGear(gear);
-    } else {
-      bagEdit.addGear(gear);
-    }
+    bagEdit.toggleGear(gear);
   };
 
   return (
-    <GearView gear={gear}>
+    <GearView gear={gear} onClick={handleClick}>
       <label
         style={{
           display: 'flex',

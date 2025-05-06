@@ -10,28 +10,20 @@ class Order {
   private showOrderOptions = false;
   private orderOptions: OrderOption[] = [
     {
-      name: 'ㄱ-ㅎ',
+      name: '이름순',
       order: OrderType.NameAsc,
-    },
-    {
-      name: 'ㅎ-ㄱ',
-      order: OrderType.NameDesc,
-    },
-    {
-      name: '무거운순',
-      order: OrderType.WeightDesc,
     },
     {
       name: '가벼운순',
       order: OrderType.WeightAsc,
     },
     {
-      name: '최근 추가순',
-      order: OrderType.CreatedDesc,
+      name: '무거운순',
+      order: OrderType.WeightDesc,
     },
     {
-      name: '오래된순',
-      order: OrderType.CreatedAsc,
+      name: '최근 추가순',
+      order: OrderType.CreatedDesc,
     },
   ].map((option) => OrderOption.from(option.name, option.order));
 

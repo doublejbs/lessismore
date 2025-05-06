@@ -117,6 +117,14 @@ class BagEdit {
     }
   }
 
+  public toggleGear(gear: Gear) {
+    if (this.hasGear(gear)) {
+      this.removeGear(gear);
+    } else {
+      this.addGear(gear);
+    }
+  }
+
   public addGear(gear: Gear) {
     if (this.hasGear(gear)) {
       return;

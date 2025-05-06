@@ -67,6 +67,10 @@ class Bag {
   public isLoading() {
     return this.loading;
   }
+
+  public dispose() {
+    this.disposeLoginReaction();
+  }
 }
 
 export default Bag;

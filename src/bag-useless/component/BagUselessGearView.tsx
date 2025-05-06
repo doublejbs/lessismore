@@ -12,12 +12,15 @@ interface Props {
 const BagUselessGearView: FC<Props> = ({ gear, bagUseless }) => {
   const isSelected = bagUseless.isSelected(gear);
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleChange = () => {};
+
+  const handleClick = (e: React.MouseEvent) => {
+    e.stopPropagation();
     bagUseless.toggle(gear);
   };
 
   return (
-    <GearView gear={gear}>
+    <GearView gear={gear} onClick={handleClick}>
       <div
         style={{
           display: 'flex',
