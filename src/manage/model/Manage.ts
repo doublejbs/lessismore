@@ -1,0 +1,109 @@
+import { makeAutoObservable } from 'mobx';
+import ManageStore from '../store/ManageStore';
+import ManagerGear from './ManagerGear';
+
+class Manage {
+  public static new() {
+    return new Manage(ManageStore.new());
+  }
+
+  private items: ManagerGear[] = [];
+  private loading = false;
+  private lastDoc: any = null;
+  private hasMore = true;
+  private sortField: string = 'name';
+  private sortOrder: 'asc' | 'desc' = 'asc';
+  private searchText: string = '';
+
+  private constructor(private readonly manageStore: ManageStore) {
+    makeAutoObservable(this);
+  }
+
+  public async resetList() {
+    this.items = [];
+    this.lastDoc = null;
+    this.hasMore = true;
+    await this.fetchNextPage();
+  }
+
+  public async fetchNextPage() {
+    if (!this.hasMore || this.loading) return;
+    this.setLoading(true);
+    const { items, lastDoc } = await this.manageStore.getList({
+      limit: 100,
+      startAfterDoc: this.lastDoc,
+      sortField: this.sortField,
+      sortOrder: this.sortOrder,
+      searchText: this.searchText,
+    });
+    if (items.length < 100) this.hasMore = false;
+
+    this.items = [...this.items, ...items];
+    this.lastDoc = lastDoc;
+    this.setLoading(false);
+  }
+
+  public getItems() {
+    return this.items;
+  }
+
+  public canFetchMore() {
+    return this.hasMore && !this.loading;
+  }
+
+  private setLoading(value: boolean) {
+    this.loading = value;
+  }
+
+  public isLoading() {
+    return this.loading;
+  }
+
+  public async updateName(id: string, newName: string) {
+    await this.manageStore.updateName(id, newName);
+    await this.resetList();
+  }
+
+  public async updateCompany(id: string, newCompany: string) {
+    await this.manageStore.updateCompany(id, newCompany);
+    await this.resetList();
+  }
+
+  public async updateWeight(id: string, newWeight: string) {
+    await this.manageStore.updateWeight(id, newWeight);
+    await this.resetList();
+  }
+
+  public async updateCategory(id: string, newCategory: string) {
+    await this.manageStore.updateCategory(id, newCategory);
+    await this.resetList();
+  }
+
+  public async updateSubCategory(id: string, newSubCategory: string) {
+    await this.manageStore.updateSubCategory(id, newSubCategory);
+    await this.resetList();
+  }
+
+  public async updateGear(id: string, updateFields: Partial<ManagerGear>) {
+    await this.manageStore.updateGear(id, updateFields);
+    this.items = this.items.map((item) => (item.id === id ? { ...item, ...updateFields } : item));
+  }
+
+  public setSort(sortField: string, sortOrder: 'asc' | 'desc') {
+    this.sortField = sortField;
+    this.sortOrder = sortOrder;
+    this.resetList();
+  }
+
+  public setSearch(searchText: string) {
+    this.searchText = searchText;
+    this.resetList();
+  }
+
+  public async addGear(fields: Partial<ManagerGear>) {
+    await this.manageStore.addGear(fields);
+    await this.resetList();
+  }
+}
+
+export default Manage;

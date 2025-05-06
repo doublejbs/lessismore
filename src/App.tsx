@@ -20,6 +20,7 @@ import BagUselessView from './bag-useless/component/BagUselessView';
 import BagDetailWrapper from './bag-detail/BagDetailWrapper.tsx';
 import LogInView from './alert/login/LogInView';
 import LogInAlertManager from './alert/login/LogInAlertManager';
+import ManageView from './manage/ManageView';
 
 const ROUTES = [
   {
@@ -69,6 +70,7 @@ const ROUTES = [
   },
   { path: '/admin', element: <AdminView /> },
   { path: '/search', element: <SearchWarehouseView /> },
+  { path: '/manage', element: <ManageView /> },
 ];
 
 const App = () => {
