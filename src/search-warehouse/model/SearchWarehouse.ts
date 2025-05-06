@@ -48,6 +48,10 @@ class SearchWarehouse {
     );
   }
 
+  public dispose() {
+    this.disposeLoginReaction();
+  }
+
   public changeKeyword(keyword: string) {
     this.setLoading(true);
     this.setKeyword(keyword);

@@ -13,12 +13,15 @@ const SearchGearView: FC<Props> = ({ gear, searchWarehouse }) => {
   const isAdded = gear.isAdded();
   const isSelected = searchWarehouse.isSelected(gear);
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleChange = (_: React.ChangeEvent<HTMLInputElement>) => {};
+
+  const handleClick = (e: React.MouseEvent) => {
+    e.stopPropagation();
     searchWarehouse.toggle(gear);
   };
 
   return (
-    <GearView gear={gear}>
+    <GearView gear={gear} onClick={handleClick}>
       <div
         style={{
           display: 'flex',
@@ -60,7 +63,7 @@ const SearchGearView: FC<Props> = ({ gear, searchWarehouse }) => {
               }}
             >
               <input
-                type="checkbox"
+                type='checkbox'
                 checked={isSelected}
                 onChange={handleChange}
                 style={{
@@ -85,16 +88,16 @@ const SearchGearView: FC<Props> = ({ gear, searchWarehouse }) => {
               >
                 {isSelected && (
                   <svg
-                    width="16"
-                    height="16"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="white"
-                    strokeWidth="2"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
+                    width='16'
+                    height='16'
+                    viewBox='0 0 24 24'
+                    fill='none'
+                    stroke='white'
+                    strokeWidth='2'
+                    strokeLinecap='round'
+                    strokeLinejoin='round'
                   >
-                    <polyline points="20 6 9 17 4 12" />
+                    <polyline points='20 6 9 17 4 12' />
                   </svg>
                 )}
               </span>
