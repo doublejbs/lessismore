@@ -51,7 +51,6 @@ const WarehouseView: FC<Props> = ({ warehouse }) => {
           >
             useless
           </div>
-
           <WarehouseFiltersView warehouse={warehouse} />
         </div>
         <div

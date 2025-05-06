@@ -1,19 +1,29 @@
 import BagItem from './BagItem.ts';
-import { makeAutoObservable } from 'mobx';
+import { makeAutoObservable, reaction } from 'mobx';
 import app from '../../App';
 import BagStore from '../../firebase/BagStore.ts';
 import { Dayjs } from 'dayjs';
+import Firebase from '../../firebase/Firebase';
 
 class Bag {
   public static new() {
-    return new Bag(app.getBagStore());
+    return new Bag(app.getBagStore(), app.getFirebase());
   }
 
   private bags: BagItem[] = [];
   private loading = false;
-
-  private constructor(private readonly bagStore: BagStore) {
+  private disposeLoginReaction: () => void;
+  private constructor(
+    private readonly bagStore: BagStore,
+    private readonly firebase: Firebase
+  ) {
     makeAutoObservable(this);
+    this.disposeLoginReaction = reaction(
+      () => this.firebase.isLoggedIn(),
+      async () => {
+        await this.getList();
+      }
+    );
   }
 
   public async getList() {

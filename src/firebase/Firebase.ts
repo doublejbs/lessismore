@@ -31,6 +31,7 @@ class Firebase {
   private store!: Firestore;
   private storage!: FirebaseStorage;
   private hasAgreedToTerms = false;
+  private loggedIn = false;
 
   public constructor() {
     makeAutoObservable(this);
@@ -62,6 +63,7 @@ class Firebase {
       this.setUserId(userId.uid);
       await this.initializeStore();
       await this.checkTermsAgreement();
+      this.setLoggedIn(true);
     }
   }
 
@@ -127,17 +129,11 @@ class Firebase {
   }
 
   public isLoggedIn() {
-    return this.initialized && !!this.userId;
+    return this.initialized && !!this.userId && this.loggedIn;
   }
 
   public async logInWithGoogle() {
-    const isLocalhost = window.location.hostname === 'localhost';
-
-    if (isLocalhost) {
-      await signInWithPopup(this.auth, this.googleProvider);
-    } else {
-      await signInWithRedirect(this.auth, this.googleProvider);
-    }
+    await signInWithPopup(this.auth, this.googleProvider);
   }
 
   public getStore() {
@@ -158,6 +154,10 @@ class Firebase {
 
   private setHasAgreedToTerms(value: boolean) {
     this.hasAgreedToTerms = value;
+  }
+
+  private setLoggedIn(value: boolean) {
+    this.loggedIn = value;
   }
 }
 

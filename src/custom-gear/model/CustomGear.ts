@@ -8,7 +8,7 @@ import AbstractGearEdit from './AbstractGearEdit';
 import { Location, NavigateFunction } from 'react-router-dom';
 import Firebase from '../../firebase/Firebase';
 import AlertManager from '../../alert/AlertManager';
-
+import LogInAlertManager from '../../alert/login/LogInAlertManager';
 class CustomGear extends AbstractGearEdit {
   public static new(navigate: NavigateFunction, location: Location) {
     return new CustomGear(
@@ -17,6 +17,7 @@ class CustomGear extends AbstractGearEdit {
       app.getGearStore(),
       app.getFirebase(),
       app.getAlertManager(),
+      app.getLogInAlertManager(),
       CustomGearCategory.new().selectFirst(),
       '',
       '',
@@ -31,6 +32,7 @@ class CustomGear extends AbstractGearEdit {
     private readonly gearStore: GearStore,
     private readonly firebase: Firebase,
     private readonly alertManager: AlertManager,
+    private readonly logInAlertManager: LogInAlertManager,
     category: CustomGearCategory,
     name: string,
     company: string,
@@ -43,13 +45,7 @@ class CustomGear extends AbstractGearEdit {
 
   public async initialize() {
     if (!this.isLoggedIn()) {
-      this.alertManager.show({
-        message: '로그인 후 추가 가능해요.',
-        confirmText: '로그인 하러 가기',
-        onConfirm: async () => {
-          this.navigate('/login');
-        },
-      });
+      this.logInAlertManager.show();
     }
   }
   public async _register() {
