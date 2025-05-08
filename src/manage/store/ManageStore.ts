@@ -9,6 +9,8 @@ import {
   startAfter as fsStartAfter,
   where,
   addDoc,
+  deleteDoc,
+  writeBatch,
 } from 'firebase/firestore';
 import { liteClient } from 'algoliasearch/lite';
 import app from '../../App';
@@ -59,7 +61,7 @@ class ManageStore {
       );
 
       const { hits } = results[0] as import('algoliasearch').SearchResponse<any>;
-      const items = hits.map(
+      let items = hits.map(
         (hit: any) =>
           new ManagerGear({
             id: hit.objectID,
@@ -74,6 +76,19 @@ class ManageStore {
             color: hit.color,
           })
       );
+      // 프론트엔드에서 정렬 적용
+      if (sortField) {
+        items = items.sort((a, b) => {
+          const aValue = (a as any)[sortField];
+          const bValue = (b as any)[sortField];
+          if (aValue === bValue) return 0;
+          if (sortOrder === 'asc') {
+            return aValue > bValue ? 1 : -1;
+          } else {
+            return aValue < bValue ? 1 : -1;
+          }
+        });
+      }
       return { items, lastDoc: null };
     } else {
       // Firestore 쿼리
@@ -175,6 +190,21 @@ class ManageStore {
       useless: [],
       createDate: Date.now(),
     });
+  }
+
+  public async deleteGear(id: string): Promise<void> {
+    const gearDoc = doc(this.firebase.getStore(), 'gear', id);
+    await deleteDoc(gearDoc);
+  }
+
+  public async deleteGears(ids: string[]): Promise<void> {
+    const store = this.firebase.getStore();
+    const batch = writeBatch(store);
+    ids.forEach(id => {
+      const gearDoc = doc(store, 'gear', id);
+      batch.delete(gearDoc);
+    });
+    await batch.commit();
   }
 }
 

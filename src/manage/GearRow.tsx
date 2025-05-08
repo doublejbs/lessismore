@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Button, Space, Input } from 'antd';
+import { Button, Space, Input, Checkbox } from 'antd';
 import NameCell from './columns/NameCell';
 import CompanyCell from './columns/CompanyCell';
 import CompanyKoreanCell from './columns/CompanyKoreanCell';
@@ -7,6 +7,7 @@ import WeightCell from './columns/WeightCell';
 import CategoryCell from './columns/CategoryCell';
 import SubCategoryCell from './columns/SubCategoryCell';
 import FirebaseImageStorage from '../firebase/FirebaseImageStorage';
+import Manage from './model/Manage';
 
 interface GearRowProps {
   gear: {
@@ -21,11 +22,10 @@ interface GearRowProps {
     imageUrl?: string;
     color?: string;
   };
-  onSave: (id: string, values: any) => Promise<void>;
-  isLoading: boolean;
+  manage: Manage;
 }
 
-const GearRow: React.FC<GearRowProps> = ({ gear, onSave, isLoading }) => {
+const GearRow: React.FC<GearRowProps> = ({ gear, manage }) => {
   const [editing, setEditing] = useState(false);
   const [values, setValues] = useState({ ...gear });
   const [loading, setLoading] = useState(false);
@@ -81,15 +81,32 @@ const GearRow: React.FC<GearRowProps> = ({ gear, onSave, isLoading }) => {
         setUploading(false);
       }
     }
-    await onSave(gear.id, newValues);
+    await manage.updateGear(gear.id, newValues);
     setLoading(false);
     setEditing(false);
     setFile(null);
     setPreviewUrl(null);
   };
 
+  const handleDelete = async () => {
+    if (!window.confirm('정말 삭제하시겠습니까?')) return;
+    setLoading(true);
+    try {
+      await manage.deleteGear(gear.id);
+    } catch (e) {
+      // 에러 처리 필요시 추가
+    }
+    setLoading(false);
+  };
+
   return (
     <tr>
+      <td>
+        <Checkbox
+          checked={manage.selectedIds.includes(gear.id)}
+          onChange={e => manage.selectGear(gear.id, e.target.checked)}
+        />
+      </td>
       <td>
         <NameCell value={values.name} onChange={(v) => handleChange('name', v)} editing={editing} />
       </td>
@@ -234,7 +251,7 @@ const GearRow: React.FC<GearRowProps> = ({ gear, onSave, isLoading }) => {
             <Button
               type='primary'
               size='small'
-              loading={loading || isLoading || uploading}
+              loading={loading || uploading}
               onClick={handleSave}
             >
               저장
@@ -244,9 +261,14 @@ const GearRow: React.FC<GearRowProps> = ({ gear, onSave, isLoading }) => {
             </Button>
           </Space>
         ) : (
-          <Button size='small' onClick={handleEdit}>
-            수정
-          </Button>
+          <Space>
+            <Button size='small' onClick={handleEdit}>
+              수정
+            </Button>
+            <Button size='small' danger onClick={handleDelete}>
+              삭제
+            </Button>
+          </Space>
         )}
       </td>
     </tr>
