@@ -14,6 +14,7 @@ class Manage {
   private sortField: string = 'name';
   private sortOrder: 'asc' | 'desc' = 'asc';
   private searchText: string = '';
+  public selectedIds: string[] = [];
 
   private constructor(private readonly manageStore: ManageStore) {
     makeAutoObservable(this);
@@ -103,6 +104,32 @@ class Manage {
   public async addGear(fields: Partial<ManagerGear>) {
     await this.manageStore.addGear(fields);
     await this.resetList();
+  }
+
+  public async deleteGear(id: string) {
+    await this.manageStore.deleteGear(id);
+    await this.resetList();
+  }
+
+  public async deleteGears(ids: string[]) {
+    await this.manageStore.deleteGears(ids);
+    await this.resetList();
+  }
+
+  public selectGear(id: string, checked: boolean) {
+    if (checked) {
+      if (!this.selectedIds.includes(id)) this.selectedIds.push(id);
+    } else {
+      this.selectedIds = this.selectedIds.filter(_id => _id !== id);
+    }
+  }
+
+  public clearSelected() {
+    this.selectedIds = [];
+  }
+
+  public selectAll(ids: string[]) {
+    this.selectedIds = [...ids];
   }
 }
 

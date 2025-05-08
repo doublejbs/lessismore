@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { observer } from 'mobx-react-lite';
-import { Table, Button, Input, Space, Spin, message } from 'antd';
+import { Table, Button, Input, Space, Spin, message, Checkbox } from 'antd';
 import type { ColumnsType } from 'antd/es/table';
 import Manage from './model/Manage';
 import GearRow from './GearRow';
@@ -25,6 +25,7 @@ const ManageView = () => {
   const [editRowId, setEditRowId] = useState<string | null>(null);
   const [editRowValues, setEditRowValues] = useState<Partial<RowType>>({});
   const [loading, setLoading] = useState(false);
+  const [selectedIds, setSelectedIds] = useState<string[]>([]);
   const loaderRef = React.useRef<HTMLDivElement | null>(null);
   const tableBodyRef = React.useRef<HTMLTableSectionElement | null>(null);
   const nameInputRef = useRef<any>(null);
@@ -35,6 +36,7 @@ const ManageView = () => {
   const subCategoryInputRef = useRef<any>(null);
   const [addModalOpen, setAddModalOpen] = useState(false);
   const [excelModalOpen, setExcelModalOpen] = useState(false);
+  const selectAllRef = useRef<any>(null);
 
   useEffect(() => {
     manage.resetList();
@@ -134,27 +136,65 @@ const ManageView = () => {
   const items = manage.getItems();
   const showLoaderRow = manage.canFetchMore();
 
-  // row 저장 핸들러
-  const handleRowSave = async (id: string, values: any) => {
-    const original = items.find((item) => item.id === id);
-    if (!original) return;
-    const updateFields: any = {};
-    if (values.name !== original.name) updateFields.name = values.name;
-    if (values.company !== original.company) updateFields.company = values.company;
-    if (values.companyKorean !== original.companyKorean)
-      updateFields.companyKorean = values.companyKorean;
-    if (values.weight !== original.weight) updateFields.weight = values.weight;
-    if (values.category !== original.category) updateFields.category = values.category;
-    if (values.subCategory !== original.subCategory) updateFields.subCategory = values.subCategory;
-    if (values.color !== original.color) updateFields.color = values.color;
-    if (values.imageUrl !== original.imageUrl) updateFields.imageUrl = values.imageUrl;
-    if (Object.keys(updateFields).length > 0) {
-      await manage.updateGear(id, updateFields);
+  // antd Table row 커스텀: GearRow 사용
+  const components = {
+    body: {
+      row: (props: any) => {
+        const rowKey = props['data-row-key'];
+        if (rowKey === 'loader') {
+          return (
+            <tr>
+              <td colSpan={9} style={{ textAlign: 'center', padding: 16 }}>
+                <div ref={loaderRef}>
+                  <Spin />
+                </div>
+              </td>
+            </tr>
+          );
+        }
+        const gear = items.find((item) => item.id === rowKey);
+        if (!gear) return <tr {...props} />;
+        return <GearRow gear={gear} manage={manage} />;
+      },
+    },
+  };
+
+  // dataSource에 로딩용 row 추가
+  const dataSource = showLoaderRow ? [...items, { id: 'loader', isLoader: true }] : items;
+
+  // antd Table 정렬 변경 핸들러
+  const handleTableChange = (_pagination: any, _filters: any, sorter: any) => {
+    if (sorter && sorter.field && sorter.order) {
+      const sortField = sorter.field;
+      const sortOrder = sorter.order === 'ascend' ? 'asc' : 'desc';
+      manage.setSort(sortField, sortOrder);
     }
   };
 
   // antd Table columns 정의
   const columns = [
+    {
+      title: (
+        <Checkbox
+          checked={manage.selectedIds.length === items.length && items.length > 0}
+          indeterminate={manage.selectedIds.length > 0 && manage.selectedIds.length < items.length}
+          onChange={e => {
+            if (e.target.checked) {
+              manage.selectAll(items.map(item => item.id));
+            } else {
+              manage.clearSelected();
+            }
+          }}
+        />
+      ),
+      dataIndex: 'checkbox',
+      key: 'checkbox',
+      width: 32,
+      render: (_: any, record: any) => {
+        if (record.isLoader) return null;
+        return null; // 실제 체크박스는 GearRow에서 렌더링
+      },
+    },
     {
       title: '이름',
       dataIndex: 'name',
@@ -288,41 +328,6 @@ const ManageView = () => {
     },
   ];
 
-  // antd Table row 커스텀: GearRow 사용
-  const components = {
-    body: {
-      row: (props: any) => {
-        const rowKey = props['data-row-key'];
-        if (rowKey === 'loader') {
-          return (
-            <tr>
-              <td colSpan={8} style={{ textAlign: 'center', padding: 16 }}>
-                <div ref={loaderRef}>
-                  <Spin />
-                </div>
-              </td>
-            </tr>
-          );
-        }
-        const gear = items.find((item) => item.id === rowKey);
-        if (!gear) return <tr {...props} />;
-        return <GearRow gear={gear} onSave={handleRowSave} isLoading={manage.isLoading()} />;
-      },
-    },
-  };
-
-  // dataSource에 로딩용 row 추가
-  const dataSource = showLoaderRow ? [...items, { id: 'loader', isLoader: true }] : items;
-
-  // antd Table 정렬 변경 핸들러
-  const handleTableChange = (_pagination: any, _filters: any, sorter: any) => {
-    if (sorter && sorter.field && sorter.order) {
-      const sortField = sorter.field;
-      const sortOrder = sorter.order === 'ascend' ? 'asc' : 'desc';
-      manage.setSort(sortField, sortOrder);
-    }
-  };
-
   return (
     <div style={{ maxWidth: '100vw', margin: '32px 0', padding: '0 2vw' }}>
       <h1 style={{ fontSize: 28, fontWeight: 700, marginBottom: 28, color: '#222' }}>장비 관리</h1>
@@ -332,6 +337,19 @@ const ManageView = () => {
         </Button>
         <Button style={{ marginLeft: 8 }} onClick={() => setExcelModalOpen(true)}>
           엑셀로 장비 추가
+        </Button>
+        <Button
+          danger
+          style={{ marginLeft: 8 }}
+          disabled={manage.selectedIds.length === 0}
+          onClick={async () => {
+            if (!window.confirm('선택된 항목을 모두 삭제하시겠습니까?')) return;
+            await manage.deleteGears(manage.selectedIds);
+            manage.clearSelected();
+            message.success('선택된 항목이 모두 삭제되었습니다.');
+          }}
+        >
+          선택 삭제
         </Button>
       </div>
       <SearchInput manager={manage} />
