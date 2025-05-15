@@ -8,8 +8,10 @@ import GearFilter from '../../warehouse/model/GearFilter';
 import OrderType from '../../order/OrderType';
 import Order from '../../order/Order';
 class BagUseless {
+  private static readonly ORDER_KEY = 'bag';
+
   public static new(navigate: NavigateFunction, location: Location) {
-    return new BagUseless(navigate, location, app.getBagStore(), app.getGearStore(), Order.new());
+    return new BagUseless(navigate, location, app.getBagStore(), app.getGearStore(), Order.new(BagUseless.ORDER_KEY));
   }
 
   private id = '';
@@ -40,6 +42,7 @@ class BagUseless {
       return;
     }
 
+    this.order.initialize();
     this.setId(id);
     const gears = await this.fetchGears();
     gears.forEach((gear) => {

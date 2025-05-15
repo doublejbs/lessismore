@@ -1,12 +1,14 @@
 import { makeAutoObservable } from 'mobx';
 import OrderOption from './OrderOption';
 import OrderType from './OrderType';
+import LocalStorageManager from '../utils/LocalStorageManager';
+
 
 class Order {
-  public static new() {
-    return new Order();
+  public static new(key: string) {
+    return new Order(key);
   }
-
+  
   private showOrderOptions = false;
   private orderOptions: OrderOption[] = [
     {
@@ -27,8 +29,25 @@ class Order {
     },
   ].map((option) => OrderOption.from(option.name, option.order));
 
-  private constructor() {
+  private constructor(private readonly key: string) {
     makeAutoObservable(this);
+    this.key = key;
+    this.orderOptions[0].select();
+  }
+
+  private getStorageKey() {
+    return `selectedOrderType_${this.key}`;
+  }
+
+  public initialize() {
+    const saved = LocalStorageManager.get<OrderType>(this.getStorageKey());
+    if (saved) {
+      const option = this.orderOptions.find(opt => opt.getOrder() === saved);
+      if (option) {
+        this.setOrderOption(option);
+        return;
+      }
+    }
     this.orderOptions[0].select();
   }
 
@@ -56,6 +75,7 @@ class Order {
     this.orderOptions.forEach((option) => option.deselect());
     this.orderOptions.find((option) => option.equals(orderOption))?.select();
     this.setShowOrderOptions(false);
+    LocalStorageManager.set(this.getStorageKey(), orderOption.getOrder());
   }
 
   public getSelectedOrderType() {

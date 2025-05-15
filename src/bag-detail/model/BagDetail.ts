@@ -10,7 +10,10 @@ import WarehouseFilter from '../../warehouse/model/WarehouseFilter';
 import GearFilter from '../../warehouse/model/GearFilter';
 import Order from '../../order/Order';
 import OrderType from '../../order/OrderType';
+
 class BagDetail {
+  private static readonly ORDER_KEY = 'bag';
+
   public static from(navigate: NavigateFunction, location: Location, id: string) {
     return new BagDetail(
       navigate,
@@ -19,7 +22,7 @@ class BagDetail {
       app.getBagStore(),
       app.getGearStore(),
       FilterManager.from(),
-      Order.new()
+      Order.new(BagDetail.ORDER_KEY)
     );
   }
 
@@ -58,6 +61,7 @@ class BagDetail {
   }
 
   public async initialize() {
+    this.order.initialize();
     const { name, weight, editDate, gears, startDate, endDate } = await this.bagStore.getBag(
       this.id,
       this.filterManager.getSelectedFilters(),
