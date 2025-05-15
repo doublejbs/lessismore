@@ -12,6 +12,8 @@ import Order from '../../order/Order';
 import OrderType from '../../order/OrderType';
 
 class BagEdit {
+  private static readonly ORDER_KEY = 'bag';
+
   public static from(navigate: NavigateFunction, location: Location, id: string) {
     return new BagEdit(
       navigate,
@@ -20,7 +22,7 @@ class BagEdit {
       app.getBagStore(),
       WarehouseDispatcher.new(),
       FilterManager.from(),
-      Order.new()
+      Order.new(BagEdit.ORDER_KEY)
     );
   }
 
@@ -60,7 +62,7 @@ class BagEdit {
       return;
     } else {
       this.setLoading(true);
-
+      this.order.initialize();
       const { weight, gears } = await this.bagStore.getBag(
         this.id,
         this.filterManager.getSelectedFilters(),

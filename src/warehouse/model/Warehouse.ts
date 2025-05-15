@@ -11,12 +11,14 @@ import OrderType from '../../order/OrderType';
 import Firebase from '../../firebase/Firebase.ts';
 
 class Warehouse {
+  private static readonly ORDER_KEY = 'warehouse';
+  
   public static from(
     dispatcher: WarehouseDispatcher,
     toastManager: ToastManager,
     firebase: Firebase
   ) {
-    return new Warehouse(dispatcher, toastManager, FilterManager.from(), Order.new(), firebase);
+    return new Warehouse(dispatcher, toastManager, FilterManager.from(), Order.new(Warehouse.ORDER_KEY), firebase);
   }
 
   private gears: Gear[] = [];
@@ -49,6 +51,7 @@ class Warehouse {
 
   public async initialize() {
     if (this.isLoggedIn()) {
+      this.order.initialize();
       await this.getList();
     }
   }
