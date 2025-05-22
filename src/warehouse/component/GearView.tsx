@@ -1,4 +1,4 @@
-import React, { FC, ReactNode } from 'react';
+import React, { FC, ReactNode, useState, useRef } from 'react';
 import GearImageView from './GearImageView.tsx';
 import Gear from '../../model/Gear.ts';
 
@@ -61,6 +61,29 @@ const GearView: FC<Props> = ({ gear, children, onClick }) => {
             gap: '12px',
           }}
         >
+          {gear.hasUsedRate() && (
+            <div
+              style={{
+                display: 'flex',
+                flexDirection: 'row',
+                gap: '4px',
+                fontSize: '8px',
+                alignItems: 'center',
+                position: 'relative',
+              }}
+            >
+              <div
+                style={{
+                  borderRadius: '12px',
+                  backgroundColor: 'rgb(235, 235, 235)',
+                  color: 'black',
+                  padding: '4px 8px',
+                }}
+              >
+                사용률 {gear.getUsedRate()}%
+              </div>
+            </div>
+          )}
           <div
             style={{
               display: 'flex',
