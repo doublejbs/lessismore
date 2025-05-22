@@ -1,3 +1,5 @@
+import { isNumber } from 'lodash';
+
 class Gear {
   public constructor(
     private readonly id: string,
@@ -120,6 +122,14 @@ class Gear {
 
   public getUsedCount() {
     return this.used.length;
+  }
+
+  public hasUsedRate() {
+    return !isNaN(this.getUsedRate());
+  }
+
+  public getUsedRate() {
+    return (this.getUsedCount() / (this.getUsedCount() + this.getUselessCount())) * 100;
   }
 
   public getUselessCount() {
