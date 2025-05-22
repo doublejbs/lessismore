@@ -67,16 +67,28 @@ class Firebase {
     }
   }
 
-  public async termsAgreed(marketingAgreed: boolean) {
+  /**
+   * 모든 약관 동의 상태를 저장
+   */
+  public async termsAgreed(
+    marketingAgreed: boolean,
+    smsAgreed: boolean,
+    termsAgreed: boolean,
+    privacyAgreed: boolean,
+    personalInfoAgreed: boolean,
+    over14Agreed: boolean
+  ) {
     const userDocRef = doc(this.getStore(), 'users', this.getUserId());
-
     await updateDoc(userDocRef, {
-      termsAgreed: true,
-      privacyAgreed: true,
+      termsAgreed: termsAgreed,
+      privacyAgreed: privacyAgreed,
       marketingAgreed: marketingAgreed,
+      personalInfoAgreed: personalInfoAgreed,
+      over14Agreed: over14Agreed,
+      smsAgreed: smsAgreed,
       agreedAt: new Date(),
     });
-    this.setHasAgreedToTerms(true);
+    this.setHasAgreedToTerms(termsAgreed && privacyAgreed && personalInfoAgreed && over14Agreed);
   }
 
   private async initializeStore() {
@@ -102,7 +114,12 @@ class Firebase {
     if (userDoc.exists()) {
       const userData = userDoc.data();
 
-      this.setHasAgreedToTerms(userData.termsAgreed === true && userData.privacyAgreed === true);
+      this.setHasAgreedToTerms(
+        userData.termsAgreed === true &&
+          userData.privacyAgreed === true &&
+          userData.personalInfoAgreed === true &&
+          userData.over14Agreed === true
+      );
     } else {
       this.setHasAgreedToTerms(false);
     }
