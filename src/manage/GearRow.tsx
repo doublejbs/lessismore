@@ -8,6 +8,7 @@ import CategoryCell from './columns/CategoryCell';
 import SubCategoryCell from './columns/SubCategoryCell';
 import FirebaseImageStorage from '../firebase/FirebaseImageStorage';
 import Manage from './model/Manage';
+import UploadButton from './UploadButton';
 
 interface GearRowProps {
   gear: {
@@ -68,7 +69,7 @@ const GearRow: React.FC<GearRowProps> = ({ gear, manage }) => {
 
   const handleSave = async () => {
     setLoading(true);
-    let newValues = { ...values };
+    const newValues = { ...values };
     if (file) {
       setUploading(true);
       try {
@@ -104,7 +105,7 @@ const GearRow: React.FC<GearRowProps> = ({ gear, manage }) => {
       <td>
         <Checkbox
           checked={manage.selectedIds.includes(gear.id)}
-          onChange={e => manage.selectGear(gear.id, e.target.checked)}
+          onChange={(e) => manage.selectGear(gear.id, e.target.checked)}
         />
       </td>
       <td>
@@ -248,12 +249,7 @@ const GearRow: React.FC<GearRowProps> = ({ gear, manage }) => {
       <td>
         {editing ? (
           <Space>
-            <Button
-              type='primary'
-              size='small'
-              loading={loading || uploading}
-              onClick={handleSave}
-            >
+            <Button type='primary' size='small' loading={loading || uploading} onClick={handleSave}>
               저장
             </Button>
             <Button size='small' onClick={handleCancel}>
@@ -268,6 +264,12 @@ const GearRow: React.FC<GearRowProps> = ({ gear, manage }) => {
             <Button size='small' danger onClick={handleDelete}>
               삭제
             </Button>
+            <UploadButton
+              imageUrl={values.imageUrl ?? ''}
+              name={values.name}
+              id={gear.id}
+              manage={manage}
+            />
           </Space>
         )}
       </td>

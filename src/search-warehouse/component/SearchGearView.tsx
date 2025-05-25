@@ -17,7 +17,12 @@ const SearchGearView: FC<Props> = ({ gear, searchWarehouse }) => {
 
   const handleClick = (e: React.MouseEvent) => {
     e.stopPropagation();
-    searchWarehouse.toggle(gear);
+
+    if (isAdded) {
+      return;
+    } else {
+      searchWarehouse.toggle(gear);
+    }
   };
 
   return (

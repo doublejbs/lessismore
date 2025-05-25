@@ -171,6 +171,11 @@ class ManageStore {
     await updateDoc(gearDoc, { subCategory: newSubCategory });
   }
 
+  public async updateImageUrl(id: string, newImageUrl: string): Promise<void> {
+    const gearDoc = doc(this.firebase.getStore(), 'gear', id);
+    await updateDoc(gearDoc, { imageUrl: newImageUrl });
+  }
+
   public async updateGear(id: string, updateFields: Partial<ManagerGear>): Promise<void> {
     const gearDoc = doc(this.firebase.getStore(), 'gear', id);
     await updateDoc(gearDoc, {
