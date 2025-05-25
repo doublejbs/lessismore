@@ -13,8 +13,6 @@ const SearchGearView: FC<Props> = ({ gear, searchWarehouse }) => {
   const isAdded = gear.isAdded();
   const isSelected = searchWarehouse.isSelected(gear);
 
-  const handleChange = (_: React.ChangeEvent<HTMLInputElement>) => {};
-
   const handleClick = (e: React.MouseEvent) => {
     e.stopPropagation();
 
@@ -23,6 +21,11 @@ const SearchGearView: FC<Props> = ({ gear, searchWarehouse }) => {
     } else {
       searchWarehouse.toggle(gear);
     }
+  };
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    e.stopPropagation();
+    searchWarehouse.toggle(gear);
   };
 
   return (
@@ -57,6 +60,7 @@ const SearchGearView: FC<Props> = ({ gear, searchWarehouse }) => {
             </div>
           ) : (
             <label
+              htmlFor={`search-gear-checkbox-${gear.getId()}`}
               style={{
                 display: 'flex',
                 alignItems: 'center',
@@ -68,14 +72,18 @@ const SearchGearView: FC<Props> = ({ gear, searchWarehouse }) => {
               }}
             >
               <input
+                id={`search-gear-checkbox-${gear.getId()}`}
                 type='checkbox'
                 checked={isSelected}
                 onChange={handleChange}
+                onClick={(e) => e.stopPropagation()}
                 style={{
                   position: 'absolute',
                   opacity: 0,
-                  width: 0,
-                  height: 0,
+                  width: '100%',
+                  height: '100%',
+                  margin: 0,
+                  cursor: 'pointer',
                 }}
               />
               <span
