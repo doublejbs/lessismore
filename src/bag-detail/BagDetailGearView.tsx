@@ -88,25 +88,27 @@ const BagDetailGearView: FC<Props> = ({ gear, bagDetail }) => {
             color: isUseless ? 'grey' : 'black',
           }}
         >
-          <div
-            style={{
-              display: 'flex',
-              flexDirection: 'row',
-              gap: '4px',
-              fontSize: '8px',
-            }}
-          >
+          {gear.hasUsedRate() && (
             <div
               style={{
-                borderRadius: '12px',
-                backgroundColor: 'rgb(235, 235, 235)',
-                color: 'black',
-                padding: '4px 8px',
+                display: 'flex',
+                flexDirection: 'row',
+                gap: '4px',
+                fontSize: '8px',
               }}
             >
-              사용률 {gear.getUsedRate()}%
+              <div
+                style={{
+                  borderRadius: '12px',
+                  backgroundColor: 'rgb(235, 235, 235)',
+                  color: 'black',
+                  padding: '4px 8px',
+                }}
+              >
+                사용률 {gear.getUsedRate()}%
+              </div>
             </div>
-          </div>
+          )}
           <div>
             <div
               style={{

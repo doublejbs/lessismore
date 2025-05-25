@@ -60,6 +60,7 @@ class SearchWarehouse {
 
   @action
   public toggle(gear: Gear) {
+    console.log('toggle', gear);
     if (this.isSelected(gear)) {
       this.deleteSelected(gear);
     } else {
