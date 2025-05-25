@@ -106,6 +106,10 @@ class Manage {
     this.resetList();
   }
 
+  public async addGearOnly(fields: Partial<ManagerGear>) {
+    await this.manageStore.addGear(fields);
+  }
+
   public async addGear(fields: Partial<ManagerGear>) {
     await this.manageStore.addGear(fields);
     await this.resetList();
@@ -125,7 +129,7 @@ class Manage {
     if (checked) {
       if (!this.selectedIds.includes(id)) this.selectedIds.push(id);
     } else {
-      this.selectedIds = this.selectedIds.filter(_id => _id !== id);
+      this.selectedIds = this.selectedIds.filter((_id) => _id !== id);
     }
   }
 
@@ -138,7 +142,7 @@ class Manage {
   }
 
   public async uploadAndUpdateImageUrl(id: string, imageUrl: string, name: string) {
-    const response = await fetch('https://uploadimagefromurl-uaz7njqewq-uc.a.run.app', {
+    const response = await fetch('https://uploadimage-434364025032.asia-northeast3.run.app', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -155,7 +159,7 @@ class Manage {
   }
 
   public async uploadImageUrl(imageUrl: string, name: string) {
-    const response = await fetch('https://uploadimagefromurl-uaz7njqewq-uc.a.run.app', {
+    const response = await fetch('https://uploadimage-434364025032.asia-northeast3.run.app', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
