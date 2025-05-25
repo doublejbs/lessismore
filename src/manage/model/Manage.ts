@@ -85,6 +85,11 @@ class Manage {
     await this.resetList();
   }
 
+  public async updateImageUrl(id: string, newImageUrl: string) {
+    await this.manageStore.updateImageUrl(id, newImageUrl);
+    await this.resetList();
+  }
+
   public async updateGear(id: string, updateFields: Partial<ManagerGear>) {
     await this.manageStore.updateGear(id, updateFields);
     this.items = this.items.map((item) => (item.id === id ? { ...item, ...updateFields } : item));
@@ -130,6 +135,36 @@ class Manage {
 
   public selectAll(ids: string[]) {
     this.selectedIds = [...ids];
+  }
+
+  public async uploadAndUpdateImageUrl(id: string, imageUrl: string, name: string) {
+    const response = await fetch('https://uploadimagefromurl-uaz7njqewq-uc.a.run.app', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ imageUrl, name }),
+    });
+    if (!response.ok) throw new Error('업로드 실패');
+    const data = await response.json();
+    if (data.downloadURL) {
+      await this.updateImageUrl(id, data.downloadURL);
+      return data.downloadURL;
+    }
+    return null;
+  }
+
+  public async uploadImageUrl(imageUrl: string, name: string) {
+    const response = await fetch('https://uploadimagefromurl-uaz7njqewq-uc.a.run.app', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ imageUrl, name }),
+    });
+    if (!response.ok) throw new Error('업로드 실패');
+    const data = await response.json();
+    return data.downloadURL;
   }
 }
 

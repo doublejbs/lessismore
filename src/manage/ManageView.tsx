@@ -178,9 +178,9 @@ const ManageView = () => {
         <Checkbox
           checked={manage.selectedIds.length === items.length && items.length > 0}
           indeterminate={manage.selectedIds.length > 0 && manage.selectedIds.length < items.length}
-          onChange={e => {
+          onChange={(e) => {
             if (e.target.checked) {
-              manage.selectAll(items.map(item => item.id));
+              manage.selectAll(items.map((item) => item.id));
             } else {
               manage.clearSelected();
             }
