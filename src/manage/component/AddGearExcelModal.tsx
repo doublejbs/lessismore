@@ -15,6 +15,7 @@ const AddGearExcelModal: React.FC<{ open: boolean; onClose: () => void; manager:
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [registering, setRegistering] = useState(false);
+  const [registeringIndex, setRegisteringIndex] = useState<number | null>(null);
   const imgRefs = useRef<{ [key: number]: HTMLImageElement | null }>({});
 
   // 전체 이미지 다운로드 (다운로드 기능 제거, 안내 메시지만 표시)
@@ -145,30 +146,49 @@ const AddGearExcelModal: React.FC<{ open: boolean; onClose: () => void; manager:
 
   const handleRegister = async () => {
     setRegistering(true);
+    setRegisteringIndex(0);
     try {
-      for (let i = 0; i < data.length; ++i) {
-        const row = data[i];
-        let imageUrl = row.imageUrl;
-        if (row.imageFile) {
-          // 수동 업로드 파일만 Storage 업로드
-          const safe = (v: string = '') => v.replace(/[^a-zA-Z0-9가-힣]/g, '_');
-          const ext = row.imageFile.name.includes('.')
-            ? row.imageFile.name.substring(row.imageFile.name.lastIndexOf('.'))
-            : '.jpg';
-          const fileName = `${safe(row.company)}_${safe(row.name)}_${safe(row.color || '')}${ext}`;
-          const storage = FirebaseImageStorage.new();
-          imageUrl = await storage.uploadFileToPublic(row.imageFile, fileName);
-        }
-        // imageUrl이 외부 URL이어도 그대로 등록
-        const newImageUrl = await manager.uploadImageUrl(imageUrl, row.name);
-        await manager.addGear({ ...row, imageUrl: newImageUrl });
+      const failedRows: number[] = [];
+      const batchSize = 6;
+      for (let batchStart = 0; batchStart < data.length; batchStart += batchSize) {
+        const batch = data.slice(batchStart, batchStart + batchSize);
+        setRegisteringIndex(Math.min(batchStart + batch.length, data.length));
+        await Promise.all(
+          batch.map(async (row, idx) => {
+            try {
+              let imageUrl = row.imageUrl;
+              if (row.imageFile) {
+                // 수동 업로드 파일만 Storage 업로드
+                const safe = (v: string = '') => v.replace(/[^a-zA-Z0-9가-힣]/g, '_');
+                const ext = row.imageFile.name.includes('.')
+                  ? row.imageFile.name.substring(row.imageFile.name.lastIndexOf('.'))
+                  : '.jpg';
+                const fileName = `${safe(row.company)}_${safe(row.name)}_${safe(row.color || '')}${ext}`;
+                const storage = FirebaseImageStorage.new();
+                imageUrl = await storage.uploadFileToPublic(row.imageFile, fileName);
+              }
+              // imageUrl이 외부 URL이어도 그대로 등록
+              const newImageUrl = await manager.uploadImageUrl(imageUrl, row.name);
+              await manager.addGearOnly({ ...row, imageUrl: newImageUrl });
+            } catch (rowErr: any) {
+              failedRows.push(batchStart + idx + 1); // 1-based index
+            }
+          })
+        );
       }
-      message.success('엑셀 데이터가 모두 등록되었습니다.');
+      if (failedRows.length > 0) {
+        message.warning(
+          `일부 행 등록 실패: ${failedRows.join(', ')}행. 나머지는 정상 등록되었습니다.`
+        );
+      } else {
+        message.success('엑셀 데이터가 모두 등록되었습니다.');
+      }
       onClose();
     } catch (e: any) {
       message.error('등록 중 오류: ' + (e?.message || String(e)));
     } finally {
       setRegistering(false);
+      setRegisteringIndex(null);
     }
   };
 
@@ -185,7 +205,11 @@ const AddGearExcelModal: React.FC<{ open: boolean; onClose: () => void; manager:
       </div>
       <Spin
         spinning={loading || registering}
-        tip={registering ? '장비를 등록 중입니다...' : '엑셀 파일을 불러오는 중입니다...'}
+        tip={
+          registering
+            ? `장비를 등록 중입니다... (${registeringIndex ?? 0}/${data.length})`
+            : '엑셀 파일을 불러오는 중입니다...'
+        }
       >
         {error ? (
           <Alert type='error' message={error} showIcon style={{ margin: '40px 0' }} />
