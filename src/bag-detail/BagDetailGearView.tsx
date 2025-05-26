@@ -15,7 +15,7 @@ const BagDetailGearView: FC<Props> = ({ gear, bagDetail }) => {
   const [showMenu, setShowMenu] = useState(false);
   const navigate = useNavigate();
 
-  const handleClickMenu = (e: React.MouseEvent) => {
+  const handleClickMenu = () => {
     setShowMenu(true);
   };
 

@@ -1,4 +1,4 @@
-import { FC, useEffect, useState } from 'react';
+import React, { FC, useEffect, useState } from 'react';
 import { observer } from 'mobx-react-lite';
 import BagEditWarehouseView from './BagEditWarehouseView';
 import { useNavigate, useParams, useLocation } from 'react-router-dom';

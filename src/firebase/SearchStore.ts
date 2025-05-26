@@ -102,7 +102,7 @@ class SearchStore {
             );
       const gears = (await getDocs(filterQuery)).docs;
 
-      if (!!gears?.length) {
+      if (gears?.length) {
         return gears.map((doc) => {
           const {
             id,
