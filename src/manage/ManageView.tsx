@@ -1,7 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { observer } from 'mobx-react-lite';
-import { Table, Button, Input, Space, Spin, message, Checkbox } from 'antd';
-import type { ColumnsType } from 'antd/es/table';
+import { Table, Button, Spin, message, Checkbox } from 'antd';
 import Manage from './model/Manage';
 import GearRow from './GearRow';
 import SearchInput from './SearchInput';

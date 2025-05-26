@@ -7,7 +7,6 @@ import ToastManager from '../../toast/ToastManager';
 import app from '../../App';
 import { Location, NavigateFunction } from 'react-router-dom';
 import Firebase from '../../firebase/Firebase';
-import AlertManager from '../../alert/AlertManager';
 import LogInAlertManager from '../../alert/login/LogInAlertManager';
 
 class SearchWarehouse {

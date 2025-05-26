@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { Route, Routes, useNavigate, useLocation } from 'react-router-dom';
 import './App.css';
 import LogIn from './LogIn.tsx';
@@ -19,8 +19,8 @@ import SearchWarehouseView from './search-warehouse/component/SearchWarehouseVie
 import BagUselessView from './bag-useless/component/BagUselessView';
 import BagDetailWrapper from './bag-detail/BagDetailWrapper.tsx';
 import LogInView from './alert/login/LogInView';
-import LogInAlertManager from './alert/login/LogInAlertManager';
 import ManageView from './manage/ManageView';
+import InfoView from './info/InfoView';
 
 const ROUTES = [
   {
@@ -71,6 +71,7 @@ const ROUTES = [
   { path: '/admin', element: <AdminView /> },
   { path: '/search', element: <SearchWarehouseView /> },
   { path: '/manage', element: <ManageView /> },
+  { path: '/info', element: <InfoView /> },
 ];
 
 const App = () => {
