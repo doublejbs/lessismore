@@ -24,9 +24,6 @@ const SearchBarView: FC<Props> = ({ searchWarehouse }) => {
   return (
     <div
       style={{
-        position: 'absolute',
-        left: 0,
-        top: '16px',
         paddingLeft: '10px',
         paddingRight: '20px',
         display: 'flex',

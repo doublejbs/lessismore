@@ -1,43 +1,26 @@
 import { FC } from 'react';
 import BagEdit from './model/BagEdit';
+import { observer } from 'mobx-react-lite';
 
 interface Props {
   bagEdit: BagEdit;
-  showMenu: boolean;
-  onHideMenu: (e: React.MouseEvent<HTMLDivElement>) => void;
 }
 
-const BagEditWarehouseAddMenuView: FC<Props> = ({ bagEdit, showMenu, onHideMenu }) => {
-  if (!showMenu) {
-    return null;
-  }
+const BagEditWarehouseAddMenuView: FC<Props> = ({ bagEdit }) => {
+  const shouldShowAddMenu = bagEdit.shouldShowAddMenu();
 
-  const handleClickSearch = (e: React.MouseEvent<HTMLDivElement>) => {
-    e.stopPropagation();
-    bagEdit.showSearch();
-  };
+  if (shouldShowAddMenu) {
+    const handleClickSearch = (e: React.MouseEvent<HTMLDivElement>) => {
+      e.stopPropagation();
+      bagEdit.showSearch();
+    };
 
-  const handleClickWrite = (e: React.MouseEvent<HTMLDivElement>) => {
-    e.stopPropagation();
-    bagEdit.showWrite();
-  };
+    const handleClickWrite = (e: React.MouseEvent<HTMLDivElement>) => {
+      e.stopPropagation();
+      bagEdit.showCustom();
+    };
 
-  return (
-    <div
-      style={{
-        position: 'fixed',
-        top: 0,
-        left: 0,
-        width: '100%',
-        height: '100%',
-        backgroundColor: 'rgba(0, 0, 0, 0.5)',
-        display: 'flex',
-        flexDirection: 'column',
-        justifyContent: 'flex-end',
-        zIndex: 1000,
-      }}
-      onClick={onHideMenu}
-    >
+    return (
       <div
         style={{
           backgroundColor: 'white',
@@ -123,8 +106,10 @@ const BagEditWarehouseAddMenuView: FC<Props> = ({ bagEdit, showMenu, onHideMenu 
           </span>
         </div>
       </div>
-    </div>
-  );
+    );
+  } else {
+    return null;
+  }
 };
 
-export default BagEditWarehouseAddMenuView;
+export default observer(BagEditWarehouseAddMenuView);

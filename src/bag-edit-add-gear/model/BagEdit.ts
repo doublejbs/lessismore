@@ -10,6 +10,7 @@ import WarehouseFilter from '../../warehouse/model/WarehouseFilter';
 import GearFilter from '../../warehouse/model/GearFilter';
 import Order from '../../order/Order';
 import OrderType from '../../order/OrderType';
+import BagEditSearch from './BagEditSearch';
 
 class BagEdit {
   private static readonly ORDER_KEY = 'bag';
@@ -22,7 +23,8 @@ class BagEdit {
       app.getBagStore(),
       WarehouseDispatcher.new(),
       FilterManager.from(),
-      Order.new(BagEdit.ORDER_KEY)
+      Order.new(BagEdit.ORDER_KEY),
+      BagEditSearch.of(navigate, location)
     );
   }
 
@@ -33,6 +35,7 @@ class BagEdit {
   private warehouseGears: Gear[] = [];
   private loading = false;
   private initialized = false;
+  private customVisible = false;
   private disposeReaction: () => void;
 
   private constructor(
@@ -42,7 +45,8 @@ class BagEdit {
     private readonly bagStore: BagStore,
     private readonly dispatcher: WarehouseDispatcherType,
     private readonly filterManager: FilterManager,
-    private readonly order: Order
+    private readonly order: Order,
+    private readonly bagEditSearch: BagEditSearch
   ) {
     makeAutoObservable(this);
     this.disposeReaction = reaction(
@@ -159,12 +163,23 @@ class BagEdit {
     return this.selectedGears.some((g) => g.isSame(gear));
   }
 
-  public showSearch() {
-    this.navigate(`/bag/${this.id}/edit/search`, { state: { from: `/bag/${this.id}/edit` } });
+  public hideAddMenu() {
+    this.bagEditSearch.hide();
+    this.setCustomVisible(false);
   }
 
-  public showWrite() {
-    this.navigate(`/warehouse/custom`, { state: { from: `/bag/${this.id}/edit` } });
+  public showSearch() {
+    this.bagEditSearch.show();
+    this.setCustomVisible(false);
+  }
+
+  public showCustom() {
+    this.setCustomVisible(true);
+    this.bagEditSearch.hide();
+  }
+
+  public shouldShowAddMenu() {
+    return !(this.isSearchVisible() || this.isCustomVisible());
   }
 
   private setWarehouseGears(gears: Gear[]) {
@@ -219,6 +234,22 @@ class BagEdit {
 
   public getOrder() {
     return this.order;
+  }
+
+  private setCustomVisible(value: boolean) {
+    this.customVisible = value;
+  }
+
+  public isSearchVisible() {
+    return this.bagEditSearch.isVisible();
+  }
+
+  public isCustomVisible() {
+    return this.customVisible;
+  }
+
+  public getBagEditSearch() {
+    return this.bagEditSearch;
   }
 }
 
