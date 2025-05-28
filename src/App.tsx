@@ -10,17 +10,16 @@ import AdminView from './AdminView.tsx';
 import LoadingView from './LoadingView.tsx';
 import BagView from './bag/component/BagView';
 import BagEditAddGearView from './bag-edit-add-gear/BagEditView.tsx';
-import BagEditSearchWarehouseView from './bag-edit-search/BagEditSearchWarehouseView';
 import AlertView from './alert/AlertView';
 import CustomGearWrapper from './custom-gear/component/CustomGearWrapper';
 import WarehouseDetailWrapper from './warehouse-detail/component/WarehouseDetailWrapper';
 import GearEditWrapperView from './gear-edit/component/GearEditWrapperView';
-import SearchWarehouseView from './search-warehouse/component/SearchWarehouseView';
 import BagUselessView from './bag-useless/component/BagUselessView';
 import BagDetailWrapper from './bag-detail/BagDetailWrapper.tsx';
 import LogInView from './alert/login/LogInView';
 import ManageView from './manage/ManageView';
 import InfoView from './info/InfoView';
+import SearchWarehouseWrapper from './search-warehouse/component/SearchWarehouseWrapper.tsx';
 
 const ROUTES = [
   {
@@ -34,10 +33,6 @@ const ROUTES = [
   {
     path: '/terms-agreement',
     element: <TermsAgreement />,
-  },
-  {
-    path: 'bag/:id/edit/search',
-    element: <BagEditSearchWarehouseView />,
   },
   {
     path: '/bag/:id/useless',
@@ -69,7 +64,7 @@ const ROUTES = [
     element: <GearEditWrapperView />,
   },
   { path: '/admin', element: <AdminView /> },
-  { path: '/search', element: <SearchWarehouseView /> },
+  { path: '/search', element: <SearchWarehouseWrapper /> },
   { path: '/manage', element: <ManageView /> },
   { path: '/info', element: <InfoView /> },
 ];

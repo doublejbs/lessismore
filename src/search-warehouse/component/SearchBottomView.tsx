@@ -14,13 +14,10 @@ const SearchBottomView: FC<Props> = ({ searchWarehouse }) => {
   return (
     <div
       style={{
-        position: 'fixed',
-        bottom: 0,
-        left: 0,
         display: 'flex',
         flexDirection: 'column',
         width: '100%',
-        height: selectedCount ? '185px' : '84px',
+        height: 'fit-content',
         backgroundColor: 'white',
         gap: '4px',
       }}

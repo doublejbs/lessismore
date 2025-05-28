@@ -2,11 +2,11 @@ import React, { FC, useEffect, useState } from 'react';
 import { observer } from 'mobx-react-lite';
 import BagEditWarehouseView from './BagEditWarehouseView';
 import { useNavigate, useParams, useLocation } from 'react-router-dom';
-import BagEditWarehouseAddMenuView from './BagEditWarehouseAddMenuView';
 import usePreventScroll from '../hooks/usePreventScroll';
 import BagEditWarehouseFiltersView from './BagEditWarehouseFiltersView';
 import BagEdit from './model/BagEdit';
 import { FlipCounter } from './components/FlipCounter';
+import BagEditWarehouseAddView from './BagEditWarehouseAddView';
 
 const BagEditView: FC = () => {
   const { id = '' } = useParams();
@@ -34,6 +34,7 @@ const BagEditView: FC = () => {
 
   const onHideMenu = (e: React.MouseEvent<HTMLDivElement>) => {
     e.stopPropagation();
+    bagEdit.hideAddMenu();
     setShowMenu(false);
   };
 
@@ -192,7 +193,7 @@ const BagEditView: FC = () => {
           {count ? `${count}개 추가하기` : '추가할 장비를 선택해주세요'}
         </button>
       </div>
-      <BagEditWarehouseAddMenuView bagEdit={bagEdit} showMenu={showMenu} onHideMenu={onHideMenu} />
+      <BagEditWarehouseAddView bagEdit={bagEdit} showMenu={showMenu} onHideMenu={onHideMenu} />
     </>
   );
 };

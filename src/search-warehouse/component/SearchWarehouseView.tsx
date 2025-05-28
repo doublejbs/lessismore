@@ -1,19 +1,16 @@
-import React, { FC, useState } from 'react';
+import React, { FC } from 'react';
 import SearchWarehouse from '../model/SearchWarehouse';
 import { observer } from 'mobx-react-lite';
 import SearchBarView from './SearchBarView';
 import SearchResultView from './SearchResultView';
 import SearchBottomView from './SearchBottomView';
-import { useLocation, useNavigate } from 'react-router-dom';
 
 interface Props {
+  searchWarehouse: SearchWarehouse;
   children?: React.ReactNode;
 }
 
-const SearchWarehouseView: FC<Props> = () => {
-  const navigate = useNavigate();
-  const location = useLocation();
-  const [searchWarehouse] = useState(() => SearchWarehouse.new(navigate, location));
+const SearchWarehouseView: FC<Props> = ({ searchWarehouse }) => {
   const selectedCount = searchWarehouse.getSelectedCount();
 
   return (
@@ -23,8 +20,8 @@ const SearchWarehouseView: FC<Props> = () => {
         flexDirection: 'column',
         height: '100%',
         width: '100%',
-        paddingTop: '80px',
-        paddingBottom: selectedCount ? '185px' : '101px',
+        paddingTop: '16px',
+        overflowY: 'hidden',
       }}
     >
       <SearchBarView searchWarehouse={searchWarehouse} />
