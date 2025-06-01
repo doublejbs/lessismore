@@ -13,9 +13,9 @@ const BagEditView: FC = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const [bagEdit] = useState(() => BagEdit.from(navigate, location, id));
-  const [showMenu, setShowMenu] = useState(false);
   const weight = bagEdit.getWeight();
   const count = bagEdit.getCount();
+  const showMenu = bagEdit.isAddMenuVisible();
 
   usePreventScroll(showMenu);
 
@@ -29,13 +29,12 @@ const BagEditView: FC = () => {
 
   const handleClickAddGear = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.stopPropagation();
-    setShowMenu(true);
+    bagEdit.showAddMenu();
   };
 
   const onHideMenu = (e: React.MouseEvent<HTMLDivElement>) => {
     e.stopPropagation();
     bagEdit.hideAddMenu();
-    setShowMenu(false);
   };
 
   useEffect(() => {
@@ -193,7 +192,7 @@ const BagEditView: FC = () => {
           {count ? `${count}개 추가하기` : '추가할 장비를 선택해주세요'}
         </button>
       </div>
-      <BagEditWarehouseAddView bagEdit={bagEdit} showMenu={showMenu} onHideMenu={onHideMenu} />
+      <BagEditWarehouseAddView bagEdit={bagEdit} onHideMenu={onHideMenu} />
     </>
   );
 };

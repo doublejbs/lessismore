@@ -5,12 +5,11 @@ import BagEditWarehouseSearchWrapper from './BagEditWarehouseSearchWrapper';
 
 interface Props {
   bagEdit: BagEdit;
-  showMenu: boolean;
   onHideMenu: (e: React.MouseEvent<HTMLDivElement>) => void;
 }
 
-const BagEditWarehouseAddView: FC<Props> = ({ bagEdit, showMenu, onHideMenu }) => {
-  if (!showMenu) {
+const BagEditWarehouseAddView: FC<Props> = ({ bagEdit, onHideMenu }) => {
+  if (!bagEdit.isAddMenuVisible()) {
     return null;
   }
 

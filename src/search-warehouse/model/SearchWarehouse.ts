@@ -59,7 +59,6 @@ class SearchWarehouse {
 
   @action
   public toggle(gear: Gear) {
-    console.log('toggle', gear);
     if (this.isSelected(gear)) {
       this.deleteSelected(gear);
     } else {
@@ -170,6 +169,19 @@ class SearchWarehouse {
     return this.hasMore;
   }
 
+  protected clear() {
+    this.clearKeyword();
+    this.clearPage();
+    this.setResult([]);
+    this.setHasMore(false);
+    this.setLoading(false);
+    this.clearSelected();
+  }
+
+  private clearSelected() {
+    this.selected = [];
+  }
+
   private clearPage() {
     this.page = 0;
   }
@@ -193,10 +205,10 @@ class SearchWarehouse {
   public async register() {
     await this.searchDispatcher.register(this.selected);
     this.toastManager.show({ message: '내 장비 추가가 완료됐어요' });
-    this.back();
+    this.back(this.selected);
   }
 
-  public back() {
+  public back(_: Array<Gear>) {
     const fromPath = this.location.state?.from;
 
     if (fromPath?.includes('/bag') || fromPath?.includes('/warehouse')) {
