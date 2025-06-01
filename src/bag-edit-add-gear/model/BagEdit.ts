@@ -23,8 +23,7 @@ class BagEdit {
       app.getBagStore(),
       WarehouseDispatcher.new(),
       FilterManager.from(),
-      Order.new(BagEdit.ORDER_KEY),
-      BagEditSearch.of(navigate, location)
+      Order.new(BagEdit.ORDER_KEY)
     );
   }
 
@@ -37,6 +36,8 @@ class BagEdit {
   private initialized = false;
   private customVisible = false;
   private disposeReaction: () => void;
+  private addMenuVisible = false;
+  private readonly bagEditSearch: BagEditSearch;
 
   private constructor(
     private readonly navigate: NavigateFunction,
@@ -45,8 +46,7 @@ class BagEdit {
     private readonly bagStore: BagStore,
     private readonly dispatcher: WarehouseDispatcherType,
     private readonly filterManager: FilterManager,
-    private readonly order: Order,
-    private readonly bagEditSearch: BagEditSearch
+    private readonly order: Order
   ) {
     makeAutoObservable(this);
     this.disposeReaction = reaction(
@@ -55,6 +55,7 @@ class BagEdit {
         await this.initialize();
       }
     );
+    this.bagEditSearch = BagEditSearch.of(this, this.navigate, this.location);
   }
 
   public dispose() {
@@ -166,6 +167,7 @@ class BagEdit {
   public hideAddMenu() {
     this.bagEditSearch.hide();
     this.setCustomVisible(false);
+    this.setAddMenuVisible(false);
   }
 
   public showSearch() {
@@ -250,6 +252,22 @@ class BagEdit {
 
   public getBagEditSearch() {
     return this.bagEditSearch;
+  }
+
+  public prependGears(gears: Gear[]) {
+    this.setWarehouseGears([...gears, ...this.warehouseGears]);
+  }
+
+  public showAddMenu() {
+    this.setAddMenuVisible(true);
+  }
+
+  private setAddMenuVisible(value: boolean) {
+    this.addMenuVisible = value;
+  }
+
+  public isAddMenuVisible() {
+    return this.addMenuVisible;
   }
 }
 
