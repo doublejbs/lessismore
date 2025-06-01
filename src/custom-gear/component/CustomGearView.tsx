@@ -2,7 +2,6 @@ import React, { FC } from 'react';
 import { observer } from 'mobx-react-lite';
 import ImageUploadView from './ImageUploadView.tsx';
 import CustomGearConfirmView from './CustomGearConfirmView.tsx';
-import Layout from '../../Layout';
 import CustomGear from '../model/CustomGear';
 import LoadingIconView from '../../LoadingIconView';
 import WarehouseFilter from '../../warehouse/model/WarehouseFilter.ts';
@@ -35,7 +34,17 @@ const CustomGearView: FC<Props> = ({ customGear }) => {
   };
 
   return (
-    <Layout>
+    <div
+      style={{
+        display: 'flex',
+        flexDirection: 'column',
+        height: '100%',
+        width: '100%',
+        padding: '0 20px 20px 20px',
+        overflowY: 'hidden',
+        gap: '16px',
+      }}
+    >
       {isLoading && (
         <div
           style={{
@@ -51,24 +60,17 @@ const CustomGearView: FC<Props> = ({ customGear }) => {
       )}
       <div
         style={{
-          position: 'fixed',
-          left: 0,
-          top: 0,
           width: '100%',
-          display: 'flex',
-          justifyContent: 'center',
-          height: '41px',
-          padding: '8px 20px',
           backgroundColor: 'white',
+          position: 'relative',
+          display: 'flex',
+          flexDirection: 'row',
+          justifyContent: 'space-between',
         }}
       >
         <button
           style={{
-            position: 'fixed',
-            left: 0,
-            top: 0,
             height: '41px',
-            padding: '8px 20px',
           }}
           onClick={handleClickHide}
         >
@@ -88,12 +90,15 @@ const CustomGearView: FC<Props> = ({ customGear }) => {
         <div
           style={{
             width: '100%',
-            textAlign: 'center',
             fontWeight: 'bold',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
           }}
         >
           직접 작성하기
         </div>
+        <div style={{ width: '10px' }}></div>
       </div>
       <div
         style={{
@@ -101,8 +106,9 @@ const CustomGearView: FC<Props> = ({ customGear }) => {
           display: 'flex',
           flexDirection: 'column',
           gap: '28px',
-          marginTop: '61px',
+
           paddingBottom: '84px',
+          overflowY: 'auto',
         }}
       >
         <div
@@ -215,7 +221,7 @@ const CustomGearView: FC<Props> = ({ customGear }) => {
         <CustomGearWeightView customGear={customGear} />
       </div>
       <CustomGearConfirmView customGear={customGear} />
-    </Layout>
+    </div>
   );
 };
 

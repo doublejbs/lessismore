@@ -46,7 +46,7 @@ class GearEdit extends AbstractGearEdit {
     }
   }
 
-  protected async _register(): Promise<void> {
+  public override async _register(): Promise<Gear> {
     const updatedGear = new Gear(
       this.gear?.getId() ?? '',
       this.getName(),
@@ -72,6 +72,8 @@ class GearEdit extends AbstractGearEdit {
     }
 
     await this.onRegister(updatedGear);
+
+    return updatedGear;
   }
 
   @action

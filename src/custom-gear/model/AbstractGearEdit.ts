@@ -4,6 +4,7 @@ import WarehouseFilter from '../../warehouse/model/WarehouseFilter.ts';
 import FileUpload from '../../warehouse/model/FileUpload';
 import GearFilter from '../../warehouse/model/GearFilter.ts';
 import dayjs from 'dayjs';
+import Gear from '../../model/Gear.ts';
 
 abstract class AbstractGearEdit extends FileUpload {
   @observable private name = '';
@@ -28,7 +29,7 @@ abstract class AbstractGearEdit extends FileUpload {
     makeObservable(this);
   }
 
-  protected abstract _register(): Promise<void>;
+  protected abstract _register(): Promise<Gear>;
 
   protected abstract hide(): void;
 

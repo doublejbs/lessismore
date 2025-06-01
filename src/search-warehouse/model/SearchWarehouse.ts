@@ -208,7 +208,7 @@ class SearchWarehouse {
     this.back(this.selected);
   }
 
-  public back(_: Array<Gear>) {
+  public back(_?: Array<Gear>) {
     const fromPath = this.location.state?.from;
 
     if (fromPath?.includes('/bag') || fromPath?.includes('/warehouse')) {

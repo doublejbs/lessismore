@@ -2,6 +2,7 @@ import { FC } from 'react';
 import BagEdit from './model/BagEdit';
 import BagEditWarehouseAddMenuView from './BagEditWarehouseAddMenuView';
 import BagEditWarehouseSearchWrapper from './BagEditWarehouseSearchWrapper';
+import BagEditWarehouseCustomGearWrapper from './BagEditWarehouseCustomGearWrapper';
 
 interface Props {
   bagEdit: BagEdit;
@@ -31,6 +32,7 @@ const BagEditWarehouseAddView: FC<Props> = ({ bagEdit, onHideMenu }) => {
     >
       <BagEditWarehouseAddMenuView bagEdit={bagEdit} />
       <BagEditWarehouseSearchWrapper bagEdit={bagEdit} />
+      <BagEditWarehouseCustomGearWrapper bagEdit={bagEdit} />
     </div>
   );
 };
