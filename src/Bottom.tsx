@@ -8,7 +8,6 @@ const Bottom = () => {
   const location = useLocation();
   const isBag = location.pathname === '/bag';
   const isWarehouse = location.pathname === '/warehouse';
-  const isInfo = location.pathname === '/info';
   const toastManager = app.getToastManager();
 
   const handleClickWarehouse = () => {
@@ -17,10 +16,6 @@ const Bottom = () => {
 
   const handleClickBag = () => {
     navigate('/bag');
-  };
-
-  const handleClickInfo = () => {
-    navigate('/info');
   };
 
   return (
@@ -61,15 +56,6 @@ const Bottom = () => {
           }}
         >
           배낭
-        </button>
-        <button
-          onClick={handleClickInfo}
-          style={{
-            fontWeight: isInfo ? 'bold' : 'normal',
-            width: '100%',
-          }}
-        >
-          내 정보
         </button>
       </div>
       <ToastView toastManager={toastManager} bottom={46} />

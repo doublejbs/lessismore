@@ -1,9 +1,11 @@
 import { useState, useRef, useEffect } from 'react';
 import app from '../../App';
+import { useNavigate } from 'react-router-dom';
 
 const UserMenu = () => {
   const [open, setOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -27,10 +29,14 @@ const UserMenu = () => {
     setOpen(false);
   };
 
+  const handleClickInfo = () => {
+    navigate('/info');
+  };
+
   return (
     <div ref={menuRef} style={{ position: 'relative', display: 'inline-block' }}>
       <button
-        onClick={() => setOpen((prev) => !prev)}
+        onClick={handleClickInfo}
         style={{
           background: 'none',
           border: 'none',
