@@ -7,7 +7,6 @@ import CustomGearCategory from './CustomGearCategory';
 import AbstractGearEdit from './AbstractGearEdit';
 import { Location, NavigateFunction } from 'react-router-dom';
 import Firebase from '../../firebase/Firebase';
-import AlertManager from '../../alert/AlertManager';
 import LogInAlertManager from '../../alert/login/LogInAlertManager';
 class CustomGear extends AbstractGearEdit {
   public static new(navigate: NavigateFunction, location: Location) {
@@ -16,7 +15,6 @@ class CustomGear extends AbstractGearEdit {
       location,
       app.getGearStore(),
       app.getFirebase(),
-      app.getAlertManager(),
       app.getLogInAlertManager(),
       CustomGearCategory.new().selectFirst(),
       '',
@@ -26,12 +24,11 @@ class CustomGear extends AbstractGearEdit {
     );
   }
 
-  private constructor(
+  protected constructor(
     private readonly navigate: NavigateFunction,
     private readonly location: Location,
     private readonly gearStore: GearStore,
     private readonly firebase: Firebase,
-    private readonly alertManager: AlertManager,
     private readonly logInAlertManager: LogInAlertManager,
     category: CustomGearCategory,
     name: string,
@@ -48,26 +45,29 @@ class CustomGear extends AbstractGearEdit {
       this.logInAlertManager.show();
     }
   }
+
   public async _register() {
-    await this.gearStore.register([
-      new Gear(
-        uuidv4(),
-        this.getName(),
-        this.getCompany(),
-        this.getWeight(),
-        await this.getFileUrl(),
-        true,
-        true,
-        this.getSelectedFirstCategory(),
-        this.getSelectedFilter(),
-        [],
-        [],
-        [],
-        Date.now(),
-        this.getColor(),
-        this.getCompany()
-      ),
-    ]);
+    const gear = new Gear(
+      uuidv4(),
+      this.getName(),
+      this.getCompany(),
+      this.getWeight(),
+      await this.getFileUrl(),
+      true,
+      true,
+      this.getSelectedFirstCategory(),
+      this.getSelectedFilter(),
+      [],
+      [],
+      [],
+      Date.now(),
+      this.getColor(),
+      this.getCompany()
+    );
+
+    await this.gearStore.register([gear]);
+
+    return gear;
   }
 
   public getFileName(): string {
