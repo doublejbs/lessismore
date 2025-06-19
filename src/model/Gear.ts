@@ -1,5 +1,3 @@
-import { isNumber } from 'lodash';
-
 class Gear {
   public constructor(
     private readonly id: string,
@@ -10,7 +8,6 @@ class Gear {
     private readonly added: boolean,
     private readonly isCustom: boolean,
     private readonly category: string,
-    private readonly subCategory: string,
     private useless: string[],
     private used: string[],
     private bags: string[],
@@ -51,10 +48,6 @@ class Gear {
     return this.category;
   }
 
-  public getSubCategory() {
-    return this.subCategory;
-  }
-
   public getData() {
     return {
       id: this.id,
@@ -64,7 +57,6 @@ class Gear {
       imageUrl: this.imageUrl ?? '',
       isCustom: this.isCustom,
       category: this.category,
-      subCategory: this.subCategory,
       useless: this.useless,
       used: this.used,
       bags: this.bags,

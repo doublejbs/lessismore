@@ -5,7 +5,6 @@ interface GearType {
   weight: string;
   imageUrl: string;
   category?: string;
-  subCategory?: string;
   useless: string[];
   used: string[];
   bags: string[];

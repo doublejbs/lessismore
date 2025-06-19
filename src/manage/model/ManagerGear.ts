@@ -5,7 +5,6 @@ class ManagerGear {
   companyKorean: string;
   weight: string;
   category: string;
-  subCategory: string;
   createDate: number;
   imageUrl: string;
   color?: string;
@@ -17,7 +16,6 @@ class ManagerGear {
     companyKorean,
     weight,
     category,
-    subCategory,
     createDate,
     imageUrl = '',
     color = '',
@@ -28,7 +26,6 @@ class ManagerGear {
     companyKorean: string;
     weight: string;
     category: string;
-    subCategory: string;
     createDate: number;
     imageUrl?: string;
     color?: string;
@@ -39,7 +36,6 @@ class ManagerGear {
     this.companyKorean = companyKorean;
     this.weight = weight;
     this.category = category;
-    this.subCategory = subCategory;
     this.createDate = createDate;
     this.imageUrl = imageUrl;
     this.color = color;

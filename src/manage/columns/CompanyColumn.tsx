@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { Button, Space, message } from 'antd';
 import type { ColumnsType } from 'antd/es/table';
 import EditCompanyCell from '../EditCompanyCell';
@@ -10,7 +10,6 @@ interface RowType {
   company: string;
   weight: string;
   category: string;
-  subCategory: string;
   createDate: number;
 }
 

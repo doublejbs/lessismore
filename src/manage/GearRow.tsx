@@ -5,7 +5,6 @@ import CompanyCell from './columns/CompanyCell';
 import CompanyKoreanCell from './columns/CompanyKoreanCell';
 import WeightCell from './columns/WeightCell';
 import CategoryCell from './columns/CategoryCell';
-import SubCategoryCell from './columns/SubCategoryCell';
 import FirebaseImageStorage from '../firebase/FirebaseImageStorage';
 import Manage from './model/Manage';
 import UploadButton from './UploadButton';
@@ -18,7 +17,6 @@ interface GearRowProps {
     companyKorean: string;
     weight: string;
     category: string;
-    subCategory: string;
     createDate: number;
     imageUrl?: string;
     color?: string;
@@ -74,7 +72,7 @@ const GearRow: React.FC<GearRowProps> = ({ gear, manage }) => {
       setUploading(true);
       try {
         const safe = (v: string = '') => v.replace(/[^a-zA-Z0-9가-힣]/g, '_');
-        const fileName = `${safe(values.company)}_${safe(values.name)}_${safe(values.subCategory)}_${Date.now()}${file ? file.name.substring(file.name.lastIndexOf('.')) : ''}`;
+        const fileName = `${safe(values.company)}_${safe(values.name)}_${safe(values.category)}_${Date.now()}${file ? file.name.substring(file.name.lastIndexOf('.')) : ''}`;
         const storage = FirebaseImageStorage.new();
         const url = await storage.uploadFileToPublic(file, fileName);
         newValues.imageUrl = url;
@@ -235,13 +233,6 @@ const GearRow: React.FC<GearRowProps> = ({ gear, manage }) => {
         <CategoryCell
           value={values.category}
           onChange={(v) => handleChange('category', v)}
-          editing={editing}
-        />
-      </td>
-      <td>
-        <SubCategoryCell
-          value={values.subCategory}
-          onChange={(v) => handleChange('subCategory', v)}
           editing={editing}
         />
       </td>

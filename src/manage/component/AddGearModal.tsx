@@ -1,8 +1,7 @@
 import React, { useState } from 'react';
-import { Modal, Form, Input, message, Table } from 'antd';
+import { Modal, Form, Input, message } from 'antd';
 import Manage from '../model/Manage';
 import FirebaseImageStorage from '../../firebase/FirebaseImageStorage';
-import * as XLSX from 'xlsx';
 
 interface AddGearModalProps {
   open: boolean;
@@ -23,7 +22,7 @@ const AddGearModal: React.FC<AddGearModalProps> = ({ open, onClose, manager }) =
       let imageUrl = values.imageUrl || '';
       if (file) {
         const safe = (v: string = '') => v.replace(/[^a-zA-Z0-9가-힣]/g, '_');
-        const fileName = `${safe(values.company)}_${safe(values.name)}_${safe(values.subCategory)}_${Date.now()}${file.name.substring(file.name.lastIndexOf('.'))}`;
+        const fileName = `${safe(values.company)}_${safe(values.name)}_${safe(values.category)}_${Date.now()}${file.name.substring(file.name.lastIndexOf('.'))}`;
         const storage = FirebaseImageStorage.new();
         imageUrl = await storage.uploadFileToPublic(file, fileName);
       }
@@ -106,9 +105,6 @@ const AddGearModal: React.FC<AddGearModalProps> = ({ open, onClose, manager }) =
           <Input />
         </Form.Item>
         <Form.Item name='category' label='카테고리'>
-          <Input />
-        </Form.Item>
-        <Form.Item name='subCategory' label='서브카테고리'>
           <Input />
         </Form.Item>
         <Form.Item name='color' label='색상'>

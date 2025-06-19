@@ -80,11 +80,6 @@ class Manage {
     await this.resetList();
   }
 
-  public async updateSubCategory(id: string, newSubCategory: string) {
-    await this.manageStore.updateSubCategory(id, newSubCategory);
-    await this.resetList();
-  }
-
   public async updateImageUrl(id: string, newImageUrl: string) {
     await this.manageStore.updateImageUrl(id, newImageUrl);
     await this.resetList();

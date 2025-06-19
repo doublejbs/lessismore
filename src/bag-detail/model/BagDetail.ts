@@ -244,7 +244,7 @@ class BagDetail {
 
   public mapGears<R>(callback: (gear: Gear) => R) {
     return this.gears
-      .filter((gear) => this.filterManager.hasFilter(gear.getSubCategory() as GearFilter))
+      .filter((gear) => this.filterManager.hasFilter(gear.getCategory() as GearFilter))
       .map(callback);
   }
 

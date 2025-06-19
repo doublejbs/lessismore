@@ -140,7 +140,7 @@ class BagEdit {
     this.selectedGears.push(gear);
     this.toAddGears.push(gear);
     this.toRemoveGears = this.toRemoveGears.filter((g) => !g.isSame(gear));
-    this.filterManager.addFilterCount(gear.getSubCategory() as GearFilter);
+    this.filterManager.addFilterCount(gear.getCategory() as GearFilter);
     this.updateWeight();
   }
 
@@ -148,7 +148,7 @@ class BagEdit {
     this.selectedGears = this.selectedGears.filter((g) => !g.isSame(gear));
     this.toAddGears = this.toAddGears.filter((g) => !g.isSame(gear));
     this.toRemoveGears.push(gear);
-    this.filterManager.minusFilterCount(gear.getSubCategory() as GearFilter);
+    this.filterManager.minusFilterCount(gear.getCategory() as GearFilter);
     this.updateWeight();
   }
 

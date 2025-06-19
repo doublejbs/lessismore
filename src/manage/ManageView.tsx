@@ -13,7 +13,6 @@ interface RowType {
   companyKorean: string;
   weight: string;
   category: string;
-  subCategory: string;
   createDate: number;
   imageUrl?: string;
   color?: string;
@@ -32,7 +31,6 @@ const ManageView = () => {
   const companyKoreanInputRef = useRef<any>(null);
   const weightInputRef = useRef<any>(null);
   const categoryInputRef = useRef<any>(null);
-  const subCategoryInputRef = useRef<any>(null);
   const [addModalOpen, setAddModalOpen] = useState(false);
   const [excelModalOpen, setExcelModalOpen] = useState(false);
   const selectAllRef = useRef<any>(null);
@@ -75,7 +73,6 @@ const ManageView = () => {
       companyKoreanInputRef.current?.focus();
       weightInputRef.current?.focus();
       categoryInputRef.current?.focus();
-      subCategoryInputRef.current?.focus();
     }
   }, [editRowId]);
 
@@ -112,12 +109,6 @@ const ManageView = () => {
       }
       if (editRowValues.category !== undefined && editRowValues.category !== original.category) {
         promises.push(manage.updateCategory(editRowId, editRowValues.category!));
-      }
-      if (
-        editRowValues.subCategory !== undefined &&
-        editRowValues.subCategory !== original.subCategory
-      ) {
-        promises.push(manage.updateSubCategory(editRowId, editRowValues.subCategory!));
       }
       await Promise.all(promises);
       message.success('수정되었습니다.');
@@ -296,12 +287,6 @@ const ManageView = () => {
       title: '카테고리',
       dataIndex: 'category',
       key: 'category',
-      sorter: true,
-    },
-    {
-      title: '서브카테고리',
-      dataIndex: 'subCategory',
-      key: 'subCategory',
       sorter: true,
     },
     {

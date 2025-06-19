@@ -30,19 +30,22 @@ class SearchStore {
 
     return {
       gears: await this.convertWithMyGears(
-        hits.map(({ name, weight, company, objectID, imageUrl, color, companyKorean }) => ({
-          name,
-          weight,
-          company,
-          id: objectID,
-          imageUrl,
-          useless: [],
-          used: [],
-          bags: [],
-          createDate: Date.now(),
-          color,
-          companyKorean,
-        }))
+        hits.map(
+          ({ name, weight, company, objectID, imageUrl, color, companyKorean, category }) => ({
+            name,
+            weight,
+            company,
+            id: objectID,
+            imageUrl,
+            useless: [],
+            used: [],
+            bags: [],
+            createDate: Date.now(),
+            color,
+            companyKorean,
+            category,
+          })
+        )
       ),
       hasMore: page + 1 < nbPages,
     };
@@ -59,7 +62,6 @@ class SearchStore {
         id,
         imageUrl,
         category = '',
-        subCategory = '',
         useless,
         used,
         bags,
@@ -76,7 +78,6 @@ class SearchStore {
           this.hasGear(id, myGears),
           false,
           category,
-          subCategory,
           useless,
           used,
           bags,
@@ -97,7 +98,7 @@ class SearchStore {
           ? collection(this.getStore(), 'users', this.getUserId(), 'gears')
           : query(
               collection(this.getStore(), 'users', this.getUserId(), 'gears'),
-              where('subCategory', '==', filter),
+              where('category', '==', filter),
               orderBy('name', 'desc')
             );
       const gears = (await getDocs(filterQuery)).docs;
@@ -112,7 +113,6 @@ class SearchStore {
             imageUrl,
             isCustom,
             category,
-            subCategory,
             useless,
             used,
             bags,
@@ -130,7 +130,6 @@ class SearchStore {
             true,
             isCustom,
             category,
-            subCategory,
             useless,
             used,
             bags,

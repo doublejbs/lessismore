@@ -55,7 +55,6 @@ class CustomGear extends AbstractGearEdit {
       await this.getFileUrl(),
       true,
       true,
-      this.getSelectedFirstCategory(),
       this.getSelectedFilter(),
       [],
       [],
