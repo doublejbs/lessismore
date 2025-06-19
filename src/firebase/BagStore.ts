@@ -94,7 +94,7 @@ class BagStore {
         .filter((doc) =>
           filters.length === 1 && filters[0] === GearFilter.All
             ? true
-            : filters.some((filter) => (doc.data() as GearData).subCategory.includes(filter))
+            : filters.some((filter) => (doc.data() as GearData).category.includes(filter))
         )
         .map((doc) => ({
           ...(doc.data() as GearData),
@@ -116,7 +116,6 @@ class BagStore {
                 weight,
                 imageUrl,
                 category = '',
-                subCategory = '',
                 useless,
                 used,
                 bags,
@@ -134,7 +133,6 @@ class BagStore {
                   true,
                   isCustom,
                   category,
-                  subCategory,
                   useless,
                   used,
                   bags,

@@ -70,7 +70,6 @@ class ManageStore {
             companyKorean: hit.companyKorean,
             weight: hit.weight,
             category: hit.category,
-            subCategory: hit.subCategory,
             createDate: hit.createDate,
             imageUrl: hit.imageUrl,
             color: hit.color,
@@ -135,7 +134,6 @@ class ManageStore {
           companyKorean: data.companyKorean,
           weight: data.weight,
           category: data.category,
-          subCategory: data.subCategory,
           createDate: data.createDate,
           imageUrl: data.imageUrl,
           color: data.color,
@@ -164,11 +162,6 @@ class ManageStore {
   public async updateCategory(id: string, newCategory: string): Promise<void> {
     const gearDoc = doc(this.firebase.getStore(), 'gear', id);
     await updateDoc(gearDoc, { category: newCategory });
-  }
-
-  public async updateSubCategory(id: string, newSubCategory: string): Promise<void> {
-    const gearDoc = doc(this.firebase.getStore(), 'gear', id);
-    await updateDoc(gearDoc, { subCategory: newSubCategory });
   }
 
   public async updateImageUrl(id: string, newImageUrl: string): Promise<void> {
@@ -205,7 +198,7 @@ class ManageStore {
   public async deleteGears(ids: string[]): Promise<void> {
     const store = this.firebase.getStore();
     const batch = writeBatch(store);
-    ids.forEach(id => {
+    ids.forEach((id) => {
       const gearDoc = doc(store, 'gear', id);
       batch.delete(gearDoc);
     });

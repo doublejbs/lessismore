@@ -59,7 +59,7 @@ class FilterManager {
   public initializeWithSelectedGears(selectedGears: Gear[]) {
     selectedGears.forEach((gear) => {
       this.filters
-        .find((currentFilter) => currentFilter.getFilter() === gear.getSubCategory())
+        .find((currentFilter) => currentFilter.getFilter() === gear.getCategory())
         ?.plusCount();
     });
   }

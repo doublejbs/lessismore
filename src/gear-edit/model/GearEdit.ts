@@ -40,7 +40,7 @@ class GearEdit extends AbstractGearEdit {
       this.setInitialWeight(this.gear.getWeight());
       this.setCompany(this.gear.getCompany());
       this.setPreviewSrc(this.gear.getImageUrl());
-      this.selectFilterWith(this.gear.getSubCategory() as GearFilter);
+      this.selectFilterWith(this.gear.getCategory() as GearFilter);
       this.setColor(this.gear.getColor());
       this.setInitialized(true);
     }
@@ -55,7 +55,6 @@ class GearEdit extends AbstractGearEdit {
       ((await this.getFileUrl()) || this.gear?.getImageUrl()) ?? '',
       true,
       this.gear?.getIsCustom() ?? false,
-      this.getSelectedFirstCategory(),
       this.getSelectedFilter(),
       this.gear?.getUseless() ?? [],
       this.gear?.getUsed() ?? [],

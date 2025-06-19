@@ -3,6 +3,20 @@ import { Modal, Table, Spin, Alert, Button, message } from 'antd';
 import * as XLSX from 'xlsx';
 import Manage from '../model/Manage';
 import FirebaseImageStorage from '../../firebase/FirebaseImageStorage';
+import { v4 as uuidv4 } from 'uuid';
+
+// 카테고리 한글→영어 매핑
+const categoryMap: Record<string, string> = {
+  텐트: 'tent',
+  침낭: 'sleeping_bag',
+  배낭: 'backpack',
+  의류: 'clothing',
+  매트: 'mat',
+  가구: 'furniture',
+  조명: 'lantern',
+  조리: 'cooking',
+  기타: 'etc',
+};
 
 const AddGearExcelModal: React.FC<{ open: boolean; onClose: () => void; manager: Manage }> = ({
   open,
@@ -59,7 +73,13 @@ const AddGearExcelModal: React.FC<{ open: boolean; onClose: () => void; manager:
         const ws = wb.Sheets[wsname];
         const jsonData = XLSX.utils.sheet_to_json(ws, { defval: '' });
         if (!jsonData.length) throw new Error('엑셀 데이터가 비어있거나 올바르지 않습니다.');
-        setData(jsonData as any[]);
+
+        // 카테고리 변환 적용
+        const convertedData = (jsonData as any[]).map((row) => ({
+          ...row,
+          category: categoryMap[row.category] || 'etc',
+        }));
+        setData(convertedData);
         const keys = Object.keys(jsonData[0] as any);
         const cols = keys.map((key) => ({
           title: key,
@@ -67,6 +87,7 @@ const AddGearExcelModal: React.FC<{ open: boolean; onClose: () => void; manager:
           key,
           render: undefined as any,
         }));
+
         if (keys.includes('imageUrl')) {
           cols.unshift({
             title: '이미지',
@@ -163,12 +184,15 @@ const AddGearExcelModal: React.FC<{ open: boolean; onClose: () => void; manager:
                 const ext = row.imageFile.name.includes('.')
                   ? row.imageFile.name.substring(row.imageFile.name.lastIndexOf('.'))
                   : '.jpg';
-                const fileName = `${safe(row.company)}_${safe(row.name)}_${safe(row.color || '')}${ext}`;
+                const fileName = `${uuidv4()}${ext}`;
                 const storage = FirebaseImageStorage.new();
                 imageUrl = await storage.uploadFileToPublic(row.imageFile, fileName);
               }
               // imageUrl이 외부 URL이어도 그대로 등록
-              const newImageUrl = await manager.uploadImageUrl(imageUrl, row.name);
+              const newImageUrl = await manager.uploadImageUrl(imageUrl, uuidv4());
+
+              const category = row.category || '';
+
               await manager.addGearOnly({ ...row, imageUrl: newImageUrl });
             } catch (rowErr: any) {
               failedRows.push(batchStart + idx + 1); // 1-based index

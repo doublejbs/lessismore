@@ -20,7 +20,6 @@ export interface GearData {
   imageUrl: string;
   isCustom: boolean;
   category: string;
-  subCategory: string;
   useless: string[];
   used: string[];
   bags: string[];
@@ -43,7 +42,6 @@ class GearStore {
         imageUrl,
         isCustom,
         category,
-        subCategory,
         useless,
         used,
         bags,
@@ -61,7 +59,6 @@ class GearStore {
         true,
         isCustom,
         category,
-        subCategory,
         useless,
         used,
         bags,
@@ -83,7 +80,7 @@ class GearStore {
           )
         : query(
             collection(this.getStore(), 'users', this.getUserId(), 'gears'),
-            where('subCategory', 'in', filters),
+            where('category', 'in', filters),
             this.getOrderQuery(order)
           );
     const gears = (await getDocs(filterQuery)).docs;
@@ -98,7 +95,6 @@ class GearStore {
           imageUrl,
           isCustom,
           category,
-          subCategory,
           useless,
           used,
           bags,
@@ -116,7 +112,6 @@ class GearStore {
           true,
           isCustom,
           category,
-          subCategory,
           useless,
           used,
           bags,
@@ -155,6 +150,9 @@ class GearStore {
 
       for (const gear of value) {
         const gearRef = doc(this.getStore(), 'users', this.getUserId(), 'gears', gear.getId());
+
+        console.log(gear.getData());
+
         if ((await getDoc(gearRef)).exists()) {
         } else {
           batch.set(gearRef, gear.getData());

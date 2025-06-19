@@ -87,7 +87,6 @@ const AdminView = () => {
               false,
               false,
               item.category,
-              item.subCategory,
               [],
               [],
               [],
