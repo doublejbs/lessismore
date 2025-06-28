@@ -164,7 +164,7 @@ class Manage {
     });
     if (!response.ok) throw new Error('업로드 실패');
     const data = await response.json();
-    return data.downloadURL;
+    return data.downloadURL === 'true' ? null : data.downloadURL;
   }
 }
 
