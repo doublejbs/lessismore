@@ -148,6 +148,7 @@ class Manage {
     const data = await response.json();
     if (data.downloadURL) {
       await this.updateImageUrl(id, data.downloadURL);
+      await this.resetList();
       return data.downloadURL;
     }
     return null;
