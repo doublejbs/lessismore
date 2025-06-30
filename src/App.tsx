@@ -20,6 +20,7 @@ import LogInView from './alert/login/LogInView';
 import ManageView from './manage/ManageView';
 import InfoView from './info/InfoView';
 import SearchWarehouseWrapper from './search-warehouse/component/SearchWarehouseWrapper.tsx';
+import OpenBrowserView from './open-browser/OpenBrowserView.tsx';
 
 const ROUTES = [
   {
@@ -67,6 +68,7 @@ const ROUTES = [
   { path: '/search', element: <SearchWarehouseWrapper /> },
   { path: '/manage', element: <ManageView /> },
   { path: '/info', element: <InfoView /> },
+  { path: '/open-browser', element: <OpenBrowserView /> },
 ];
 
 const App = () => {
