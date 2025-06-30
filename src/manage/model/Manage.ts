@@ -155,14 +155,17 @@ class Manage {
   }
 
   public async uploadImageUrl(imageUrl: string, name: string) {
-    const response = await fetch('https://uploadimage-434364025032.asia-northeast3.run.app', {
+    const response = await fetch('https://uploadimagefromurl-uaz7njqewq-du.a.run.app', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({ imageUrl, name }),
     });
-    if (!response.ok) throw new Error('업로드 실패');
+    if (!response.ok) {
+      console.error(response);
+      throw new Error('업로드 실패');
+    }
     const data = await response.json();
     return data.downloadURL === 'true' ? null : data.downloadURL;
   }

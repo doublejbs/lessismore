@@ -189,6 +189,7 @@ const AddGearExcelModal: React.FC<{ open: boolean; onClose: () => void; manager:
                 imageUrl = await storage.uploadFileToPublic(row.imageFile, fileName);
               }
               // imageUrl이 외부 URL이어도 그대로 등록
+              // const newImageUrl = await manager.uploadImageUrl(imageUrl, uuidv4());
               const newImageUrl = await manager.uploadImageUrl(imageUrl, uuidv4());
 
               const category = row.category || '';
