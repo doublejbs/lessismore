@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { Route, Routes, useNavigate, useLocation } from 'react-router-dom';
 import './App.css';
 import LogIn from './LogIn.tsx';
@@ -80,21 +80,28 @@ const App = () => {
   const isInitialized = app.isInitialized();
   const alertManager = app.getAlertManager();
   const logInAlertManager = app.getLogInAlertManager();
+  const [isInstagram, setIsInstagram] = useState(false);
 
   useEffect(() => {
     if (isInitialized) {
-      if (isLoggedIn) {
-        if (hasAgreed) {
-          if (
-            location.pathname === '/login' ||
-            location.pathname === '/' ||
-            location.pathname === '/terms-agreement'
-          ) {
-            navigate('/warehouse', { replace: true });
-          }
-        } else {
-          if (location.pathname !== '/terms-agreement') {
-            navigate('/terms-agreement', { replace: true });
+      const ua = navigator.userAgent.toLowerCase();
+
+      if (ua.includes('instagram') || ua.includes('fbav')) {
+        setIsInstagram(true);
+      } else {
+        if (isLoggedIn) {
+          if (hasAgreed) {
+            if (
+              location.pathname === '/login' ||
+              location.pathname === '/' ||
+              location.pathname === '/terms-agreement'
+            ) {
+              navigate('/warehouse', { replace: true });
+            }
+          } else {
+            if (location.pathname !== '/terms-agreement') {
+              navigate('/terms-agreement', { replace: true });
+            }
           }
         }
       }
@@ -103,7 +110,22 @@ const App = () => {
     }
   }, [isLoggedIn, isInitialized, location.pathname, hasAgreed]);
 
-  if (isInitialized) {
+  if (isInstagram) {
+    return (
+      <div
+        style={{
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          minHeight: '100vh',
+        }}
+      >
+        <p>
+          👉 우측 상단 <strong>•••</strong> → <strong>"브라우저에서 열기"</strong>를 눌러주세요.
+        </p>
+      </div>
+    );
+  } else if (isInitialized) {
     return (
       <>
         <Routes>
