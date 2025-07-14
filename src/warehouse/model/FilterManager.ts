@@ -14,6 +14,10 @@ class FilterManager {
       name: '전체',
     },
     {
+      filter: GearFilter.Backpack,
+      name: '배낭',
+    },
+    {
       filter: GearFilter.Tent,
       name: '텐트',
     },
@@ -22,20 +26,8 @@ class FilterManager {
       name: '침낭',
     },
     {
-      filter: GearFilter.Backpack,
-      name: '배낭',
-    },
-    {
-      filter: GearFilter.Clothing,
-      name: '의류',
-    },
-    {
       filter: GearFilter.Mat,
       name: '매트',
-    },
-    {
-      filter: GearFilter.Furniture,
-      name: '가구',
     },
     {
       filter: GearFilter.Lantern,
@@ -44,6 +36,14 @@ class FilterManager {
     {
       filter: GearFilter.Cooking,
       name: '조리',
+    },
+    {
+      filter: GearFilter.Clothing,
+      name: '의류',
+    },
+    {
+      filter: GearFilter.Furniture,
+      name: '가구',
     },
     {
       filter: GearFilter.Etc,
