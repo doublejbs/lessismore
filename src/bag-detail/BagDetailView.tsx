@@ -1,4 +1,4 @@
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { FC, useEffect } from 'react';
 import { observer } from 'mobx-react-lite';
 import BagDetailGearView from './BagDetailGearView';
@@ -13,7 +13,6 @@ interface Props {
 
 const BagDetailView: FC<Props> = ({ bagDetail }) => {
   const navigate = useNavigate();
-  const location = useLocation();
   const initialized = bagDetail.isInitialized();
 
   const handleClickAdd = () => {

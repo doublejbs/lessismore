@@ -126,6 +126,10 @@ class FilterManager {
       }
     });
   }
+
+  public getAllFilter() {
+    return this.filters[0].getFilter();
+  }
 }
 
 export default FilterManager;

@@ -64,7 +64,7 @@ class BagDetail {
     this.order.initialize();
     const { name, weight, editDate, gears, startDate, endDate } = await this.bagStore.getBag(
       this.id,
-      this.filterManager.getSelectedFilters(),
+      [this.filterManager.getAllFilter()],
       this.order.getSelectedOrderType() ?? OrderType.NameAsc
     );
     this.setName(name);
