@@ -2,10 +2,10 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import { FC, useEffect } from 'react';
 import { observer } from 'mobx-react-lite';
 import BagDetailGearView from './BagDetailGearView';
-import BagDetailUselessDescriptionView from './BagDetailUselessDescriptionView';
 import BagDetailFiltersView from './BagDetailFiltersView';
 import BagDetail from './model/BagDetail';
 import { FlipCounter } from '../bag-edit-add-gear/components/FlipCounter';
+import BagDetailUselessDescriptionView from './BagDetailUselessDescriptionView';
 
 interface Props {
   bagDetail: BagDetail;
@@ -108,6 +108,8 @@ const BagDetailView: FC<Props> = ({ bagDetail }) => {
           >
             {date}
           </div>
+        </div>
+        <div style={{ overflowY: 'auto', height: '100%' }}>
           <BagDetailUselessDescriptionView bagDetail={bagDetail} />
           <div
             style={{
@@ -116,49 +118,48 @@ const BagDetailView: FC<Props> = ({ bagDetail }) => {
               height: '0.625rem',
             }}
           ></div>
-        </div>
-        <div
-          style={{
-            width: '100%',
-            display: 'flex',
-            padding: '0.9375rem 1.25rem',
-            justifyContent: 'space-between',
-            fontSize: '1.0625rem',
-          }}
-        >
-          <span
+          <div
             style={{
-              fontWeight: 'bold',
+              width: '100%',
+              display: 'flex',
+              padding: '0.9375rem 1.25rem',
+              justifyContent: 'space-between',
+              fontSize: '1.0625rem',
             }}
           >
-            총 {gears.length}개의 장비
-          </span>
-        </div>
-        <BagDetailFiltersView bagDetail={bagDetail} />
-        <div
-          style={{
-            display: 'flex',
-            flexDirection: 'column',
-            alignItems: 'center',
-            gap: '0.5rem',
-            height: '100%',
-            padding: '0 1.25rem 0',
-            overflowY: 'auto',
-          }}
-        >
-          <ul
+            <span
+              style={{
+                fontWeight: 'bold',
+              }}
+            >
+              총 {gears.length}개의 장비
+            </span>
+          </div>
+          <BagDetailFiltersView bagDetail={bagDetail} />
+          <div
             style={{
               display: 'flex',
               flexDirection: 'column',
-              width: '100%',
+              alignItems: 'center',
               gap: '0.5rem',
-              paddingBottom: '1rem',
+              height: '100%',
+              padding: '0 1.25rem 0',
             }}
           >
-            {bagDetail.mapGears((gear) => {
-              return <BagDetailGearView key={gear.getId()} gear={gear} bagDetail={bagDetail} />;
-            })}
-          </ul>
+            <ul
+              style={{
+                display: 'flex',
+                flexDirection: 'column',
+                width: '100%',
+                gap: '0.5rem',
+                paddingBottom: '1rem',
+              }}
+            >
+              {bagDetail.mapGears((gear) => {
+                return <BagDetailGearView key={gear.getId()} gear={gear} bagDetail={bagDetail} />;
+              })}
+            </ul>
+          </div>
         </div>
         <div
           style={{
