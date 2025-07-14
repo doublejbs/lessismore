@@ -1,11 +1,12 @@
+import React, { FC, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { FC, useEffect } from 'react';
 import { observer } from 'mobx-react-lite';
 import BagDetailGearView from './BagDetailGearView';
 import BagDetailFiltersView from './BagDetailFiltersView';
 import BagDetail from './model/BagDetail';
 import { FlipCounter } from '../bag-edit-add-gear/components/FlipCounter';
 import BagDetailUselessDescriptionView from './BagDetailUselessDescriptionView';
+import BagDetailChartView from './BagDetailChartView';
 
 interface Props {
   bagDetail: BagDetail;
@@ -109,6 +110,7 @@ const BagDetailView: FC<Props> = ({ bagDetail }) => {
           </div>
         </div>
         <div style={{ overflowY: 'auto', height: '100%' }}>
+          <BagDetailChartView bagDetail={bagDetail} />
           <BagDetailUselessDescriptionView bagDetail={bagDetail} />
           <div
             style={{
