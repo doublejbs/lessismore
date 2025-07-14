@@ -24,6 +24,10 @@ const BagDetailFiltersView: FC<Props> = ({ bagDetail }) => {
         display: 'flex',
         flexDirection: 'row',
         gap: '8px',
+        position: 'sticky',
+        top: 0,
+        zIndex: 20,
+        backgroundColor: 'white',
       }}
     >
       <div

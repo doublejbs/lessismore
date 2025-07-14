@@ -11,8 +11,6 @@ const GearImageView: FC<Props> = ({ imageUrl }) => {
     setLoading(false);
   };
 
-  console.log('imageUrl', imageUrl);
-
   if (!imageUrl || !String(imageUrl).includes('.com')) {
     return null;
   }
