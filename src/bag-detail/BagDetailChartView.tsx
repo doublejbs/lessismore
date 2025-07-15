@@ -1,4 +1,4 @@
-import React, { FC, useState, useEffect } from 'react';
+import { FC, useState, useEffect } from 'react';
 import { observer } from 'mobx-react-lite';
 import BagDetail from './model/BagDetail';
 import GearFilter from '../warehouse/model/GearFilter';
@@ -77,12 +77,33 @@ const BagDetailChartView: FC<Props> = ({ bagDetail }) => {
       totalWeight += weight;
     });
 
-    return Array.from(categoryMap.entries()).map(([category, data]) => ({
-      category,
-      count: data.count,
-      weight: data.weight,
-      percentage: totalWeight > 0 ? (data.weight / totalWeight) * 100 : 0,
-    }));
+    // 카테고리 순서 정의
+    const categoryOrder = [
+      '베이스(배낭, 텐트, 침낭, 매트)',
+      GearFilter.Lantern,
+      GearFilter.Cooking,
+      GearFilter.Clothing,
+      GearFilter.Furniture,
+      GearFilter.Etc,
+    ];
+
+    // 순서에 따라 정렬된 데이터 생성
+    const sortedData = categoryOrder
+      .map((category) => {
+        const data = categoryMap.get(category);
+        if (data) {
+          return {
+            category,
+            count: data.count,
+            weight: data.weight,
+            percentage: totalWeight > 0 ? (data.weight / totalWeight) * 100 : 0,
+          };
+        }
+        return null;
+      })
+      .filter((item) => item !== null);
+
+    return sortedData;
   };
 
   const categoryData = getCategoryData();
