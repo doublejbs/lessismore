@@ -1,4 +1,4 @@
-import React, { FC, useEffect } from 'react';
+import { FC, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { observer } from 'mobx-react-lite';
 import BagDetailGearView from './BagDetailGearView';
@@ -7,6 +7,7 @@ import BagDetail from './model/BagDetail';
 import { FlipCounter } from '../bag-edit-add-gear/components/FlipCounter';
 import BagDetailUselessDescriptionView from './BagDetailUselessDescriptionView';
 import BagDetailChartView from './BagDetailChartView';
+import ShareButtonView from './component/ShareButtonView';
 
 interface Props {
   bagDetail: BagDetail;
@@ -55,7 +56,7 @@ const BagDetailView: FC<Props> = ({ bagDetail }) => {
             gap: '0rem',
           }}
         >
-          <div>
+          <div style={{ position: 'relative' }}>
             <div
               style={{
                 display: 'flex',
@@ -76,6 +77,7 @@ const BagDetailView: FC<Props> = ({ bagDetail }) => {
                 <path d='M15 5L8 12L15 19' stroke='black' strokeWidth='2' strokeLinejoin='round' />
               </svg>
             </div>
+            <ShareButtonView bagId={bagDetail.getId()} bagName={name} />
             <div
               style={{
                 width: '100%',
@@ -110,7 +112,6 @@ const BagDetailView: FC<Props> = ({ bagDetail }) => {
           </div>
         </div>
         <div style={{ overflowY: 'auto', height: '100%' }}>
-          <BagDetailChartView bagDetail={bagDetail} />
           <BagDetailUselessDescriptionView bagDetail={bagDetail} />
           <div
             style={{
@@ -119,24 +120,27 @@ const BagDetailView: FC<Props> = ({ bagDetail }) => {
               height: '0.625rem',
             }}
           ></div>
-          <div
-            style={{
-              width: '100%',
-              display: 'flex',
-              padding: '0.9375rem 1.25rem',
-              justifyContent: 'space-between',
-              fontSize: '1.0625rem',
-            }}
-          >
-            <span
+          <BagDetailChartView bagDetail={bagDetail} />
+          <div style={{ position: 'sticky', top: 0, zIndex: 20, backgroundColor: 'white' }}>
+            <div
               style={{
-                fontWeight: 'bold',
+                width: '100%',
+                display: 'flex',
+                padding: '0.9375rem 1.25rem',
+                justifyContent: 'space-between',
+                fontSize: '1.0625rem',
               }}
             >
-              총 {gears.length}개의 장비
-            </span>
+              <span
+                style={{
+                  fontWeight: 'bold',
+                }}
+              >
+                총 {gears.length}개의 장비
+              </span>
+            </div>
+            <BagDetailFiltersView bagDetail={bagDetail} />
           </div>
-          <BagDetailFiltersView bagDetail={bagDetail} />
           <div
             style={{
               display: 'flex',

@@ -57,11 +57,6 @@ class BagStore {
       await getDoc(doc(this.getStore(), 'users', this.firebase.getUserId()))
     ).data()?.['bags'];
 
-    if (!bagIDs.includes(id)) {
-      window.alert('잘못된 접근입니다');
-      throw new Error('Bag not found');
-    }
-
     const { name, weight, gears, editDate, startDate, endDate } = (
       await getDoc(doc(this.getStore(), 'bag', id))
     ).data() as {

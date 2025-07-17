@@ -10,6 +10,7 @@ import WarehouseFilter from '../../warehouse/model/WarehouseFilter';
 import GearFilter from '../../warehouse/model/GearFilter';
 import Order from '../../order/Order';
 import OrderType from '../../order/OrderType';
+import Firebase from '../../firebase/Firebase';
 
 class BagDetail {
   private static readonly ORDER_KEY = 'bag';
@@ -22,7 +23,8 @@ class BagDetail {
       app.getBagStore(),
       app.getGearStore(),
       FilterManager.from(),
-      Order.new(BagDetail.ORDER_KEY)
+      Order.new(BagDetail.ORDER_KEY),
+      app.getFirebase()
     );
   }
 
@@ -49,7 +51,8 @@ class BagDetail {
     private readonly bagStore: BagStore,
     private readonly gearStore: GearStore,
     private readonly filterManager: FilterManager,
-    private readonly order: Order
+    private readonly order: Order,
+    private readonly firebase: Firebase
   ) {
     makeAutoObservable(this);
     this.disposeReaction = reaction(

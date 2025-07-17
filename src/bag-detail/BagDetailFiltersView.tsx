@@ -24,15 +24,13 @@ const BagDetailFiltersView: FC<Props> = ({ bagDetail }) => {
         display: 'flex',
         flexDirection: 'row',
         gap: '8px',
-        position: 'sticky',
-        top: 0,
         zIndex: 20,
         backgroundColor: 'white',
       }}
     >
       <div
         style={{
-          height: '36px',
+          height: '32px',
           width: '100%',
           display: 'flex',
           flexDirection: 'row',
@@ -47,10 +45,10 @@ const BagDetailFiltersView: FC<Props> = ({ bagDetail }) => {
               key={filter.getName()}
               className={'clickable'}
               style={{
-                height: '36px',
-                borderRadius: '26px',
-                fontSize: '16px',
-                padding: '10px 18px',
+                height: '32px',
+                borderRadius: '22px',
+                fontSize: '14px',
+                padding: '8px 16px',
                 display: 'flex',
                 justifyContent: 'center',
                 alignItems: 'center',

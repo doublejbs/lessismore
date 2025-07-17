@@ -107,6 +107,7 @@ const BagDetailChartView: FC<Props> = ({ bagDetail }) => {
   };
 
   const categoryData = getCategoryData();
+  const hasData = categoryData.length > 0;
 
   // 카테고리별 색상 정의
   const getColorForCategory = (index: number) => {
@@ -146,86 +147,110 @@ const BagDetailChartView: FC<Props> = ({ bagDetail }) => {
         >
           카테고리별 무게
         </div>
+        {hasData && (
+          <div
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: '0.5rem',
+            }}
+          >
+            <button
+              style={{
+                padding: '0.25rem 0.5rem',
+                fontSize: '0.75rem',
+                border: '1px solid black',
+                borderRadius: '0.375rem',
+                backgroundColor: 'black',
+                color: 'white',
+                cursor: 'pointer',
+              }}
+              onClick={() => setIsPercentMode(!isPercentMode)}
+            >
+              {isPercentMode ? '무게' : '퍼센트'} 보기
+            </button>
+          </div>
+        )}
+      </div>
+
+      {hasData ? (
+        // 스택 바 차트
         <div
           style={{
+            height: '3rem',
+            backgroundColor: '#F2F4F6',
+            borderRadius: '0.5rem',
             display: 'flex',
-            alignItems: 'center',
-            gap: '0.5rem',
           }}
         >
-          <button
-            style={{
-              padding: '0.25rem 0.5rem',
-              fontSize: '0.75rem',
-              border: '1px solid black',
-              borderRadius: '0.375rem',
-              backgroundColor: 'black',
-              color: 'white',
-              cursor: 'pointer',
-            }}
-            onClick={() => setIsPercentMode(!isPercentMode)}
-          >
-            {isPercentMode ? '무게' : '퍼센트'} 보기
-          </button>
+          {categoryData.map((item, index) => {
+            const isFirst = index === 0;
+            const isLast = index === categoryData.length - 1;
+            const minWidthPercent = 12; // 최소 넓이 12%
+            const displayWidth = Math.max(item.percentage, minWidthPercent);
+
+            return (
+              <div
+                key={index}
+                style={{
+                  width: isAnimated ? `${displayWidth}%` : '0%',
+                  backgroundColor: getColorForCategory(index),
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  fontSize: '0.75rem',
+                  color: 'white',
+                  fontWeight: 'bold',
+                  borderTopLeftRadius: isFirst ? '0.5rem' : '0',
+                  borderBottomLeftRadius: isFirst ? '0.5rem' : '0',
+                  borderTopRightRadius: isLast ? '0.5rem' : '0',
+                  borderBottomRightRadius: isLast ? '0.5rem' : '0',
+                  transition: 'width 0.5s cubic-bezier(0.4, 0, 0.2, 1)',
+                  overflow: 'hidden',
+                  minWidth: '60px', // 최소 픽셀 넓이
+                }}
+              >
+                {isAnimated && (
+                  <div
+                    style={{
+                      textAlign: 'center',
+                      lineHeight: '1.1',
+                      opacity: isAnimated ? 1 : 0,
+                      transition: 'opacity 0.3s cubic-bezier(0.4, 0, 0.2, 1) 0.2s',
+                    }}
+                  >
+                    <div style={{ fontSize: '0.625rem', fontWeight: 'bold' }}>
+                      {getKoreanCategoryName(item.category)}
+                    </div>
+                    <div style={{ fontSize: '0.75rem' }}>
+                      {isPercentMode
+                        ? `${item.percentage.toFixed(1)}%`
+                        : `${item.weight.toFixed(0)}g`}
+                    </div>
+                  </div>
+                )}
+              </div>
+            );
+          })}
         </div>
-      </div>
-
-      {/* 스택 바 차트 */}
-      <div
-        style={{
-          height: '3rem',
-          backgroundColor: '#F2F4F6',
-          borderRadius: '0.5rem',
-          display: 'flex',
-        }}
-      >
-        {categoryData.map((item, index) => {
-          const isFirst = index === 0;
-          const isLast = index === categoryData.length - 1;
-
-          return (
-            <div
-              key={index}
-              style={{
-                width: isAnimated ? `${item.percentage}%` : '0%',
-                backgroundColor: getColorForCategory(index),
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                fontSize: '0.75rem',
-                color: 'white',
-                fontWeight: 'bold',
-                borderTopLeftRadius: isFirst ? '0.5rem' : '0',
-                borderBottomLeftRadius: isFirst ? '0.5rem' : '0',
-                borderTopRightRadius: isLast ? '0.5rem' : '0',
-                borderBottomRightRadius: isLast ? '0.5rem' : '0',
-                transition: 'width 0.5s cubic-bezier(0.4, 0, 0.2, 1)',
-                overflow: 'hidden',
-              }}
-            >
-              {item.percentage > 8 && isAnimated && (
-                <div
-                  style={{
-                    textAlign: 'center',
-                    lineHeight: '1.1',
-                    opacity: isAnimated ? 1 : 0,
-                    transition: 'opacity 0.3s cubic-bezier(0.4, 0, 0.2, 1) 0.2s',
-                  }}
-                >
-                  <div style={{ fontSize: '0.625rem', fontWeight: 'bold' }}>
-                    {getKoreanCategoryName(item.category)}
-                  </div>
-                  <div style={{ fontSize: '0.75rem' }}>
-                    {isPercentMode
-                      ? `${item.percentage.toFixed(1)}%`
-                      : `${item.weight.toFixed(0)}g`}
-                  </div>
-                </div>
-              )}
-            </div>
-          );
-        })}
-      </div>
+      ) : (
+        // 데이터가 없을 때 메시지
+        <div
+          style={{
+            height: '3rem',
+            backgroundColor: '#F2F4F6',
+            borderRadius: '0.5rem',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            fontSize: '0.875rem',
+            color: '#6B7280',
+            fontWeight: '500',
+          }}
+        >
+          장비를 추가해주세요
+        </div>
+      )}
     </div>
   );
 };

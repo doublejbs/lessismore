@@ -1,6 +1,5 @@
-import { action, makeAutoObservable, reaction } from 'mobx';
+import { makeAutoObservable, reaction } from 'mobx';
 import Gear from '../../model/Gear.ts';
-import GearFilter from './GearFilter.ts';
 import WarehouseFilter from './WarehouseFilter.ts';
 import WarehouseDispatcherType from './WarehouseDispatcherType.ts';
 import WarehouseDispatcher from './WarehouseDispatcher.ts';
@@ -12,13 +11,19 @@ import Firebase from '../../firebase/Firebase.ts';
 
 class Warehouse {
   private static readonly ORDER_KEY = 'warehouse';
-  
+
   public static from(
     dispatcher: WarehouseDispatcher,
     toastManager: ToastManager,
     firebase: Firebase
   ) {
-    return new Warehouse(dispatcher, toastManager, FilterManager.from(), Order.new(Warehouse.ORDER_KEY), firebase);
+    return new Warehouse(
+      dispatcher,
+      toastManager,
+      FilterManager.from(),
+      Order.new(Warehouse.ORDER_KEY),
+      firebase
+    );
   }
 
   private gears: Gear[] = [];
@@ -51,6 +56,7 @@ class Warehouse {
 
   public async initialize() {
     if (this.isLoggedIn()) {
+      console.log('initialize');
       this.order.initialize();
       await this.getList();
     }
@@ -140,7 +146,7 @@ class Warehouse {
   }
 
   private isLoggedIn() {
-    return this.firebase.isLoggedIn;
+    return this.firebase.isLoggedIn();
   }
 }
 
