@@ -1,4 +1,4 @@
-import { FC, useState } from 'react';
+import { FC } from 'react';
 import Warehouse from '../model/Warehouse.ts';
 import WarehouseFilter from '../model/WarehouseFilter.ts';
 import { observer } from 'mobx-react-lite';
@@ -24,7 +24,7 @@ const WarehouseFiltersView: FC<Props> = ({ warehouse }) => {
     >
       <div
         style={{
-          height: '36px',
+          height: '32px',
           width: '100%',
           display: 'flex',
           flexDirection: 'row',
@@ -40,9 +40,9 @@ const WarehouseFiltersView: FC<Props> = ({ warehouse }) => {
               className={'clickable'}
               style={{
                 height: '100%',
-                borderRadius: '26px',
-                fontSize: '16px',
-                padding: '10px 18px',
+                borderRadius: '22px',
+                fontSize: '14px',
+                padding: '8px 16px',
                 display: 'flex',
                 justifyContent: 'center',
                 alignItems: 'center',

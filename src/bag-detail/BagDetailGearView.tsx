@@ -3,6 +3,7 @@ import Gear from '../model/Gear';
 import BagDetail from './model/BagDetail';
 import { useNavigate } from 'react-router-dom';
 import BagDetailImageView from './BagDetailImageView';
+import { observer } from 'mobx-react-lite';
 
 interface Props {
   gear: Gear;
@@ -129,6 +130,7 @@ const BagDetailGearView: FC<Props> = ({ gear, bagDetail }) => {
             <span>{gear.getWeight()}g</span>
           </div>
         </div>
+
         <div
           style={{
             display: 'flex',
@@ -285,4 +287,4 @@ const BagDetailGearView: FC<Props> = ({ gear, bagDetail }) => {
   );
 };
 
-export default BagDetailGearView;
+export default observer(BagDetailGearView);

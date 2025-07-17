@@ -186,11 +186,14 @@ const AddGearExcelModal: React.FC<{ open: boolean; onClose: () => void; manager:
                   : '.jpg';
                 const fileName = `${uuidv4()}${ext}`;
                 const storage = FirebaseImageStorage.new();
-                imageUrl = await storage.uploadFileToPublic(row.imageFile, fileName);
+                imageUrl = await storage.uploadFileToPublic(row.imageFile, uuidv4());
               }
               // imageUrl이 외부 URL이어도 그대로 등록
               // const newImageUrl = await manager.uploadImageUrl(imageUrl, uuidv4());
-              const newImageUrl = await manager.uploadImageUrl(imageUrl, uuidv4());
+              let newImageUrl = '';
+              if (imageUrl) {
+                newImageUrl = await manager.uploadImageUrl(imageUrl, uuidv4());
+              }
 
               const category = row.category || '';
 

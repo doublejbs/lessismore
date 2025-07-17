@@ -17,7 +17,7 @@ const ToastView: FC<Props> = ({ toastManager, bottom }) => {
         style={{
           position: 'absolute',
           bottom,
-          width: '350px',
+          width: '100%',
           margin: '0 auto',
           padding: '16px 20px',
           zIndex: 20,
