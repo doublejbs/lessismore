@@ -20,6 +20,7 @@ interface GearRowProps {
     createDate: number;
     imageUrl?: string;
     color?: string;
+    nameKorean?: string;
   };
   manage: Manage;
 }
@@ -108,6 +109,13 @@ const GearRow: React.FC<GearRowProps> = ({ gear, manage }) => {
       </td>
       <td>
         <NameCell value={values.name} onChange={(v) => handleChange('name', v)} editing={editing} />
+      </td>
+      <td>
+        <NameCell
+          value={values.nameKorean || ''}
+          onChange={(v) => handleChange('nameKorean', v)}
+          editing={editing}
+        />
       </td>
       <td>
         <CompanyCell

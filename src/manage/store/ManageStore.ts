@@ -73,6 +73,7 @@ class ManageStore {
             createDate: hit.createDate,
             imageUrl: hit.imageUrl,
             color: hit.color,
+            nameKorean: hit.nameKorean || '',
           })
       );
       // 프론트엔드에서 정렬 적용
@@ -137,6 +138,7 @@ class ManageStore {
           createDate: data.createDate,
           imageUrl: data.imageUrl,
           color: data.color,
+          nameKorean: data.nameKorean || '',
         });
       });
       const lastDoc = snap.docs.length > 0 ? snap.docs[snap.docs.length - 1] : null;
@@ -203,6 +205,11 @@ class ManageStore {
       batch.delete(gearDoc);
     });
     await batch.commit();
+  }
+
+  public async updateNameKorean(id: string, newNameKorean: string): Promise<void> {
+    const gearDoc = doc(this.firebase.getStore(), 'gear', id);
+    await updateDoc(gearDoc, { nameKorean: newNameKorean });
   }
 }
 
