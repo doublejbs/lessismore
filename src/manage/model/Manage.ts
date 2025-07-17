@@ -80,6 +80,11 @@ class Manage {
     await this.resetList();
   }
 
+  public async updateNameKorean(id: string, newNameKorean: string) {
+    await this.manageStore.updateNameKorean(id, newNameKorean);
+    await this.resetList();
+  }
+
   public async updateImageUrl(id: string, newImageUrl: string) {
     await this.manageStore.updateImageUrl(id, newImageUrl);
     await this.resetList();

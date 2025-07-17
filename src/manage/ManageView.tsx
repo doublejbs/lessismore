@@ -6,6 +6,8 @@ import GearRow from './GearRow';
 import SearchInput from './SearchInput';
 import AddGearModal from './component/AddGearModal';
 import AddGearExcelModal from './component/AddGearExcelModal';
+import SaveKoreanNameButtonView from './SaveKoreanNameButtonView';
+
 interface RowType {
   id: string;
   name: string;
@@ -16,6 +18,7 @@ interface RowType {
   createDate: number;
   imageUrl?: string;
   color?: string;
+  nameKorean?: string;
 }
 
 const ManageView = () => {
@@ -192,6 +195,12 @@ const ManageView = () => {
       sorter: true,
     },
     {
+      title: '이름(한글)',
+      dataIndex: 'nameKorean',
+      key: 'nameKorean',
+      sorter: true,
+    },
+    {
       title: '회사',
       dataIndex: 'company',
       key: 'company',
@@ -322,6 +331,7 @@ const ManageView = () => {
         <Button style={{ marginLeft: 8 }} onClick={() => setExcelModalOpen(true)}>
           엑셀로 장비 추가
         </Button>
+        <SaveKoreanNameButtonView manage={manage} />
         <Button
           danger
           style={{ marginLeft: 8 }}

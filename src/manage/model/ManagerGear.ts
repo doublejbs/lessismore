@@ -8,6 +8,7 @@ class ManagerGear {
   createDate: number;
   imageUrl: string;
   color?: string;
+  nameKorean: string;
 
   constructor({
     id,
@@ -19,6 +20,7 @@ class ManagerGear {
     createDate,
     imageUrl = '',
     color = '',
+    nameKorean = '',
   }: {
     id: string;
     name: string;
@@ -29,6 +31,7 @@ class ManagerGear {
     createDate: number;
     imageUrl?: string;
     color?: string;
+    nameKorean?: string;
   }) {
     this.id = id;
     this.name = name;
@@ -39,6 +42,7 @@ class ManagerGear {
     this.createDate = createDate;
     this.imageUrl = imageUrl;
     this.color = color;
+    this.nameKorean = nameKorean;
   }
 }
 
