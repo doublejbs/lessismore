@@ -145,7 +145,6 @@ class Firebase {
   }
 
   public isLoggedIn() {
-    console.log('isLoggedIn', this.initialized, this.userId, this.loggedIn);
     return this.initialized && !!this.userId && this.loggedIn;
   }
 

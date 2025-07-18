@@ -57,7 +57,7 @@ const WarehouseGearView: FC<Props> = ({ gear, warehouse }) => {
           style={{
             display: 'flex',
             flexDirection: 'column',
-            minWidth: '40px',
+            minWidth: '32px',
             height: '100%',
             justifyContent: 'center',
           }}
@@ -70,8 +70,8 @@ const WarehouseGearView: FC<Props> = ({ gear, warehouse }) => {
             onClick={handleClickMenu}
           >
             <svg
-              width='6'
-              height='22'
+              width='5'
+              height='18'
               viewBox='0 0 6 22'
               fill='none'
               xmlns='http://www.w3.org/2000/svg'
