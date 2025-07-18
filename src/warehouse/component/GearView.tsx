@@ -1,4 +1,4 @@
-import React, { FC, ReactNode, useState, useRef } from 'react';
+import React, { FC, ReactNode } from 'react';
 import GearImageView from './GearImageView.tsx';
 import Gear from '../../model/Gear.ts';
 
@@ -15,8 +15,8 @@ const GearView: FC<Props> = ({ gear, children, onClick }) => {
     <li
       style={{
         display: 'flex',
-        padding: '12px 0px',
-        gap: '16px',
+        padding: '10px 0px',
+        gap: '12px',
       }}
       onClick={onClick}
     >
@@ -24,17 +24,17 @@ const GearView: FC<Props> = ({ gear, children, onClick }) => {
         style={{
           display: 'flex',
           flexDirection: 'row',
-          gap: '8px',
+          gap: '6px',
         }}
       >
         <div
           style={{
-            width: '100px',
-            height: '100px',
+            width: '80px',
+            height: '80px',
             backgroundColor: '#F1F1F1',
             display: 'flex',
             alignItems: 'center',
-            minWidth: '100px',
+            minWidth: '80px',
             borderRadius: '4px',
             justifyContent: 'center',
             overflow: 'hidden',
@@ -48,7 +48,7 @@ const GearView: FC<Props> = ({ gear, children, onClick }) => {
           display: 'flex',
           flexDirection: 'column',
           overflow: 'hidden',
-          paddingTop: '4px',
+          paddingTop: '3px',
           flexGrow: 1,
         }}
       >
@@ -57,66 +57,84 @@ const GearView: FC<Props> = ({ gear, children, onClick }) => {
             display: 'flex',
             flexDirection: 'column',
             height: '100%',
-            fontSize: '14px',
-            gap: '12px',
+            fontSize: '12px',
+            gap: '10px',
           }}
         >
-          {gear.hasUsedRate() && (
+          <div
+            style={{
+              display: 'flex',
+              flexDirection: 'row',
+              justifyContent: 'space-between',
+              alignItems: 'flex-start',
+              width: '100%',
+            }}
+          >
             <div
               style={{
                 display: 'flex',
-                flexDirection: 'row',
-                gap: '4px',
-                fontSize: '8px',
-                alignItems: 'center',
-                position: 'relative',
+                flexDirection: 'column',
+                gap: '7px',
               }}
             >
               <div
                 style={{
-                  borderRadius: '12px',
-                  backgroundColor: 'rgb(235, 235, 235)',
-                  color: 'black',
-                  padding: '4px 8px',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  overflow: 'hidden',
+                  gap: '7px',
+                  lineHeight: '1',
                 }}
               >
-                사용률 {gear.getUsedRate()}%
+                <div
+                  className={'text-ellipsis'}
+                  style={{
+                    fontSize: '14px',
+                    fontWeight: 'bold',
+                  }}
+                >
+                  {gear.getName()}
+                </div>
+                <div
+                  style={{
+                    fontSize: '10px',
+                  }}
+                >
+                  {gear.getCompany()}
+                </div>
+              </div>
+              <div
+                style={{
+                  fontSize: '14px',
+                  fontWeight: 'bold',
+                }}
+              >
+                {gear.getWeight() ? `${gear.getWeight()}g` : ''}
               </div>
             </div>
-          )}
-          <div
-            style={{
-              display: 'flex',
-              flexDirection: 'column',
-              overflow: 'hidden',
-              gap: '9px',
-              lineHeight: '1',
-            }}
-          >
-            <div
-              className={'text-ellipsis'}
-              style={{
-                fontSize: '16px',
-                fontWeight: 'bold',
-              }}
-            >
-              {gear.getName()}
-            </div>
-            <div
-              style={{
-                fontSize: '12px',
-              }}
-            >
-              {gear.getCompany()}
-            </div>
-          </div>
-          <div
-            style={{
-              fontSize: '16px',
-              fontWeight: 'bold',
-            }}
-          >
-            {gear.getWeight() ? `${gear.getWeight()}g` : ''}
+            {gear.hasUsedRate() && (
+              <div
+                style={{
+                  display: 'flex',
+                  flexDirection: 'row',
+                  gap: '3px',
+                  fontSize: '7px',
+                  alignItems: 'center',
+                  position: 'relative',
+                }}
+              >
+                <div
+                  style={{
+                    borderRadius: '10px',
+                    backgroundColor: 'rgb(235, 235, 235)',
+                    color: 'black',
+                    padding: '3px 6px',
+                  }}
+                >
+                  사용률 {gear.getUsedRate()}%
+                </div>
+              </div>
+            )}
           </div>
         </div>
       </div>

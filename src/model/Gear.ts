@@ -121,7 +121,7 @@ class Gear {
   }
 
   public getUsedRate() {
-    return (this.getUsedCount() / (this.getUsedCount() + this.getUselessCount())) * 100;
+    return Math.round((this.getUsedCount() / (this.getUsedCount() + this.getUselessCount())) * 100);
   }
 
   public getUselessCount() {

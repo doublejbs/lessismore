@@ -7,7 +7,6 @@ import BagDetail from './model/BagDetail';
 import { FlipCounter } from '../bag-edit-add-gear/components/FlipCounter';
 import BagDetailUselessDescriptionView from './BagDetailUselessDescriptionView';
 import BagDetailChartView from './BagDetailChartView';
-import ShareButtonView from './component/ShareButtonView';
 
 interface Props {
   bagDetail: BagDetail;
@@ -77,7 +76,7 @@ const BagDetailView: FC<Props> = ({ bagDetail }) => {
                 <path d='M15 5L8 12L15 19' stroke='black' strokeWidth='2' strokeLinejoin='round' />
               </svg>
             </div>
-            <ShareButtonView bagId={bagDetail.getId()} bagName={name} />
+            {/* <ShareButtonView bagId={bagDetail.getId()} bagName={name} /> */}
             <div
               style={{
                 width: '100%',
@@ -156,7 +155,7 @@ const BagDetailView: FC<Props> = ({ bagDetail }) => {
                 display: 'flex',
                 flexDirection: 'column',
                 width: '100%',
-                gap: '0.5rem',
+                gap: '16px',
                 paddingBottom: '1rem',
               }}
             >
@@ -176,7 +175,7 @@ const BagDetailView: FC<Props> = ({ bagDetail }) => {
             style={{
               backgroundColor: 'black',
               width: '100%',
-              padding: '1.125rem',
+              padding: '0.875rem',
               color: 'white',
               borderRadius: '0.625rem',
             }}

@@ -13,10 +13,13 @@ const BagDetailChartView: FC<Props> = ({ bagDetail }) => {
 
   // 애니메이션 시작
   useEffect(() => {
-    const timer = setTimeout(() => {
-      setIsAnimated(true);
-    }, 50);
-    return () => clearTimeout(timer);
+    // 브라우저가 초기 렌더링을 완료한 후 애니메이션 시작
+    // requestAnimationFrame을 두 번 사용하여 확실히 초기 렌더링 완료 후 실행
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => {
+        setIsAnimated(true);
+      });
+    });
   }, []);
 
   // GearFilter를 한국어로 변환
@@ -186,8 +189,8 @@ const BagDetailChartView: FC<Props> = ({ bagDetail }) => {
           {categoryData.map((item, index) => {
             const isFirst = index === 0;
             const isLast = index === categoryData.length - 1;
-            const minWidthPercent = 12; // 최소 넓이 12%
-            const displayWidth = Math.max(item.percentage, minWidthPercent);
+            // 애니메이션을 위해 실제 퍼센트 사용 (최소 너비는 픽셀로만 제한)
+            const displayWidth = item.percentage;
 
             return (
               <div
@@ -205,9 +208,9 @@ const BagDetailChartView: FC<Props> = ({ bagDetail }) => {
                   borderBottomLeftRadius: isFirst ? '0.5rem' : '0',
                   borderTopRightRadius: isLast ? '0.5rem' : '0',
                   borderBottomRightRadius: isLast ? '0.5rem' : '0',
-                  transition: 'width 0.5s cubic-bezier(0.4, 0, 0.2, 1)',
+                  transition: 'width 0.8s cubic-bezier(0.4, 0, 0.2, 1)',
                   overflow: 'hidden',
-                  minWidth: '60px', // 최소 픽셀 넓이
+                  minWidth: isAnimated ? '60px' : '0px',
                 }}
               >
                 {isAnimated && (
@@ -216,7 +219,7 @@ const BagDetailChartView: FC<Props> = ({ bagDetail }) => {
                       textAlign: 'center',
                       lineHeight: '1.1',
                       opacity: isAnimated ? 1 : 0,
-                      transition: 'opacity 0.3s cubic-bezier(0.4, 0, 0.2, 1) 0.2s',
+                      transition: 'opacity 0.4s cubic-bezier(0.4, 0, 0.2, 1) 0.3s',
                     }}
                   >
                     <div style={{ fontSize: '0.625rem', fontWeight: 'bold' }}>

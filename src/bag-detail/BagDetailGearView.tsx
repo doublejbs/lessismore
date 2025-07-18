@@ -44,15 +44,14 @@ const BagDetailGearView: FC<Props> = ({ gear, bagDetail }) => {
           display: 'flex',
           flexDirection: 'row',
           width: '100%',
-          gap: '8px',
-          padding: '12px 0',
+          gap: '6px',
         }}
       >
         <div
           style={{
-            width: '84px',
-            height: '84px',
-            minWidth: '84px',
+            width: '68px',
+            height: '68px',
+            minWidth: '68px',
             backgroundColor: '#F1F1F1',
             borderRadius: '4px',
             overflow: 'hidden',
@@ -66,13 +65,13 @@ const BagDetailGearView: FC<Props> = ({ gear, bagDetail }) => {
           {isUseless && (
             <div
               style={{
-                fontSize: '24px',
+                fontSize: '20px',
                 fontWeight: 'bold',
                 position: 'absolute',
                 transform:
                   'translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y))',
                 rotate: '-10.78deg',
-                letterSpacing: '-2px',
+                letterSpacing: '-1.5px',
               }}
             >
               useless
@@ -83,51 +82,69 @@ const BagDetailGearView: FC<Props> = ({ gear, bagDetail }) => {
           style={{
             display: 'flex',
             flexDirection: 'column',
-            justifyContent: 'space-between',
+            justifyContent: 'flex-start',
             alignItems: 'start',
             flexGrow: 1,
             color: isUseless ? 'grey' : 'black',
           }}
         >
-          {gear.hasUsedRate() && (
+          <div
+            style={{
+              display: 'flex',
+              flexDirection: 'row',
+              justifyContent: 'space-between',
+              alignItems: 'flex-start',
+              width: '100%',
+            }}
+          >
             <div
               style={{
                 display: 'flex',
-                flexDirection: 'row',
+                flexDirection: 'column',
                 gap: '4px',
-                fontSize: '8px',
               }}
             >
+              <div>
+                <div
+                  style={{
+                    fontSize: '10px',
+                  }}
+                >
+                  <span>{gear.getCompany()}</span>
+                </div>
+                <div className={'text-ellipsis'} style={{ fontWeight: 'bold', fontSize: '14px' }}>
+                  <span>{gear.getName()}</span>
+                </div>
+              </div>
               <div
                 style={{
-                  borderRadius: '12px',
-                  backgroundColor: 'rgb(235, 235, 235)',
-                  color: 'black',
-                  padding: '4px 8px',
+                  fontSize: '14px',
                 }}
               >
-                사용률 {gear.getUsedRate()}%
+                <span>{gear.getWeight()}g</span>
               </div>
             </div>
-          )}
-          <div>
-            <div
-              style={{
-                fontSize: '12px',
-              }}
-            >
-              <span>{gear.getCompany()}</span>
-            </div>
-            <div className={'text-ellipsis'} style={{ fontWeight: 'bold', fontSize: '16px' }}>
-              <span>{gear.getName()}</span>
-            </div>
-          </div>
-          <div
-            style={{
-              fontSize: '16px',
-            }}
-          >
-            <span>{gear.getWeight()}g</span>
+            {gear.hasUsedRate() && (
+              <div
+                style={{
+                  display: 'flex',
+                  flexDirection: 'row',
+                  gap: '3px',
+                  fontSize: '7px',
+                }}
+              >
+                <div
+                  style={{
+                    borderRadius: '10px',
+                    backgroundColor: 'rgb(235, 235, 235)',
+                    color: 'black',
+                    padding: '3px 6px',
+                  }}
+                >
+                  사용률 {gear.getUsedRate()}%
+                </div>
+              </div>
+            )}
           </div>
         </div>
 
@@ -135,7 +152,7 @@ const BagDetailGearView: FC<Props> = ({ gear, bagDetail }) => {
           style={{
             display: 'flex',
             flexDirection: 'column',
-            minWidth: '40px',
+            minWidth: '32px',
             height: '100%',
           }}
         >
@@ -147,8 +164,8 @@ const BagDetailGearView: FC<Props> = ({ gear, bagDetail }) => {
             onClick={handleClickMenu}
           >
             <svg
-              width='6'
-              height='22'
+              width='5'
+              height='18'
               viewBox='0 0 6 22'
               fill='none'
               xmlns='http://www.w3.org/2000/svg'
