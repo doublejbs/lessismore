@@ -49,9 +49,9 @@ const BagDetailGearView: FC<Props> = ({ gear, bagDetail }) => {
       >
         <div
           style={{
-            width: '68px',
-            height: '68px',
-            minWidth: '68px',
+            width: '80px',
+            height: '80px',
+            minWidth: '80px',
             backgroundColor: '#F1F1F1',
             borderRadius: '4px',
             overflow: 'hidden',
