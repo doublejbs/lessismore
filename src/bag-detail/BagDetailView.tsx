@@ -1,4 +1,4 @@
-import { FC, useEffect } from 'react';
+import React, { FC, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { observer } from 'mobx-react-lite';
 import BagDetailGearView from './BagDetailGearView';
@@ -39,7 +39,6 @@ const BagDetailView: FC<Props> = ({ bagDetail }) => {
         style={{
           display: 'flex',
           flexDirection: 'column',
-          overflowY: 'hidden',
           height: '100%',
         }}
       >
@@ -51,32 +50,10 @@ const BagDetailView: FC<Props> = ({ bagDetail }) => {
             width: '100%',
             backgroundColor: 'white',
             paddingTop: '0.5rem',
-            zIndex: 20,
             gap: '0rem',
           }}
         >
           <div style={{ position: 'relative' }}>
-            <div
-              style={{
-                display: 'flex',
-                alignItems: 'center',
-                position: 'absolute',
-                left: '1rem',
-                top: '0.5rem',
-              }}
-              onClick={handleClickBack}
-            >
-              <svg
-                width='1.5rem'
-                height='1.5rem'
-                viewBox='0 0 24 24'
-                fill='none'
-                xmlns='http://www.w3.org/2000/svg'
-              >
-                <path d='M15 5L8 12L15 19' stroke='black' strokeWidth='2' strokeLinejoin='round' />
-              </svg>
-            </div>
-            {/* <ShareButtonView bagId={bagDetail.getId()} bagName={name} /> */}
             <div
               style={{
                 width: '100%',
@@ -93,24 +70,60 @@ const BagDetailView: FC<Props> = ({ bagDetail }) => {
             style={{
               width: '100%',
               textAlign: 'center',
-              fontWeight: 'bold',
-              fontSize: '2.5rem',
-            }}
-          >
-            <FlipCounter value={weight} />
-          </div>
-          <div
-            style={{
-              width: '100%',
-              textAlign: 'center',
               fontSize: '0.875rem',
               color: '#9B9B9B',
+              paddingBottom: '0.5rem',
             }}
           >
             {date}
           </div>
         </div>
-        <div style={{ overflowY: 'auto', height: '100%' }}>
+        <div
+          style={{
+            position: 'sticky',
+            top: 0,
+            width: '100%',
+            backgroundColor: 'white',
+            zIndex: 20,
+            paddingTop: '0.25rem',
+            paddingBottom: '0.25rem',
+          }}
+        >
+          <div style={{ position: 'relative' }}>
+            <div
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                position: 'absolute',
+                left: '1rem',
+                top: '50%',
+                transform: 'translateY(-50%)',
+              }}
+              onClick={handleClickBack}
+            >
+              <svg
+                width='1.25rem'
+                height='1.25rem'
+                viewBox='0 0 24 24'
+                fill='none'
+                xmlns='http://www.w3.org/2000/svg'
+              >
+                <path d='M15 5L8 12L15 19' stroke='black' strokeWidth='2' strokeLinejoin='round' />
+              </svg>
+            </div>
+            <div
+              style={{
+                width: '100%',
+                textAlign: 'center',
+                fontWeight: 'bold',
+                fontSize: '1.8rem',
+              }}
+            >
+              <FlipCounter value={weight} />
+            </div>
+          </div>
+        </div>
+        <div style={{ height: '100%' }}>
           <BagDetailUselessDescriptionView bagDetail={bagDetail} />
           <div
             style={{
@@ -120,7 +133,7 @@ const BagDetailView: FC<Props> = ({ bagDetail }) => {
             }}
           ></div>
           <BagDetailChartView bagDetail={bagDetail} />
-          <div style={{ position: 'sticky', top: 0, zIndex: 20, backgroundColor: 'white' }}>
+          <div style={{ position: 'sticky', top: '3.5rem', zIndex: 19, backgroundColor: 'white' }}>
             <div
               style={{
                 width: '100%',
@@ -156,7 +169,7 @@ const BagDetailView: FC<Props> = ({ bagDetail }) => {
                 flexDirection: 'column',
                 width: '100%',
                 gap: '16px',
-                paddingBottom: '1rem',
+                paddingBottom: '5rem',
               }}
             >
               {bagDetail.mapGears((gear) => {
@@ -167,8 +180,16 @@ const BagDetailView: FC<Props> = ({ bagDetail }) => {
         </div>
         <div
           style={{
+            position: 'fixed',
+            bottom: 0,
+            left: 0,
+            right: 0,
             width: '100%',
             padding: '0.75rem 1.5rem',
+            backgroundColor: 'white',
+            zIndex: 30,
+            maxWidth: '768px',
+            margin: '0 auto',
           }}
         >
           <button

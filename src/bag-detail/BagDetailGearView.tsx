@@ -108,9 +108,27 @@ const BagDetailGearView: FC<Props> = ({ gear, bagDetail }) => {
                 <div
                   style={{
                     fontSize: '10px',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '6px',
                   }}
                 >
                   <span>{gear.getCompany()}</span>
+                  {gear.hasUsedRate() && (
+                    <div
+                      style={{
+                        borderRadius: '8px',
+                        backgroundColor: 'rgb(235, 235, 235)',
+                        color: 'black',
+                        padding: '3px 6px',
+                        fontSize: '10px',
+                        fontWeight: '500',
+                        lineHeight: '1',
+                      }}
+                    >
+                      사용률 {gear.getUsedRate()}%
+                    </div>
+                  )}
                 </div>
                 <div className={'text-ellipsis'} style={{ fontWeight: 'bold', fontSize: '14px' }}>
                   <span>{gear.getName()}</span>
@@ -124,27 +142,6 @@ const BagDetailGearView: FC<Props> = ({ gear, bagDetail }) => {
                 <span>{gear.getWeight()}g</span>
               </div>
             </div>
-            {gear.hasUsedRate() && (
-              <div
-                style={{
-                  display: 'flex',
-                  flexDirection: 'row',
-                  gap: '3px',
-                  fontSize: '7px',
-                }}
-              >
-                <div
-                  style={{
-                    borderRadius: '10px',
-                    backgroundColor: 'rgb(235, 235, 235)',
-                    color: 'black',
-                    padding: '3px 6px',
-                  }}
-                >
-                  사용률 {gear.getUsedRate()}%
-                </div>
-              </div>
-            )}
           </div>
         </div>
 
