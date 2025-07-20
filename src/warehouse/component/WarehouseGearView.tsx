@@ -93,6 +93,7 @@ const WarehouseGearView: FC<Props> = ({ gear, warehouse }) => {
             width: '100%',
             height: '100%',
             backgroundColor: 'rgba(0, 0, 0, 0.5)',
+            zIndex: 10,
           }}
           onClick={handleClickBack}
         >

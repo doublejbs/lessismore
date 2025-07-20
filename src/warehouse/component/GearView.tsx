@@ -87,6 +87,30 @@ const GearView: FC<Props> = ({ gear, children, onClick }) => {
                 }}
               >
                 <div
+                  style={{
+                    fontSize: '10px',
+                    display: 'flex',
+                    flexDirection: 'row',
+                    alignItems: 'center',
+                    gap: '6px',
+                  }}
+                >
+                  <span>{gear.getCompany()}</span>
+                  {gear.hasUsedRate() && (
+                    <span
+                      style={{
+                        borderRadius: '10px',
+                        backgroundColor: 'rgb(235, 235, 235)',
+                        color: 'black',
+                        padding: '2px 5px',
+                        fontSize: '10px',
+                      }}
+                    >
+                      사용률 {gear.getUsedRate()}%
+                    </span>
+                  )}
+                </div>
+                <div
                   className={'text-ellipsis'}
                   style={{
                     fontSize: '14px',
@@ -94,13 +118,6 @@ const GearView: FC<Props> = ({ gear, children, onClick }) => {
                   }}
                 >
                   {gear.getName()}
-                </div>
-                <div
-                  style={{
-                    fontSize: '10px',
-                  }}
-                >
-                  {gear.getCompany()}
                 </div>
               </div>
               <div
@@ -112,29 +129,6 @@ const GearView: FC<Props> = ({ gear, children, onClick }) => {
                 {gear.getWeight() ? `${gear.getWeight()}g` : ''}
               </div>
             </div>
-            {gear.hasUsedRate() && (
-              <div
-                style={{
-                  display: 'flex',
-                  flexDirection: 'row',
-                  gap: '3px',
-                  fontSize: '7px',
-                  alignItems: 'center',
-                  position: 'relative',
-                }}
-              >
-                <div
-                  style={{
-                    borderRadius: '10px',
-                    backgroundColor: 'rgb(235, 235, 235)',
-                    color: 'black',
-                    padding: '3px 6px',
-                  }}
-                >
-                  사용률 {gear.getUsedRate()}%
-                </div>
-              </div>
-            )}
           </div>
         </div>
       </div>
