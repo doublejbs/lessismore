@@ -4,6 +4,7 @@ import BagDetail from './model/BagDetail';
 import { useNavigate } from 'react-router-dom';
 import BagDetailImageView from './BagDetailImageView';
 import { observer } from 'mobx-react-lite';
+import usePreventScroll from '../hooks/usePreventScroll';
 
 interface Props {
   gear: Gear;
@@ -15,6 +16,8 @@ const BagDetailGearView: FC<Props> = ({ gear, bagDetail }) => {
   const isUseless = bagDetail.isUseless(gear);
   const [showMenu, setShowMenu] = useState(false);
   const navigate = useNavigate();
+
+  usePreventScroll(showMenu);
 
   const handleClickMenu = () => {
     setShowMenu(true);
@@ -122,7 +125,6 @@ const BagDetailGearView: FC<Props> = ({ gear, bagDetail }) => {
                         color: 'black',
                         padding: '3px 6px',
                         fontSize: '10px',
-                        fontWeight: '500',
                         lineHeight: '1',
                       }}
                     >
@@ -178,13 +180,13 @@ const BagDetailGearView: FC<Props> = ({ gear, bagDetail }) => {
       {showMenu && (
         <div
           style={{
-            position: 'absolute',
+            position: 'fixed',
             top: 0,
             left: 0,
             width: '100%',
             height: '100%',
             backgroundColor: 'rgba(0, 0, 0, 0.5)',
-            zIndex: 20,
+            zIndex: 40,
           }}
           onClick={handleClickBack}
         >
