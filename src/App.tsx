@@ -21,6 +21,7 @@ import ManageView from './manage/ManageView';
 import InfoView from './info/InfoView';
 import SearchWarehouseWrapper from './search-warehouse/component/SearchWarehouseWrapper.tsx';
 import OpenBrowserView from './open-browser/OpenBrowserView.tsx';
+import BagShareWrapper from './bag-share/component/BagShareWrapper.tsx';
 
 const ROUTES = [
   {
@@ -34,6 +35,10 @@ const ROUTES = [
   {
     path: '/terms-agreement',
     element: <TermsAgreement />,
+  },
+  {
+    path: '/bag-share/:id',
+    element: <BagShareWrapper />,
   },
   {
     path: '/bag/:id/useless',

@@ -43,6 +43,7 @@ class BagDetail {
   private startDate = dayjs();
   private endDate = dayjs();
   private disposeReaction: () => void;
+  private shared = false;
 
   private constructor(
     private readonly navigate: NavigateFunction,
@@ -65,17 +66,19 @@ class BagDetail {
 
   public async initialize() {
     this.order.initialize();
-    const { name, weight, editDate, gears, startDate, endDate } = await this.bagStore.getBag(
-      this.id,
-      [this.filterManager.getAllFilter()],
-      this.order.getSelectedOrderType() ?? OrderType.NameAsc
-    );
+    const { name, weight, editDate, gears, startDate, endDate, shared } =
+      await this.bagStore.getBag(
+        this.id,
+        [this.filterManager.getAllFilter()],
+        this.order.getSelectedOrderType() ?? OrderType.NameAsc
+      );
     this.setName(name);
     this.setWeight(weight);
     this.setEditDate(editDate);
     this.setGears(gears);
     this.setStartDate(startDate);
     this.setEndDate(endDate);
+    this.setShared(shared);
     this.calculateUsedWeight();
     this.updateUselessChecked();
     this.setInitialized(true);
@@ -291,6 +294,29 @@ class BagDetail {
 
   public dispose() {
     this.disposeReaction();
+  }
+
+  private setShared(value: boolean) {
+    this.shared = value;
+  }
+
+  public isShared() {
+    return this.shared;
+  }
+
+  public async share() {
+    await this.bagStore.updateShared(this.id, this.firebase.getUserId(), true);
+    this.setShared(true);
+  }
+
+  public async unshare() {
+    await this.bagStore.updateShared(this.id, this.firebase.getUserId(), false);
+    window.alert('공유가 취소되었습니다.');
+    this.setShared(false);
+  }
+
+  public getUrl() {
+    return `${window.location.origin}/bag-share/${this.id}`;
   }
 }
 
