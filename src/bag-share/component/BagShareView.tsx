@@ -1,35 +1,27 @@
 import { FC, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
 import { observer } from 'mobx-react-lite';
-import BagDetailGearView from './BagDetailGearView';
-import BagDetailFiltersView from './BagDetailFiltersView';
-import BagDetail from './model/BagDetail';
-import { FlipCounter } from '../bag-edit-add-gear/components/FlipCounter';
-import BagDetailUselessDescriptionView from './BagDetailUselessDescriptionView';
-import BagDetailChartView from './BagDetailChartView';
-import ShareButtonView from './component/ShareButtonView';
+import BagShare from '../model/BagShare';
+import { FlipCounter } from '../../bag-edit-add-gear/components/FlipCounter';
+import BagDetailChartView from '../../bag-detail/BagDetailChartView';
+import BagDetailFiltersView from '../../bag-detail/BagDetailFiltersView';
+import BagShareGearView from './BagShareGearView';
 
 interface Props {
-  bagDetail: BagDetail;
+  bagShare: BagShare;
 }
 
-const BagDetailView: FC<Props> = ({ bagDetail }) => {
-  const navigate = useNavigate();
-  const initialized = bagDetail.isInitialized();
-
-  const handleClickAdd = () => {
-    navigate(`/bag/${bagDetail.getId()}/edit`, { state: { from: `/bag/${bagDetail.getId()}` } });
-  };
+const BagShareView: FC<Props> = ({ bagShare }) => {
+  const initialized = bagShare.isInitialized();
 
   useEffect(() => {
-    bagDetail.initialize();
+    bagShare.initialize();
   }, []);
 
   if (initialized) {
-    const name = bagDetail.getName();
-    const weight = bagDetail.getWeight();
-    const gears = bagDetail.getGears();
-    const date = bagDetail.getDate();
+    const name = bagShare.getName();
+    const weight = bagShare.getWeight();
+    const gears = bagShare.getGears();
+    const date = bagShare.getDateRange();
 
     return (
       <div
@@ -62,7 +54,6 @@ const BagDetailView: FC<Props> = ({ bagDetail }) => {
             >
               {name}
             </div>
-            <ShareButtonView bagDetail={bagDetail} />
           </div>
           <div
             style={{
@@ -99,15 +90,7 @@ const BagDetailView: FC<Props> = ({ bagDetail }) => {
           </div>
         </div>
         <div style={{ height: '100%' }}>
-          <BagDetailUselessDescriptionView bagDetail={bagDetail} />
-          <div
-            style={{
-              width: '100%',
-              backgroundColor: '#F2F4F6',
-              height: '0.625rem',
-            }}
-          ></div>
-          <BagDetailChartView bagDetail={bagDetail} />
+          <BagDetailChartView bagDetail={bagShare} />
           <div style={{ position: 'sticky', top: '3.5rem', zIndex: 19, backgroundColor: 'white' }}>
             <div
               style={{
@@ -126,7 +109,7 @@ const BagDetailView: FC<Props> = ({ bagDetail }) => {
                 총 {gears.length}개의 장비
               </span>
             </div>
-            <BagDetailFiltersView bagDetail={bagDetail} />
+            <BagDetailFiltersView bagDetail={bagShare} />
           </div>
           <div
             style={{
@@ -147,42 +130,29 @@ const BagDetailView: FC<Props> = ({ bagDetail }) => {
                 paddingBottom: '5rem',
               }}
             >
-              {bagDetail.mapGears((gear) => {
-                return <BagDetailGearView key={gear.getId()} gear={gear} bagDetail={bagDetail} />;
+              {bagShare.mapGears((gear) => {
+                return <BagShareGearView key={gear.getId()} gear={gear} />;
               })}
             </ul>
           </div>
         </div>
-        <div
-          style={{
-            position: 'fixed',
-            bottom: 0,
-            left: 0,
-            right: 0,
-            width: '100%',
-            padding: '0.75rem 1.5rem',
-            backgroundColor: 'white',
-            zIndex: 30,
-            maxWidth: '768px',
-            margin: '0 auto',
-          }}
-        >
-          <button
-            style={{
-              backgroundColor: 'black',
-              width: '100%',
-              padding: '0.875rem',
-              color: 'white',
-              borderRadius: '0.625rem',
-            }}
-            onClick={handleClickAdd}
-          >
-            장비 추가하기
-          </button>
-        </div>
       </div>
     );
   }
+
+  // 로딩 상태
+  return (
+    <div
+      style={{
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
+        height: '100vh',
+      }}
+    >
+      <div>로딩 중...</div>
+    </div>
+  );
 };
 
-export default observer(BagDetailView);
+export default observer(BagShareView);

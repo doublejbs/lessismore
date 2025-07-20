@@ -33,7 +33,7 @@ class BagStore {
         await getDoc(doc(this.getStore(), 'users', this.firebase.getUserId()))
       ).data()?.['bags'];
 
-      if (!!bagIDs.length) {
+      if (bagIDs.length) {
         const bags = await getDocs(
           query(
             collection(this.getStore(), 'bag'),
@@ -52,12 +52,105 @@ class BagStore {
     }
   }
 
+  public async getSharedBag(id: string, filters: GearFilter[], order: OrderType) {
+    const bag = await getDoc(doc(this.getStore(), 'bag', id));
+    if (bag.exists()) {
+      const { name, weight, editDate, startDate, endDate, shared, gears, userId } = bag.data();
+
+      if (!shared) {
+        alert('공유되지 않은 배낭입니다.');
+        throw new Error('Bag not shared');
+      }
+
+      if (gears.length === 0) {
+        return {
+          name,
+          weight,
+          editDate,
+          startDate,
+          endDate,
+          gears: [],
+          shared,
+        };
+      } else {
+        const warehouseSnapshot = await getDocs(
+          query(
+            collection(this.getStore(), 'users', userId, 'gears'),
+            where('__name__', 'in', gears),
+            this.getOrderQuery(order)
+          )
+        );
+        const warehouseGears = warehouseSnapshot.docs
+          .filter((doc) =>
+            filters.length === 1 && filters[0] === GearFilter.All
+              ? true
+              : filters.some((filter) => (doc.data() as GearData).category.includes(filter))
+          )
+          .map((doc) => ({
+            ...(doc.data() as GearData),
+            id: doc.id,
+          }));
+
+        return {
+          name,
+          weight,
+          editDate,
+          startDate,
+          endDate,
+          shared,
+          gears: warehouseGears.length
+            ? warehouseGears.map(
+                ({
+                  id,
+                  name,
+                  company,
+                  weight,
+                  imageUrl,
+                  category = '',
+                  useless,
+                  used,
+                  bags,
+                  isCustom,
+                  createDate,
+                  color,
+                  companyKorean,
+                }) =>
+                  new Gear(
+                    id,
+                    name,
+                    company,
+                    weight,
+                    imageUrl,
+                    true,
+                    isCustom,
+                    category,
+                    useless,
+                    used,
+                    bags,
+                    createDate,
+                    color,
+                    companyKorean
+                  )
+              )
+            : [],
+        };
+      }
+    } else {
+      return null;
+    }
+  }
+
   public async getBag(id: string, filters: GearFilter[], order: OrderType) {
     const bagIDs = (
       await getDoc(doc(this.getStore(), 'users', this.firebase.getUserId()))
     ).data()?.['bags'];
 
-    const { name, weight, gears, editDate, startDate, endDate } = (
+    if (!bagIDs.includes(id)) {
+      window.alert('잘못된 접근입니다.');
+      throw new Error('Bag not found');
+    }
+
+    const { name, weight, gears, editDate, startDate, endDate, shared } = (
       await getDoc(doc(this.getStore(), 'bag', id))
     ).data() as {
       name: string;
@@ -66,6 +159,7 @@ class BagStore {
       startDate: string;
       endDate: string;
       gears: string[];
+      shared: boolean;
     };
 
     if (gears.length === 0) {
@@ -76,6 +170,7 @@ class BagStore {
         startDate,
         endDate,
         gears: [],
+        shared,
       };
     } else {
       const warehouseSnapshot = await getDocs(
@@ -102,6 +197,7 @@ class BagStore {
         editDate,
         startDate,
         endDate,
+        shared,
         gears: warehouseGears.length
           ? warehouseGears.map(
               ({
@@ -180,6 +276,8 @@ class BagStore {
       editDate: new Date().toISOString(),
       startDate: startDate.toISOString(),
       endDate: endDate.toISOString(),
+      shared: false,
+      userId: this.getUserID(),
     });
 
     await updateDoc(doc(this.getStore(), 'users', this.getUserID()), {
@@ -288,6 +386,10 @@ class BagStore {
       batch.update(bagRef, { weight });
     });
     await batch.commit();
+  }
+
+  public async updateShared(id: string, userId: string, shared: boolean) {
+    await updateDoc(doc(this.getStore(), 'bag', id), { shared, userId });
   }
 }
 

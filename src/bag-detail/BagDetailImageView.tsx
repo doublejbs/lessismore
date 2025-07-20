@@ -7,7 +7,7 @@ interface Props {
 }
 
 const BagDetailImageView: FC<Props> = ({ imageUrl, shadow }) => {
-  const [loading, setLoading] = useState(!!imageUrl);
+  const [loading, setLoading] = useState(!!imageUrl && String(imageUrl) !== 'true');
 
   const handleLoad = () => {
     setLoading(false);
@@ -16,7 +16,7 @@ const BagDetailImageView: FC<Props> = ({ imageUrl, shadow }) => {
   return (
     <>
       {loading && <LoadingIconView />}
-      {imageUrl && (
+      {imageUrl && String(imageUrl) !== 'true' && (
         <img
           src={imageUrl}
           width={2000}

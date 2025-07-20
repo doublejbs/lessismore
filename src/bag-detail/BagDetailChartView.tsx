@@ -1,10 +1,15 @@
 import { FC, useState, useEffect } from 'react';
 import { observer } from 'mobx-react-lite';
-import BagDetail from './model/BagDetail';
 import GearFilter from '../warehouse/model/GearFilter';
+import Gear from '../model/Gear';
+import { getKoreanCategoryName } from '../utils/CategoryUtils';
+
+interface Bag {
+  getGears: () => Gear[];
+}
 
 interface Props {
-  bagDetail: BagDetail;
+  bagDetail: Bag;
 }
 
 const BagDetailChartView: FC<Props> = ({ bagDetail }) => {
@@ -21,34 +26,6 @@ const BagDetailChartView: FC<Props> = ({ bagDetail }) => {
       });
     });
   }, []);
-
-  // GearFilter를 한국어로 변환
-  const getKoreanCategoryName = (category: string): string => {
-    switch (category) {
-      case GearFilter.Tent:
-        return '텐트';
-      case GearFilter.SleepingBag:
-        return '침낭';
-      case GearFilter.Backpack:
-        return '배낭';
-      case GearFilter.Clothing:
-        return '의류';
-      case GearFilter.Mat:
-        return '매트';
-      case GearFilter.Furniture:
-        return '가구';
-      case GearFilter.Lantern:
-        return '랜턴';
-      case GearFilter.Cooking:
-        return '조리';
-      case GearFilter.Etc:
-        return '기타';
-      case '베이스':
-        return '베이스';
-      default:
-        return category;
-    }
-  };
 
   // 카테고리별 데이터 계산
   const getCategoryData = () => {

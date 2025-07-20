@@ -1,11 +1,17 @@
 import { FC } from 'react';
 import WarehouseFilter from '../warehouse/model/WarehouseFilter';
-import BagDetail from './model/BagDetail';
 import { observer } from 'mobx-react-lite';
 import OrderButtonView from '../order/OrderButtonView';
+import Order from '../order/Order';
+
+interface BagWithFilters {
+  getOrder: () => Order;
+  toggleFilter: (filter: WarehouseFilter) => void;
+  mapFilters: <R>(callback: (filter: WarehouseFilter) => R) => R[];
+}
 
 interface Props {
-  bagDetail: BagDetail;
+  bagDetail: BagWithFilters;
 }
 
 const BagDetailFiltersView: FC<Props> = ({ bagDetail }) => {
