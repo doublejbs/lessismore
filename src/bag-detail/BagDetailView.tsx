@@ -20,10 +20,6 @@ const BagDetailView: FC<Props> = ({ bagDetail }) => {
     navigate(`/bag/${bagDetail.getId()}/edit`, { state: { from: `/bag/${bagDetail.getId()}` } });
   };
 
-  const handleClickBack = () => {
-    bagDetail.back();
-  };
-
   useEffect(() => {
     bagDetail.initialize();
   }, []);
@@ -89,38 +85,15 @@ const BagDetailView: FC<Props> = ({ bagDetail }) => {
             paddingBottom: '0.25rem',
           }}
         >
-          <div style={{ position: 'relative' }}>
-            <div
-              style={{
-                display: 'flex',
-                alignItems: 'center',
-                position: 'absolute',
-                left: '1rem',
-                top: '50%',
-                transform: 'translateY(-50%)',
-              }}
-              onClick={handleClickBack}
-            >
-              <svg
-                width='1.25rem'
-                height='1.25rem'
-                viewBox='0 0 24 24'
-                fill='none'
-                xmlns='http://www.w3.org/2000/svg'
-              >
-                <path d='M15 5L8 12L15 19' stroke='black' strokeWidth='2' strokeLinejoin='round' />
-              </svg>
-            </div>
-            <div
-              style={{
-                width: '100%',
-                textAlign: 'center',
-                fontWeight: 'bold',
-                fontSize: '1.8rem',
-              }}
-            >
-              <FlipCounter value={weight} />
-            </div>
+          <div
+            style={{
+              width: '100%',
+              textAlign: 'center',
+              fontWeight: 'bold',
+              fontSize: '1.8rem',
+            }}
+          >
+            <FlipCounter value={weight} />
           </div>
         </div>
         <div style={{ height: '100%' }}>
