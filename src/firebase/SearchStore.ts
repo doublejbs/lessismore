@@ -1,10 +1,10 @@
-import { liteClient } from 'algoliasearch/lite';
 import { collection, getDocs, orderBy, query, where } from '@firebase/firestore';
-import Firebase from './Firebase.ts';
-import GearType from '../warehouse/type/GearType.ts';
 import { SearchResponse } from 'algoliasearch';
+import { liteClient } from 'algoliasearch/lite';
 import Gear from '../model/Gear';
 import GearFilter from '../warehouse/model/GearFilter';
+import GearType from '../warehouse/type/GearType.ts';
+import Firebase from './Firebase.ts';
 
 class SearchStore {
   private readonly searchClient = liteClient('BWS6CWRXRM', 'dafcc0c015856d4ca5fb6d0626cf8f9f');
@@ -47,7 +47,7 @@ class SearchStore {
           })
         )
       ),
-      hasMore: page + 1 < nbPages,
+      hasMore: (page ?? 0) + 1 < (nbPages ?? 0),
     };
   }
 

@@ -1,7 +1,7 @@
-import GearFilter from './GearFilter';
-import WarehouseFilter from './WarehouseFilter';
 import { makeAutoObservable } from 'mobx';
 import Gear from '../../model/Gear';
+import GearFilter from './GearFilter';
+import WarehouseFilter from './WarehouseFilter';
 
 class FilterManager {
   public static from() {
@@ -44,6 +44,14 @@ class FilterManager {
     {
       filter: GearFilter.Furniture,
       name: '가구',
+    },
+    {
+      filter: GearFilter.Electronic,
+      name: '전자기기',
+    },
+    {
+      filter: GearFilter.Food,
+      name: '음식',
     },
     {
       filter: GearFilter.Etc,

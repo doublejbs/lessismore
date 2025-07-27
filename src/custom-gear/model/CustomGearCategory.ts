@@ -1,5 +1,5 @@
-import WarehouseFilter from '../../warehouse/model/WarehouseFilter.ts';
 import GearFilter from '../../warehouse/model/GearFilter.ts';
+import WarehouseFilter from '../../warehouse/model/WarehouseFilter.ts';
 
 class CustomGearCategory {
   public static new() {
@@ -38,6 +38,14 @@ class CustomGearCategory {
     {
       filter: GearFilter.Cooking,
       name: '조리',
+    },
+    {
+      filter: GearFilter.Electronic,
+      name: '전자기기',
+    },
+    {
+      filter: GearFilter.Food,
+      name: '음식',
     },
     {
       filter: GearFilter.Etc,

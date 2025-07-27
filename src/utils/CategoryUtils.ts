@@ -18,6 +18,10 @@ export const getKoreanCategoryName = (category: string): string => {
       return '랜턴';
     case GearFilter.Cooking:
       return '조리';
+    case GearFilter.Electronic:
+      return '전자기기';
+    case GearFilter.Food:
+      return '음식';
     case GearFilter.Etc:
       return '기타';
     case '베이스':
