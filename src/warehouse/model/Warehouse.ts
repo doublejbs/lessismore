@@ -1,13 +1,13 @@
 import { makeAutoObservable, reaction } from 'mobx';
+import Firebase from '../../firebase/Firebase.ts';
 import Gear from '../../model/Gear.ts';
-import WarehouseFilter from './WarehouseFilter.ts';
-import WarehouseDispatcherType from './WarehouseDispatcherType.ts';
-import WarehouseDispatcher from './WarehouseDispatcher.ts';
-import ToastManager from '../../toast/ToastManager';
-import FilterManager from './FilterManager';
 import Order from '../../order/Order';
 import OrderType from '../../order/OrderType';
-import Firebase from '../../firebase/Firebase.ts';
+import ToastManager from '../../toast/ToastManager';
+import FilterManager from './FilterManager';
+import WarehouseDispatcher from './WarehouseDispatcher.ts';
+import WarehouseDispatcherType from './WarehouseDispatcherType.ts';
+import WarehouseFilter from './WarehouseFilter.ts';
 
 class Warehouse {
   private static readonly ORDER_KEY = 'warehouse';
@@ -56,7 +56,6 @@ class Warehouse {
 
   public async initialize() {
     if (this.isLoggedIn()) {
-      console.log('initialize');
       this.order.initialize();
       await this.getList();
     }

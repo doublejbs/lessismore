@@ -8,6 +8,8 @@ const enum GearFilter {
   Furniture = 'furniture',
   Lantern = 'lantern',
   Cooking = 'cooking',
+  Electronic = 'electronic',
+  Food = 'food',
   Etc = 'etc',
 }
 

@@ -1,8 +1,8 @@
-import { FC, useState, useEffect } from 'react';
 import { observer } from 'mobx-react-lite';
-import GearFilter from '../warehouse/model/GearFilter';
+import { FC, useEffect, useState } from 'react';
 import Gear from '../model/Gear';
 import { getKoreanCategoryName } from '../utils/CategoryUtils';
+import GearFilter from '../warehouse/model/GearFilter';
 
 interface Bag {
   getGears: () => Gear[];
@@ -62,6 +62,8 @@ const BagDetailChartView: FC<Props> = ({ bagDetail }) => {
       '베이스(배낭, 텐트, 침낭, 매트)',
       GearFilter.Lantern,
       GearFilter.Cooking,
+      GearFilter.Electronic,
+      GearFilter.Food,
       GearFilter.Clothing,
       GearFilter.Furniture,
       GearFilter.Etc,

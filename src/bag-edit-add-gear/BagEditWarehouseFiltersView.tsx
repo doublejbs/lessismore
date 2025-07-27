@@ -1,10 +1,9 @@
-import WarehouseFilter from '../warehouse/model/WarehouseFilter';
-import Warehouse from '../warehouse/model/Warehouse';
-import { FC } from 'react';
-import GearFilter from '../warehouse/model/GearFilter';
 import { observer } from 'mobx-react-lite';
-import BagEdit from './model/BagEdit';
+import { FC } from 'react';
 import OrderButtonView from '../order/OrderButtonView';
+import GearFilter from '../warehouse/model/GearFilter';
+import WarehouseFilter from '../warehouse/model/WarehouseFilter';
+import BagEdit from './model/BagEdit';
 
 interface Props {
   bagEdit: BagEdit;
@@ -58,7 +57,6 @@ const BagEditWarehouseFiltersView: FC<Props> = ({ bagEdit }) => {
               className={'clickable'}
               style={{
                 height: '100%',
-                width: '79px',
                 borderRadius: '26px',
                 fontSize: '16px',
                 padding: '10px 12px',
