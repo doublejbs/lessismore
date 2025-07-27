@@ -1,13 +1,13 @@
+import { observer } from 'mobx-react-lite';
 import { FC, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { observer } from 'mobx-react-lite';
-import BagDetailGearView from './BagDetailGearView';
-import BagDetailFiltersView from './BagDetailFiltersView';
-import BagDetail from './model/BagDetail';
 import { FlipCounter } from '../bag-edit-add-gear/components/FlipCounter';
-import BagDetailUselessDescriptionView from './BagDetailUselessDescriptionView';
 import BagDetailChartView from './BagDetailChartView';
+import BagDetailFiltersView from './BagDetailFiltersView';
+import BagDetailGearView from './BagDetailGearView';
+import BagDetailUselessDescriptionView from './BagDetailUselessDescriptionView';
 import ShareButtonView from './component/ShareButtonView';
+import BagDetail from './model/BagDetail';
 
 interface Props {
   bagDetail: BagDetail;
@@ -37,6 +37,7 @@ const BagDetailView: FC<Props> = ({ bagDetail }) => {
           display: 'flex',
           flexDirection: 'column',
           height: '100%',
+          overflowY: 'auto',
         }}
       >
         <div
@@ -98,13 +99,13 @@ const BagDetailView: FC<Props> = ({ bagDetail }) => {
             <FlipCounter value={weight} />
           </div>
         </div>
-        <div style={{ height: '100%' }}>
+
           <BagDetailUselessDescriptionView bagDetail={bagDetail} />
           <div
             style={{
               width: '100%',
               backgroundColor: '#F2F4F6',
-              height: '0.625rem',
+              minHeight: '0.625rem',
             }}
           ></div>
           <BagDetailChartView bagDetail={bagDetail} />
@@ -152,7 +153,6 @@ const BagDetailView: FC<Props> = ({ bagDetail }) => {
               })}
             </ul>
           </div>
-        </div>
         <div
           style={{
             position: 'fixed',
