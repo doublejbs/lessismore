@@ -138,6 +138,10 @@ class FilterManager {
   public getAllFilter() {
     return this.filters[0].getFilter();
   }
+
+  public getFilter(filter: GearFilter) {
+    return this.filters.find((currentFilter) => currentFilter.getFilter() === filter);
+  }
 }
 
 export default FilterManager;

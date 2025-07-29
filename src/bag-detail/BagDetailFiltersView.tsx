@@ -1,12 +1,13 @@
 import { FC } from 'react';
 import WarehouseFilter from '../warehouse/model/WarehouseFilter';
 import { observer } from 'mobx-react-lite';
-import OrderButtonView from '../order/OrderButtonView';
 import Order from '../order/Order';
 
 interface BagWithFilters {
   getOrder: () => Order;
-  toggleFilter: (filter: WarehouseFilter) => void;
+  scrollToCategory: (category: string) => void;
+  isActiveCategory: (category: string) => boolean;
+  hasCategoryGears: (categoryName: string) => boolean;
   mapFilters: <R>(callback: (filter: WarehouseFilter) => R) => R[];
 }
 
@@ -15,62 +16,72 @@ interface Props {
 }
 
 const BagDetailFiltersView: FC<Props> = ({ bagDetail }) => {
-  const order = bagDetail.getOrder();
-
   const handleClick = (filter: WarehouseFilter) => {
-    bagDetail.toggleFilter(filter);
+    bagDetail.scrollToCategory(filter.getName());
   };
 
   return (
     <div
       style={{
         width: '100%',
-        paddingBottom: '15px',
-        paddingLeft: '20px',
-        display: 'flex',
-        flexDirection: 'row',
-        gap: '8px',
-        zIndex: 20,
         backgroundColor: 'white',
+        borderBottom: '1px solid #E5E5E5',
       }}
     >
       <div
         style={{
-          height: '32px',
-          width: '100%',
           display: 'flex',
           flexDirection: 'row',
-          gap: '8px',
-          overflowX: 'scroll',
+          overflowX: 'auto',
           scrollbarWidth: 'none',
+          msOverflowStyle: 'none',
         }}
       >
         {bagDetail.mapFilters((filter) => {
+          const categoryName = filter.getName();
+
+          // 해당 카테고리에 장비가 없으면 필터를 표시하지 않음
+          if (!bagDetail.hasCategoryGears(categoryName)) {
+            return null;
+          }
+
+          const isActive = bagDetail.isActiveCategory(categoryName);
+
           return (
             <button
-              key={filter.getName()}
+              key={categoryName}
               className={'clickable'}
               style={{
-                height: '32px',
-                borderRadius: '22px',
+                minWidth: 'max-content',
+                padding: '12px 16px',
                 fontSize: '14px',
-                padding: '8px 16px',
-                display: 'flex',
-                justifyContent: 'center',
-                alignItems: 'center',
-                flexDirection: 'column',
+                fontWeight: isActive ? '600' : '500',
+                color: isActive ? '#000000' : '#666666',
+                backgroundColor: 'transparent',
+                border: 'none',
+                borderBottom: `2px solid ${isActive ? '#000000' : 'transparent'}`,
                 whiteSpace: 'nowrap',
-                backgroundColor: filter.isSelected() ? 'black' : '#EBEBEB',
-                color: filter.isSelected() ? 'white' : 'black',
+                transition: 'all 0.2s ease',
               }}
               onClick={() => handleClick(filter)}
+              onMouseEnter={(e) => {
+                if (!isActive) {
+                  e.currentTarget.style.color = '#000000';
+                  e.currentTarget.style.borderBottomColor = '#000000';
+                }
+              }}
+              onMouseLeave={(e) => {
+                if (!isActive) {
+                  e.currentTarget.style.color = '#666666';
+                  e.currentTarget.style.borderBottomColor = 'transparent';
+                }
+              }}
             >
-              {filter.getName()}
+              {categoryName}
             </button>
           );
         })}
       </div>
-      <OrderButtonView order={order} />
     </div>
   );
 };

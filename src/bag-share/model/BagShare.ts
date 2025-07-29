@@ -30,6 +30,7 @@ class BagShare {
   private editDate = dayjs();
   private startDate = dayjs();
   private endDate = dayjs();
+  private activeCategory: string = '';
 
   private constructor(
     private readonly id: string,
@@ -125,6 +126,68 @@ class BagShare {
     } else {
       this.selectFilter(filter);
     }
+  }
+
+  public getAllGears() {
+    return this.gears;
+  }
+
+  public getGearsByCategory() {
+    const categoryMap = new Map<string, Gear[]>();
+
+    this.gears.forEach((gear) => {
+      const category =
+        this.filterManager.getFilter(gear.getCategory() as GearFilter)?.getName() ?? '';
+      if (!categoryMap.has(category)) {
+        categoryMap.set(category, []);
+      }
+      categoryMap.get(category)!.push(gear);
+    });
+
+    // filterManager의 필터 순서에 맞춰 정렬 (장비가 있는 카테고리만)
+    const orderedCategories: { category: string; gears: Gear[] }[] = [];
+
+    this.filterManager.mapFilters((filter) => {
+      const categoryName = filter.getName();
+      if (categoryMap.has(categoryName)) {
+        orderedCategories.push({
+          category: categoryName,
+          gears: categoryMap.get(categoryName)!,
+        });
+      }
+    });
+
+    return orderedCategories;
+  }
+
+  public scrollToCategory(category: string) {
+    const element = document.getElementById(`category-${category}`);
+    if (element) {
+      element.scrollIntoView({
+        behavior: 'smooth',
+        block: 'start',
+      });
+    }
+  }
+
+  public setActiveCategory(category: string) {
+    this.activeCategory = category;
+  }
+
+  public getActiveCategory() {
+    return this.activeCategory;
+  }
+
+  public isActiveCategory(category: string) {
+    return this.activeCategory === category;
+  }
+
+  public hasCategoryGears(categoryName: string) {
+    return this.gears.some((gear) => {
+      const category =
+        this.filterManager.getFilter(gear.getCategory() as GearFilter)?.getName() ?? '';
+      return category === categoryName;
+    });
   }
 }
 
