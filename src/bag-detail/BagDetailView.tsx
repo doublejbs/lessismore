@@ -3,11 +3,11 @@ import { FC, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { FlipCounter } from '../bag-edit-add-gear/components/FlipCounter';
 import BagDetailChartView from './BagDetailChartView';
+import BagDetailFiltersView from './BagDetailFiltersView';
 import BagDetailGearView from './BagDetailGearView';
 import BagDetailUselessDescriptionView from './BagDetailUselessDescriptionView';
 import ShareButtonView from './component/ShareButtonView';
 import BagDetail from './model/BagDetail';
-import BagDetailFiltersView from './BagDetailFiltersView';
 
 interface Props {
   bagDetail: BagDetail;
@@ -30,25 +30,28 @@ const BagDetailView: FC<Props> = ({ bagDetail }) => {
 
     const observer = new IntersectionObserver(
       (entries) => {
-        let maxRatio = 0;
-        let activeCategory = '';
+        let bestCategory = '';
+        let bestRatio = 0;
 
         entries.forEach((entry) => {
-          if (entry.isIntersecting && entry.intersectionRatio > maxRatio) {
-            maxRatio = entry.intersectionRatio;
-            const categoryId = entry.target.id;
-            activeCategory = categoryId.replace('category-', '');
+          // 카테고리가 70% 이상 보이고, 현재까지 가장 많이 보이는 경우
+          if (entry.isIntersecting && entry.intersectionRatio >= 0.7) {
+            if (entry.intersectionRatio > bestRatio) {
+              bestRatio = entry.intersectionRatio;
+              const categoryId = entry.target.id;
+              bestCategory = categoryId.replace('category-', '');
+            }
           }
         });
 
-        if (activeCategory) {
-          bagDetail.setActiveCategory(activeCategory);
+        if (bestCategory) {
+          bagDetail.setActiveCategory(bestCategory);
         }
       },
       {
         root: null,
-        rootMargin: '-100px 0px -60% 0px',
-        threshold: [0, 0.1, 0.5, 1.0],
+        rootMargin: '-150px 0px -76px 0px',
+        threshold: [0, 0.1, 0.3, 0.5, 0.7, 0.8, 0.9, 1.0],
       }
     );
 
@@ -83,10 +86,32 @@ const BagDetailView: FC<Props> = ({ bagDetail }) => {
         style={{
           display: 'flex',
           flexDirection: 'column',
-          height: '100%',
-          overflowY: 'auto',
+          minHeight: '100vh',
         }}
       >
+        <div
+          style={{
+            position: 'sticky',
+            top: 0,
+            width: '100%',
+            backgroundColor: 'white',
+            zIndex: 20,
+            paddingTop: '0.25rem',
+            paddingBottom: '0.25rem',
+          }}
+        >
+          <div
+            style={{
+              width: '100%',
+              textAlign: 'center',
+              fontWeight: 'bold',
+              fontSize: '1.8rem',
+            }}
+          >
+            <FlipCounter value={weight} />
+          </div>
+          <ShareButtonView bagDetail={bagDetail} />
+        </div>
         <div
           style={{
             display: 'flex',
@@ -110,7 +135,6 @@ const BagDetailView: FC<Props> = ({ bagDetail }) => {
             >
               {name}
             </div>
-            <ShareButtonView bagDetail={bagDetail} />
           </div>
           <div
             style={{
@@ -124,28 +148,6 @@ const BagDetailView: FC<Props> = ({ bagDetail }) => {
             {date}
           </div>
         </div>
-        <div
-          style={{
-            position: 'sticky',
-            top: 0,
-            width: '100%',
-            backgroundColor: 'white',
-            zIndex: 20,
-            paddingTop: '0.25rem',
-            paddingBottom: '0.25rem',
-          }}
-        >
-          <div
-            style={{
-              width: '100%',
-              textAlign: 'center',
-              fontWeight: 'bold',
-              fontSize: '1.8rem',
-            }}
-          >
-            <FlipCounter value={weight} />
-          </div>
-        </div>
         <BagDetailUselessDescriptionView bagDetail={bagDetail} />
         <div
           style={{
@@ -155,7 +157,9 @@ const BagDetailView: FC<Props> = ({ bagDetail }) => {
           }}
         ></div>
         <BagDetailChartView bagDetail={bagDetail} />
-        <div style={{ position: 'sticky', top: '3.5rem', zIndex: 19, backgroundColor: 'white' }}>
+        <div style={{
+           position: 'sticky',
+           top: '60px', zIndex: 19, backgroundColor: 'white' }}>
           <div
             style={{
               width: '100%',
@@ -181,7 +185,7 @@ const BagDetailView: FC<Props> = ({ bagDetail }) => {
             flexDirection: 'column',
             alignItems: 'center',
             gap: '0.5rem',
-            height: '100%',
+            flex: 1,
             padding: '0 1.25rem 0px',
           }}
         >
@@ -202,7 +206,7 @@ const BagDetailView: FC<Props> = ({ bagDetail }) => {
                   padding: '0.5rem 0',
                 }}
               >
-                {category} ({categoryGears.length})
+                {category}
               </div>
               <ul
                 style={{
