@@ -1,7 +1,7 @@
-import { FC } from 'react';
-import WarehouseFilter from '../warehouse/model/WarehouseFilter';
 import { observer } from 'mobx-react-lite';
+import { FC } from 'react';
 import Order from '../order/Order';
+import WarehouseFilter from '../warehouse/model/WarehouseFilter';
 
 interface BagWithFilters {
   getOrder: () => Order;
@@ -26,15 +26,18 @@ const BagDetailFiltersView: FC<Props> = ({ bagDetail }) => {
         width: '100%',
         backgroundColor: 'white',
         borderBottom: '1px solid #E5E5E5',
+        padding: '16px',
       }}
     >
       <div
+        className="hide-scrollbar"
         style={{
           display: 'flex',
           flexDirection: 'row',
           overflowX: 'auto',
           scrollbarWidth: 'none',
           msOverflowStyle: 'none',
+          gap: '8px',
         }}
       >
         {bagDetail.mapFilters((filter) => {
@@ -52,28 +55,29 @@ const BagDetailFiltersView: FC<Props> = ({ bagDetail }) => {
               key={categoryName}
               className={'clickable'}
               style={{
-                minWidth: 'max-content',
-                padding: '12px 16px',
+                padding: '8px 16px',
                 fontSize: '14px',
-                fontWeight: isActive ? '600' : '500',
-                color: isActive ? '#000000' : '#666666',
-                backgroundColor: 'transparent',
+                fontWeight: '500',
+                color: isActive ? '#FFFFFF' : '#666666',
+                backgroundColor: isActive ? '#000000' : '#F5F5F5',
                 border: 'none',
-                borderBottom: `2px solid ${isActive ? '#000000' : 'transparent'}`,
+                borderRadius: '20px',
                 whiteSpace: 'nowrap',
                 transition: 'all 0.2s ease',
+                cursor: 'pointer',
+                flexShrink: 0,
               }}
               onClick={() => handleClick(filter)}
               onMouseEnter={(e) => {
                 if (!isActive) {
+                  e.currentTarget.style.backgroundColor = '#E5E5E5';
                   e.currentTarget.style.color = '#000000';
-                  e.currentTarget.style.borderBottomColor = '#000000';
                 }
               }}
               onMouseLeave={(e) => {
                 if (!isActive) {
+                  e.currentTarget.style.backgroundColor = '#F5F5F5';
                   e.currentTarget.style.color = '#666666';
-                  e.currentTarget.style.borderBottomColor = 'transparent';
                 }
               }}
             >
