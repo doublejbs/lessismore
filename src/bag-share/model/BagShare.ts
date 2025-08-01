@@ -1,14 +1,14 @@
+import dayjs from 'dayjs';
 import { makeAutoObservable } from 'mobx';
-import GearFilter from '../../warehouse/model/GearFilter';
-import WarehouseFilter from '../../warehouse/model/WarehouseFilter';
+import app from '../../App';
 import BagStore from '../../firebase/BagStore';
 import GearStore from '../../firebase/GearStore';
-import FilterManager from '../../warehouse/model/FilterManager';
+import Gear from '../../model/Gear';
 import Order from '../../order/Order';
 import OrderType from '../../order/OrderType';
-import app from '../../App';
-import Gear from '../../model/Gear';
-import dayjs from 'dayjs';
+import FilterManager from '../../warehouse/model/FilterManager';
+import GearFilter from '../../warehouse/model/GearFilter';
+import WarehouseFilter from '../../warehouse/model/WarehouseFilter';
 
 class BagShare {
   private static readonly ORDER_KEY = 'bag-share';
@@ -125,6 +125,14 @@ class BagShare {
     } else {
       this.selectFilter(filter);
     }
+  }
+
+  public toggleFilterWithScroll(filter: WarehouseFilter) {
+    this.toggleFilter(filter);
+  }
+
+  public mapFiltersWithGears<R>(callback: (filter: WarehouseFilter) => R) {
+    return this.filterManager.mapFilters(callback);
   }
 }
 
