@@ -395,6 +395,17 @@ class BagStore {
   public async updateShared(id: string, userId: string, shared: boolean) {
     await updateDoc(doc(this.getStore(), 'bag', id), { shared, userId });
   }
+
+  public async updateName(id: string, name: string) {
+    await updateDoc(doc(this.getStore(), 'bag', id), { name });
+  }
+
+  public async updateDates(id: string, startDate: string, endDate: string) {
+    await updateDoc(doc(this.getStore(), 'bag', id), { 
+      startDate, 
+      endDate 
+    });
+  }
 }
 
 export default BagStore;

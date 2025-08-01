@@ -349,6 +349,17 @@ class BagDetail {
     this.selectFilter(filter);
     this.scrollToCategory(filter.getFilter());
   }
+
+  public async updateName(name: string) {
+    await this.bagStore.updateName(this.id, name);
+    this.setName(name);
+  }
+
+  public async updateDates(startDate: string, endDate: string) {
+    await this.bagStore.updateDates(this.id, startDate, endDate);
+    this.setStartDate(startDate);
+    this.setEndDate(endDate);
+  }
 }
 
 export default BagDetail;

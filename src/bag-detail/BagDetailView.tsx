@@ -5,8 +5,10 @@ import { FlipCounter } from '../bag-edit-add-gear/components/FlipCounter';
 import { useScrollBasedFilter } from '../hooks/useScrollBasedFilter';
 import GearFilter from '../warehouse/model/GearFilter';
 import BagDetailChartView from './BagDetailChartView';
+import BagDetailDateView from './BagDetailDateView';
 import BagDetailFiltersView from './BagDetailFiltersView';
 import BagDetailGearView from './BagDetailGearView';
+import BagDetailNameView from './BagDetailNameView';
 import BagDetailUselessDescriptionView from './BagDetailUselessDescriptionView';
 import ShareButtonView from './component/ShareButtonView';
 import BagDetail from './model/BagDetail';
@@ -66,10 +68,8 @@ const BagDetailView: FC<Props> = ({ bagDetail }) => {
   };
 
   if (initialized) {
-    const name = bagDetail.getName();
     const weight = bagDetail.getWeight();
     const gears = bagDetail.getGears();
-    const date = bagDetail.getDate();
 
     return (
       <div
@@ -91,30 +91,10 @@ const BagDetailView: FC<Props> = ({ bagDetail }) => {
           }}
         >
           <div style={{ position: 'relative' }}>
-            <div
-              style={{
-                width: '100%',
-                textAlign: 'center',
-                fontWeight: 'bold',
-                fontSize: '1.25rem',
-                lineHeight: '1.5rem',
-              }}
-            >
-              {name}
-            </div>
+            <BagDetailNameView bagDetail={bagDetail} />
             <ShareButtonView bagDetail={bagDetail} />
           </div>
-          <div
-            style={{
-              width: '100%',
-              textAlign: 'center',
-              fontSize: '0.875rem',
-              color: '#9B9B9B',
-              paddingBottom: '0.5rem',
-            }}
-          >
-            {date}
-          </div>
+          <BagDetailDateView bagDetail={bagDetail} />
         </div>
         <div
           style={{
