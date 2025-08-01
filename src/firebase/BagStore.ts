@@ -1,4 +1,5 @@
-import Firebase from './Firebase';
+import { runTransaction, writeBatch } from '@firebase/firestore';
+import dayjs, { Dayjs } from 'dayjs';
 import {
   addDoc,
   arrayRemove,
@@ -14,13 +15,12 @@ import {
   updateDoc,
   where,
 } from 'firebase/firestore';
-import GearStore, { GearData } from './GearStore.ts';
-import dayjs, { Dayjs } from 'dayjs';
-import Gear from '../model/Gear';
 import BagItem from '../bag/model/BagItem';
-import { runTransaction, writeBatch } from '@firebase/firestore';
-import GearFilter from '../warehouse/model/GearFilter';
+import Gear from '../model/Gear';
 import OrderType from '../order/OrderType.ts';
+import GearFilter from '../warehouse/model/GearFilter';
+import Firebase from './Firebase';
+import GearStore, { GearData } from './GearStore.ts';
 class BagStore {
   public constructor(
     private readonly firebase: Firebase,
@@ -138,6 +138,10 @@ class BagStore {
     } else {
       return null;
     }
+  }
+
+  public async getBagWithAllFilter(id: string) {
+    return await this.getBag(id, [GearFilter.All], OrderType.NameAsc);
   }
 
   public async getBag(id: string, filters: GearFilter[], order: OrderType) {

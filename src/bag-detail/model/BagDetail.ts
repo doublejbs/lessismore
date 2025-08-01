@@ -1,16 +1,15 @@
-import { makeAutoObservable, reaction } from 'mobx';
-import app from '../../App';
-import Gear from '../../model/Gear';
-import BagStore from '../../firebase/BagStore';
-import GearStore from '../../firebase/GearStore';
 import dayjs from 'dayjs';
+import { makeAutoObservable } from 'mobx';
 import { Location, NavigateFunction } from 'react-router-dom';
-import FilterManager from '../../warehouse/model/FilterManager';
-import WarehouseFilter from '../../warehouse/model/WarehouseFilter';
-import GearFilter from '../../warehouse/model/GearFilter';
-import Order from '../../order/Order';
-import OrderType from '../../order/OrderType';
+import app from '../../App';
+import BagStore from '../../firebase/BagStore';
 import Firebase from '../../firebase/Firebase';
+import GearStore from '../../firebase/GearStore';
+import Gear from '../../model/Gear';
+import Order from '../../order/Order';
+import GearFilter from '../../warehouse/model/GearFilter';
+import WarehouseFilter from '../../warehouse/model/WarehouseFilter';
+import BagDetailFilterManager from './BagDetailFilterManager';
 
 class BagDetail {
   private static readonly ORDER_KEY = 'bag';
@@ -22,7 +21,7 @@ class BagDetail {
       id,
       app.getBagStore(),
       app.getGearStore(),
-      FilterManager.from(),
+      BagDetailFilterManager.from(),
       Order.new(BagDetail.ORDER_KEY),
       app.getFirebase()
     );
@@ -42,8 +41,8 @@ class BagDetail {
   private loading = false;
   private startDate = dayjs();
   private endDate = dayjs();
-  private disposeReaction: () => void;
   private shared = false;
+  private categoryRefs: Map<string, HTMLDivElement> = new Map();
 
   private constructor(
     private readonly navigate: NavigateFunction,
@@ -51,27 +50,17 @@ class BagDetail {
     private readonly id: string,
     private readonly bagStore: BagStore,
     private readonly gearStore: GearStore,
-    private readonly filterManager: FilterManager,
+    private readonly filterManager: BagDetailFilterManager,
     private readonly order: Order,
     private readonly firebase: Firebase
   ) {
     makeAutoObservable(this);
-    this.disposeReaction = reaction(
-      () => this.order.getSelectedOrderType(),
-      async () => {
-        await this.initialize();
-      }
-    );
   }
 
   public async initialize() {
     this.order.initialize();
     const { name, weight, editDate, gears, startDate, endDate, shared } =
-      await this.bagStore.getBag(
-        this.id,
-        [this.filterManager.getAllFilter()],
-        this.order.getSelectedOrderType() ?? OrderType.NameAsc
-      );
+      await this.bagStore.getBagWithAllFilter(this.id);
     this.setName(name);
     this.setWeight(weight);
     this.setEditDate(editDate);
@@ -240,6 +229,10 @@ class BagDetail {
     return this.filterManager.mapFilters(callback);
   }
 
+  public mapFiltersWithGears<R>(callback: (filter: WarehouseFilter) => R) {
+    return this.filterManager.getFiltersWithGears(this.gears).map(callback);
+  }
+
   public toggleFilter(filter: WarehouseFilter) {
     if (filter.isSelected()) {
       this.deselectFilter(filter);
@@ -252,6 +245,10 @@ class BagDetail {
     return this.gears
       .filter((gear) => this.filterManager.hasFilter(gear.getCategory() as GearFilter))
       .map(callback);
+  }
+
+  public getGearsByCategory() {
+    return this.filterManager.groupGearsByCategory(this.gears);
   }
 
   private setStartDate(value: string) {
@@ -292,10 +289,6 @@ class BagDetail {
     return this.order;
   }
 
-  public dispose() {
-    this.disposeReaction();
-  }
-
   private setShared(value: boolean) {
     this.shared = value;
   }
@@ -317,6 +310,44 @@ class BagDetail {
 
   public getUrl() {
     return `${window.location.origin}/bag-share/${this.id}`;
+  }
+
+  public setActiveFilterByCategory(categoryFilter: GearFilter) {
+    // 모든 필터를 비활성화
+    this.filterManager.mapFilters(filter => filter.deselect());
+    
+    // 해당 카테고리 필터만 활성화
+    this.filterManager.mapFilters(filter => {
+      if (filter.isSame(categoryFilter)) {
+        filter.select();
+      }
+    });
+  }
+
+  public clearAllFilters() {
+    this.filterManager.mapFilters(filter => filter.deselect());
+  }
+
+  public setCategoryRefs(refs: Map<string, HTMLDivElement>) {
+    this.categoryRefs = refs;
+  }
+
+  public scrollToCategory(categoryFilter: GearFilter) {
+    const element = this.categoryRefs.get(categoryFilter);
+    if (element) {
+      const y = element.getBoundingClientRect().top + window.pageYOffset - 170.5;
+      
+      window.scrollTo({
+        top: y,
+        behavior: 'smooth'
+      });
+    }
+  }
+
+  public toggleFilterWithScroll(filter: WarehouseFilter) {
+    // 필터를 선택하고 해당 카테고리로 스크롤
+    this.selectFilter(filter);
+    this.scrollToCategory(filter.getFilter());
   }
 }
 

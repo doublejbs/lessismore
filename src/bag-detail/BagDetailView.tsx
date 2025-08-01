@@ -1,7 +1,9 @@
 import { observer } from 'mobx-react-lite';
-import { FC, useEffect } from 'react';
+import { FC, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { FlipCounter } from '../bag-edit-add-gear/components/FlipCounter';
+import { useScrollBasedFilter } from '../hooks/useScrollBasedFilter';
+import GearFilter from '../warehouse/model/GearFilter';
 import BagDetailChartView from './BagDetailChartView';
 import BagDetailFiltersView from './BagDetailFiltersView';
 import BagDetailGearView from './BagDetailGearView';
@@ -16,6 +18,8 @@ interface Props {
 const BagDetailView: FC<Props> = ({ bagDetail }) => {
   const navigate = useNavigate();
   const initialized = bagDetail.isInitialized();
+  const { setCategoryRef, updateVisibility } = useScrollBasedFilter(bagDetail, initialized);
+  const observerRef = useRef<IntersectionObserver | null>(null);
 
   const handleClickAdd = () => {
     navigate(`/bag/${bagDetail.getId()}/edit`, { state: { from: `/bag/${bagDetail.getId()}` } });
@@ -24,6 +28,42 @@ const BagDetailView: FC<Props> = ({ bagDetail }) => {
   useEffect(() => {
     bagDetail.initialize();
   }, []);
+
+  useEffect(() => {
+    if (!initialized) return;
+
+    // IntersectionObserver 생성
+    observerRef.current = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          const categoryFilter = entry.target.getAttribute('data-category');
+          if (categoryFilter) {
+            updateVisibility(categoryFilter as GearFilter, entry.isIntersecting);
+          }
+        });
+      },
+      {
+        threshold: 0.1,
+        rootMargin: '-170px 0px 0px 0px',
+      }
+    );
+
+    return () => {
+      if (observerRef.current) {
+        observerRef.current.disconnect();
+      }
+    };
+  }, [initialized, updateVisibility]);
+
+  const setCategoryRefWithObserver = (categoryFilter: string, element: HTMLDivElement | null) => {
+    setCategoryRef(categoryFilter, element);
+    
+    if (observerRef.current) {
+      if (element) {
+        observerRef.current.observe(element);
+      }
+    }
+  };
 
   if (initialized) {
     const name = bagDetail.getName();
@@ -36,8 +76,7 @@ const BagDetailView: FC<Props> = ({ bagDetail }) => {
         style={{
           display: 'flex',
           flexDirection: 'column',
-          height: '100%',
-          overflowY: 'auto',
+          minHeight: '100vh',
         }}
       >
         <div
@@ -139,19 +178,47 @@ const BagDetailView: FC<Props> = ({ bagDetail }) => {
               padding: '0 1.25rem 0',
             }}
           >
-            <ul
+            <div
               style={{
                 display: 'flex',
                 flexDirection: 'column',
                 width: '100%',
-                gap: '16px',
+                gap: '24px',
                 paddingBottom: '5rem',
               }}
             >
-              {bagDetail.mapGears((gear) => {
-                return <BagDetailGearView key={gear.getId()} gear={gear} bagDetail={bagDetail} />;
-              })}
-            </ul>
+              {bagDetail.getGearsByCategory().map(({ category, gears }) => (
+                <div 
+                  key={category.getFilter()}
+                  ref={(el) => setCategoryRefWithObserver(category.getFilter(), el)}
+                  data-category={category.getFilter()}
+                >
+                  <div
+                    style={{
+                      fontSize: '1.125rem',
+                      fontWeight: 'bold',
+                      marginBottom: '12px',
+                      color: '#333',
+                      paddingBottom: '8px',
+                    }}
+                  >
+                    {category.getName()}
+                  </div>
+                  <ul
+                    style={{
+                      display: 'flex',
+                      flexDirection: 'column',
+                      width: '100%',
+                      gap: '16px',
+                    }}
+                  >
+                    {gears.map((gear) => (
+                      <BagDetailGearView key={gear.getId()} gear={gear} bagDetail={bagDetail} />
+                    ))}
+                  </ul>
+                </div>
+              ))}
+            </div>
           </div>
         <div
           style={{

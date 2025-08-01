@@ -1,13 +1,12 @@
+import { observer } from 'mobx-react-lite';
 import { FC } from 'react';
 import WarehouseFilter from '../warehouse/model/WarehouseFilter';
-import { observer } from 'mobx-react-lite';
-import OrderButtonView from '../order/OrderButtonView';
-import Order from '../order/Order';
+import FilterButtonView from './component/FilterButtonView';
 
 interface BagWithFilters {
-  getOrder: () => Order;
   toggleFilter: (filter: WarehouseFilter) => void;
-  mapFilters: <R>(callback: (filter: WarehouseFilter) => R) => R[];
+  toggleFilterWithScroll: (filter: WarehouseFilter) => void;
+  mapFiltersWithGears: <R>(callback: (filter: WarehouseFilter) => R) => R[];
 }
 
 interface Props {
@@ -15,12 +14,6 @@ interface Props {
 }
 
 const BagDetailFiltersView: FC<Props> = ({ bagDetail }) => {
-  const order = bagDetail.getOrder();
-
-  const handleClick = (filter: WarehouseFilter) => {
-    bagDetail.toggleFilter(filter);
-  };
-
   return (
     <div
       style={{
@@ -45,32 +38,16 @@ const BagDetailFiltersView: FC<Props> = ({ bagDetail }) => {
           scrollbarWidth: 'none',
         }}
       >
-        {bagDetail.mapFilters((filter) => {
+        {bagDetail.mapFiltersWithGears((filter) => {
           return (
-            <button
+            <FilterButtonView
               key={filter.getName()}
-              className={'clickable'}
-              style={{
-                height: '32px',
-                borderRadius: '22px',
-                fontSize: '14px',
-                padding: '8px 16px',
-                display: 'flex',
-                justifyContent: 'center',
-                alignItems: 'center',
-                flexDirection: 'column',
-                whiteSpace: 'nowrap',
-                backgroundColor: filter.isSelected() ? 'black' : '#EBEBEB',
-                color: filter.isSelected() ? 'white' : 'black',
-              }}
-              onClick={() => handleClick(filter)}
-            >
-              {filter.getName()}
-            </button>
+              filter={filter}
+              bagDetail={bagDetail}
+            />
           );
         })}
       </div>
-      <OrderButtonView order={order} />
     </div>
   );
 };

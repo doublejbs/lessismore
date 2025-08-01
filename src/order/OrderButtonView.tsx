@@ -1,7 +1,6 @@
+import { observer } from 'mobx-react-lite';
 import Order from './Order.ts';
 import OrderOption from './OrderOption.ts';
-import OrderType from './OrderType.ts';
-import { observer } from 'mobx-react-lite';
 
 interface Props {
   order: Order;
