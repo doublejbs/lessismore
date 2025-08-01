@@ -1,11 +1,12 @@
 import dayjs from 'dayjs';
-import { FC, useState, useEffect } from 'react';
+import { FC, useEffect, useState } from 'react';
 
 interface DateRangeCalendarProps {
   startDate: dayjs.Dayjs | null;
   endDate: dayjs.Dayjs | null;
   onStartDateChange: (date: dayjs.Dayjs) => void;
   onEndDateChange: (date: dayjs.Dayjs | null) => void;
+  initialMonth?: dayjs.Dayjs;
 }
 
 const DateRangeCalendar: FC<DateRangeCalendarProps> = ({
@@ -13,8 +14,11 @@ const DateRangeCalendar: FC<DateRangeCalendarProps> = ({
   endDate,
   onStartDateChange,
   onEndDateChange,
+  initialMonth,
 }) => {
-  const [currentMonth, setCurrentMonth] = useState(dayjs().startOf('month'));
+  const [currentMonth, setCurrentMonth] = useState(
+    initialMonth ? initialMonth.startOf('month') : dayjs().startOf('month')
+  );
   const [calendarDays, setCalendarDays] = useState<dayjs.Dayjs[]>([]);
   const weekdays = ['일', '월', '화', '수', '목', '금', '토'];
 
