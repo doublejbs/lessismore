@@ -1,13 +1,13 @@
 import { observer } from 'mobx-react-lite';
-import { FC, useEffect, useRef } from 'react';
+import { FC, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { FlipCounter } from '../bag-edit-add-gear/components/FlipCounter';
 import { useScrollBasedFilter } from '../hooks/useScrollBasedFilter';
 import GearFilter from '../warehouse/model/GearFilter';
+import BagDetailCategoryView from './BagDetailCategoryView';
 import BagDetailChartView from './BagDetailChartView';
 import BagDetailDateView from './BagDetailDateView';
 import BagDetailFiltersView from './BagDetailFiltersView';
-import BagDetailGearView from './BagDetailGearView';
 import BagDetailNameView from './BagDetailNameView';
 import BagDetailUselessDescriptionView from './BagDetailUselessDescriptionView';
 import ShareButtonView from './component/ShareButtonView';
@@ -21,7 +21,7 @@ const BagDetailView: FC<Props> = ({ bagDetail }) => {
   const navigate = useNavigate();
   const initialized = bagDetail.isInitialized();
   const { setCategoryRef, updateVisibility } = useScrollBasedFilter(bagDetail, initialized);
-  const observerRef = useRef<IntersectionObserver | null>(null);
+  const [observer, setObserver] = useState<IntersectionObserver | null>(null);
 
   const handleClickAdd = () => {
     navigate(`/bag/${bagDetail.getId()}/edit`, { state: { from: `/bag/${bagDetail.getId()}` } });
@@ -34,8 +34,7 @@ const BagDetailView: FC<Props> = ({ bagDetail }) => {
   useEffect(() => {
     if (!initialized) return;
 
-    // IntersectionObserver 생성
-    observerRef.current = new IntersectionObserver(
+    const newObserver = new IntersectionObserver(
       (entries) => {
         entries.forEach((entry) => {
           const categoryFilter = entry.target.getAttribute('data-category');
@@ -50,22 +49,14 @@ const BagDetailView: FC<Props> = ({ bagDetail }) => {
       }
     );
 
+    setObserver(newObserver);
+
     return () => {
-      if (observerRef.current) {
-        observerRef.current.disconnect();
+      if (observer) {
+        observer.disconnect();
       }
     };
   }, [initialized, updateVisibility]);
-
-  const setCategoryRefWithObserver = (categoryFilter: string, element: HTMLDivElement | null) => {
-    setCategoryRef(categoryFilter, element);
-    
-    if (observerRef.current) {
-      if (element) {
-        observerRef.current.observe(element);
-      }
-    }
-  };
 
   if (initialized) {
     const weight = bagDetail.getWeight();
@@ -168,35 +159,7 @@ const BagDetailView: FC<Props> = ({ bagDetail }) => {
               }}
             >
               {bagDetail.getGearsByCategory().map(({ category, gears }) => (
-                <div 
-                  key={category.getFilter()}
-                  ref={(el) => setCategoryRefWithObserver(category.getFilter(), el)}
-                  data-category={category.getFilter()}
-                >
-                  <div
-                    style={{
-                      fontSize: '1.125rem',
-                      fontWeight: 'bold',
-                      marginBottom: '12px',
-                      color: '#333',
-                      paddingBottom: '8px',
-                    }}
-                  >
-                    {category.getName()}
-                  </div>
-                  <ul
-                    style={{
-                      display: 'flex',
-                      flexDirection: 'column',
-                      width: '100%',
-                      gap: '16px',
-                    }}
-                  >
-                    {gears.map((gear) => (
-                      <BagDetailGearView key={gear.getId()} gear={gear} bagDetail={bagDetail} />
-                    ))}
-                  </ul>
-                </div>
+                <BagDetailCategoryView key={category.getFilter()} category={category} bagDetail={bagDetail} setCategoryRef={setCategoryRef} observer={observer} gears={gears}/>
               ))}
             </div>
           </div>
