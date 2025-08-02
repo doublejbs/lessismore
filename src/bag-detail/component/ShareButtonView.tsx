@@ -1,7 +1,7 @@
+import { observer } from 'mobx-react-lite';
 import { FC, useState } from 'react';
 import usePreventScroll from '../../hooks/usePreventScroll';
 import BagDetail from '../model/BagDetail';
-import { observer } from 'mobx-react-lite';
 
 interface Props {
   bagDetail: BagDetail;
@@ -68,10 +68,10 @@ const ShareButtonView: FC<Props> = ({ bagDetail }) => {
           alignItems: 'center',
           justifyContent: 'center',
           position: 'absolute',
-          right: '0.5rem',
-          top: '0',
+          right: '0',
+          top: '0.3rem',
           cursor: 'pointer',
-          padding: '0.5rem',
+          padding: '1rem',
         }}
         onClick={handleShareButtonClick}
       >
