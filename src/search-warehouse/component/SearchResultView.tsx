@@ -1,9 +1,9 @@
-import React, { FC } from 'react';
+import { observer } from 'mobx-react-lite';
+import { FC } from 'react';
+import LoadingView from '../../LoadingView';
 import SearchWarehouse from '../model/SearchWarehouse';
 import InfinityScroll from './InfinityScroll';
 import SearchGearView from './SearchGearView';
-import LoadingView from '../../LoadingView';
-import { observer } from 'mobx-react-lite';
 
 interface Props {
   searchWarehouse: SearchWarehouse;
@@ -43,7 +43,7 @@ const SearchResultView: FC<Props> = ({ searchWarehouse }) => {
                 hasMore={canLoadMore}
               >
                 {result.map((gear) => (
-                  <SearchGearView
+                  <SearchGearView 
                     key={gear.getId()}
                     gear={gear}
                     searchWarehouse={searchWarehouse}

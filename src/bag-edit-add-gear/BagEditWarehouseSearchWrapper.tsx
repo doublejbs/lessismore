@@ -1,9 +1,9 @@
-import { FC } from 'react';
-import BagEdit from './model/BagEdit';
 import { observer } from 'mobx-react-lite';
-import SearchResultView from '../search-warehouse/component/SearchResultView';
-import SearchBottomView from '../search-warehouse/component/SearchBottomView';
+import { FC } from 'react';
 import SearchBarView from '../search-warehouse/component/SearchBarView';
+import SearchBottomView from '../search-warehouse/component/SearchBottomView';
+import SearchResultView from '../search-warehouse/component/SearchResultView';
+import BagEdit from './model/BagEdit';
 
 interface Props {
   bagEdit: BagEdit;
@@ -21,7 +21,7 @@ const BagEditWarehouseSearchWrapper: FC<Props> = ({ bagEdit }) => {
     <div
       style={{
         backgroundColor: 'white',
-        height: '90%',
+        height: '90vh',
         position: 'relative',
         borderRadius: '10px 10px 0 0',
         zIndex: 12,

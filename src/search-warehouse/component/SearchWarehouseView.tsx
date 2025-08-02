@@ -1,9 +1,9 @@
+import { observer } from 'mobx-react-lite';
 import React, { FC } from 'react';
 import SearchWarehouse from '../model/SearchWarehouse';
-import { observer } from 'mobx-react-lite';
 import SearchBarView from './SearchBarView';
-import SearchResultView from './SearchResultView';
 import SearchBottomView from './SearchBottomView';
+import SearchResultView from './SearchResultView';
 
 interface Props {
   searchWarehouse: SearchWarehouse;
@@ -11,14 +11,12 @@ interface Props {
 }
 
 const SearchWarehouseView: FC<Props> = ({ searchWarehouse }) => {
-  const selectedCount = searchWarehouse.getSelectedCount();
-
   return (
     <div
       style={{
         display: 'flex',
         flexDirection: 'column',
-        height: '100%',
+        height: '100vh',
         width: '100%',
         paddingTop: '16px',
         overflowY: 'hidden',
