@@ -1,5 +1,5 @@
 import { observer } from 'mobx-react-lite';
-import { FC, useRef } from 'react';
+import { FC, useEffect, useRef } from 'react';
 import WarehouseFilter from '../../warehouse/model/WarehouseFilter';
 
 interface BagWithFilters {
@@ -15,8 +15,17 @@ const FilterButtonView: FC<Props> = ({ filter, bagDetail }) => {
   const isSelected = filter.isSelected();
   const ref = useRef<HTMLButtonElement>(null);
 
+  useEffect(() => {
+    if (isSelected) {
+      ref.current?.scrollIntoView({ 
+        behavior: 'smooth', 
+        block: 'nearest', 
+        inline: 'center' 
+      });
+    }
+  }, [isSelected]);
+
   const handleClick = () => {
-    ref.current?.scrollIntoView({ behavior: 'smooth' });
     bagDetail.toggleFilterWithScroll(filter);
   };
 
