@@ -1,27 +1,27 @@
+import { observer } from 'mobx-react-lite';
 import { useEffect, useState } from 'react';
-import { Route, Routes, useNavigate, useLocation } from 'react-router-dom';
+import { Route, Routes, useLocation, useNavigate } from 'react-router-dom';
+import AdminView from './AdminView.tsx';
 import './App.css';
+import app from './App.ts';
+import LoadingView from './LoadingView.tsx';
 import LogIn from './LogIn.tsx';
 import TermsAgreement from './TermsAgreement.tsx';
-import { observer } from 'mobx-react-lite';
-import app from './App.ts';
-import WarehouseWrapper from './warehouse/component/WarehouseWrapper.tsx';
-import AdminView from './AdminView.tsx';
-import LoadingView from './LoadingView.tsx';
-import BagView from './bag/component/BagView';
-import BagEditAddGearView from './bag-edit-add-gear/BagEditView.tsx';
 import AlertView from './alert/AlertView';
-import CustomGearWrapper from './custom-gear/component/CustomGearWrapper';
-import WarehouseDetailWrapper from './warehouse-detail/component/WarehouseDetailWrapper';
-import GearEditWrapperView from './gear-edit/component/GearEditWrapperView';
-import BagUselessView from './bag-useless/component/BagUselessView';
-import BagDetailWrapper from './bag-detail/BagDetailWrapper.tsx';
 import LogInView from './alert/login/LogInView';
-import ManageView from './manage/ManageView';
-import InfoView from './info/InfoView';
-import SearchWarehouseWrapper from './search-warehouse/component/SearchWarehouseWrapper.tsx';
-import OpenBrowserView from './open-browser/OpenBrowserView.tsx';
+import BagDetailWrapper from './bag-detail/BagDetailWrapper.tsx';
+import BagEditAddGearView from './bag-edit-add-gear/BagEditView.tsx';
 import BagShareWrapper from './bag-share/component/BagShareWrapper.tsx';
+import BagUselessView from './bag-useless/component/BagUselessView';
+import BagView from './bag/component/BagView';
+import CustomGearWrapper from './custom-gear/component/CustomGearWrapper';
+import GearEditWrapperView from './gear-edit/component/GearEditWrapperView';
+import InfoView from './info/InfoView';
+import ManageView from './manage/ManageView';
+import OpenBrowserView from './open-browser/OpenBrowserView.tsx';
+import SearchWarehouseWrapper from './search-warehouse/component/SearchWarehouseWrapper.tsx';
+import WarehouseDetailWrapper from './warehouse-detail/component/WarehouseDetailWrapper';
+import WarehouseWrapper from './warehouse/component/WarehouseWrapper.tsx';
 
 const ROUTES = [
   {
@@ -126,7 +126,7 @@ const App = () => {
         }}
       >
         <p>
-          👉 우측 상단 <strong>•••</strong> → <strong>"브라우저에서 열기"</strong>를 눌러주세요.
+          👉 우측 상단 <strong>•••</strong> → <strong>&quot;외부 브라우저에서 열기&quot;</strong>를 눌러주세요.
         </p>
       </div>
     );
@@ -147,7 +147,11 @@ const App = () => {
       </>
     );
   } else {
-    return <LoadingView />;
+    return (
+      <div style={{ height: '100vh' }}>
+        <LoadingView />
+      </div>
+    );
   }
 };
 

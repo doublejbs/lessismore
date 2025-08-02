@@ -1,8 +1,8 @@
 import { FC } from 'react';
-import BagEdit from './model/BagEdit';
 import BagEditWarehouseAddMenuView from './BagEditWarehouseAddMenuView';
-import BagEditWarehouseSearchWrapper from './BagEditWarehouseSearchWrapper';
 import BagEditWarehouseCustomGearWrapper from './BagEditWarehouseCustomGearWrapper';
+import BagEditWarehouseSearchWrapper from './BagEditWarehouseSearchWrapper';
+import BagEdit from './model/BagEdit';
 
 interface Props {
   bagEdit: BagEdit;
@@ -21,7 +21,7 @@ const BagEditWarehouseAddView: FC<Props> = ({ bagEdit, onHideMenu }) => {
         top: 0,
         left: 0,
         width: '100%',
-        height: '100%',
+        height: '100vh',
         backgroundColor: 'rgba(0, 0, 0, 0.5)',
         display: 'flex',
         flexDirection: 'column',
