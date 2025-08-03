@@ -7,7 +7,7 @@ const WarehouseEmptyView: FC = () => {
   const handleClick = () => {};
 
   return (
-    <Layout>
+    <Layout vh={true}>
       <div
         style={{
           display: 'flex',
