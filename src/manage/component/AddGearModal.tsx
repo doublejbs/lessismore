@@ -106,12 +106,7 @@ const AddGearModal: React.FC<AddGearModalProps> = ({ open, onClose, manager }) =
             </div>
           )}
         </Form.Item>
-        <Form.Item
-          name='weight'
-          label='무게'
-          rules={[{ type: 'number', message: '무게는 숫자여야 합니다.' }]}
-          initialValue={0}
-        >
+        <Form.Item name='weight' label='무게' initialValue={0}>
           <Input />
         </Form.Item>
         <Form.Item

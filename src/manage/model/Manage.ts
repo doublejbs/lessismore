@@ -1,6 +1,7 @@
 import { makeAutoObservable } from 'mobx';
 import ManageStore from '../store/ManageStore';
 import ManagerGear from './ManagerGear';
+import { v4 as uuidv4 } from 'uuid';
 
 class Manage {
   public static new() {
@@ -94,14 +95,11 @@ class Manage {
     if (
       updateFields.imageUrl &&
       updateFields.name &&
+      updateFields.imageUrl.length > 0 &&
       updateFields.imageUrl.includes('https://') &&
       !updateFields.imageUrl.includes('googleapis.com')
     ) {
-      const imageUrl = await this.uploadAndUpdateImageUrl(
-        id,
-        updateFields.imageUrl,
-        updateFields.name
-      );
+      const imageUrl = await this.uploadAndUpdateImageUrl(id, updateFields.imageUrl, uuidv4());
       if (imageUrl) {
         updateFields.imageUrl = imageUrl;
       }
