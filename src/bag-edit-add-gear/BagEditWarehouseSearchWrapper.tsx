@@ -21,19 +21,21 @@ const BagEditWarehouseSearchWrapper: FC<Props> = ({ bagEdit }) => {
     <div
       style={{
         backgroundColor: 'white',
-        height: '90vh',
+        height: '90%',
         position: 'relative',
         borderRadius: '10px 10px 0 0',
         zIndex: 12,
         display: 'flex',
         flexDirection: 'column',
-        overflowY: 'hidden',
-        paddingTop: '16px',
+        overflowY: 'auto',
+        paddingBottom: '80px',
       }}
       onClick={(e) => e.stopPropagation()}
     >
       <SearchBarView searchWarehouse={bagEditSearch} />
-      <SearchResultView searchWarehouse={bagEditSearch} />
+      <SearchResultView searchWarehouse={bagEditSearch}>
+        {<div style={{ minHeight: bagEditSearch.hasSelected() ? '180px' : '80px' }}></div>}
+      </SearchResultView>
       <SearchBottomView searchWarehouse={bagEditSearch} />
     </div>
   );

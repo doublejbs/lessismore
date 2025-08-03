@@ -3,6 +3,7 @@ import { observer } from 'mobx-react-lite';
 import { FC, useState } from 'react';
 import DateRangeCalendar from '../bag/component/DateRangeCalendar';
 import BagDetail from './model/BagDetail';
+import usePreventScroll from '../hooks/usePreventScroll';
 
 interface Props {
   bagDetail: BagDetail;
@@ -13,6 +14,8 @@ const BagDetailDateView: FC<Props> = ({ bagDetail }) => {
   const [startDate, setStartDate] = useState<dayjs.Dayjs | null>(null);
   const [endDate, setEndDate] = useState<dayjs.Dayjs | null>(null);
   const [isUpdating, setIsUpdating] = useState(false);
+
+  usePreventScroll(isModalOpen);
 
   const handleDateClick = () => {
     setStartDate(bagDetail.getStartDate());
@@ -33,10 +36,7 @@ const BagDetailDateView: FC<Props> = ({ bagDetail }) => {
 
     try {
       setIsUpdating(true);
-      await bagDetail.updateDates(
-        startDate.toISOString(),
-        endDate.toISOString()
-      );
+      await bagDetail.updateDates(startDate.toISOString(), endDate.toISOString());
       setIsModalOpen(false);
     } catch (error) {
       console.error('Failed to update dates:', error);
@@ -80,26 +80,26 @@ const BagDetailDateView: FC<Props> = ({ bagDetail }) => {
       >
         <span>{bagDetail.getDate()}</span>
         <svg
-          width="16"
-          height="16"
-          viewBox="0 0 24 24"
-          fill="none"
-          xmlns="http://www.w3.org/2000/svg"
+          width='16'
+          height='16'
+          viewBox='0 0 24 24'
+          fill='none'
+          xmlns='http://www.w3.org/2000/svg'
           style={{ opacity: 0.5 }}
         >
           <path
-            d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"
-            stroke="currentColor"
-            strokeWidth="2"
-            strokeLinecap="round"
-            strokeLinejoin="round"
+            d='M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7'
+            stroke='currentColor'
+            strokeWidth='2'
+            strokeLinecap='round'
+            strokeLinejoin='round'
           />
           <path
-            d="m18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"
-            stroke="currentColor"
-            strokeWidth="2"
-            strokeLinecap="round"
-            strokeLinejoin="round"
+            d='m18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z'
+            stroke='currentColor'
+            strokeWidth='2'
+            strokeLinecap='round'
+            strokeLinejoin='round'
           />
         </svg>
       </div>
@@ -153,7 +153,7 @@ const BagDetailDateView: FC<Props> = ({ bagDetail }) => {
             >
               여행 시작일과 종료일을 선택해주세요
             </div>
-            
+
             <div style={{ marginBottom: '20px' }}>
               <DateRangeCalendar
                 startDate={startDate}
@@ -213,4 +213,4 @@ const BagDetailDateView: FC<Props> = ({ bagDetail }) => {
   );
 };
 
-export default observer(BagDetailDateView); 
+export default observer(BagDetailDateView);
