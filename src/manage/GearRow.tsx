@@ -72,6 +72,7 @@ const GearRow: React.FC<GearRowProps> = ({ gear, manage }) => {
     setLoading(true);
     const newValues = { ...values };
     if (file) {
+      console.log('file', file);
       setUploading(true);
       try {
         const safe = (v: string = '') => v.replace(/[^a-zA-Z0-9가-힣]/g, '_');
