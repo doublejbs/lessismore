@@ -1,4 +1,4 @@
-import React, { FC } from 'react';
+import React, { FC, useRef, useEffect } from 'react';
 import SearchWarehouse from '../model/SearchWarehouse';
 import { observer } from 'mobx-react-lite';
 
@@ -8,6 +8,8 @@ interface Props {
 
 const SearchBarView: FC<Props> = ({ searchWarehouse }) => {
   const keyword = searchWarehouse.getKeyword();
+  const inputRef = useRef<HTMLInputElement>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     searchWarehouse.changeKeyword(e.target.value);
@@ -21,8 +23,35 @@ const SearchBarView: FC<Props> = ({ searchWarehouse }) => {
     searchWarehouse.back();
   };
 
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (
+        containerRef.current &&
+        !containerRef.current.contains(event.target as Node) &&
+        inputRef.current
+      ) {
+        inputRef.current.blur();
+      }
+    };
+
+    const handleScroll = () => {
+      if (inputRef.current) {
+        inputRef.current.blur();
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    document.addEventListener('scroll', handleScroll, true);
+
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+      document.removeEventListener('scroll', handleScroll, true);
+    };
+  }, []);
+
   return (
     <div
+      ref={containerRef}
       style={{
         paddingLeft: '10px',
         paddingRight: '20px',
@@ -72,6 +101,7 @@ const SearchBarView: FC<Props> = ({ searchWarehouse }) => {
         }}
       >
         <input
+          ref={inputRef}
           className='no-outline'
           style={{
             appearance: 'none',

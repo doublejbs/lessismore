@@ -9,8 +9,6 @@ interface Props {
 }
 
 const SearchBottomView: FC<Props> = ({ searchWarehouse }) => {
-  const selectedCount = searchWarehouse.getSelectedCount();
-
   return (
     <div
       style={{
