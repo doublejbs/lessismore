@@ -91,6 +91,22 @@ class Manage {
   }
 
   public async updateGear(id: string, updateFields: Partial<ManagerGear>) {
+    if (
+      updateFields.imageUrl &&
+      updateFields.name &&
+      updateFields.imageUrl.includes('https://') &&
+      !updateFields.imageUrl.includes('googleapis.com')
+    ) {
+      const imageUrl = await this.uploadAndUpdateImageUrl(
+        id,
+        updateFields.imageUrl,
+        updateFields.name
+      );
+      if (imageUrl) {
+        updateFields.imageUrl = imageUrl;
+      }
+    }
+
     await this.manageStore.updateGear(id, updateFields);
     this.items = this.items.map((item) => (item.id === id ? { ...item, ...updateFields } : item));
   }

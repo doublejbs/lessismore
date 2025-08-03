@@ -74,6 +74,8 @@ class ManageStore {
             imageUrl: hit.imageUrl,
             color: hit.color,
             nameKorean: hit.nameKorean || '',
+            secondaryCategory: hit.secondaryCategory,
+            tertiaryCategory: hit.tertiaryCategory,
           })
       );
       // 프론트엔드에서 정렬 적용
@@ -139,6 +141,8 @@ class ManageStore {
           imageUrl: data.imageUrl,
           color: data.color,
           nameKorean: data.nameKorean || '',
+          secondaryCategory: data.secondaryCategory,
+          tertiaryCategory: data.tertiaryCategory,
         });
       });
       const lastDoc = snap.docs.length > 0 ? snap.docs[snap.docs.length - 1] : null;

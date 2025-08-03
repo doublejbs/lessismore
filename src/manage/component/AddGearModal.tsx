@@ -33,6 +33,7 @@ const AddGearModal: React.FC<AddGearModalProps> = ({ open, onClose, manager }) =
       setPreviewUrl(null);
       message.success('장비가 추가되었습니다.');
     } catch (e) {
+      console.error(e);
       // validation 실패
     } finally {
       setUploading(false);
@@ -79,7 +80,11 @@ const AddGearModal: React.FC<AddGearModalProps> = ({ open, onClose, manager }) =
         >
           <Input />
         </Form.Item>
-        <Form.Item name='companyKorean' label='회사(한글)'>
+        <Form.Item
+          name='companyKorean'
+          label='회사(한글)'
+          rules={[{ required: true, message: '회사(한글)을 입력하세요.' }]}
+        >
           <Input />
         </Form.Item>
         <Form.Item label='이미지 파일'>
@@ -101,13 +106,22 @@ const AddGearModal: React.FC<AddGearModalProps> = ({ open, onClose, manager }) =
             </div>
           )}
         </Form.Item>
-        <Form.Item name='weight' label='무게'>
+        <Form.Item
+          name='weight'
+          label='무게'
+          rules={[{ type: 'number', message: '무게는 숫자여야 합니다.' }]}
+          initialValue={0}
+        >
           <Input />
         </Form.Item>
-        <Form.Item name='category' label='카테고리'>
+        <Form.Item
+          name='category'
+          label='카테고리'
+          rules={[{ required: true, message: '카테고리를 입력하세요.' }]}
+        >
           <Input />
         </Form.Item>
-        <Form.Item name='color' label='색상'>
+        <Form.Item name='color' label='색상' initialValue=''>
           <Input />
         </Form.Item>
       </Form>
