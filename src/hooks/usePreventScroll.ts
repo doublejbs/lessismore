@@ -8,9 +8,19 @@ const usePreventScroll = (isPrevent: boolean, preventScrollEvent: boolean = true
       // html, body 모두에 스크롤 방지 적용
       document.documentElement.style.cssText = `
         overflow: hidden;
+        position: fixed;
+        top: -${scrollY}px;
+        left: 0;
+        right: 0;
+        width: 100%;
       `;
       document.body.style.cssText = `
         overflow: hidden;
+        position: fixed;
+        top: -${scrollY}px;
+        left: 0;
+        right: 0;
+        width: 100%;
       `;
 
       // 터치 이벤트 방지 (모바일)
