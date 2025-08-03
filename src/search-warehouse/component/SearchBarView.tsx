@@ -29,7 +29,14 @@ const SearchBarView: FC<Props> = ({ searchWarehouse }) => {
         display: 'flex',
         gap: '12px',
         width: '100%',
-        height: '48px',
+        height: '80px',
+        position: 'sticky',
+        top: 0,
+        left: 0,
+        zIndex: 10,
+        backgroundColor: 'white',
+        paddingTop: '16px',
+        paddingBottom: '16px',
       }}
     >
       <div

@@ -194,6 +194,10 @@ class SearchWarehouse {
     this.setKeyword('');
   }
 
+  public hasSelected() {
+    return this.selected.length > 0;
+  }
+
   public getSelectedCount() {
     return this.selected.length;
   }

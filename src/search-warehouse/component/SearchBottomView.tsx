@@ -1,8 +1,8 @@
 import { FC } from 'react';
 import SearchWarehouse from '../model/SearchWarehouse';
 import SearchConfirmView from './SearchConfirmView';
-import SearchSelectedView from './SearchSelectedView';
 import { observer } from 'mobx-react-lite';
+import SearchSelectedView from './SearchSelectedView';
 
 interface Props {
   searchWarehouse: SearchWarehouse;
@@ -17,9 +17,12 @@ const SearchBottomView: FC<Props> = ({ searchWarehouse }) => {
         display: 'flex',
         flexDirection: 'column',
         width: '100%',
-        height: 'fit-content',
         backgroundColor: 'white',
         gap: '4px',
+        position: 'fixed',
+        bottom: 0,
+        left: 0,
+        zIndex: 10,
       }}
     >
       <SearchSelectedView searchWarehouse={searchWarehouse} />

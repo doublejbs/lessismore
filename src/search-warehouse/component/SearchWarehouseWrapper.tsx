@@ -13,7 +13,6 @@ const SearchWarehouseWrapper: FC = () => {
     <div
       style={{
         height: '100%',
-        overflowY: 'hidden',
       }}
     >
       <SearchWarehouseView searchWarehouse={searchWarehouse} />

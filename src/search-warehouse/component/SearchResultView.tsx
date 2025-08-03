@@ -7,14 +7,16 @@ import SearchGearView from './SearchGearView';
 
 interface Props {
   searchWarehouse: SearchWarehouse;
+  children?: React.ReactNode;
 }
 
-const SearchResultView: FC<Props> = ({ searchWarehouse }) => {
+const SearchResultView: FC<Props> = ({ searchWarehouse, children }) => {
   const keyword = searchWarehouse.getKeyword();
   const isEmpty = searchWarehouse.isEmpty();
   const canLoadMore = searchWarehouse.canLoadMore();
   const isLoading = searchWarehouse.isLoading();
   const result = searchWarehouse.getResult();
+  const hasSelected = searchWarehouse.hasSelected();
 
   const handleLoadMore = () => {
     searchWarehouse.searchMore();
@@ -37,19 +39,16 @@ const SearchResultView: FC<Props> = ({ searchWarehouse }) => {
                 flexDirection: 'column',
               }}
             >
-              <InfinityScroll
-                loadMore={handleLoadMore}
-                isLoading={isLoading}
-                hasMore={canLoadMore}
-              >
+              <InfinityScroll loadMore={handleLoadMore} isLoading={isLoading} hasMore={canLoadMore}>
                 {result.map((gear) => (
-                  <SearchGearView 
+                  <SearchGearView
                     key={gear.getId()}
                     gear={gear}
                     searchWarehouse={searchWarehouse}
                   />
                 ))}
               </InfinityScroll>
+              {children}
             </ul>
             {isLoading && (
               <div
@@ -70,9 +69,10 @@ const SearchResultView: FC<Props> = ({ searchWarehouse }) => {
     <div
       style={{
         height: '100%',
-        overflowY: 'auto',
         transform: 'translateZ(0)',
-        padding: '0 20px',
+        paddingRight: '20px',
+        paddingLeft: '20px',
+        paddingBottom: hasSelected ? '180px' : '80px',
       }}
     >
       {render()}

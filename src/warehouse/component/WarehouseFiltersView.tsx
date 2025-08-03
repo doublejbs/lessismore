@@ -20,6 +20,10 @@ const WarehouseFiltersView: FC<Props> = ({ warehouse }) => {
         display: 'flex',
         gap: '4px',
         alignItems: 'center',
+        position: 'sticky',
+        top: 0,
+        zIndex: 10,
+        backgroundColor: 'white',
       }}
     >
       <div
