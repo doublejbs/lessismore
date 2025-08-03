@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 
-const usePreventScroll = (isPrevent: boolean) => {
+const usePreventScroll = (isPrevent: boolean, preventScrollEvent: boolean = true) => {
   useEffect(() => {
     if (isPrevent) {
       const scrollY = window.scrollY;
@@ -8,18 +8,9 @@ const usePreventScroll = (isPrevent: boolean) => {
       // html, body 모두에 스크롤 방지 적용
       document.documentElement.style.cssText = `
         overflow: hidden;
-        position: fixed;
-        top: -${scrollY}px;
-        left: 0;
-        right: 0;
       `;
       document.body.style.cssText = `
         overflow: hidden;
-        width: 100%;
-        position: fixed;
-        top: -${scrollY}px;
-        left: 0;
-        right: 0;
       `;
 
       // 터치 이벤트 방지 (모바일)
@@ -32,8 +23,10 @@ const usePreventScroll = (isPrevent: boolean) => {
         e.preventDefault();
       };
 
-      document.addEventListener('touchmove', preventTouch, { passive: false });
-      document.addEventListener('wheel', preventWheel, { passive: false });
+      if (preventScrollEvent) {
+        document.addEventListener('touchmove', preventTouch, { passive: false });
+        document.addEventListener('wheel', preventWheel, { passive: false });
+      }
 
       return () => {
         document.documentElement.style.cssText = '';

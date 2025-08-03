@@ -110,7 +110,7 @@ const BagDetailGearView: FC<Props> = ({ gear, bagDetail }) => {
               <div>
                 <div
                   style={{
-                    fontSize: '10px',
+                    fontSize: '12px',
                     display: 'flex',
                     alignItems: 'center',
                     gap: '6px',
@@ -135,10 +135,14 @@ const BagDetailGearView: FC<Props> = ({ gear, bagDetail }) => {
                 <div className={'text-ellipsis'} style={{ fontWeight: 'bold', fontSize: '14px' }}>
                   <span>{gear.getName()}</span>
                 </div>
+                <div style={{ fontSize: '14px' }}>
+                  <span>{gear.getColor()}</span>
+                </div>
               </div>
               <div
                 style={{
                   fontSize: '14px',
+                  fontWeight: 'bold',
                 }}
               >
                 <span>{gear.getWeight()}g</span>

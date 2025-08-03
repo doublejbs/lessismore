@@ -48,7 +48,6 @@ const GearView: FC<Props> = ({ gear, children, onClick }) => {
           display: 'flex',
           flexDirection: 'column',
           overflow: 'hidden',
-          paddingTop: '3px',
           flexGrow: 1,
         }}
       >
@@ -118,6 +117,13 @@ const GearView: FC<Props> = ({ gear, children, onClick }) => {
                   }}
                 >
                   {gear.getName()}
+                </div>
+                <div
+                  style={{
+                    fontSize: '14px',
+                  }}
+                >
+                  {gear.getColor()}
                 </div>
               </div>
               <div
