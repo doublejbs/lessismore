@@ -24,8 +24,10 @@ const UploadButton: React.FC<UploadButtonProps> = ({ imageUrl, name, id, manage 
   };
 
   return (
-    <Button type="primary" onClick={handleUpload}>업로드</Button>
+    <Button type='primary' onClick={handleUpload}>
+      이미지 서버로 업로드
+    </Button>
   );
 };
 
-export default UploadButton; 
+export default UploadButton;

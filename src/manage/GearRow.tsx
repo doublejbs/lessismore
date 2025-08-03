@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Button, Space, Input, Checkbox } from 'antd';
+import { Button, Space, Input, Checkbox, message } from 'antd';
 import NameCell from './columns/NameCell';
 import CompanyCell from './columns/CompanyCell';
 import CompanyKoreanCell from './columns/CompanyKoreanCell';
@@ -17,6 +17,8 @@ interface GearRowProps {
     companyKorean: string;
     weight: string;
     category: string;
+    secondaryCategory?: string;
+    tertiaryCategory?: string;
     createDate: number;
     imageUrl?: string;
     color?: string;
@@ -82,6 +84,7 @@ const GearRow: React.FC<GearRowProps> = ({ gear, manage }) => {
       }
     }
     await manage.updateGear(gear.id, newValues);
+    message.success('저장되었습니다.');
     setLoading(false);
     setEditing(false);
     setFile(null);
@@ -241,6 +244,20 @@ const GearRow: React.FC<GearRowProps> = ({ gear, manage }) => {
         <CategoryCell
           value={values.category}
           onChange={(v) => handleChange('category', v)}
+          editing={editing}
+        />
+      </td>
+      <td>
+        <CategoryCell
+          value={values.secondaryCategory || ''}
+          onChange={(v) => handleChange('secondaryCategory', v)}
+          editing={editing}
+        />
+      </td>
+      <td>
+        <CategoryCell
+          value={values.tertiaryCategory || ''}
+          onChange={(v) => handleChange('tertiaryCategory', v)}
           editing={editing}
         />
       </td>

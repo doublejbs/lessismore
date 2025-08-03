@@ -15,6 +15,8 @@ interface RowType {
   companyKorean: string;
   weight: string;
   category: string;
+  secondaryCategory?: string;
+  tertiaryCategory?: string;
   createDate: number;
   imageUrl?: string;
   color?: string;
@@ -137,7 +139,7 @@ const ManageView = () => {
         if (rowKey === 'loader') {
           return (
             <tr>
-              <td colSpan={9} style={{ textAlign: 'center', padding: 16 }}>
+              <td colSpan={11} style={{ textAlign: 'center', padding: 16 }}>
                 <div ref={loaderRef}>
                   <Spin />
                 </div>
@@ -296,6 +298,18 @@ const ManageView = () => {
       title: '카테고리',
       dataIndex: 'category',
       key: 'category',
+      sorter: true,
+    },
+    {
+      title: '2차 카테고리',
+      dataIndex: 'secondaryCategory',
+      key: 'secondaryCategory',
+      sorter: true,
+    },
+    {
+      title: '3차 카테고리',
+      dataIndex: 'tertiaryCategory',
+      key: 'tertiaryCategory',
       sorter: true,
     },
     {
