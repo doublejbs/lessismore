@@ -1,13 +1,27 @@
 import { FC, useRef } from 'react';
 import SearchWarehouse from '../model/SearchWarehouse';
+import { josa } from 'josa';
 
 interface Props {
   searchWarehouse: SearchWarehouse;
 }
 
+const SuggestionKeywords = [
+  '니모',
+  '하이퍼라이트마운틴기어',
+  '야마토미치',
+  '코오롱스포츠',
+  '아크테릭스',
+  '케일',
+  '랩',
+  '꼴로르',
+  '헬리녹스',
+];
+
 const SearchBarInputView: FC<Props> = ({ searchWarehouse }) => {
   const keyword = searchWarehouse.getKeyword();
   const inputRef = useRef<HTMLInputElement>(null);
+  const placeholder = `${josa(`'${SuggestionKeywords[Math.floor(Math.random() * SuggestionKeywords.length)]}'#{으로}`)} 검색해보세요.`;
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     searchWarehouse.changeKeyword(e.target.value);
@@ -50,7 +64,7 @@ const SearchBarInputView: FC<Props> = ({ searchWarehouse }) => {
         }}
         value={keyword}
         onChange={handleChange}
-        placeholder={'제품 혹은 브랜드 명으로 검색해보세요'}
+        placeholder={placeholder}
         onFocus={handleFocus}
         onClick={handleClick}
       />
