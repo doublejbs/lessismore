@@ -21,7 +21,7 @@ const SuggestionKeywords = [
 const SearchBarInputView: FC<Props> = ({ searchWarehouse }) => {
   const keyword = searchWarehouse.getKeyword();
   const inputRef = useRef<HTMLInputElement>(null);
-  const placeholder = `${josa(`'${SuggestionKeywords[Math.floor(Math.random() * SuggestionKeywords.length)]}'#{으로}`)} 검색해보세요.`;
+  const placeholder = `${josa(`'${SuggestionKeywords[Math.floor(Math.random() * SuggestionKeywords.length)]}'#{을}`)} 검색해보세요`;
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     searchWarehouse.changeKeyword(e.target.value);
