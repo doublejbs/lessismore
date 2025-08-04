@@ -54,6 +54,7 @@ class SearchWarehouse {
   public changeKeyword(keyword: string) {
     this.setLoading(true);
     this.setKeyword(keyword);
+    this.setResult([]);
     this.debouncedSearch();
   }
 
