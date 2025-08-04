@@ -1,9 +1,9 @@
 import { observer } from 'mobx-react-lite';
 import { FC } from 'react';
-import LoadingView from '../../LoadingView';
 import SearchWarehouse from '../model/SearchWarehouse';
 import InfinityScroll from './InfinityScroll';
 import SearchGearView from './SearchGearView';
+import SearchSkeletonView from './SearchSkeletonView';
 
 interface Props {
   searchWarehouse: SearchWarehouse;
@@ -28,7 +28,21 @@ const SearchResultView: FC<Props> = ({ searchWarehouse, children }) => {
         return <div></div>;
       }
       case isEmpty && !isLoading: {
-        return <div>검색 결과가 없습니다</div>;
+        return (
+          <div
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              height: '200px',
+              color: '#888',
+              fontSize: '16px',
+              textAlign: 'center',
+            }}
+          >
+            검색 결과가 없습니다
+          </div>
+        );
       }
       default: {
         return (
@@ -39,7 +53,7 @@ const SearchResultView: FC<Props> = ({ searchWarehouse, children }) => {
                   height: '100%',
                 }}
               >
-                <LoadingView />
+                <SearchSkeletonView />
               </div>
             ) : (
               <ul
