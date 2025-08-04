@@ -33,24 +33,7 @@ const SearchResultView: FC<Props> = ({ searchWarehouse, children }) => {
       default: {
         return (
           <>
-            <ul
-              style={{
-                display: 'flex',
-                flexDirection: 'column',
-              }}
-            >
-              <InfinityScroll loadMore={handleLoadMore} isLoading={isLoading} hasMore={canLoadMore}>
-                {result.map((gear) => (
-                  <SearchGearView
-                    key={gear.getId()}
-                    gear={gear}
-                    searchWarehouse={searchWarehouse}
-                  />
-                ))}
-              </InfinityScroll>
-              {children}
-            </ul>
-            {isLoading && (
+            {isLoading ? (
               <div
                 style={{
                   height: '100%',
@@ -58,6 +41,28 @@ const SearchResultView: FC<Props> = ({ searchWarehouse, children }) => {
               >
                 <LoadingView />
               </div>
+            ) : (
+              <ul
+                style={{
+                  display: 'flex',
+                  flexDirection: 'column',
+                }}
+              >
+                <InfinityScroll
+                  loadMore={handleLoadMore}
+                  isLoading={isLoading}
+                  hasMore={canLoadMore}
+                >
+                  {result.map((gear) => (
+                    <SearchGearView
+                      key={gear.getId()}
+                      gear={gear}
+                      searchWarehouse={searchWarehouse}
+                    />
+                  ))}
+                </InfinityScroll>
+                {children}
+              </ul>
             )}
           </>
         );
