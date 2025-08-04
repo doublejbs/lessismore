@@ -1,6 +1,7 @@
-import React, { FC, useRef, useEffect } from 'react';
+import { FC, useRef, useEffect } from 'react';
 import SearchWarehouse from '../model/SearchWarehouse';
 import { observer } from 'mobx-react-lite';
+import SearchBarInputView from './SearchInputView';
 
 interface Props {
   searchWarehouse: SearchWarehouse;
@@ -10,10 +11,6 @@ const SearchBarView: FC<Props> = ({ searchWarehouse }) => {
   const keyword = searchWarehouse.getKeyword();
   const inputRef = useRef<HTMLInputElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
-
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    searchWarehouse.changeKeyword(e.target.value);
-  };
 
   const handleClickClear = () => {
     searchWarehouse.clearKeyword();
@@ -100,22 +97,7 @@ const SearchBarView: FC<Props> = ({ searchWarehouse }) => {
           gap: '4px',
         }}
       >
-        <input
-          ref={inputRef}
-          className='no-outline'
-          style={{
-            appearance: 'none',
-            border: 'none',
-            backgroundColor: 'transparent',
-            padding: 0,
-            width: '100%',
-            fontSize: '16px',
-            outline: 'none',
-          }}
-          value={keyword}
-          onChange={handleChange}
-          placeholder={'제품 혹은 브랜드 명으로 검색해보세요'}
-        />
+        <SearchBarInputView searchWarehouse={searchWarehouse} />
         {keyword && (
           <div onClick={handleClickClear}>
             <svg
