@@ -1,11 +1,9 @@
 import { FC } from 'react';
-import Layout from '../../Layout';
 import Bottom from '../../Bottom';
+import Layout from '../../Layout';
 import AddButtonView from './AddButtonView';
 
 const WarehouseEmptyView: FC = () => {
-  const handleClick = () => {};
-
   return (
     <Layout vh={true}>
       <div
@@ -38,7 +36,7 @@ const WarehouseEmptyView: FC = () => {
           display: 'flex',
           justifyContent: 'center',
           alignItems: 'center',
-          height: '100%',
+          flex: 1,
           paddingBottom: '53px',
         }}
       >

@@ -1,7 +1,8 @@
-import { FC } from 'react';
-import LogInAlertManager from './LogInAlertManager';
 import { observer } from 'mobx-react-lite';
+import { FC } from 'react';
+import usePreventScroll from '../../hooks/usePreventScroll';
 import LoadingView from '../../LoadingView';
+import LogInAlertManager from './LogInAlertManager';
 interface Props {
   logInAlertManager: LogInAlertManager;
 }
@@ -9,6 +10,8 @@ interface Props {
 const LogInView: FC<Props> = ({ logInAlertManager }) => {
   const isVisible = logInAlertManager.isVisible();
   const isLoading = logInAlertManager.isLoading();
+
+  usePreventScroll(isVisible, false);
 
   const handleClickCancel = () => {
     logInAlertManager.hide();
@@ -22,7 +25,7 @@ const LogInView: FC<Props> = ({ logInAlertManager }) => {
     return (
       <div
         style={{
-          position: 'absolute',
+          position: 'fixed',
           top: 0,
           left: 0,
           backgroundColor: 'rgba(0, 0, 0, 0.5)',
