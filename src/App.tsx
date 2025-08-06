@@ -4,6 +4,7 @@ import { Route, Routes, useLocation, useNavigate } from 'react-router-dom';
 import AdminView from './AdminView.tsx';
 import './App.css';
 import app from './App.ts';
+import InstagramWebView from './InstagramWebView.tsx';
 import LoadingView from './LoadingView.tsx';
 import LogIn from './LogIn.tsx';
 import TermsAgreement from './TermsAgreement.tsx';
@@ -116,20 +117,7 @@ const App = () => {
   }, [isLoggedIn, isInitialized, location.pathname, hasAgreed]);
 
   if (isInstagram) {
-    return (
-      <div
-        style={{
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          minHeight: '100vh',
-        }}
-      >
-        <p>
-          👉 우측 상단 <strong>•••</strong> → <strong>&quot;외부 브라우저에서 열기&quot;</strong>를 눌러주세요.
-        </p>
-      </div>
-    );
+    return <InstagramWebView />;
   } else if (isInitialized) {
     return (
       <>
