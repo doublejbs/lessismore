@@ -1,5 +1,5 @@
-import { FC } from 'react';
 import { observer } from 'mobx-react-lite';
+import { FC } from 'react';
 import AlertManager from './AlertManager';
 
 interface Props {
