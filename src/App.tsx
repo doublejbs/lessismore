@@ -15,6 +15,7 @@ import BagEditAddGearView from './bag-edit-add-gear/BagEditView.tsx';
 import BagShareWrapper from './bag-share/component/BagShareWrapper.tsx';
 import BagUselessView from './bag-useless/component/BagUselessView';
 import BagView from './bag/component/BagView';
+import CelebrateView from './celebrate/CelebrateView';
 import CustomGearWrapper from './custom-gear/component/CustomGearWrapper';
 import GearEditWrapperView from './gear-edit/component/GearEditWrapperView';
 import InfoView from './info/InfoView';
@@ -75,6 +76,7 @@ const ROUTES = [
   { path: '/manage', element: <ManageView /> },
   { path: '/info', element: <InfoView /> },
   { path: '/open-browser', element: <OpenBrowserView /> },
+  { path: '/celebrate', element: <CelebrateView /> },
 ];
 
 const App = () => {
