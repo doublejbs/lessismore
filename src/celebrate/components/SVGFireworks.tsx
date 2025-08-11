@@ -12,23 +12,23 @@ const SVGFireworks: FC<Props> = ({ isActive, onComplete }) => {
 
   useEffect(() => {
     if (isActive) {
-      // 폭죽 파티클 생성
+      // 폭죽 파티클 생성 (더 많은 폭죽)
       const newParticles = [];
-      for (let i = 0; i < 5; i++) {
+      for (let i = 0; i < 15; i++) {
         newParticles.push({
           id: i,
           x: Math.random() * 80 + 10, // 10-90% 범위
-          y: Math.random() * 60 + 20, // 20-80% 범위
-          delay: i * 0.5, // 순차적으로 터지도록
+          y: Math.random() * 70 + 15, // 15-85% 범위
+          delay: i * 0.2, // 더 빠른 간격으로 터지도록
         });
       }
       setParticles(newParticles);
 
-      // 3초 후 완료
+      // 8초 후 완료 (더 긴 시간)
       const timer = setTimeout(() => {
         setParticles([]);
         onComplete();
-      }, 3000);
+      }, 5000);
 
       return () => clearTimeout(timer);
     }
@@ -52,27 +52,37 @@ const SVGFireworks: FC<Props> = ({ isActive, onComplete }) => {
         {particles.map((particle) => (
           <g key={particle.id}>
             {/* 중심 폭발 */}
-            <circle cx={`${particle.x}%`} cy={`${particle.y}%`} r='0' fill='#ff6b6b' opacity='0.8'>
+            <circle
+              cx={`${particle.x}%`}
+              cy={`${particle.y}%`}
+              r='0'
+              fill={
+                ['#ffd700', '#ff4444', '#44ff44', '#4488ff', '#ff6600', '#ff44aa', '#ffffff'][
+                  particle.id % 7
+                ]
+              }
+              opacity='0.9'
+            >
               <animate
                 attributeName='r'
-                values='0;20;0'
-                dur='1s'
+                values='0;35;0'
+                dur='1.5s'
                 begin={`${particle.delay}s`}
                 repeatCount='1'
               />
               <animate
                 attributeName='opacity'
-                values='0.8;0.4;0'
-                dur='1s'
+                values='0.9;0.6;0'
+                dur='1.5s'
                 begin={`${particle.delay}s`}
                 repeatCount='1'
               />
             </circle>
 
             {/* 방사형 파티클들 */}
-            {Array.from({ length: 12 }).map((_, i) => {
-              const angle = i * 30 * (Math.PI / 180);
-              const distance = 40;
+            {Array.from({ length: 18 }).map((_, i) => {
+              const angle = i * 20 * (Math.PI / 180);
+              const distance = 80;
               const endX = particle.x + Math.cos(angle) * distance;
               const endY = particle.y + Math.sin(angle) * distance;
 
@@ -81,36 +91,40 @@ const SVGFireworks: FC<Props> = ({ isActive, onComplete }) => {
                   key={i}
                   cx={`${particle.x}%`}
                   cy={`${particle.y}%`}
-                  r='2'
-                  fill={['#ff6b6b', '#4ecdc4', '#45b7d1', '#96ceb4', '#feca57'][i % 5]}
+                  r='4'
+                  fill={
+                    ['#ffd700', '#ff4444', '#44ff44', '#4488ff', '#ff6600', '#ff44aa', '#ffffff'][
+                      particle.id % 7
+                    ]
+                  }
                   opacity='0'
                 >
                   <animate
                     attributeName='cx'
                     values={`${particle.x}%;${endX}%`}
-                    dur='1.5s'
-                    begin={`${particle.delay + 0.2}s`}
+                    dur='1.2s'
+                    begin={`${particle.delay + 0.1}s`}
                     repeatCount='1'
                   />
                   <animate
                     attributeName='cy'
                     values={`${particle.y}%;${endY}%`}
-                    dur='1.5s'
-                    begin={`${particle.delay + 0.2}s`}
+                    dur='1.2s'
+                    begin={`${particle.delay + 0.1}s`}
                     repeatCount='1'
                   />
                   <animate
                     attributeName='opacity'
-                    values='0;1;0'
-                    dur='1.5s'
-                    begin={`${particle.delay + 0.2}s`}
+                    values='0;1;0.8;0'
+                    dur='1.2s'
+                    begin={`${particle.delay + 0.1}s`}
                     repeatCount='1'
                   />
                   <animate
                     attributeName='r'
-                    values='2;1;0'
-                    dur='1.5s'
-                    begin={`${particle.delay + 0.2}s`}
+                    values='4;6;3;0'
+                    dur='1.2s'
+                    begin={`${particle.delay + 0.1}s`}
                     repeatCount='1'
                   />
                 </circle>
@@ -118,17 +132,21 @@ const SVGFireworks: FC<Props> = ({ isActive, onComplete }) => {
             })}
 
             {/* 별 모양 파티클 */}
-            {Array.from({ length: 6 }).map((_, i) => {
-              const angle = i * 60 * (Math.PI / 180);
-              const distance = 60;
+            {Array.from({ length: 10 }).map((_, i) => {
+              const angle = i * 36 * (Math.PI / 180);
+              const distance = 100;
               const endX = particle.x + Math.cos(angle) * distance;
               const endY = particle.y + Math.sin(angle) * distance;
 
               return (
                 <polygon
                   key={`star-${i}`}
-                  points='0,-4 1.2,-1.2 4,0 1.2,1.2 0,4 -1.2,1.2 -4,0 -1.2,-1.2'
-                  fill='#ffd700'
+                  points='0,-8 2.4,-2.4 8,0 2.4,2.4 0,8 -2.4,2.4 -8,0 -2.4,-2.4'
+                  fill={
+                    ['#ffd700', '#ff4444', '#44ff44', '#4488ff', '#ff6600', '#ff44aa', '#ffffff'][
+                      particle.id % 7
+                    ]
+                  }
                   opacity='0'
                   transform={`translate(${particle.x}%, ${particle.y}%)`}
                 >
@@ -136,23 +154,23 @@ const SVGFireworks: FC<Props> = ({ isActive, onComplete }) => {
                     attributeName='transform'
                     type='translate'
                     values={`${particle.x}% ${particle.y}%;${endX}% ${endY}%`}
-                    dur='2s'
-                    begin={`${particle.delay + 0.1}s`}
+                    dur='1.5s'
+                    begin={`${particle.delay + 0.05}s`}
                     repeatCount='1'
                   />
                   <animate
                     attributeName='opacity'
-                    values='0;1;0'
-                    dur='2s'
-                    begin={`${particle.delay + 0.1}s`}
+                    values='0;1;0.9;0'
+                    dur='1.5s'
+                    begin={`${particle.delay + 0.05}s`}
                     repeatCount='1'
                   />
                   <animateTransform
                     attributeName='transform'
                     type='rotate'
                     values='0;360'
-                    dur='2s'
-                    begin={`${particle.delay + 0.1}s`}
+                    dur='1.5s'
+                    begin={`${particle.delay + 0.05}s`}
                     repeatCount='1'
                     additive='sum'
                   />
