@@ -4,6 +4,7 @@ import {
   createUserWithEmailAndPassword,
   getAuth,
   GoogleAuthProvider,
+  signInWithCredential,
   signInWithEmailAndPassword,
   signInWithPopup,
   signOut,
@@ -174,6 +175,11 @@ class Firebase {
 
   private setLoggedIn(value: boolean) {
     this.loggedIn = value;
+  }
+
+  public async signInWithIdToken(idToken: string, accessToken: string) {
+    const credential = GoogleAuthProvider.credential(idToken, accessToken);
+    await signInWithCredential(this.auth, credential);
   }
 }
 
