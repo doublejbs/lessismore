@@ -11,7 +11,6 @@ import TermsAgreement from './TermsAgreement.tsx';
 import AlertView from './alert/AlertView';
 import LogInView from './alert/login/LogInView';
 import BagDetailWrapper from './bag-detail/BagDetailWrapper.tsx';
-import BagEditAddGearView from './bag-edit-add-gear/BagEditView.tsx';
 import BagShareWrapper from './bag-share/component/BagShareWrapper.tsx';
 import BagUselessView from './bag-useless/component/BagUselessView';
 import BagView from './bag/component/BagView';
@@ -24,6 +23,7 @@ import OpenBrowserView from './open-browser/OpenBrowserView.tsx';
 import SearchWarehouseWrapper from './search-warehouse/component/SearchWarehouseWrapper.tsx';
 import WarehouseWrapper from './warehouse/component/WarehouseWrapper.tsx';
 import WarehouseWebViewDetailWrapper from './warehouse-detail/component/WarehouseWebViewDetailWrapper';
+import BagEditWebViewWrapper from './bag-edit-add-gear/BagEditWebViewWrapper';
 
 const ROUTES = [
   {
@@ -48,7 +48,7 @@ const ROUTES = [
   },
   {
     path: '/bag/:id/edit',
-    element: <BagEditAddGearView />,
+    element: <BagEditWebViewWrapper />,
   },
   {
     path: '/bag/:id',

@@ -10,11 +10,17 @@ import Order from '../../order/Order';
 import GearFilter from '../../warehouse/model/GearFilter';
 import WarehouseFilter from '../../warehouse/model/WarehouseFilter';
 import BagDetailFilterManager from './BagDetailFilterManager';
+import WebViewManager from '../../webview/WebViewManager';
 
 class BagDetail {
   private static readonly ORDER_KEY = 'bag';
 
-  public static from(navigate: NavigateFunction, location: Location, id: string) {
+  public static from(
+    navigate: NavigateFunction,
+    location: Location,
+    id: string,
+    webViewManager: WebViewManager
+  ) {
     return new BagDetail(
       navigate,
       location,
@@ -23,7 +29,8 @@ class BagDetail {
       app.getGearStore(),
       BagDetailFilterManager.from(),
       Order.new(BagDetail.ORDER_KEY),
-      app.getFirebase()
+      app.getFirebase(),
+      webViewManager
     );
   }
 
@@ -52,7 +59,8 @@ class BagDetail {
     private readonly gearStore: GearStore,
     private readonly filterManager: BagDetailFilterManager,
     private readonly order: Order,
-    private readonly firebase: Firebase
+    private readonly firebase: Firebase,
+    private readonly webViewManager: WebViewManager
   ) {
     makeAutoObservable(this);
   }
@@ -276,12 +284,16 @@ class BagDetail {
   }
 
   public back() {
-    const fromPath = this.location.state?.from;
-
-    if (fromPath?.includes('/bag')) {
-      this.navigate(-1);
+    if (this.webViewManager.isWebView()) {
+      this.webViewManager.closeWebView();
     } else {
-      this.navigate('/bag');
+      const fromPath = this.location.state?.from;
+
+      if (fromPath?.includes('/bag')) {
+        this.navigate(-1);
+      } else {
+        this.navigate('/bag');
+      }
     }
   }
 
@@ -314,10 +326,10 @@ class BagDetail {
 
   public setActiveFilterByCategory(categoryFilter: GearFilter) {
     // 모든 필터를 비활성화
-    this.filterManager.mapFilters(filter => filter.deselect());
-    
+    this.filterManager.mapFilters((filter) => filter.deselect());
+
     // 해당 카테고리 필터만 활성화
-    this.filterManager.mapFilters(filter => {
+    this.filterManager.mapFilters((filter) => {
       if (filter.isSame(categoryFilter)) {
         filter.select();
       }
@@ -325,7 +337,7 @@ class BagDetail {
   }
 
   public clearAllFilters() {
-    this.filterManager.mapFilters(filter => filter.deselect());
+    this.filterManager.mapFilters((filter) => filter.deselect());
   }
 
   public setCategoryRefs(refs: Map<string, HTMLDivElement>) {
@@ -336,10 +348,10 @@ class BagDetail {
     const element = this.categoryRefs.get(categoryFilter);
     if (element) {
       const y = element.getBoundingClientRect().top + window.pageYOffset - 170.5;
-      
+
       window.scrollTo({
         top: y,
-        behavior: 'smooth'
+        behavior: 'smooth',
       });
     }
   }
@@ -359,6 +371,16 @@ class BagDetail {
     await this.bagStore.updateDates(this.id, startDate, endDate);
     this.setStartDate(startDate);
     this.setEndDate(endDate);
+  }
+
+  public goToEdit() {
+    if (this.webViewManager.isWebView()) {
+      this.webViewManager.navigate(`/bag/${this.getId()}/edit`);
+    } else {
+      this.navigate(`/bag/${this.getId()}/edit`, {
+        state: { from: `/bag/${this.getId()}` },
+      });
+    }
   }
 }
 

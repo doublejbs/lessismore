@@ -222,14 +222,16 @@ class SearchWarehouse {
   }
 
   public back(_?: Array<Gear>) {
-    this.webViewManager.closeWebView();
-
-    const fromPath = this.location.state?.from;
-
-    if (fromPath?.includes('/bag') || fromPath?.includes('/warehouse')) {
-      this.navigate(-1);
+    if (this.webViewManager.isWebView()) {
+      this.webViewManager.closeWebView();
     } else {
-      this.navigate('/warehouse');
+      const fromPath = this.location.state?.from;
+
+      if (fromPath?.includes('/bag') || fromPath?.includes('/warehouse')) {
+        this.navigate(-1);
+      } else {
+        this.navigate('/warehouse');
+      }
     }
   }
 }

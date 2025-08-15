@@ -1,18 +1,17 @@
-import React, { FC, useEffect, useState } from 'react';
+import React, { FC, useEffect } from 'react';
 import { observer } from 'mobx-react-lite';
 import BagEditWarehouseView from './BagEditWarehouseView';
-import { useNavigate, useParams, useLocation } from 'react-router-dom';
 import BagEditWarehouseFiltersView from './BagEditWarehouseFiltersView';
 import BagEdit from './model/BagEdit';
 import { FlipCounter } from './components/FlipCounter';
 import BagEditWarehouseAddView from './BagEditWarehouseAddView';
 import usePreventScroll from '../hooks/usePreventScroll';
 
-const BagEditView: FC = () => {
-  const { id = '' } = useParams();
-  const navigate = useNavigate();
-  const location = useLocation();
-  const [bagEdit] = useState(() => BagEdit.from(navigate, location, id));
+interface Props {
+  bagEdit: BagEdit;
+}
+
+const BagEditView: FC<Props> = ({ bagEdit }) => {
   const weight = bagEdit.getWeight();
   const count = bagEdit.getCount();
   const showMenu = bagEdit.isAddMenuVisible();
