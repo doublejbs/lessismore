@@ -11,11 +11,17 @@ import GearFilter from '../../warehouse/model/GearFilter';
 import Order from '../../order/Order';
 import OrderType from '../../order/OrderType';
 import BagEditSearch from './BagEditSearch';
+import WebViewManager from '../../webview/WebViewManager';
 
 class BagEdit {
   private static readonly ORDER_KEY = 'bag';
 
-  public static from(navigate: NavigateFunction, location: Location, id: string) {
+  public static from(
+    navigate: NavigateFunction,
+    location: Location,
+    id: string,
+    webViewManager: WebViewManager
+  ) {
     return new BagEdit(
       navigate,
       location,
@@ -23,7 +29,8 @@ class BagEdit {
       app.getBagStore(),
       WarehouseDispatcher.new(),
       FilterManager.from(),
-      Order.new(BagEdit.ORDER_KEY)
+      Order.new(BagEdit.ORDER_KEY),
+      webViewManager
     );
   }
 
@@ -46,7 +53,8 @@ class BagEdit {
     private readonly bagStore: BagStore,
     private readonly dispatcher: WarehouseDispatcherType,
     private readonly filterManager: FilterManager,
-    private readonly order: Order
+    private readonly order: Order,
+    private readonly webViewManager: WebViewManager
   ) {
     makeAutoObservable(this);
     this.disposeReaction = reaction(
@@ -115,12 +123,16 @@ class BagEdit {
   }
 
   public back() {
-    const fromPath = this.location.state?.from;
-
-    if (fromPath?.includes(`/bag/${this.id}`)) {
-      this.navigate(-1);
+    if (this.isWebView()) {
+      this.webViewManager.closeWebView();
     } else {
-      this.navigate(`/bag/${this.id}`);
+      const fromPath = this.location.state?.from;
+
+      if (fromPath?.includes(`/bag/${this.id}`)) {
+        this.navigate(-1);
+      } else {
+        this.navigate(`/bag/${this.id}`);
+      }
     }
   }
 
@@ -171,13 +183,23 @@ class BagEdit {
   }
 
   public showSearch() {
-    this.bagEditSearch.show();
-    this.setCustomVisible(false);
+    if (this.isWebView()) {
+      this.webViewManager.navigate('/search');
+      this.setAddMenuVisible(false);
+    } else {
+      this.bagEditSearch.show();
+      this.setCustomVisible(false);
+    }
   }
 
   public showCustom() {
-    this.setCustomVisible(true);
-    this.bagEditSearch.hide();
+    if (this.isWebView()) {
+      this.webViewManager.navigate('/custom');
+      this.setAddMenuVisible(false);
+    } else {
+      this.setCustomVisible(true);
+      this.bagEditSearch.hide();
+    }
   }
 
   public shouldShowAddMenu() {
@@ -268,6 +290,10 @@ class BagEdit {
 
   public isAddMenuVisible() {
     return this.addMenuVisible;
+  }
+
+  public isWebView() {
+    return this.webViewManager.isWebView();
   }
 }
 

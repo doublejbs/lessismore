@@ -4,14 +4,17 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import { useState } from 'react';
 import SearchWarehouse from '../model/SearchWarehouse';
 import WebViewWrapper from '../../webview/WebViewWrapper';
+import app from '../../App';
+import WebViewManager from '../../webview/WebViewManager';
 
 const SearchWarehouseWrapper: FC = () => {
   const navigate = useNavigate();
   const location = useLocation();
-  const [searchWarehouse] = useState(() => SearchWarehouse.new(navigate, location));
+  const [webViewManager] = useState(() => WebViewManager.new(app.getFirebase()));
+  const [searchWarehouse] = useState(() => SearchWarehouse.new(navigate, location, webViewManager));
 
   return (
-    <WebViewWrapper>
+    <WebViewWrapper webViewManager={webViewManager}>
       <div
         style={{
           height: '100%',

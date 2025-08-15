@@ -19,13 +19,12 @@ interface Props {
 }
 
 const BagDetailView: FC<Props> = ({ bagDetail }) => {
-  const navigate = useNavigate();
   const initialized = bagDetail.isInitialized();
   const { setCategoryRef, updateVisibility } = useScrollBasedFilter(bagDetail, initialized);
   const [observer, setObserver] = useState<IntersectionObserver | null>(null);
 
   const handleClickBack = () => {
-    navigate(-1);
+    bagDetail.back();
   };
 
   useEffect(() => {

@@ -4,12 +4,17 @@ import WarehouseDetailView from './WarehouseDetailView';
 import WarehouseDetail from '../model/WarehouseDetail';
 import { useNavigate, useParams, useLocation } from 'react-router-dom';
 import WarehouseDispatcher from '../../warehouse/model/WarehouseDispatcher';
+import WebViewManager from '../../webview/WebViewManager';
 
-const WarehouseDetailWrapper: FC = () => {
+interface Props {
+  webViewManager: WebViewManager;
+}
+
+const WarehouseDetailWrapper: FC<Props> = ({ webViewManager }) => {
   const navigate = useNavigate();
   const location = useLocation();
   const [warehouseDetail] = useState(() =>
-    WarehouseDetail.new(navigate, WarehouseDispatcher.new(), location)
+    WarehouseDetail.new(navigate, WarehouseDispatcher.new(), location, webViewManager)
   );
   const { id = '' } = useParams();
   const initialized = warehouseDetail.isInitialized();

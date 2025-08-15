@@ -1,19 +1,25 @@
-import { FC, useEffect, useState } from 'react';
+import { FC, useEffect } from 'react';
 import WebViewManager from './WebViewManager';
-import app from '../App';
+import { observer } from 'mobx-react-lite';
 
 interface Props {
+  webViewManager: WebViewManager;
   children: React.ReactNode;
+  skeletonView?: React.ReactNode;
 }
 
-const WebViewWrapper: FC<Props> = ({ children }) => {
-  const [webViewManager] = useState<WebViewManager>(() => WebViewManager.new(app.getFirebase()));
+const WebViewWrapper: FC<Props> = ({ children, webViewManager, skeletonView }) => {
+  const initialized = webViewManager.isInitialized();
 
   useEffect(() => {
     webViewManager.initialize();
   }, []);
 
-  return <>{children}</>;
+  if (initialized) {
+    return <>{children}</>;
+  } else {
+    return skeletonView;
+  }
 };
 
-export default WebViewWrapper;
+export default observer(WebViewWrapper);

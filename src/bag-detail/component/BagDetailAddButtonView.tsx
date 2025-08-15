@@ -1,5 +1,4 @@
 import { FC } from 'react';
-import { useNavigate } from 'react-router-dom';
 import BagDetail from '../model/BagDetail';
 
 interface Props {
@@ -7,10 +6,8 @@ interface Props {
 }
 
 const BagDetailAddButtonView: FC<Props> = ({ bagDetail }) => {
-  const navigate = useNavigate();
-
   const handleClickAdd = () => {
-    navigate(`/bag/${bagDetail.getId()}/edit`, { state: { from: `/bag/${bagDetail.getId()}` } });
+    bagDetail.goToEdit();
   };
 
   return (

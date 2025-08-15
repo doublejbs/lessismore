@@ -8,16 +8,22 @@ import app from '../../App';
 import { Location, NavigateFunction } from 'react-router-dom';
 import Firebase from '../../firebase/Firebase';
 import LogInAlertManager from '../../alert/login/LogInAlertManager';
+import WebViewManager from '../../webview/WebViewManager';
 
 class SearchWarehouse {
-  public static new(navigate: NavigateFunction, location: Location) {
+  public static new(
+    navigate: NavigateFunction,
+    location: Location,
+    webViewManager: WebViewManager
+  ) {
     return new SearchWarehouse(
       SearchDispatcher.new(),
       app.getToastManager(),
       navigate,
       location,
       app.getFirebase(),
-      app.getLogInAlertManager()
+      app.getLogInAlertManager(),
+      webViewManager
     );
   }
 
@@ -36,7 +42,8 @@ class SearchWarehouse {
     private readonly navigate: NavigateFunction,
     private readonly location: Location,
     private readonly firebase: Firebase,
-    private readonly logInAlertManager: LogInAlertManager
+    private readonly logInAlertManager: LogInAlertManager,
+    private readonly webViewManager: WebViewManager
   ) {
     makeObservable(this);
     this.disposeLoginReaction = reaction(
@@ -210,16 +217,21 @@ class SearchWarehouse {
   public async register() {
     await this.searchDispatcher.register(this.selected);
     this.toastManager.show({ message: '내 장비 추가가 완료됐어요' });
+    this.webViewManager.updateData();
     this.back(this.selected);
   }
 
   public back(_?: Array<Gear>) {
-    const fromPath = this.location.state?.from;
-
-    if (fromPath?.includes('/bag') || fromPath?.includes('/warehouse')) {
-      this.navigate(-1);
+    if (this.webViewManager.isWebView()) {
+      this.webViewManager.closeWebView();
     } else {
-      this.navigate('/warehouse');
+      const fromPath = this.location.state?.from;
+
+      if (fromPath?.includes('/bag') || fromPath?.includes('/warehouse')) {
+        this.navigate(-1);
+      } else {
+        this.navigate('/warehouse');
+      }
     }
   }
 }
