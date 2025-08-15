@@ -22,8 +22,8 @@ import InfoView from './info/InfoView';
 import ManageView from './manage/ManageView';
 import OpenBrowserView from './open-browser/OpenBrowserView.tsx';
 import SearchWarehouseWrapper from './search-warehouse/component/SearchWarehouseWrapper.tsx';
-import WarehouseDetailWrapper from './warehouse-detail/component/WarehouseDetailWrapper';
 import WarehouseWrapper from './warehouse/component/WarehouseWrapper.tsx';
+import WarehouseWebViewDetailWrapper from './warehouse-detail/component/WarehouseWebViewDetailWrapper';
 
 const ROUTES = [
   {
@@ -61,7 +61,7 @@ const ROUTES = [
   { path: '/warehouse', element: <WarehouseWrapper /> },
   {
     path: '/warehouse/detail/:id',
-    element: <WarehouseDetailWrapper />,
+    element: <WarehouseWebViewDetailWrapper />,
   },
   {
     path: '/warehouse/custom',

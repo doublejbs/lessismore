@@ -10,6 +10,7 @@ import { Location } from 'react-router-dom';
 import { action, makeObservable, observable } from 'mobx';
 import BagEdit from './BagEdit';
 import Gear from '../../model/Gear';
+import WebViewManager from '../../webview/WebViewManager';
 
 class BagEditSearch extends SearchWarehouse {
   public static of(bagEdit: BagEdit, navigate: NavigateFunction, location: Location) {
@@ -35,7 +36,15 @@ class BagEditSearch extends SearchWarehouse {
     firebase: Firebase,
     logInAlertManager: LogInAlertManager
   ) {
-    super(dispatcher, toastManager, navigate, location, firebase, logInAlertManager);
+    super(
+      dispatcher,
+      toastManager,
+      navigate,
+      location,
+      firebase,
+      logInAlertManager,
+      WebViewManager.new(firebase)
+    );
     makeObservable(this);
   }
 

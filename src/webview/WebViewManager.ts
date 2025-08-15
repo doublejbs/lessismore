@@ -1,15 +1,31 @@
 import Firebase from '../firebase/Firebase';
+import { makeAutoObservable } from 'mobx';
+
+declare global {
+  interface Window {
+    NativeBridge: {
+      closeWebView(): void;
+      updateData(): void;
+      navigate(path: string): void;
+    };
+  }
+}
 
 class WebViewManager {
   public static new(firebase: Firebase) {
     return new WebViewManager(firebase);
   }
 
-  private constructor(private readonly firebase: Firebase) {}
+  private initialized = false;
+
+  private constructor(private readonly firebase: Firebase) {
+    makeAutoObservable(this);
+  }
 
   public async initialize() {
     // WebView 환경에서만 실행
-    if (!this.isWebView()) {
+    if (!this.isWebView() || this.isInitialized()) {
+      this.setInitialized(true);
       return;
     }
 
@@ -23,32 +39,49 @@ class WebViewManager {
         await this.firebase.signInWithIdToken(tokenFromQuery, accessTokenFromQuery);
         // 토큰 사용 후 URL에서 제거 (보안상 좋음)
         this.removeTokenFromUrl();
+        this.setInitialized(true);
       } catch (e) {
+        window.alert(`로그인 실패 ${e}`);
         console.error('webview error', e);
       }
     }
   }
 
-  private isWebView(): boolean {
-    // 1. User Agent로 WebView 감지
-    const userAgent = navigator.userAgent.toLowerCase();
-    const isAndroidWebView =
-      userAgent.includes('wv') || (userAgent.includes('android') && userAgent.includes('version'));
-    const isIOSWebView = userAgent.includes('mobile') && !userAgent.includes('safari');
-
-    // 2. 특정 WebView 환경 변수 확인
-    const hasWebViewInterface = (window as any).webkit || (window as any).Android;
-
-    // 3. 브라우저가 아닌 환경 감지
-    const isNotBrowser = !(window as any).chrome && !window.navigator.userAgent.includes('Firefox');
-
-    return isAndroidWebView || isIOSWebView || hasWebViewInterface || isNotBrowser;
+  public isWebView(): boolean {
+    return !!(window as unknown as { NativeBridge: boolean }).NativeBridge;
   }
 
   private removeTokenFromUrl(): void {
     const url = new URL(window.location.href);
     url.searchParams.delete('token');
     window.history.replaceState({}, document.title, url.toString());
+  }
+
+  private setInitialized(initialized: boolean) {
+    this.initialized = initialized;
+  }
+
+  public isInitialized() {
+    return this.initialized;
+  }
+
+  public closeWebView() {
+    if (this.isWebView()) {
+      console.log('closeWebView');
+      window.NativeBridge.closeWebView();
+    }
+  }
+
+  public updateData() {
+    if (this.isWebView()) {
+      window.NativeBridge.updateData();
+    }
+  }
+
+  public navigate(path: string) {
+    if (this.isWebView()) {
+      window.NativeBridge.navigate(path);
+    }
   }
 }
 
