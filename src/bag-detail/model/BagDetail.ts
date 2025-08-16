@@ -382,6 +382,14 @@ class BagDetail {
       });
     }
   }
+
+  public goToEditGear(gear: Gear) {
+    if (this.webViewManager.isWebView()) {
+      this.webViewManager.navigate(`/gear-edit/${gear.getId()}`);
+    } else {
+      this.navigate(`/gear/edit/${gear.getId()}`, { state: { from: `/bag/${this.getId()}` } });
+    }
+  }
 }
 
 export default BagDetail;

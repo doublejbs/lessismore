@@ -3,6 +3,7 @@ import WebViewWrapper from '../webview/WebViewWrapper';
 import WebViewManager from '../webview/WebViewManager';
 import app from '../App';
 import BagEditView from './BagEditView';
+import BagEditSkeletonView from './BagEditSkeletonView';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import BagEdit from './model/BagEdit';
 
@@ -14,7 +15,7 @@ const BagEditWebViewWrapper: FC = () => {
   const [bagEdit] = useState(() => BagEdit.from(navigate, location, id, webViewManager));
 
   return (
-    <WebViewWrapper webViewManager={webViewManager}>
+    <WebViewWrapper webViewManager={webViewManager} skeletonView={<BagEditSkeletonView />}>
       <BagEditView bagEdit={bagEdit} />
     </WebViewWrapper>
   );
