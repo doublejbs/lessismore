@@ -1,14 +1,15 @@
-import { FC, useEffect, useState } from 'react';
-import { useLocation, useNavigate, useParams } from 'react-router-dom';
+import { FC, useEffect } from 'react';
+import { useParams } from 'react-router-dom';
 import BagUseless from '../model/BagUseless';
 import { observer } from 'mobx-react-lite';
 import BagUselessGearView from './BagUselessGearView';
 
-const BagUselessView: FC = () => {
+interface Props {
+  bagUseless: BagUseless;
+}
+
+const BagUselessView: FC<Props> = ({ bagUseless }) => {
   const { id } = useParams();
-  const navigate = useNavigate();
-  const location = useLocation();
-  const [bagUseless] = useState(() => BagUseless.new(navigate, location));
   const isInitialized = bagUseless.isInitialized();
   const allCount = bagUseless.getAllCount();
   const selectedCount = bagUseless.getSelectedCount();

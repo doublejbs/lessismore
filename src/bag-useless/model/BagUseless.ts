@@ -7,11 +7,23 @@ import { Location, NavigateFunction } from 'react-router-dom';
 import GearFilter from '../../warehouse/model/GearFilter';
 import OrderType from '../../order/OrderType';
 import Order from '../../order/Order';
+import WebViewManager from '../../webview/WebViewManager';
 class BagUseless {
   private static readonly ORDER_KEY = 'bag';
 
-  public static new(navigate: NavigateFunction, location: Location) {
-    return new BagUseless(navigate, location, app.getBagStore(), app.getGearStore(), Order.new(BagUseless.ORDER_KEY));
+  public static new(
+    navigate: NavigateFunction,
+    location: Location,
+    webViewManager: WebViewManager
+  ) {
+    return new BagUseless(
+      navigate,
+      location,
+      app.getBagStore(),
+      app.getGearStore(),
+      Order.new(BagUseless.ORDER_KEY),
+      webViewManager
+    );
   }
 
   private id = '';
@@ -26,7 +38,8 @@ class BagUseless {
     private readonly location: Location,
     private readonly bagStore: BagStore,
     private readonly gearStore: GearStore,
-    private readonly order: Order
+    private readonly order: Order,
+    private readonly webViewManager: WebViewManager
   ) {
     makeAutoObservable(this);
     this.disposeReaction = reaction(
@@ -151,12 +164,16 @@ class BagUseless {
   }
 
   public back() {
-    const fromPath = this.location.state?.from;
-
-    if (fromPath?.includes('/bag') || fromPath?.includes(`/bag/${this.id}`)) {
-      this.navigate(-1);
+    if (this.webViewManager.isWebView()) {
+      this.webViewManager.closeWebView();
     } else {
-      this.navigate(`/bag/${this.id}`);
+      const fromPath = this.location.state?.from;
+
+      if (fromPath?.includes('/bag') || fromPath?.includes(`/bag/${this.id}`)) {
+        this.navigate(-1);
+      } else {
+        this.navigate(`/bag/${this.id}`);
+      }
     }
   }
 

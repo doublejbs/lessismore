@@ -1,6 +1,5 @@
 import { observer } from 'mobx-react-lite';
 import { FC, useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
 import { FlipCounter } from '../bag-edit-add-gear/components/FlipCounter';
 import { useScrollBasedFilter } from '../hooks/useScrollBasedFilter';
 import GearFilter from '../warehouse/model/GearFilter';

@@ -62,7 +62,6 @@ class WarehouseDetail {
   public edit() {
     if (this.getGear()) {
       if (this.webViewManager.isWebView()) {
-        window.alert('webview');
         this.webViewManager.navigate(`/gear-edit/${this.getGear()?.getId()}`);
       } else {
         this.navigate(`/gear/edit/${this.getGear()?.getId()}`);

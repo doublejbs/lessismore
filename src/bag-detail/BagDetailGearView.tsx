@@ -1,7 +1,6 @@
 import React, { FC, useState } from 'react';
 import Gear from '../model/Gear';
 import BagDetail from './model/BagDetail';
-import { useNavigate } from 'react-router-dom';
 import BagDetailImageView from './BagDetailImageView';
 import { observer } from 'mobx-react-lite';
 import usePreventScroll from '../hooks/usePreventScroll';
@@ -15,7 +14,6 @@ const BagDetailGearView: FC<Props> = ({ gear, bagDetail }) => {
   const imageUrl = gear.getImageUrl();
   const isUseless = bagDetail.isUseless(gear);
   const [showMenu, setShowMenu] = useState(false);
-  const navigate = useNavigate();
 
   usePreventScroll(showMenu);
 

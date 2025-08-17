@@ -108,7 +108,7 @@ class BagDetail {
   }
 
   public getWeight() {
-    return Number(this.weight) / 1000;
+    return Math.round((Number(this.weight) / 1000) * 100) / 100;
   }
 
   private setGears(value: Gear[]) {
@@ -202,7 +202,7 @@ class BagDetail {
   }
 
   public getUsedWeight() {
-    return Number(this.usedWeight) / 1000;
+    return Math.round((Number(this.usedWeight) / 1000) * 100) / 100;
   }
 
   private setUselessChecked(value: boolean) {
@@ -388,6 +388,16 @@ class BagDetail {
       this.webViewManager.navigate(`/gear-edit/${gear.getId()}`);
     } else {
       this.navigate(`/gear/edit/${gear.getId()}`, { state: { from: `/bag/${this.getId()}` } });
+    }
+  }
+
+  public goToUseless() {
+    if (this.webViewManager.isWebView()) {
+      this.webViewManager.navigate(`/useless/${this.getId()}`);
+    } else {
+      this.navigate(`/bag/${this.getId()}/useless`, {
+        state: { from: `/bag/${this.getId()}` },
+      });
     }
   }
 }

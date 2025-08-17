@@ -12,7 +12,6 @@ import AlertView from './alert/AlertView';
 import LogInView from './alert/login/LogInView';
 import BagDetailWrapper from './bag-detail/BagDetailWrapper.tsx';
 import BagShareWrapper from './bag-share/component/BagShareWrapper.tsx';
-import BagUselessView from './bag-useless/component/BagUselessView';
 import BagView from './bag/component/BagView';
 import CelebrateView from './celebrate/CelebrateView';
 import CustomGearWrapper from './custom-gear/component/CustomGearWrapper';
@@ -24,6 +23,7 @@ import SearchWarehouseWrapper from './search-warehouse/component/SearchWarehouse
 import WarehouseWrapper from './warehouse/component/WarehouseWrapper.tsx';
 import WarehouseWebViewDetailWrapper from './warehouse-detail/component/WarehouseWebViewDetailWrapper';
 import BagEditWebViewWrapper from './bag-edit-add-gear/BagEditWebViewWrapper';
+import BagUselessWebViewWrapper from './bag-useless/component/BagUselessWebViewWrapper';
 
 const ROUTES = [
   {
@@ -44,7 +44,7 @@ const ROUTES = [
   },
   {
     path: '/bag/:id/useless',
-    element: <BagUselessView />,
+    element: <BagUselessWebViewWrapper />,
   },
   {
     path: '/bag/:id/edit',
