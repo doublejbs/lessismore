@@ -10,6 +10,7 @@ interface Props {
 const AlertView: FC<Props> = ({ alertManager }) => {
   const isVisible = alertManager.isVisible();
   const message = alertManager.getMessage();
+  const subMessage = alertManager.getSubMessage();
   const confirmText = alertManager.getConfirmText();
 
   usePreventScroll(isVisible);
@@ -49,13 +50,25 @@ const AlertView: FC<Props> = ({ alertManager }) => {
             gap: '24px',
           }}
         >
-          <div
-            style={{
-              fontSize: '20px',
-              fontWeight: 'bold',
-            }}
-          >
-            <span>{message}</span>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
+            <div
+              style={{
+                fontSize: '20px',
+                fontWeight: 'bold',
+              }}
+            >
+              <span>{message}</span>
+            </div>
+            {subMessage && (
+              <div
+                style={{
+                  fontSize: '16px',
+                  color: '#666666',
+                }}
+              >
+                <span>{subMessage}</span>
+              </div>
+            )}
           </div>
           <div
             style={{
