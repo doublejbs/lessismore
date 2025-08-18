@@ -43,6 +43,7 @@ const BagUselessGearView: FC<Props> = ({ gear, bagUseless }) => {
           }}
         >
           <label
+            htmlFor={`bag-useless-gear-checkbox-${gear.getId()}`}
             style={{
               display: 'flex',
               alignItems: 'center',
@@ -54,6 +55,7 @@ const BagUselessGearView: FC<Props> = ({ gear, bagUseless }) => {
             }}
           >
             <input
+              id={`bag-useless-gear-checkbox-${gear.getId()}`}
               type='checkbox'
               checked={isSelected}
               onChange={handleChange}
@@ -61,8 +63,10 @@ const BagUselessGearView: FC<Props> = ({ gear, bagUseless }) => {
               style={{
                 position: 'absolute',
                 opacity: 0,
-                width: 0,
-                height: 0,
+                width: '100%',
+                height: '100%',
+                margin: 0,
+                cursor: 'pointer',
               }}
             />
             <span
