@@ -7,6 +7,7 @@ declare global {
       closeWebView(): void;
       updateData(): void;
       navigate(path: string): void;
+      navigateToLogin(): void;
     };
   }
 }
@@ -44,6 +45,8 @@ class WebViewManager {
         window.alert(`로그인 실패 ${e}`);
         console.error('webview error', e);
       }
+    } else {
+      this.setInitialized(true);
     }
   }
 
@@ -82,6 +85,10 @@ class WebViewManager {
     if (this.isWebView()) {
       window.NativeBridge.navigate(path);
     }
+  }
+
+  public navigateToLogin() {
+    window.NativeBridge.navigateToLogin();
   }
 }
 
