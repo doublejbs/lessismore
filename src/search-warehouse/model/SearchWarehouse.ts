@@ -84,24 +84,23 @@ class SearchWarehouse {
 
   private showLogInAlert() {
     if (this.webViewManager.isWebView()) {
-      window.addEventListener('message', this.handleAuthTokens.bind(this));
+      window.onMessageFromReactNative = this.handleAuthTokens.bind(this);
       this.webViewManager.navigateToLogin();
     } else {
       this.logInAlertManager.show();
     }
   }
 
-  private async handleAuthTokens(event: MessageEvent) {
-    const data = JSON.parse(event.data);
-    if (data.type === 'AUTH_TOKENS') {
-      const { accessToken, idToken } = data.data;
-      await this.firebase.signInWithIdToken(idToken, accessToken);
-      window.removeEventListener('message', this.handleAuthTokens);
+  private async handleAuthTokens(data: any) {
+    try {
+      if (data.type === 'AUTH_TOKENS') {
+        const { accessToken, idToken } = data.data;
+        await this.firebase.signInWithIdToken(idToken, accessToken);
+        window.onMessageFromReactNative = () => {};
+      }
+    } catch (error) {
+      window.alert(error);
     }
-  }
-
-  private deselect(gear: Gear) {
-    this.selected = this.selected.filter((item) => !item.isSame(gear));
   }
 
   @action

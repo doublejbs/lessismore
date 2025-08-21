@@ -9,6 +9,7 @@ declare global {
       navigate(path: string): void;
       navigateToLogin(): void;
     };
+    onMessageFromReactNative: (event: MessageEvent) => void;
   }
 }
 
@@ -46,6 +47,7 @@ class WebViewManager {
         console.error('webview error', e);
       }
     } else {
+      await this.firebase.logout();
       this.setInitialized(true);
     }
   }
