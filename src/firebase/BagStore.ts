@@ -1,4 +1,4 @@
-import { runTransaction, writeBatch } from '@firebase/firestore';
+import { deleteDoc, runTransaction, writeBatch } from '@firebase/firestore';
 import dayjs, { Dayjs } from 'dayjs';
 import {
   addDoc,
@@ -360,9 +360,36 @@ class BagStore {
   }
 
   public async delete(id: string) {
-    await updateDoc(doc(this.getStore(), 'users', this.getUserID()), {
-      bags: arrayRemove(id),
-    });
+    try {
+      const bagRef = doc(this.getStore(), 'bag', id);
+      const bagSnap = await getDoc(bagRef);
+
+      if (bagSnap.exists()) {
+        const bagData = bagSnap.data();
+        const gears: string[] = bagData.gears || [];
+
+        if (gears.length > 0) {
+          const batch = writeBatch(this.getStore());
+
+          for (const gearId of gears) {
+            const gearRef = doc(this.getStore(), 'users', this.getUserID(), 'gears', gearId);
+            batch.update(gearRef, {
+              bags: arrayRemove(id),
+              useless: arrayRemove(id),
+              used: arrayRemove(id),
+            });
+          }
+          await batch.commit();
+        }
+      }
+      await deleteDoc(bagRef);
+      await updateDoc(doc(this.getStore(), 'users', this.getUserID()), {
+        bags: arrayRemove(id),
+      });
+    } catch (e) {
+      console.error('배낭 삭제 중 오류 발생:', e);
+      throw e;
+    }
   }
 
   private getStore() {
@@ -401,9 +428,9 @@ class BagStore {
   }
 
   public async updateDates(id: string, startDate: string, endDate: string) {
-    await updateDoc(doc(this.getStore(), 'bag', id), { 
-      startDate, 
-      endDate 
+    await updateDoc(doc(this.getStore(), 'bag', id), {
+      startDate,
+      endDate,
     });
   }
 }

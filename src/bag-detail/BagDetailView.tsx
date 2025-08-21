@@ -1,6 +1,5 @@
 import { observer } from 'mobx-react-lite';
 import { FC, useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
 import { FlipCounter } from '../bag-edit-add-gear/components/FlipCounter';
 import { useScrollBasedFilter } from '../hooks/useScrollBasedFilter';
 import GearFilter from '../warehouse/model/GearFilter';
@@ -19,13 +18,12 @@ interface Props {
 }
 
 const BagDetailView: FC<Props> = ({ bagDetail }) => {
-  const navigate = useNavigate();
   const initialized = bagDetail.isInitialized();
   const { setCategoryRef, updateVisibility } = useScrollBasedFilter(bagDetail, initialized);
   const [observer, setObserver] = useState<IntersectionObserver | null>(null);
 
   const handleClickBack = () => {
-    navigate(-1);
+    bagDetail.back();
   };
 
   useEffect(() => {

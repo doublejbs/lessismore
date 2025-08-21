@@ -138,7 +138,9 @@ class Firebase {
   }
 
   public async logout() {
-    await signOut(this.auth);
+    if (this.isLoggedIn()) {
+      await signOut(this.auth);
+    }
   }
 
   public getUserId() {

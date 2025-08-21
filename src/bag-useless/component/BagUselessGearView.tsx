@@ -12,7 +12,10 @@ interface Props {
 const BagUselessGearView: FC<Props> = ({ gear, bagUseless }) => {
   const isSelected = bagUseless.isSelected(gear);
 
-  const handleChange = () => {};
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    e.stopPropagation();
+    bagUseless.toggle(gear);
+  };
 
   const handleClick = (e: React.MouseEvent) => {
     e.stopPropagation();
@@ -40,6 +43,7 @@ const BagUselessGearView: FC<Props> = ({ gear, bagUseless }) => {
           }}
         >
           <label
+            htmlFor={`bag-useless-gear-checkbox-${gear.getId()}`}
             style={{
               display: 'flex',
               alignItems: 'center',
@@ -51,14 +55,18 @@ const BagUselessGearView: FC<Props> = ({ gear, bagUseless }) => {
             }}
           >
             <input
+              id={`bag-useless-gear-checkbox-${gear.getId()}`}
               type='checkbox'
               checked={isSelected}
               onChange={handleChange}
+              onClick={(e) => e.stopPropagation()}
               style={{
                 position: 'absolute',
                 opacity: 0,
-                width: 0,
-                height: 0,
+                width: '100%',
+                height: '100%',
+                margin: 0,
+                cursor: 'pointer',
               }}
             />
             <span

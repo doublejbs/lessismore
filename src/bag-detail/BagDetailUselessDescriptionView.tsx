@@ -1,6 +1,5 @@
 import { FC } from 'react';
 import BagDetail from './model/BagDetail';
-import { useNavigate } from 'react-router-dom';
 import { observer } from 'mobx-react-lite';
 
 interface Props {
@@ -8,12 +7,11 @@ interface Props {
 }
 
 const BagDetailUselessDescriptionView: FC<Props> = ({ bagDetail }) => {
-  const navigate = useNavigate();
   const isUselessChecked = bagDetail.isUselessChecked();
   const usedWeight = bagDetail.getUsedWeight();
 
   const handleClickUseless = () => {
-    navigate(`/bag/${bagDetail.getId()}/useless`, { state: { from: `/bag/${bagDetail.getId()}` } });
+    bagDetail.goToUseless();
   };
 
   const render = () => {
