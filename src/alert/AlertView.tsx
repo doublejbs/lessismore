@@ -1,6 +1,7 @@
 import { observer } from 'mobx-react-lite';
 import { FC } from 'react';
 import AlertManager from './AlertManager';
+import usePreventScroll from '../hooks/usePreventScroll';
 
 interface Props {
   alertManager: AlertManager;
@@ -9,7 +10,10 @@ interface Props {
 const AlertView: FC<Props> = ({ alertManager }) => {
   const isVisible = alertManager.isVisible();
   const message = alertManager.getMessage();
+  const subMessage = alertManager.getSubMessage();
   const confirmText = alertManager.getConfirmText();
+
+  usePreventScroll(isVisible);
 
   const handleClickCancel = () => {
     alertManager.hide();
@@ -23,7 +27,7 @@ const AlertView: FC<Props> = ({ alertManager }) => {
     return (
       <div
         style={{
-          position: 'absolute',
+          position: 'fixed',
           top: 0,
           left: 0,
           backgroundColor: 'rgba(0, 0, 0, 0.5)',
@@ -46,13 +50,25 @@ const AlertView: FC<Props> = ({ alertManager }) => {
             gap: '24px',
           }}
         >
-          <div
-            style={{
-              fontSize: '20px',
-              fontWeight: 'bold',
-            }}
-          >
-            <span>{message}</span>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
+            <div
+              style={{
+                fontSize: '20px',
+                fontWeight: 'bold',
+              }}
+            >
+              <span>{message}</span>
+            </div>
+            {subMessage && (
+              <div
+                style={{
+                  fontSize: '16px',
+                  color: '#666666',
+                }}
+              >
+                <span>{subMessage}</span>
+              </div>
+            )}
           </div>
           <div
             style={{

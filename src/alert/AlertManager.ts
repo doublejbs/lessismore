@@ -7,6 +7,7 @@ class AlertManager {
 
   private visible = false;
   private message = '';
+  private subMessage = '';
   private confirmText = '';
   private onConfirm: () => Promise<void> = async () => {};
 
@@ -16,14 +17,17 @@ class AlertManager {
 
   public show({
     message,
+    subMessage = '',
     confirmText,
     onConfirm,
   }: {
     message: string;
+    subMessage?: string;
     confirmText: string;
     onConfirm: () => Promise<void>;
   }) {
     this.setMessage(message);
+    this.setSubMessage(subMessage);
     this.setConfirmText(confirmText);
     this.setOnConfirm(onConfirm);
     this.setVisible(true);
@@ -50,8 +54,16 @@ class AlertManager {
     this.message = text;
   }
 
+  private setSubMessage(text: string) {
+    this.subMessage = text;
+  }
+
   private setConfirmText(text: string) {
     this.confirmText = text;
+  }
+
+  public getSubMessage() {
+    return this.subMessage;
   }
 
   public getMessage() {

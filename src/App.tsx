@@ -1,5 +1,5 @@
 import { observer } from 'mobx-react-lite';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useMemo } from 'react';
 import { Route, Routes, useLocation, useNavigate } from 'react-router-dom';
 import AdminView from './AdminView.tsx';
 import './App.css';
@@ -11,9 +11,7 @@ import TermsAgreement from './TermsAgreement.tsx';
 import AlertView from './alert/AlertView';
 import LogInView from './alert/login/LogInView';
 import BagDetailWrapper from './bag-detail/BagDetailWrapper.tsx';
-import BagEditAddGearView from './bag-edit-add-gear/BagEditView.tsx';
 import BagShareWrapper from './bag-share/component/BagShareWrapper.tsx';
-import BagUselessView from './bag-useless/component/BagUselessView';
 import BagView from './bag/component/BagView';
 import CelebrateView from './celebrate/CelebrateView';
 import CustomGearWrapper from './custom-gear/component/CustomGearWrapper';
@@ -22,8 +20,10 @@ import InfoView from './info/InfoView';
 import ManageView from './manage/ManageView';
 import OpenBrowserView from './open-browser/OpenBrowserView.tsx';
 import SearchWarehouseWrapper from './search-warehouse/component/SearchWarehouseWrapper.tsx';
-import WarehouseDetailWrapper from './warehouse-detail/component/WarehouseDetailWrapper';
 import WarehouseWrapper from './warehouse/component/WarehouseWrapper.tsx';
+import WarehouseWebViewDetailWrapper from './warehouse-detail/component/WarehouseWebViewDetailWrapper';
+import BagEditWebViewWrapper from './bag-edit-add-gear/BagEditWebViewWrapper';
+import BagUselessWebViewWrapper from './bag-useless/component/BagUselessWebViewWrapper';
 
 const ROUTES = [
   {
@@ -44,11 +44,11 @@ const ROUTES = [
   },
   {
     path: '/bag/:id/useless',
-    element: <BagUselessView />,
+    element: <BagUselessWebViewWrapper />,
   },
   {
     path: '/bag/:id/edit',
-    element: <BagEditAddGearView />,
+    element: <BagEditWebViewWrapper />,
   },
   {
     path: '/bag/:id',
@@ -61,7 +61,7 @@ const ROUTES = [
   { path: '/warehouse', element: <WarehouseWrapper /> },
   {
     path: '/warehouse/detail/:id',
-    element: <WarehouseDetailWrapper />,
+    element: <WarehouseWebViewDetailWrapper />,
   },
   {
     path: '/warehouse/custom',
@@ -90,6 +90,9 @@ const App = () => {
   const logInAlertManager = app.getLogInAlertManager();
   const [isInstagram, setIsInstagram] = useState(false);
 
+  // pathname만 메모이제이션하여 쿼리 파라미터 변경 시 리렌더링 방지
+  const pathname = useMemo(() => location.pathname, [location.pathname]);
+
   useEffect(() => {
     if (isInitialized) {
       const ua = navigator.userAgent.toLowerCase();
@@ -99,15 +102,11 @@ const App = () => {
       } else {
         if (isLoggedIn) {
           if (hasAgreed) {
-            if (
-              location.pathname === '/login' ||
-              location.pathname === '/' ||
-              location.pathname === '/terms-agreement'
-            ) {
+            if (pathname === '/login' || pathname === '/' || pathname === '/terms-agreement') {
               navigate('/warehouse', { replace: true });
             }
           } else {
-            if (location.pathname !== '/terms-agreement') {
+            if (pathname !== '/terms-agreement') {
               navigate('/terms-agreement', { replace: true });
             }
           }
@@ -116,7 +115,7 @@ const App = () => {
     } else {
       app.initialize();
     }
-  }, [isLoggedIn, isInitialized, location.pathname, hasAgreed]);
+  }, [isInitialized, pathname]); // location.pathname 대신 pathname 사용
 
   if (isInstagram) {
     return <InstagramWebView />;

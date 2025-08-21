@@ -8,12 +8,14 @@ import { NavigateFunction, Location } from 'react-router-dom';
 import WarehouseDispatcherType from '../../warehouse/model/WarehouseDispatcherType';
 import AlertManager from '../../alert/AlertManager';
 import ToastManager from '../../toast/ToastManager';
+import WebViewManager from '../../webview/WebViewManager';
 
 class WarehouseDetail {
   public static new(
     navigate: NavigateFunction,
     dispatcher: WarehouseDispatcherType,
-    location: Location
+    location: Location,
+    webViewManager: WebViewManager
   ) {
     return new WarehouseDetail(
       app.getBagStore(),
@@ -22,7 +24,8 @@ class WarehouseDetail {
       dispatcher,
       app.getAlertManager(),
       app.getToastManager(),
-      location
+      location,
+      webViewManager
     );
   }
 
@@ -37,7 +40,8 @@ class WarehouseDetail {
     private readonly dispatcher: WarehouseDispatcherType,
     private readonly alertManager: AlertManager,
     private readonly toastManager: ToastManager,
-    private readonly location: Location
+    private readonly location: Location,
+    private readonly webViewManager: WebViewManager
   ) {
     makeAutoObservable(this);
   }
@@ -51,13 +55,17 @@ class WarehouseDetail {
       this.setBags(await this.bagStore.getBags(this.getGear()?.getBags() ?? []));
       this.setInitialized(true);
     } catch (e) {
-      window.alert('잘못된 접근입니다');
+      window.alert(`잘못된 접근입니다. ${id} ${e}`);
     }
   }
 
   public edit() {
     if (this.getGear()) {
-      this.navigate(`/gear/edit/${this.getGear()?.getId()}`);
+      if (this.webViewManager.isWebView()) {
+        this.webViewManager.navigate(`/gear-edit/${this.getGear()?.getId()}`);
+      } else {
+        this.navigate(`/gear/edit/${this.getGear()?.getId()}`);
+      }
     }
   }
 
@@ -102,13 +110,21 @@ class WarehouseDetail {
   }
 
   public close() {
-    const fromPath = this.location.state?.from;
-
-    if (fromPath?.includes('/warehouse')) {
-      this.navigate(-1);
+    if (this.webViewManager.isWebView()) {
+      this.webViewManager.closeWebView();
     } else {
-      this.navigate('/warehouse');
+      const fromPath = this.location.state?.from;
+
+      if (fromPath?.includes('/warehouse')) {
+        this.navigate(-1);
+      } else {
+        this.navigate('/warehouse');
+      }
     }
+  }
+
+  public isWebView() {
+    return this.webViewManager.isWebView();
   }
 }
 
