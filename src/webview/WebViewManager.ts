@@ -7,7 +7,9 @@ declare global {
       closeWebView(): void;
       updateData(): void;
       navigate(path: string): void;
+      navigateToLogin(): void;
     };
+    onMessageFromReactNative: (event: MessageEvent) => void;
   }
 }
 
@@ -44,6 +46,9 @@ class WebViewManager {
         window.alert(`로그인 실패 ${e}`);
         console.error('webview error', e);
       }
+    } else {
+      await this.firebase.logout();
+      this.setInitialized(true);
     }
   }
 
@@ -82,6 +87,10 @@ class WebViewManager {
     if (this.isWebView()) {
       window.NativeBridge.navigate(path);
     }
+  }
+
+  public navigateToLogin() {
+    window.NativeBridge.navigateToLogin();
   }
 }
 

@@ -78,12 +78,29 @@ class SearchWarehouse {
     if (this.firebase.isLoggedIn()) {
       this.selected.push(gear);
     } else {
+      this.showLogInAlert();
+    }
+  }
+
+  private showLogInAlert() {
+    if (this.webViewManager.isWebView()) {
+      window.onMessageFromReactNative = this.handleAuthTokens.bind(this);
+      this.webViewManager.navigateToLogin();
+    } else {
       this.logInAlertManager.show();
     }
   }
 
-  private deselect(gear: Gear) {
-    this.selected = this.selected.filter((item) => !item.isSame(gear));
+  private async handleAuthTokens(data: any) {
+    try {
+      if (data.type === 'AUTH_TOKENS') {
+        const { accessToken, idToken } = data.data;
+        await this.firebase.signInWithIdToken(idToken, accessToken);
+        window.onMessageFromReactNative = () => {};
+      }
+    } catch (error) {
+      window.alert(error);
+    }
   }
 
   @action
@@ -215,10 +232,12 @@ class SearchWarehouse {
   }
 
   public async register() {
-    await this.searchDispatcher.register(this.selected);
-    this.toastManager.show({ message: '내 장비 추가가 완료됐어요' });
-    this.webViewManager.updateData();
-    this.back(this.selected);
+    if (this.firebase.isLoggedIn()) {
+      await this.searchDispatcher.register(this.selected);
+      this.toastManager.show({ message: '내 장비 추가가 완료됐어요' });
+      this.webViewManager.updateData();
+      this.back(this.selected);
+    }
   }
 
   public back(_?: Array<Gear>) {
