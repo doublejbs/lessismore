@@ -6,6 +6,7 @@ import GearRow from './GearRow';
 import SearchInput from './SearchInput';
 import AddGearModal from './component/AddGearModal';
 import AddGearExcelModal from './component/AddGearExcelModal';
+import NaverShoppingImageModal from './component/NaverShoppingImageModal';
 import SaveKoreanNameButtonView from './SaveKoreanNameButtonView';
 
 interface RowType {
@@ -38,6 +39,7 @@ const ManageView = () => {
   const categoryInputRef = useRef<any>(null);
   const [addModalOpen, setAddModalOpen] = useState(false);
   const [excelModalOpen, setExcelModalOpen] = useState(false);
+  const [naverShoppingModalOpen, setNaverShoppingModalOpen] = useState(false);
   const selectAllRef = useRef<any>(null);
 
   useEffect(() => {
@@ -345,6 +347,13 @@ const ManageView = () => {
         <Button style={{ marginLeft: 8 }} onClick={() => setExcelModalOpen(true)}>
           엑셀로 장비 추가
         </Button>
+        <Button
+          style={{ marginLeft: 8 }}
+          disabled={manage.selectedIds.length === 0}
+          onClick={() => setNaverShoppingModalOpen(true)}
+        >
+          네이버 쇼핑 이미지 URL 가져오기
+        </Button>
         <SaveKoreanNameButtonView manage={manage} />
         <Button
           danger
@@ -379,6 +388,12 @@ const ManageView = () => {
         open={excelModalOpen}
         onClose={() => setExcelModalOpen(false)}
         manager={manage}
+      />
+      <NaverShoppingImageModal
+        open={naverShoppingModalOpen}
+        onClose={() => setNaverShoppingModalOpen(false)}
+        selectedGears={items.filter((item) => manage.selectedIds.includes(item.id))}
+        manage={manage}
       />
     </div>
   );
