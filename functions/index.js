@@ -26,6 +26,51 @@ const bucketName = 'lessismore-7e070.appspot.com'; // 자신의 GCS 버킷 이�
 
 functions.setGlobalOptions({ region: 'asia-northeast3' });
 
+export const naverShoppingSearch = functions.https.onRequest(async (req, res) => {
+  res.set('Access-Control-Allow-Origin', '*');
+  res.set('Access-Control-Allow-Methods', 'GET, OPTIONS');
+  res.set('Access-Control-Allow-Headers', 'Content-Type');
+
+  if (req.method === 'OPTIONS') {
+    res.status(204).send('');
+    return;
+  }
+
+  if (req.method !== 'GET') {
+    res.status(405).send('Method Not Allowed');
+    return;
+  }
+
+  const { query } = req.query;
+  if (!query) {
+    res.status(400).send('Missing query parameter');
+    return;
+  }
+
+  try {
+    const response = await fetch(
+      `https://openapi.naver.com/v1/search/shop.json?query=${encodeURIComponent(query)}&display=1`,
+      {
+        method: 'GET',
+        headers: {
+          'X-Naver-Client-Id': 'SIqRa74N6rizQwljpjiP',
+          'X-Naver-Client-Secret': 'M0V_0hHAS9',
+        },
+      }
+    );
+
+    if (!response.ok) {
+      throw new Error(`네이버 API 호출 실패: ${response.status}`);
+    }
+
+    const data = await response.json();
+    res.status(200).json(data);
+  } catch (error) {
+    console.error('네이버 쇼핑 API 호출 실패:', error);
+    res.status(500).send(error.message);
+  }
+});
+
 export const uploadImageFromUrl = functions.https.onRequest(async (req, res) => {
   res.set('Access-Control-Allow-Origin', '*');
   res.set('Access-Control-Allow-Methods', 'POST, OPTIONS');
