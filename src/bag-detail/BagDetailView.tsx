@@ -9,6 +9,7 @@ import BagDetailDateView from './BagDetailDateView';
 import BagDetailFiltersView from './BagDetailFiltersView';
 import BagDetailNameView from './BagDetailNameView';
 import BagDetailUselessDescriptionView from './BagDetailUselessDescriptionView';
+import BagDetailWeatherView from './BagDetailWeatherView';
 import BagDetailAddButtonView from './component/BagDetailAddButtonView';
 import ShareButtonView from './component/ShareButtonView';
 import BagDetail from './model/BagDetail';
@@ -130,8 +131,8 @@ const BagDetailView: FC<Props> = ({ bagDetail }) => {
           </div>
           <BagDetailDateView bagDetail={bagDetail} />
         </div>
-
         <BagDetailUselessDescriptionView bagDetail={bagDetail} />
+        <BagDetailWeatherView bagDetail={bagDetail} />
         <div
           style={{
             width: '100%',
