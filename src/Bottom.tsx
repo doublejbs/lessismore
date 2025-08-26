@@ -20,75 +20,27 @@ const Bottom = () => {
 
   // 내 장비 아이콘 (텐트)
   const WarehouseIcon = ({ isActive }: { isActive: boolean }) => (
-    <svg width='24' height='24' viewBox='0 0 24 24' fill='none' xmlns='http://www.w3.org/2000/svg'>
-      {/* 텐트 (삼각형 형태) */}
-      <path
-        d='M2 20L12 6L22 20H2Z'
-        stroke={isActive ? '#000' : '#666'}
-        strokeWidth='2'
-        strokeLinecap='round'
-        strokeLinejoin='round'
-        fill='none'
-      />
-      {/* 텐트 입구 */}
-      <path
-        d='M12 20V14'
-        stroke={isActive ? '#000' : '#666'}
-        strokeWidth='2'
-        strokeLinecap='round'
-      />
+    <svg
+      xmlns='http://www.w3.org/2000/svg'
+      height='24px'
+      viewBox='0 -960 960 960'
+      width='24px'
+      fill={isActive ? '#000000' : '#666666'}
+    >
+      <path d='M80-80v-186l350-472-70-94 64-48 56 75 56-75 64 48-70 94 350 472v186H80Zm400-591L160-240v80h120l200-280 200 280h120v-80L480-671ZM378-160h204L480-302 378-160Zm102-280 200 280-200-280-200 280 200-280Z' />
     </svg>
   );
 
   // 배낭 아이콘 (오스프리 스타일)
   const BagIcon = ({ isActive }: { isActive: boolean }) => (
-    <svg width='24' height='24' viewBox='0 0 24 24' fill='none' xmlns='http://www.w3.org/2000/svg'>
-      {/* 메인 백팩 몸체 */}
-      <path
-        d='M8 7H16C17.1 7 18 7.9 18 9V20C18 21.1 17.1 22 16 22H8C6.9 22 6 21.1 6 20V9C6 7.9 6.9 7 8 7Z'
-        stroke={isActive ? '#000' : '#666'}
-        strokeWidth='2'
-        strokeLinecap='round'
-        strokeLinejoin='round'
-        fill='none'
-      />
-      {/* 상단 원형 뚜껑 (오스프리 특징) */}
-      <circle
-        cx='12'
-        cy='7'
-        r='4'
-        stroke={isActive ? '#000' : '#666'}
-        strokeWidth='2'
-        fill='none'
-      />
-      {/* 어깨 스트랩 */}
-      <path
-        d='M8 7V4M16 7V4'
-        stroke={isActive ? '#000' : '#666'}
-        strokeWidth='2'
-        strokeLinecap='round'
-      />
-      {/* 하단 컴파트먼트 구분선 */}
-      <path
-        d='M6 17H18'
-        stroke={isActive ? '#000' : '#666'}
-        strokeWidth='2'
-        strokeLinecap='round'
-      />
-      {/* 사이드 압축 스트랩 */}
-      <path
-        d='M6 12H7M17 12H18'
-        stroke={isActive ? '#000' : '#666'}
-        strokeWidth='1.5'
-        strokeLinecap='round'
-      />
-      {/* 상단 뚜껑 손잡이 */}
-      <path
-        d='M11 5H13'
-        stroke={isActive ? '#000' : '#666'}
-        strokeWidth='2'
-        strokeLinecap='round'
-      />
+    <svg
+      xmlns='http://www.w3.org/2000/svg'
+      height='24px'
+      viewBox='0 -960 960 960'
+      width='24px'
+      fill={isActive ? '#1f1f1f' : '#666666'}
+    >
+      <path d='m280-40 123-622q6-29 27-43.5t44-14.5q23 0 42.5 10t31.5 30l40 64q18 29 46.5 52.5T700-529v-71h60v560h-60v-406q-48-11-89-35t-71-59l-24 120 84 80v300h-80v-240l-84-80-72 320h-84Zm17-395-85-16q-16-3-25-16.5t-6-30.5l30-157q6-32 34-50.5t60-12.5l46 9-54 274Zm243-305q-33 0-56.5-23.5T460-820q0-33 23.5-56.5T540-900q33 0 56.5 23.5T620-820q0 33-23.5 56.5T540-740Z' />
     </svg>
   );
 
