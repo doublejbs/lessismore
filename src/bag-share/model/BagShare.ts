@@ -6,7 +6,7 @@ import GearStore from '../../firebase/GearStore';
 import Gear from '../../model/Gear';
 import Order from '../../order/Order';
 import OrderType from '../../order/OrderType';
-import FilterManager from '../../warehouse/model/FilterManager';
+import BagDetailFilterManager from '../../bag-detail/model/BagDetailFilterManager';
 import GearFilter from '../../warehouse/model/GearFilter';
 import WarehouseFilter from '../../warehouse/model/WarehouseFilter';
 
@@ -18,7 +18,7 @@ class BagShare {
       id,
       app.getBagStore(),
       app.getGearStore(),
-      FilterManager.from(),
+      BagDetailFilterManager.from(),
       Order.new(BagShare.ORDER_KEY)
     );
   }
@@ -35,7 +35,7 @@ class BagShare {
     private readonly id: string,
     private readonly bagStore: BagStore,
     private readonly gearStore: GearStore,
-    private readonly filterManager: FilterManager,
+    private readonly filterManager: BagDetailFilterManager,
     private readonly order: Order
   ) {
     makeAutoObservable(this);
@@ -120,19 +120,57 @@ class BagShare {
   }
 
   public toggleFilter(filter: WarehouseFilter) {
-    if (filter.isSelected()) {
-      this.deselectFilter(filter);
-    } else {
-      this.selectFilter(filter);
-    }
+    // 모든 필터를 먼저 해제하고 선택된 필터만 활성화
+    this.filterManager.mapFilters((f) => f.deselect());
+    filter.select();
   }
 
   public toggleFilterWithScroll(filter: WarehouseFilter) {
+    // 필터를 선택하고 해당 카테고리로 스크롤
     this.toggleFilter(filter);
+    this.scrollToCategory(filter.getFilter());
   }
 
   public mapFiltersWithGears<R>(callback: (filter: WarehouseFilter) => R) {
-    return this.filterManager.mapFilters(callback);
+    return this.filterManager.getFiltersWithGears(this.gears).map(callback);
+  }
+
+  public getGearsByCategory() {
+    return this.filterManager.groupGearsByCategory(this.gears);
+  }
+
+  public setActiveFilterByCategory(categoryFilter: GearFilter) {
+    // 모든 필터를 비활성화
+    this.filterManager.mapFilters((filter) => filter.deselect());
+
+    // 해당 카테고리 필터만 활성화
+    this.filterManager.mapFilters((filter) => {
+      if (filter.isSame(categoryFilter)) {
+        filter.select();
+      }
+    });
+  }
+
+  public clearAllFilters() {
+    this.filterManager.mapFilters((filter) => filter.deselect());
+  }
+
+  private categoryRefs: Map<string, HTMLDivElement> = new Map();
+
+  public setCategoryRefs(refs: Map<string, HTMLDivElement>) {
+    this.categoryRefs = refs;
+  }
+
+  public scrollToCategory(categoryFilter: GearFilter) {
+    const element = this.categoryRefs.get(categoryFilter);
+    if (element) {
+      const y = element.getBoundingClientRect().top + window.pageYOffset - 170.5;
+
+      window.scrollTo({
+        top: y,
+        behavior: 'smooth',
+      });
+    }
   }
 }
 

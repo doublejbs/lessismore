@@ -1,10 +1,12 @@
-import { FC, useEffect } from 'react';
+import { FC, useEffect, useState } from 'react';
 import { observer } from 'mobx-react-lite';
 import BagShare from '../model/BagShare';
 import { FlipCounter } from '../../bag-edit-add-gear/components/FlipCounter';
 import BagDetailChartView from '../../bag-detail/BagDetailChartView';
 import BagDetailFiltersView from '../../bag-detail/BagDetailFiltersView';
-import BagShareGearView from './BagShareGearView';
+import BagShareCategoryView from './BagShareCategoryView';
+import { useScrollBasedFilterForBagShare } from '../../hooks/useScrollBasedFilterForBagShare';
+import GearFilter from '../../warehouse/model/GearFilter';
 
 interface Props {
   bagShare: BagShare;
@@ -12,10 +14,42 @@ interface Props {
 
 const BagShareView: FC<Props> = ({ bagShare }) => {
   const initialized = bagShare.isInitialized();
+  const { setCategoryRef, updateVisibility } = useScrollBasedFilterForBagShare(
+    bagShare,
+    initialized
+  );
+  const [observer, setObserver] = useState<IntersectionObserver | null>(null);
 
   useEffect(() => {
     bagShare.initialize();
   }, []);
+
+  useEffect(() => {
+    if (!initialized) return;
+
+    const newObserver = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          const categoryFilter = entry.target.getAttribute('data-category');
+          if (categoryFilter) {
+            updateVisibility(categoryFilter as GearFilter, entry.isIntersecting);
+          }
+        });
+      },
+      {
+        threshold: 0.1,
+        rootMargin: '-170px 0px 0px 0px',
+      }
+    );
+
+    setObserver(newObserver);
+
+    return () => {
+      if (observer) {
+        observer.disconnect();
+      }
+    };
+  }, [initialized, updateVisibility]);
 
   if (initialized) {
     const name = bagShare.getName();
@@ -121,19 +155,26 @@ const BagShareView: FC<Props> = ({ bagShare }) => {
               padding: '0 1.25rem 0',
             }}
           >
-            <ul
+            <div
               style={{
                 display: 'flex',
                 flexDirection: 'column',
                 width: '100%',
-                gap: '16px',
+                gap: '24px',
                 paddingBottom: '5rem',
               }}
             >
-              {bagShare.mapGears((gear) => {
-                return <BagShareGearView key={gear.getId()} gear={gear} />;
-              })}
-            </ul>
+              {bagShare.getGearsByCategory().map(({ category, gears }) => (
+                <BagShareCategoryView
+                  key={category.getFilter()}
+                  category={category}
+                  bagShare={bagShare}
+                  setCategoryRef={setCategoryRef}
+                  observer={observer}
+                  gears={gears}
+                />
+              ))}
+            </div>
           </div>
         </div>
       </div>
