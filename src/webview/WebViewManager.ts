@@ -10,6 +10,7 @@ declare global {
       navigateToLogin(): void;
     };
     onMessageFromReactNative: (event: MessageEvent) => void;
+    onRefreshFromReactNative: () => void;
   }
 }
 
@@ -31,6 +32,8 @@ class WebViewManager {
       return;
     }
 
+    window.onRefreshFromReactNative = this.handleRefresh.bind(this);
+
     // 1. URL 쿼리 파라미터에서 토큰 가져오기
     const urlParams = new URLSearchParams(window.location.search);
     const tokenFromQuery = urlParams.get('token');
@@ -50,6 +53,10 @@ class WebViewManager {
       await this.firebase.logout();
       this.setInitialized(true);
     }
+  }
+
+  private handleRefresh() {
+    window.alert('refresh');
   }
 
   public isWebView(): boolean {
