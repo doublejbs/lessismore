@@ -15,6 +15,7 @@ interface Props {
 const BagDetailChartView: FC<Props> = ({ bagDetail }) => {
   const [isAnimated, setIsAnimated] = useState(false);
   const [isPercentMode, setIsPercentMode] = useState(true);
+  const [highlightedIndex, setHighlightedIndex] = useState<number | null>(null);
 
   // 애니메이션 시작
   useEffect(() => {
@@ -156,65 +157,108 @@ const BagDetailChartView: FC<Props> = ({ bagDetail }) => {
       </div>
 
       {hasData ? (
-        // 스택 바 차트
-        <div
-          style={{
-            height: '3rem',
-            backgroundColor: '#F2F4F6',
-            borderRadius: '0.5rem',
-            display: 'flex',
-          }}
-        >
-          {categoryData.map((item, index) => {
-            const isFirst = index === 0;
-            const isLast = index === categoryData.length - 1;
-            // 애니메이션을 위해 실제 퍼센트 사용 (최소 너비는 픽셀로만 제한)
-            const displayWidth = item.percentage;
+        <>
+          {/* 스택 바 차트 */}
+          <div
+            style={{
+              height: '3rem',
+              backgroundColor: '#F2F4F6',
+              borderRadius: '0.5rem',
+              display: 'flex',
+              marginBottom: '1rem',
+            }}
+          >
+            {categoryData.map((item, index) => {
+              const isFirst = index === 0;
+              const isLast = index === categoryData.length - 1;
+              const isHighlighted = highlightedIndex === index;
+              // 애니메이션을 위해 실제 퍼센트 사용 (최소 너비는 픽셀로만 제한)
+              const displayWidth = item.percentage;
 
-            return (
-              <div
-                key={index}
-                style={{
-                  width: isAnimated ? `${displayWidth}%` : '0%',
-                  backgroundColor: getColorForCategory(index),
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  fontSize: '0.75rem',
-                  color: 'white',
-                  fontWeight: 'bold',
-                  borderTopLeftRadius: isFirst ? '0.5rem' : '0',
-                  borderBottomLeftRadius: isFirst ? '0.5rem' : '0',
-                  borderTopRightRadius: isLast ? '0.5rem' : '0',
-                  borderBottomRightRadius: isLast ? '0.5rem' : '0',
-                  transition: 'width 0.8s cubic-bezier(0.4, 0, 0.2, 1)',
-                  overflow: 'hidden',
-                  minWidth: isAnimated ? '60px' : '0px',
-                }}
-              >
-                {isAnimated && (
+              return (
+                <div
+                  key={index}
+                  style={{
+                    width: isAnimated ? `${displayWidth}%` : '0%',
+                    backgroundColor: getColorForCategory(index),
+                    borderTopLeftRadius: isFirst ? '0.5rem' : '0',
+                    borderBottomLeftRadius: isFirst ? '0.5rem' : '0',
+                    borderTopRightRadius: isLast ? '0.5rem' : '0',
+                    borderBottomRightRadius: isLast ? '0.5rem' : '0',
+                    transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+                    minWidth: isAnimated ? '4px' : '0px',
+                    cursor: 'pointer',
+                    transform: isHighlighted ? 'scaleY(1.15)' : 'scaleY(1)',
+                    transformOrigin: 'center',
+                    zIndex: isHighlighted ? 10 : 1,
+                    position: 'relative',
+                  }}
+                  onClick={() => {
+                    setHighlightedIndex(highlightedIndex === index ? null : index);
+                  }}
+                />
+              );
+            })}
+          </div>
+
+          {/* 범례 */}
+          <div
+            style={{
+              display: 'grid',
+              gridTemplateColumns: 'repeat(auto-fit, minmax(120px, 1fr))',
+              gap: '0.5rem',
+            }}
+          >
+            {categoryData.map((item, index) => {
+              const isHighlighted = highlightedIndex === index;
+              const isDimmed = highlightedIndex !== null && highlightedIndex !== index;
+
+              return (
+                <div
+                  key={index}
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '0.5rem',
+                    opacity: isAnimated ? (isDimmed ? 0.4 : 1) : 0,
+                    transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+                    padding: '0.5rem',
+                    borderRadius: '0.375rem',
+                    backgroundColor: 'transparent',
+                    cursor: 'pointer',
+                  }}
+                  onClick={() => {
+                    setHighlightedIndex(highlightedIndex === index ? null : index);
+                  }}
+                >
                   <div
                     style={{
-                      textAlign: 'center',
-                      lineHeight: '1.1',
-                      opacity: isAnimated ? 1 : 0,
-                      transition: 'opacity 0.4s cubic-bezier(0.4, 0, 0.2, 1) 0.3s',
+                      width: '12px',
+                      height: '12px',
+                      backgroundColor: getColorForCategory(index),
+                      borderRadius: '2px',
+                      flexShrink: 0,
+                    }}
+                  />
+                  <div
+                    style={{
+                      fontSize: '0.75rem',
+                      color: '#374151',
+                      lineHeight: '1.2',
                     }}
                   >
-                    <div style={{ fontSize: '0.625rem', fontWeight: 'bold' }}>
-                      {getKoreanCategoryName(item.category)}
-                    </div>
-                    <div style={{ fontSize: '0.75rem' }}>
+                    <div style={{ fontWeight: '500' }}>{getKoreanCategoryName(item.category)}</div>
+                    <div style={{ color: '#6B7280' }}>
                       {isPercentMode
                         ? `${item.percentage.toFixed(1)}%`
                         : `${item.weight.toFixed(0)}g`}
                     </div>
                   </div>
-                )}
-              </div>
-            );
-          })}
-        </div>
+                </div>
+              );
+            })}
+          </div>
+        </>
       ) : (
         // 데이터가 없을 때 메시지
         <div
