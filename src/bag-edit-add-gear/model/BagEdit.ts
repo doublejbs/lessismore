@@ -75,6 +75,7 @@ class BagEdit {
       return;
     } else {
       this.setLoading(true);
+      this.webViewManager.setRefreshCallback(this.refresh.bind(this));
       this.order.initialize();
       const { weight, gears } = await this.bagStore.getBag(
         this.id,
@@ -90,6 +91,11 @@ class BagEdit {
       this.setLoading(false);
       this.setInitialized(true);
     }
+  }
+
+  private async refresh() {
+    this.order.selectCreatedDesc();
+    await this.getList();
   }
 
   private async getList() {
