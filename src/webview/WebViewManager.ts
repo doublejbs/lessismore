@@ -10,17 +10,21 @@ declare global {
       navigateToLogin(): void;
     };
     onMessageFromReactNative: (event: MessageEvent) => void;
+    onRefreshFromReactNative: () => void;
   }
 }
 
 class WebViewManager {
-  public static new(firebase: Firebase) {
-    return new WebViewManager(firebase);
+  public static new(firebase: Firebase, onRefresh?: () => void) {
+    return new WebViewManager(firebase, onRefresh);
   }
 
   private initialized = false;
 
-  private constructor(private readonly firebase: Firebase) {
+  private constructor(
+    private readonly firebase: Firebase,
+    private onRefresh?: () => void
+  ) {
     makeAutoObservable(this);
   }
 
@@ -30,6 +34,8 @@ class WebViewManager {
       this.setInitialized(true);
       return;
     }
+
+    window.onRefreshFromReactNative = this.handleRefresh.bind(this);
 
     // 1. URL 쿼리 파라미터에서 토큰 가져오기
     const urlParams = new URLSearchParams(window.location.search);
@@ -49,6 +55,12 @@ class WebViewManager {
     } else {
       await this.firebase.logout();
       this.setInitialized(true);
+    }
+  }
+
+  private handleRefresh() {
+    if (this.onRefresh) {
+      this.onRefresh();
     }
   }
 
@@ -72,7 +84,6 @@ class WebViewManager {
 
   public closeWebView() {
     if (this.isWebView()) {
-      console.log('closeWebView');
       window.NativeBridge.closeWebView();
     }
   }
@@ -91,6 +102,10 @@ class WebViewManager {
 
   public navigateToLogin() {
     window.NativeBridge.navigateToLogin();
+  }
+
+  public setRefreshCallback(callback: () => void) {
+    this.onRefresh = callback;
   }
 }
 

@@ -1,6 +1,7 @@
-import React, { FC } from 'react';
+import { FC } from 'react';
 import GearImageView from '../../warehouse/component/GearImageView';
 import Gear from '../../model/Gear';
+import { observer } from 'mobx-react-lite';
 
 interface Props {
   gear: Gear;
@@ -175,4 +176,4 @@ const WarehouseDetailInformationView: FC<Props> = ({ gear }) => {
   );
 };
 
-export default WarehouseDetailInformationView;
+export default observer(WarehouseDetailInformationView);

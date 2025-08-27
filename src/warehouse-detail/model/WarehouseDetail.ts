@@ -32,6 +32,7 @@ class WarehouseDetail {
   private gear: Gear | null = null;
   private bags: BagItem[] = [];
   private initialized = false;
+  private id: string = '';
 
   private constructor(
     private readonly bagStore: BagStore,
@@ -49,14 +50,19 @@ class WarehouseDetail {
   public async initialize(id: string) {
     try {
       this.setInitialized(false);
-      const gear = await this.gearStore.getGear(id);
-
-      this.setGear(gear);
+      this.webViewManager.setRefreshCallback(this.getGearData.bind(this));
+      this.setId(id);
+      await this.getGearData();
       this.setBags(await this.bagStore.getBags(this.getGear()?.getBags() ?? []));
       this.setInitialized(true);
     } catch (e) {
       window.alert(`잘못된 접근입니다. ${id} ${e}`);
     }
+  }
+
+  private async getGearData() {
+    const gear = await this.gearStore.getGear(this.id);
+    this.setGear(gear);
   }
 
   public edit() {
@@ -125,6 +131,10 @@ class WarehouseDetail {
 
   public isWebView() {
     return this.webViewManager.isWebView();
+  }
+
+  private setId(id: string) {
+    this.id = id;
   }
 }
 
