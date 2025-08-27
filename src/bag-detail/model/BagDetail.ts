@@ -66,7 +66,13 @@ class BagDetail {
   }
 
   public async initialize() {
+    this.webViewManager.setRefreshCallback(this.getData.bind(this));
     this.order.initialize();
+    await this.getData();
+    this.setInitialized(true);
+  }
+
+  private async getData() {
     const { name, weight, editDate, gears, startDate, endDate, shared } =
       await this.bagStore.getBagWithAllFilter(this.id);
     this.setName(name);
@@ -78,7 +84,6 @@ class BagDetail {
     this.setShared(shared);
     this.calculateUsedWeight();
     this.updateUselessChecked();
-    this.setInitialized(true);
   }
 
   private updateUselessChecked() {
@@ -371,6 +376,10 @@ class BagDetail {
     await this.bagStore.updateDates(this.id, startDate, endDate);
     this.setStartDate(startDate);
     this.setEndDate(endDate);
+  }
+
+  public async handleRefresh() {
+    await this.initialize();
   }
 
   public goToEdit() {

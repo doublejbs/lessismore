@@ -3,12 +3,11 @@ import OrderOption from './OrderOption';
 import OrderType from './OrderType';
 import LocalStorageManager from '../utils/LocalStorageManager';
 
-
 class Order {
   public static new(key: string) {
     return new Order(key);
   }
-  
+
   private showOrderOptions = false;
   private orderOptions: OrderOption[] = [
     {
@@ -42,7 +41,7 @@ class Order {
   public initialize() {
     const saved = LocalStorageManager.get<OrderType>(this.getStorageKey());
     if (saved) {
-      const option = this.orderOptions.find(opt => opt.getOrder() === saved);
+      const option = this.orderOptions.find((opt) => opt.getOrder() === saved);
       if (option) {
         this.setOrderOption(option);
         return;
@@ -80,6 +79,12 @@ class Order {
 
   public getSelectedOrderType() {
     return this.orderOptions.find((option) => option.isSelected())?.getOrder();
+  }
+
+  public selectCreatedDesc() {
+    this.setOrderOption(
+      this.orderOptions.find((option) => option.getOrder() === OrderType.CreatedDesc)!
+    );
   }
 }
 

@@ -15,13 +15,16 @@ declare global {
 }
 
 class WebViewManager {
-  public static new(firebase: Firebase) {
-    return new WebViewManager(firebase);
+  public static new(firebase: Firebase, onRefresh?: () => void) {
+    return new WebViewManager(firebase, onRefresh);
   }
 
   private initialized = false;
 
-  private constructor(private readonly firebase: Firebase) {
+  private constructor(
+    private readonly firebase: Firebase,
+    private onRefresh?: () => void
+  ) {
     makeAutoObservable(this);
   }
 
@@ -56,7 +59,9 @@ class WebViewManager {
   }
 
   private handleRefresh() {
-    window.alert('refresh');
+    if (this.onRefresh) {
+      this.onRefresh();
+    }
   }
 
   public isWebView(): boolean {
@@ -79,7 +84,6 @@ class WebViewManager {
 
   public closeWebView() {
     if (this.isWebView()) {
-      console.log('closeWebView');
       window.NativeBridge.closeWebView();
     }
   }
@@ -98,6 +102,10 @@ class WebViewManager {
 
   public navigateToLogin() {
     window.NativeBridge.navigateToLogin();
+  }
+
+  public setRefreshCallback(callback: () => void) {
+    this.onRefresh = callback;
   }
 }
 

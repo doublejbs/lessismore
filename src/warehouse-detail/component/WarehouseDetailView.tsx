@@ -1,7 +1,8 @@
-import React, { FC } from 'react';
+import { FC } from 'react';
 import WarehouseDetail from '../model/WarehouseDetail';
 import WarehouseDetailInformationView from './WarehouseDetailInformationView';
 import WarehouseDetailBagRecordView from './WarehouseDetailBagRecordView';
+import { observer } from 'mobx-react-lite';
 
 interface Props {
   warehouseDetail: WarehouseDetail;
@@ -107,4 +108,4 @@ const WarehouseDetailView: FC<Props> = ({ warehouseDetail }) => {
   }
 };
 
-export default WarehouseDetailView;
+export default observer(WarehouseDetailView);
