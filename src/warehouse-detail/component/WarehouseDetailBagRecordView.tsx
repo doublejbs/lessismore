@@ -1,4 +1,4 @@
-import React, { FC } from 'react';
+import { FC } from 'react';
 import Gear from '../../model/Gear';
 import WarehouseDetail from '../model/WarehouseDetail';
 import { useNavigate } from 'react-router-dom';
@@ -44,7 +44,7 @@ const WarehouseDetailBagRecordView: FC<Props> = ({ gear, warehouseDetail }) => {
             const isUsed = gear.hasUsed(bag.getID());
 
             const handleClick = () => {
-              navigate(`/bag/${bag.getID()}`, { state: { from: '/warehouse/detail' } });
+              warehouseDetail.goToBag(bag);
             };
 
             const renderButton = () => {

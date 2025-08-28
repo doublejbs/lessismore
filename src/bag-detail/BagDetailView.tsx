@@ -132,6 +132,7 @@ const BagDetailView: FC<Props> = ({ bagDetail }) => {
         </div>
 
         <BagDetailUselessDescriptionView bagDetail={bagDetail} />
+        <BagDetailChartView bagDetail={bagDetail} />
         <div
           style={{
             width: '100%',
@@ -139,7 +140,6 @@ const BagDetailView: FC<Props> = ({ bagDetail }) => {
             minHeight: '0.625rem',
           }}
         ></div>
-        <BagDetailChartView bagDetail={bagDetail} />
         <div style={{ position: 'sticky', top: '3.5rem', zIndex: 19, backgroundColor: 'white' }}>
           <div
             style={{

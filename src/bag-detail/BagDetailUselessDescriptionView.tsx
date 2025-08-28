@@ -46,45 +46,66 @@ const BagDetailUselessDescriptionView: FC<Props> = ({ bagDetail }) => {
   return (
     <div
       style={{
-        width: '100%',
-        display: 'flex',
-        padding: '0 1.25rem',
+        padding: '1rem 1.25rem 0.5rem',
+        backgroundColor: 'white',
       }}
     >
       <div
         style={{
-          width: '100%',
           display: 'flex',
-          flexDirection: 'column',
-          padding: '0.5rem 0',
-          fontSize: '0.875rem',
-          fontWeight: 'bold',
+          justifyContent: 'space-between',
+          alignItems: 'center',
+          cursor: 'pointer',
+          borderRadius: '0.375rem',
+          transition: 'background-color 0.2s',
         }}
         onClick={handleClickUseless}
-      >
-        {render()}
-      </div>
-      <div
-        style={{
-          display: 'flex',
-          alignItems: 'center',
+        onMouseEnter={(e) => {
+          if (!('ontouchstart' in window || navigator.maxTouchPoints > 0)) {
+            e.currentTarget.style.backgroundColor = '#F9FAFB';
+          }
+        }}
+        onMouseLeave={(e) => {
+          if (!('ontouchstart' in window || navigator.maxTouchPoints > 0)) {
+            e.currentTarget.style.backgroundColor = 'transparent';
+          }
         }}
       >
-        <svg
-          width='1.5rem'
-          height='1.5rem'
-          viewBox='0 0 24 24'
-          fill='none'
-          xmlns='http://www.w3.org/2000/svg'
+        <div
+          style={{
+            display: 'flex',
+            flexDirection: 'column',
+            fontSize: '1.0625rem',
+            fontWeight: 'bold',
+          }}
         >
-          <path
-            d='M10 7L15 12L10 17'
-            stroke='black'
-            strokeWidth='2'
-            strokeLinecap='round'
-            strokeLinejoin='round'
-          />
-        </svg>
+          {render()}
+        </div>
+        <div
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            width: '20px',
+            height: '20px',
+          }}
+        >
+          <svg
+            width='1.5rem'
+            height='1.5rem'
+            viewBox='0 0 24 24'
+            fill='none'
+            xmlns='http://www.w3.org/2000/svg'
+          >
+            <path
+              d='M10 7L15 12L10 17'
+              stroke='black'
+              strokeWidth='2'
+              strokeLinecap='round'
+              strokeLinejoin='round'
+            />
+          </svg>
+        </div>
       </div>
     </div>
   );

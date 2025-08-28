@@ -53,7 +53,6 @@ class WarehouseDetail {
       this.webViewManager.setRefreshCallback(this.getGearData.bind(this));
       this.setId(id);
       await this.getGearData();
-      this.setBags(await this.bagStore.getBags(this.getGear()?.getBags() ?? []));
       this.setInitialized(true);
     } catch (e) {
       window.alert(`잘못된 접근입니다. ${id} ${e}`);
@@ -63,6 +62,7 @@ class WarehouseDetail {
   private async getGearData() {
     const gear = await this.gearStore.getGear(this.id);
     this.setGear(gear);
+    this.setBags(await this.bagStore.getBags(this.getGear()?.getBags() ?? []));
   }
 
   public edit() {
@@ -135,6 +135,14 @@ class WarehouseDetail {
 
   private setId(id: string) {
     this.id = id;
+  }
+
+  public goToBag(bag: BagItem) {
+    if (this.webViewManager.isWebView()) {
+      this.webViewManager.navigate(`/bag/${bag.getID()}`);
+    } else {
+      this.navigate(`/bag/${bag.getID()}`, { state: { from: '/warehouse/detail' } });
+    }
   }
 }
 

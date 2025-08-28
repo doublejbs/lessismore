@@ -14,8 +14,8 @@ interface Props {
 
 const BagDetailChartView: FC<Props> = ({ bagDetail }) => {
   const [isAnimated, setIsAnimated] = useState(false);
-  const [isPercentMode, setIsPercentMode] = useState(true);
   const [highlightedIndex, setHighlightedIndex] = useState<number | null>(null);
+  const [isExpanded, setIsExpanded] = useState(false);
 
   // 애니메이션 시작
   useEffect(() => {
@@ -110,7 +110,7 @@ const BagDetailChartView: FC<Props> = ({ bagDetail }) => {
   return (
     <div
       style={{
-        padding: '1.25rem',
+        padding: '0.5rem 1.25rem 1rem',
         backgroundColor: 'white',
       }}
     >
@@ -119,8 +119,10 @@ const BagDetailChartView: FC<Props> = ({ bagDetail }) => {
           display: 'flex',
           justifyContent: 'space-between',
           alignItems: 'center',
-          marginBottom: '1rem',
+          cursor: 'pointer',
+          borderRadius: '0.375rem',
         }}
+        onClick={() => setIsExpanded(!isExpanded)}
       >
         <div
           style={{
@@ -128,154 +130,179 @@ const BagDetailChartView: FC<Props> = ({ bagDetail }) => {
             fontWeight: 'bold',
           }}
         >
-          카테고리별 무게
+          📊 카테고리별 무게
         </div>
-        {hasData && (
-          <div
-            style={{
-              display: 'flex',
-              alignItems: 'center',
-              gap: '0.5rem',
-            }}
-          >
-            <button
-              style={{
-                padding: '0.25rem 0.5rem',
-                fontSize: '0.75rem',
-                border: '1px solid black',
-                borderRadius: '0.375rem',
-                backgroundColor: 'black',
-                color: 'white',
-                cursor: 'pointer',
-              }}
-              onClick={() => setIsPercentMode(!isPercentMode)}
-            >
-              {isPercentMode ? '무게' : '퍼센트'} 보기
-            </button>
-          </div>
-        )}
-      </div>
-
-      {hasData ? (
-        <>
-          {/* 스택 바 차트 */}
-          <div
-            style={{
-              height: '3rem',
-              backgroundColor: '#F2F4F6',
-              borderRadius: '0.5rem',
-              display: 'flex',
-              marginBottom: '1rem',
-            }}
-          >
-            {categoryData.map((item, index) => {
-              const isFirst = index === 0;
-              const isLast = index === categoryData.length - 1;
-              const isHighlighted = highlightedIndex === index;
-              // 애니메이션을 위해 실제 퍼센트 사용 (최소 너비는 픽셀로만 제한)
-              const displayWidth = item.percentage;
-
-              return (
-                <div
-                  key={index}
-                  style={{
-                    width: isAnimated ? `${displayWidth}%` : '0%',
-                    backgroundColor: getColorForCategory(index),
-                    borderTopLeftRadius: isFirst ? '0.5rem' : '0',
-                    borderBottomLeftRadius: isFirst ? '0.5rem' : '0',
-                    borderTopRightRadius: isLast ? '0.5rem' : '0',
-                    borderBottomRightRadius: isLast ? '0.5rem' : '0',
-                    transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
-                    minWidth: isAnimated ? '4px' : '0px',
-                    cursor: 'pointer',
-                    transform: isHighlighted ? 'scaleY(1.15)' : 'scaleY(1)',
-                    transformOrigin: 'center',
-                    zIndex: isHighlighted ? 10 : 1,
-                    position: 'relative',
-                  }}
-                  onClick={() => {
-                    setHighlightedIndex(highlightedIndex === index ? null : index);
-                  }}
-                />
-              );
-            })}
-          </div>
-
-          {/* 범례 */}
-          <div
-            style={{
-              display: 'grid',
-              gridTemplateColumns: 'repeat(auto-fit, minmax(120px, 1fr))',
-              gap: '0.5rem',
-            }}
-          >
-            {categoryData.map((item, index) => {
-              const isHighlighted = highlightedIndex === index;
-              const isDimmed = highlightedIndex !== null && highlightedIndex !== index;
-
-              return (
-                <div
-                  key={index}
-                  style={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: '0.5rem',
-                    opacity: isAnimated ? (isDimmed ? 0.4 : 1) : 0,
-                    transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
-                    padding: '0.5rem',
-                    borderRadius: '0.375rem',
-                    backgroundColor: 'transparent',
-                    cursor: 'pointer',
-                  }}
-                  onClick={() => {
-                    setHighlightedIndex(highlightedIndex === index ? null : index);
-                  }}
-                >
-                  <div
-                    style={{
-                      width: '12px',
-                      height: '12px',
-                      backgroundColor: getColorForCategory(index),
-                      borderRadius: '2px',
-                      flexShrink: 0,
-                    }}
-                  />
-                  <div
-                    style={{
-                      fontSize: '0.75rem',
-                      color: '#374151',
-                      lineHeight: '1.2',
-                    }}
-                  >
-                    <div style={{ fontWeight: '500' }}>{getKoreanCategoryName(item.category)}</div>
-                    <div style={{ color: '#6B7280' }}>
-                      {isPercentMode
-                        ? `${item.percentage.toFixed(1)}%`
-                        : `${item.weight.toFixed(0)}g`}
-                    </div>
-                  </div>
-                </div>
-              );
-            })}
-          </div>
-        </>
-      ) : (
-        // 데이터가 없을 때 메시지
         <div
           style={{
-            height: '3rem',
-            backgroundColor: '#F2F4F6',
-            borderRadius: '0.5rem',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
-            fontSize: '0.875rem',
-            color: '#6B7280',
-            fontWeight: '500',
+            width: '20px',
+            height: '20px',
           }}
         >
-          장비를 추가해주세요
+          <svg
+            width='1.5rem'
+            height='1.5rem'
+            viewBox='0 0 24 24'
+            fill='none'
+            xmlns='http://www.w3.org/2000/svg'
+          >
+            <path
+              d={isExpanded ? 'M7 10L12 15L17 10' : 'M10 7L15 12L10 17'}
+              stroke='black'
+              strokeWidth='2'
+              strokeLinecap='round'
+              strokeLinejoin='round'
+            />
+          </svg>
         </div>
+      </div>
+
+      {isExpanded && (
+        <>
+          {hasData ? (
+            <>
+              {/* 스택 바 차트 */}
+              <div
+                style={{
+                  height: '3rem',
+                  backgroundColor: '#F2F4F6',
+                  borderRadius: '0.5rem',
+                  display: 'flex',
+                  margin: '1rem 0',
+                }}
+              >
+                {categoryData.map((item, index) => {
+                  const isFirst = index === 0;
+                  const isLast = index === categoryData.length - 1;
+                  const isHighlighted = highlightedIndex === index;
+                  // 애니메이션을 위해 실제 퍼센트 사용 (최소 너비는 픽셀로만 제한)
+                  const displayWidth = item.percentage;
+
+                  return (
+                    <div
+                      key={index}
+                      style={{
+                        width: isAnimated ? `${displayWidth}%` : '0%',
+                        backgroundColor: getColorForCategory(index),
+                        borderTopLeftRadius: isFirst ? '0.5rem' : '0',
+                        borderBottomLeftRadius: isFirst ? '0.5rem' : '0',
+                        borderTopRightRadius: isLast ? '0.5rem' : '0',
+                        borderBottomRightRadius: isLast ? '0.5rem' : '0',
+                        transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+                        minWidth: isAnimated ? '4px' : '0px',
+                        cursor: 'pointer',
+                        transform: isHighlighted ? 'scaleY(1.15)' : 'scaleY(1)',
+                        transformOrigin: 'center',
+                        zIndex: isHighlighted ? 10 : 1,
+                        position: 'relative',
+                      }}
+                      onClick={() => {
+                        setHighlightedIndex(highlightedIndex === index ? null : index);
+                      }}
+                    />
+                  );
+                })}
+              </div>
+
+              {/* 범례 */}
+              <div
+                style={{
+                  display: 'flex',
+                  flexDirection: 'column',
+                  gap: '0.5rem',
+                }}
+              >
+                {categoryData.map((item, index) => {
+                  const isDimmed = highlightedIndex !== null && highlightedIndex !== index;
+
+                  return (
+                    <div
+                      key={index}
+                      style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'space-between',
+                        gap: '0.5rem',
+                        opacity: isAnimated ? (isDimmed ? 0.4 : 1) : 0,
+                        transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+                        padding: '0.5rem',
+                        borderRadius: '0.375rem',
+                        backgroundColor: 'transparent',
+                        cursor: 'pointer',
+                      }}
+                      onClick={() => {
+                        setHighlightedIndex(highlightedIndex === index ? null : index);
+                      }}
+                    >
+                      {/* 왼쪽: 색상 표시자 + 카테고리 이름과 퍼센트 */}
+                      <div
+                        style={{
+                          display: 'flex',
+                          alignItems: 'center',
+                          gap: '0.5rem',
+                          flex: 1,
+                        }}
+                      >
+                        <div
+                          style={{
+                            width: '12px',
+                            height: '12px',
+                            backgroundColor: getColorForCategory(index),
+                            borderRadius: '2px',
+                            flexShrink: 0,
+                          }}
+                        />
+                        <div
+                          style={{
+                            fontSize: '0.875rem',
+                            color: '#374151',
+                            lineHeight: '1.2',
+                          }}
+                        >
+                          <div style={{ fontWeight: 'bold' }}>
+                            {getKoreanCategoryName(item.category)}
+                          </div>
+                          <div style={{ color: '#6B7280' }}>{item.percentage.toFixed(1)}%</div>
+                        </div>
+                      </div>
+
+                      {/* 오른쪽: 무게 */}
+                      <div
+                        style={{
+                          fontSize: '0.875rem',
+                          color: '#374151',
+                          fontWeight: 'bold',
+                          textAlign: 'right',
+                        }}
+                      >
+                        {item.weight.toFixed(0)}g
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            </>
+          ) : (
+            // 데이터가 없을 때 메시지
+            <div
+              style={{
+                height: '3rem',
+                backgroundColor: '#F2F4F6',
+                borderRadius: '0.5rem',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                fontSize: '0.875rem',
+                color: '#6B7280',
+                fontWeight: '500',
+              }}
+            >
+              장비를 추가해주세요
+            </div>
+          )}
+        </>
       )}
     </div>
   );
