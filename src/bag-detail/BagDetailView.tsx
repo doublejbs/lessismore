@@ -12,6 +12,7 @@ import BagDetailUselessDescriptionView from './BagDetailUselessDescriptionView';
 import BagDetailAddButtonView from './component/BagDetailAddButtonView';
 import ShareButtonView from './component/ShareButtonView';
 import BagDetail from './model/BagDetail';
+import BagDetailWeatherView from './BagDetailWeatherView';
 
 interface Props {
   bagDetail: BagDetail;
@@ -130,7 +131,7 @@ const BagDetailView: FC<Props> = ({ bagDetail }) => {
           </div>
           <BagDetailDateView bagDetail={bagDetail} />
         </div>
-
+        <BagDetailWeatherView />
         <BagDetailUselessDescriptionView bagDetail={bagDetail} />
         <BagDetailChartView bagDetail={bagDetail} />
         <div
