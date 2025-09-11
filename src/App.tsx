@@ -24,6 +24,7 @@ import WarehouseWrapper from './warehouse/component/WarehouseWrapper.tsx';
 import WarehouseWebViewDetailWrapper from './warehouse-detail/component/WarehouseWebViewDetailWrapper';
 import BagEditWebViewWrapper from './bag-edit-add-gear/BagEditWebViewWrapper';
 import BagUselessWebViewWrapper from './bag-useless/component/BagUselessWebViewWrapper';
+import WeatherView from './bag-detail/weather/component/WeatherView';
 
 const ROUTES = [
   {
@@ -41,6 +42,10 @@ const ROUTES = [
   {
     path: '/bag-share/:id',
     element: <BagShareWrapper />,
+  },
+  {
+    path: '/bag/:id/weather',
+    element: <WeatherView />,
   },
   {
     path: '/bag/:id/useless',

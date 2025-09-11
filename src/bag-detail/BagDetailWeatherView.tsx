@@ -1,88 +1,83 @@
-import { useState } from 'react';
-import { GoogleMap, LoadScript, Marker, Autocomplete } from '@react-google-maps/api';
+import { FC } from 'react';
+import { useNavigate } from 'react-router-dom';
+import BagDetail from './model/BagDetail';
 
-const center = {
-  lat: 37.5665, // 초기 서울 좌표
-  lng: 126.978,
-};
+interface Props {
+  bagDetail: BagDetail;
+}
 
-const containerStyle = {
-  width: '100%',
-  height: '500px',
-};
+const BagDetailWeatherView: FC<Props> = ({ bagDetail }) => {
+  const navigate = useNavigate();
 
-const BagDetailWeatherView = () => {
-  const [mapCenter, setMapCenter] = useState(center);
-  const [markerPos, setMarkerPos] = useState(center);
-  const [autocomplete, setAutocomplete] = useState(null);
-
-  const onLoad = (autoC: any) => setAutocomplete(autoC);
-
-  const onPlaceChanged = () => {
-    if (autocomplete !== null) {
-      const place = (autocomplete as any).getPlace();
-      if (!place.geometry || !place.geometry.location) return;
-
-      const location = {
-        lat: place.geometry.location.lat(),
-        lng: place.geometry.location.lng(),
-      };
-
-      setMapCenter(location);
-      setMarkerPos(location);
-
-      console.log('선택한 장소:', place.name, location);
-    }
+  const handleClick = () => {
+    navigate(`/bag/${bagDetail.getId()}/weather`);
   };
 
   return (
-    <LoadScript
-      googleMapsApiKey='AIzaSyBYYprHdpI_4j3_yERPOcImb-mw2bNFVYU' // 🔑 여기에 API 키 넣기
-      libraries={['places']}
+    <div
+      style={{
+        padding: '1rem 1.25rem 0.5rem',
+        backgroundColor: 'white',
+      }}
     >
-      <div className='p-2'>
-        <Autocomplete onLoad={onLoad} onPlaceChanged={onPlaceChanged}>
-          <input
-            id='search-input'
-            type='text'
-            placeholder='장소 검색'
-            style={{
-              boxSizing: `border-box`,
-              border: `1px solid transparent`,
-              width: `240px`,
-              height: `40px`,
-              padding: `0 12px`,
-              borderRadius: `4px`,
-              boxShadow: `0 2px 6px rgba(0, 0, 0, 0.3)`,
-              fontSize: `14px`,
-              outline: `none`,
-              position: 'absolute',
-              left: '50%',
-              marginLeft: '-120px',
-              top: '10px',
-              zIndex: 1000,
-            }}
-          />
-        </Autocomplete>
-
-        <GoogleMap
-          mapContainerStyle={containerStyle}
-          center={mapCenter}
-          zoom={10}
-          onClick={(e) => {
-            const lat = e.latLng?.lat();
-            const lng = e.latLng?.lng();
-            setMarkerPos({ lat: lat ?? 0, lng: lng ?? 0 });
-            console.log('지도에서 선택한 좌표:', lat, lng);
-          }}
-          options={{
-            gestureHandling: 'greedy',
+      <div
+        style={{
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'center',
+          cursor: 'pointer',
+          borderRadius: '0.375rem',
+          transition: 'background-color 0.2s',
+        }}
+        onClick={handleClick}
+        onMouseEnter={(e) => {
+          if (!('ontouchstart' in window || navigator.maxTouchPoints > 0)) {
+            e.currentTarget.style.backgroundColor = '#F9FAFB';
+          }
+        }}
+        onMouseLeave={(e) => {
+          if (!('ontouchstart' in window || navigator.maxTouchPoints > 0)) {
+            e.currentTarget.style.backgroundColor = 'transparent';
+          }
+        }}
+      >
+        <div
+          style={{
+            display: 'flex',
+            flexDirection: 'column',
+            fontSize: '1.0625rem',
+            fontWeight: 'bold',
           }}
         >
-          <Marker position={markerPos} />
-        </GoogleMap>
+          <span>날씨 확인하기</span>
+        </div>
+        <div
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            width: '20px',
+            height: '20px',
+          }}
+        >
+          <svg
+            width='1.5rem'
+            height='1.5rem'
+            viewBox='0 0 24 24'
+            fill='none'
+            xmlns='http://www.w3.org/2000/svg'
+          >
+            <path
+              d='M10 7L15 12L10 17'
+              stroke='black'
+              strokeWidth='2'
+              strokeLinecap='round'
+              strokeLinejoin='round'
+            />
+          </svg>
+        </div>
       </div>
-    </LoadScript>
+    </div>
   );
 };
 

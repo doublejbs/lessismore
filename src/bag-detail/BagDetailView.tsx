@@ -131,7 +131,7 @@ const BagDetailView: FC<Props> = ({ bagDetail }) => {
           </div>
           <BagDetailDateView bagDetail={bagDetail} />
         </div>
-        <BagDetailWeatherView />
+        <BagDetailWeatherView bagDetail={bagDetail} />
         <BagDetailUselessDescriptionView bagDetail={bagDetail} />
         <BagDetailChartView bagDetail={bagDetail} />
         <div
