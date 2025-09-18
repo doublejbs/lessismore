@@ -2,6 +2,7 @@ import { FC } from 'react';
 import WarehouseDetail from '../model/WarehouseDetail';
 import WarehouseDetailInformationView from './WarehouseDetailInformationView';
 import WarehouseDetailBagRecordView from './WarehouseDetailBagRecordView';
+import WarehouseDetailReviewView from './WarehouseDetailReviewView';
 import { observer } from 'mobx-react-lite';
 
 interface Props {
@@ -65,6 +66,7 @@ const WarehouseDetailView: FC<Props> = ({ warehouseDetail }) => {
         >
           <WarehouseDetailInformationView gear={gear} />
           <WarehouseDetailBagRecordView gear={gear} warehouseDetail={warehouseDetail} />
+          <WarehouseDetailReviewView gear={gear} />
           <div
             style={{
               display: 'flex',
