@@ -1,4 +1,4 @@
-import { NavigateFunction, Location } from 'react-router-dom';
+import { Location } from 'react-router-dom';
 import FilterManager from '../../warehouse/model/FilterManager';
 import BagStore from '../../firebase/BagStore';
 import app from '../../App';
@@ -16,14 +16,8 @@ import WebViewManager from '../../webview/WebViewManager';
 class BagEdit {
   private static readonly ORDER_KEY = 'bag';
 
-  public static from(
-    navigate: NavigateFunction,
-    location: Location,
-    id: string,
-    webViewManager: WebViewManager
-  ) {
+  public static from(location: Location, id: string, webViewManager: WebViewManager) {
     return new BagEdit(
-      navigate,
       location,
       id,
       app.getBagStore(),
@@ -47,7 +41,6 @@ class BagEdit {
   private readonly bagEditSearch: BagEditSearch;
 
   private constructor(
-    private readonly navigate: NavigateFunction,
     private readonly location: Location,
     private readonly id: string,
     private readonly bagStore: BagStore,
@@ -63,7 +56,7 @@ class BagEdit {
         await this.initialize();
       }
     );
-    this.bagEditSearch = BagEditSearch.of(this, this.navigate, this.location);
+    this.bagEditSearch = BagEditSearch.of(this, this.location);
   }
 
   public dispose() {
@@ -123,23 +116,9 @@ class BagEdit {
     return this.selectedGears.length;
   }
 
-  public async save() {
+  public async save(pop: any) {
     await this.bagStore.save(this.id, this.toAddGears, this.toRemoveGears, this.selectedGears);
-    this.back();
-  }
-
-  public back() {
-    if (this.isWebView()) {
-      this.webViewManager.closeWebView();
-    } else {
-      const fromPath = this.location.state?.from;
-
-      if (fromPath?.includes(`/bag/${this.id}`)) {
-        this.navigate(-1);
-      } else {
-        this.navigate(`/bag/${this.id}`);
-      }
-    }
+    pop();
   }
 
   public toggleGear(gear: Gear) {
@@ -188,24 +167,12 @@ class BagEdit {
     this.setAddMenuVisible(false);
   }
 
-  public showSearch() {
-    if (this.isWebView()) {
-      this.webViewManager.navigate('/search');
-      this.setAddMenuVisible(false);
-    } else {
-      this.bagEditSearch.show();
-      this.setCustomVisible(false);
-    }
+  public showSearch(push: any) {
+    push('SearchWarehouseWrapper', {});
   }
 
-  public showCustom() {
-    if (this.isWebView()) {
-      this.webViewManager.navigate('/custom');
-      this.setAddMenuVisible(false);
-    } else {
-      this.setCustomVisible(true);
-      this.bagEditSearch.hide();
-    }
+  public showCustom(push: any) {
+    push('CustomGearWrapper', {});
   }
 
   public shouldShowAddMenu() {

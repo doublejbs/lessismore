@@ -4,16 +4,10 @@ import CustomGearCategory from '../../custom-gear/model/CustomGearCategory';
 import Gear from '../../model/Gear';
 import GearFilter from '../../warehouse/model/GearFilter.ts';
 import GearEditDispatcher from './GearEditDispatcher.ts';
-import { NavigateFunction, Location } from 'react-router-dom';
 
 class GearEdit extends AbstractGearEdit {
-  public static from(
-    dispatcher: GearEditDispatcher,
-    navigate: NavigateFunction,
-    location: Location,
-    category: CustomGearCategory
-  ) {
-    return new GearEdit(dispatcher, navigate, location, category);
+  public static from(dispatcher: GearEditDispatcher, category: CustomGearCategory) {
+    return new GearEdit(dispatcher, category);
   }
 
   private gear: Gear | null = null;
@@ -23,8 +17,6 @@ class GearEdit extends AbstractGearEdit {
 
   private constructor(
     private readonly dispatcher: GearEditDispatcher,
-    private readonly navigate: NavigateFunction,
-    private readonly location: Location,
     category: CustomGearCategory
   ) {
     super(category, '', '', '', '');
@@ -87,16 +79,6 @@ class GearEdit extends AbstractGearEdit {
 
   public isInitialized() {
     return this.initialized;
-  }
-
-  public override hide(): void {
-    const from = this.location.state?.from;
-
-    if (from?.includes('/warehouse') || from?.includes('/bag')) {
-      this.navigate(-1);
-    } else {
-      this.navigate('/warehouse');
-    }
   }
 
   @action

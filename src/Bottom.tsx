@@ -1,21 +1,19 @@
-import { useLocation, useNavigate } from 'react-router-dom';
 import ToastView from './toast/ToastView';
 import app from './App';
 import { observer } from 'mobx-react-lite';
 
 const Bottom = () => {
-  const navigate = useNavigate();
-  const location = useLocation();
-  const isBag = location.pathname === '/bag';
-  const isWarehouse = location.pathname === '/warehouse';
+  const location = window.location;
+  const isBag = location.pathname === '/bag/';
+  const isWarehouse = location.pathname === '/warehouse/';
   const toastManager = app.getToastManager();
 
   const handleClickWarehouse = () => {
-    navigate('/warehouse');
+    window.location.href = '/warehouse/';
   };
 
   const handleClickBag = () => {
-    navigate('/bag');
+    window.location.href = '/bag/';
   };
 
   // 내 장비 아이콘 (텐트)

@@ -3,7 +3,7 @@ import Warehouse from '../model/Warehouse.ts';
 import Gear from '../../model/Gear.ts';
 import app from '../../App.ts';
 import GearView from './GearView.tsx';
-import { useNavigate } from 'react-router-dom';
+import { useFlow } from '@stackflow/react/future';
 
 interface Props {
   gear: Gear;
@@ -13,7 +13,7 @@ interface Props {
 const WarehouseGearView: FC<Props> = ({ gear, warehouse }) => {
   const alertManager = app.getAlertManager();
   const [showMenu, setShowMenu] = useState(false);
-  const navigate = useNavigate();
+  const { push } = useFlow();
 
   const handleClickMenu = (e: React.MouseEvent) => {
     e.stopPropagation();
@@ -41,13 +41,13 @@ const WarehouseGearView: FC<Props> = ({ gear, warehouse }) => {
   const handleClickDetail = (e: React.MouseEvent) => {
     e.stopPropagation();
     setShowMenu(false);
-    navigate(`/warehouse/detail/${gear.getId()}`, { state: { from: '/warehouse' } });
+    push('WarehouseWebViewDetailWrapper', { id: gear.getId() });
   };
 
   const handleClickEdit = (e: React.MouseEvent) => {
     e.stopPropagation();
     setShowMenu(false);
-    navigate(`/gear/edit/${gear.getId()}`, { state: { from: '/warehouse' } });
+    push('GearEditWrapperView', { id: gear.getId() });
   };
 
   return (

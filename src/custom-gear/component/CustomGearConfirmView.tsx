@@ -1,6 +1,7 @@
-import React, { FC } from 'react';
+import { FC } from 'react';
 import { observer } from 'mobx-react-lite';
 import CustomGear from '../model/CustomGear';
+import { useFlow } from '@stackflow/react/future';
 
 interface Props {
   customGear: CustomGear;
@@ -8,9 +9,10 @@ interface Props {
 
 const CustomGearConfirmView: FC<Props> = ({ customGear }) => {
   const errorMessage = customGear.getErrorMessage();
+  const { pop } = useFlow();
 
   const handleClickConfirm = async () => {
-    await customGear.register();
+    await customGear.register(pop);
   };
 
   return (

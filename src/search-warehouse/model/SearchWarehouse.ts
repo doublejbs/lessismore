@@ -5,21 +5,16 @@ import SearchDispatcher from './SearchDispatcher';
 import { debounce } from 'lodash';
 import ToastManager from '../../toast/ToastManager';
 import app from '../../App';
-import { Location, NavigateFunction } from 'react-router-dom';
+import { Location } from 'react-router-dom';
 import Firebase from '../../firebase/Firebase';
 import LogInAlertManager from '../../alert/login/LogInAlertManager';
 import WebViewManager from '../../webview/WebViewManager';
 
 class SearchWarehouse {
-  public static new(
-    navigate: NavigateFunction,
-    location: Location,
-    webViewManager: WebViewManager
-  ) {
+  public static new(location: Location, webViewManager: WebViewManager) {
     return new SearchWarehouse(
       SearchDispatcher.new(),
       app.getToastManager(),
-      navigate,
       location,
       app.getFirebase(),
       app.getLogInAlertManager(),
@@ -39,7 +34,6 @@ class SearchWarehouse {
   protected constructor(
     private readonly searchDispatcher: SearchDispatcherType,
     private readonly toastManager: ToastManager,
-    private readonly navigate: NavigateFunction,
     private readonly location: Location,
     private readonly firebase: Firebase,
     private readonly logInAlertManager: LogInAlertManager,
@@ -231,27 +225,17 @@ class SearchWarehouse {
     return this.selected;
   }
 
-  public async register() {
+  public async register(pop: any) {
     if (this.firebase.isLoggedIn()) {
       await this.searchDispatcher.register(this.selected);
       this.toastManager.show({ message: '내 장비 추가가 완료됐어요' });
       this.webViewManager.updateData();
-      this.back(this.selected);
+      this.back(pop);
     }
   }
 
-  public back(_?: Array<Gear>) {
-    if (this.webViewManager.isWebView()) {
-      this.webViewManager.closeWebView();
-    } else {
-      const fromPath = this.location.state?.from;
-
-      if (fromPath?.includes('/bag') || fromPath?.includes('/warehouse')) {
-        this.navigate(-1);
-      } else {
-        this.navigate('/warehouse');
-      }
-    }
+  public back(pop: any) {
+    pop();
   }
 }
 

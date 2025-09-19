@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { observer } from 'mobx-react-lite';
 import BagItemView from './BagItemView.tsx';
 import BagAddView from './BagAddView';
@@ -6,6 +6,7 @@ import Bag from '../model/Bag.ts';
 import LoadingView from '../../LoadingView.tsx';
 import BagItem from '../model/BagItem';
 import Bottom from '../../Bottom';
+import { AppScreen } from '@stackflow/plugin-basic-ui';
 
 const BagView = () => {
   const [bag] = useState(() => Bag.new());
@@ -63,30 +64,32 @@ const BagView = () => {
   }, []);
 
   return (
-    <div
-      style={{
-        position: 'relative',
-        height: '100%',
-      }}
-    >
+    <AppScreen>
       <div
         style={{
+          position: 'relative',
           height: '100%',
-          display: 'flex',
-          flexDirection: 'column',
-          padding: '0 20px 0 20px',
         }}
       >
-        {render()}
         <div
           style={{
-            minHeight: '106px',
+            height: '100%',
+            display: 'flex',
+            flexDirection: 'column',
+            padding: '0 20px 0 20px',
           }}
-        ></div>
-        <Bottom />
-        <BagAddView bag={bag} />
+        >
+          {render()}
+          <div
+            style={{
+              minHeight: '106px',
+            }}
+          ></div>
+          <Bottom />
+          <BagAddView bag={bag} />
+        </div>
       </div>
-    </div>
+    </AppScreen>
   );
 };
 

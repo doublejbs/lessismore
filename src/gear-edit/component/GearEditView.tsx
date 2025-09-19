@@ -1,4 +1,4 @@
-import React, { FC } from 'react';
+import React, { FC, useEffect } from 'react';
 import LoadingIconView from '../../LoadingIconView';
 import { observer } from 'mobx-react-lite';
 import GearEdit from '../model/GearEdit';
@@ -8,6 +8,9 @@ import Layout from '../../Layout';
 import GearEditWeightView from './GearEditWeightView';
 import GearEditConfirmView from './GearEditConfirmView';
 import GearEditColorView from './GearEditColorView';
+import { useActivityParams } from '@stackflow/react';
+import { useFlow } from '@stackflow/react/future';
+
 interface Props {
   gearEdit: GearEdit;
 }
@@ -16,6 +19,8 @@ const GearEditView: FC<Props> = ({ gearEdit }) => {
   const name = gearEdit.getName();
   const company = gearEdit.getCompany();
   const isLoading = gearEdit.isLoading();
+  const { id = '' } = (useActivityParams() as { id: string }) || { id: '' };
+  const { pop } = useFlow();
 
   const handleChangeName = (e: React.ChangeEvent<HTMLInputElement>) => {
     gearEdit.setName(e.target.value);
@@ -26,12 +31,18 @@ const GearEditView: FC<Props> = ({ gearEdit }) => {
   };
 
   const handleClickHide = () => {
-    gearEdit.hide();
+    pop();
   };
 
   const handleClickSelectFilter = (filter: WarehouseFilter) => {
     gearEdit.selectFilter(filter);
   };
+
+  useEffect(() => {
+    if (id) {
+      gearEdit.initialize(id);
+    }
+  }, [id]);
 
   return (
     <Layout>

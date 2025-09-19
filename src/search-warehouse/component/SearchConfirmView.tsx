@@ -1,6 +1,7 @@
 import { FC } from 'react';
 import SearchWarehouse from '../model/SearchWarehouse';
 import { observer } from 'mobx-react-lite';
+import { useFlow } from '@stackflow/react/future';
 
 interface Props {
   searchWarehouse: SearchWarehouse;
@@ -8,9 +9,10 @@ interface Props {
 
 const SearchConfirmView: FC<Props> = ({ searchWarehouse }) => {
   const selectedCount = searchWarehouse.getSelectedCount();
+  const { pop } = useFlow();
 
   const handleClick = () => {
-    searchWarehouse.register();
+    searchWarehouse.register(pop);
   };
 
   return (
@@ -31,9 +33,7 @@ const SearchConfirmView: FC<Props> = ({ searchWarehouse }) => {
         }}
         onClick={handleClick}
       >
-        {selectedCount > 0
-          ? `${selectedCount}개 추가하기`
-          : '추가할 장비를 선택해주세요'}
+        {selectedCount > 0 ? `${selectedCount}개 추가하기` : '추가할 장비를 선택해주세요'}
       </button>
     </div>
   );

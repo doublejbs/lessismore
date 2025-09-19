@@ -1,4 +1,3 @@
-import { NavigateFunction } from 'react-router-dom';
 import SearchWarehouse from '../../search-warehouse/model/SearchWarehouse';
 import app from '../../App';
 import ToastManager from '../../toast/ToastManager';
@@ -13,12 +12,11 @@ import Gear from '../../model/Gear';
 import WebViewManager from '../../webview/WebViewManager';
 
 class BagEditSearch extends SearchWarehouse {
-  public static of(bagEdit: BagEdit, navigate: NavigateFunction, location: Location) {
+  public static of(bagEdit: BagEdit, location: Location) {
     return new BagEditSearch(
       bagEdit,
       SearchDispatcher.new(),
       app.getToastManager(),
-      navigate,
       location,
       app.getFirebase(),
       app.getLogInAlertManager()
@@ -31,7 +29,6 @@ class BagEditSearch extends SearchWarehouse {
     private readonly bagEdit: BagEdit,
     dispatcher: SearchDispatcherType,
     toastManager: ToastManager,
-    navigate: NavigateFunction,
     location: Location,
     firebase: Firebase,
     logInAlertManager: LogInAlertManager
@@ -39,7 +36,6 @@ class BagEditSearch extends SearchWarehouse {
     super(
       dispatcher,
       toastManager,
-      navigate,
       location,
       firebase,
       logInAlertManager,

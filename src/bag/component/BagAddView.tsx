@@ -1,9 +1,9 @@
 import React, { FC, useState } from 'react';
 import Bag from '../model/Bag';
-import { useNavigate } from 'react-router-dom';
 import dayjs from 'dayjs';
 import BagAddDateView from './BagAddDateView';
 import app from '../../App';
+import { useFlow } from '@stackflow/react/future';
 
 interface Props {
   bag: Bag;
@@ -14,7 +14,7 @@ const BagAddView: FC<Props> = ({ bag }) => {
   const [inputValue, setInputValue] = useState('');
   const [startDate, setStartDate] = useState<dayjs.Dayjs | null>(dayjs());
   const [endDate, setEndDate] = useState<dayjs.Dayjs | null>(dayjs().add(1, 'day'));
-  const navigate = useNavigate();
+  const { push } = useFlow();
 
   const showAdd = () => {
     if (app.getFirebase().isLoggedIn()) {
@@ -41,7 +41,7 @@ const BagAddView: FC<Props> = ({ bag }) => {
       setShouldShowAdd(false);
       setStartDate(dayjs());
       setEndDate(dayjs());
-      navigate(`/bag/${bagID}`, { state: { from: '/bag' } });
+      push('BagDetailWrapper', { id: bagID });
     }
   };
 

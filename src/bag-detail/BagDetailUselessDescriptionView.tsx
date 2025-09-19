@@ -1,6 +1,7 @@
 import { FC } from 'react';
 import BagDetail from './model/BagDetail';
 import { observer } from 'mobx-react-lite';
+import { useFlow } from '@stackflow/react/future';
 
 interface Props {
   bagDetail: BagDetail;
@@ -9,9 +10,10 @@ interface Props {
 const BagDetailUselessDescriptionView: FC<Props> = ({ bagDetail }) => {
   const isUselessChecked = bagDetail.isUselessChecked();
   const usedWeight = bagDetail.getUsedWeight();
+  const { push } = useFlow();
 
   const handleClickUseless = () => {
-    bagDetail.goToUseless();
+    bagDetail.goToUseless(push);
   };
 
   const render = () => {

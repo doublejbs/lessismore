@@ -1,8 +1,6 @@
 import { FC, useState } from 'react';
 import BagEdit from './model/BagEdit';
 import { observer } from 'mobx-react-lite';
-import { useNavigate } from 'react-router-dom';
-import { useLocation } from 'react-router-dom';
 import CustomGearView from '../custom-gear/component/CustomGearView';
 import BagEditCustomGear from './model/BagEditCustomGear';
 
@@ -11,9 +9,7 @@ interface Props {
 }
 
 const BagEditWarehouseCustomGearWrapper: FC<Props> = ({ bagEdit }) => {
-  const navigate = useNavigate();
-  const location = useLocation();
-  const [customGear] = useState(() => BagEditCustomGear.of(bagEdit, navigate, location));
+  const [customGear] = useState(() => BagEditCustomGear.of(bagEdit));
 
   if (!bagEdit.isCustomVisible()) {
     return null;

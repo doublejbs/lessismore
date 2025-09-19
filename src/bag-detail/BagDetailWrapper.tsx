@@ -1,24 +1,26 @@
 import { FC, useState } from 'react';
-import { useLocation, useNavigate, useParams } from 'react-router-dom';
+import { useLocation } from 'react-router-dom';
 import BagDetail from './model/BagDetail';
 import { observer } from 'mobx-react-lite';
 import BagDetailView from './BagDetailView';
 import BagDetailSkeletonView from './BagDetailSkeletonView';
 import WebViewWrapper from '../webview/WebViewWrapper';
-import WebViewManager from '../webview/WebViewManager';
 import app from '../App';
+import { AppScreen } from '@stackflow/plugin-basic-ui';
+import { useActivityParams } from '@stackflow/react';
 
 const BagDetailWrapper: FC = () => {
-  const { id } = useParams();
+  const { id } = useActivityParams() as { id: string };
   const location = useLocation();
-  const navigate = useNavigate();
-  const [webViewManager] = useState(() => WebViewManager.new(app.getFirebase()));
-  const [bagDetail] = useState(() => BagDetail.from(navigate, location, id ?? '', webViewManager));
+  const [webViewManager] = useState(() => app.getWebViewManager());
+  const [bagDetail] = useState(() => BagDetail.from(location, id ?? '', webViewManager));
 
   return (
-    <WebViewWrapper webViewManager={webViewManager} skeletonView={<BagDetailSkeletonView />}>
-      <BagDetailView bagDetail={bagDetail} />
-    </WebViewWrapper>
+    <AppScreen>
+      <WebViewWrapper skeletonView={<BagDetailSkeletonView />}>
+        <BagDetailView bagDetail={bagDetail} />
+      </WebViewWrapper>
+    </AppScreen>
   );
 };
 

@@ -1,19 +1,19 @@
 import React, { FC } from 'react';
-import { useNavigate } from 'react-router-dom';
 import Bag from '../model/Bag';
 import BagItem from '../model/BagItem';
+import { useFlow } from '@stackflow/react/future';
 
 interface Props {
   bagItem: BagItem;
   bag: Bag;
 }
 const BagItemView: FC<Props> = ({ bagItem, bag }) => {
-  const navigate = useNavigate();
   const id = bagItem.getID();
   const date = bagItem.getDate();
+  const { push } = useFlow();
 
   const handleClick = () => {
-    navigate(`/bag/${id}`, { state: { from: '/bag' } });
+    push('BagDetailWrapper', { id: id });
   };
 
   const handleClickDelete = (e: React.MouseEvent) => {
@@ -23,7 +23,7 @@ const BagItemView: FC<Props> = ({ bagItem, bag }) => {
 
   const handleClickUseless = (e: React.MouseEvent) => {
     e.stopPropagation();
-    navigate(`/bag/${id}/useless`, { state: { from: '/bag' } });
+    push('BagUselessWebViewWrapper', { id: id });
   };
 
   return (

@@ -1,6 +1,4 @@
 import CustomGear from '../../custom-gear/model/CustomGear';
-import { NavigateFunction } from 'react-router-dom';
-import { Location } from 'react-router-dom';
 import GearStore from '../../firebase/GearStore';
 import CustomGearCategory from '../../custom-gear/model/CustomGearCategory';
 import app from '../../App';
@@ -9,11 +7,9 @@ import Firebase from '../../firebase/Firebase';
 import BagEdit from './BagEdit';
 
 class BagEditCustomGear extends CustomGear {
-  public static of(bagEdit: BagEdit, navigate: NavigateFunction, location: Location) {
+  public static of(bagEdit: BagEdit) {
     return new BagEditCustomGear(
       bagEdit,
-      navigate,
-      location,
       app.getGearStore(),
       app.getFirebase(),
       app.getLogInAlertManager(),
@@ -27,8 +23,6 @@ class BagEditCustomGear extends CustomGear {
 
   private constructor(
     private readonly bagEdit: BagEdit,
-    navigate: NavigateFunction,
-    location: Location,
     gearStore: GearStore,
     firebase: Firebase,
     logInAlertManager: LogInAlertManager,
@@ -38,18 +32,7 @@ class BagEditCustomGear extends CustomGear {
     weight: string,
     color: string
   ) {
-    super(
-      navigate,
-      location,
-      gearStore,
-      firebase,
-      logInAlertManager,
-      category,
-      name,
-      company,
-      weight,
-      color
-    );
+    super(gearStore, firebase, logInAlertManager, category, name, company, weight, color);
   }
 
   public override async _register() {
@@ -60,8 +43,9 @@ class BagEditCustomGear extends CustomGear {
     return gear;
   }
 
-  public override hide() {
+  public override hide(pop: any) {
     this.bagEdit.hideAddMenu();
+    pop();
   }
 }
 

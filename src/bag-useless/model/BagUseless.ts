@@ -3,7 +3,7 @@ import BagStore from '../../firebase/BagStore';
 import app from '../../App';
 import Gear from '../../model/Gear';
 import GearStore from '../../firebase/GearStore';
-import { Location, NavigateFunction } from 'react-router-dom';
+import { Location } from 'react-router-dom';
 import GearFilter from '../../warehouse/model/GearFilter';
 import OrderType from '../../order/OrderType';
 import Order from '../../order/Order';
@@ -11,13 +11,8 @@ import WebViewManager from '../../webview/WebViewManager';
 class BagUseless {
   private static readonly ORDER_KEY = 'bag';
 
-  public static new(
-    navigate: NavigateFunction,
-    location: Location,
-    webViewManager: WebViewManager
-  ) {
+  public static new(location: Location, webViewManager: WebViewManager) {
     return new BagUseless(
-      navigate,
       location,
       app.getBagStore(),
       app.getGearStore(),
@@ -34,7 +29,6 @@ class BagUseless {
   private disposeReaction: () => void;
 
   private constructor(
-    private readonly navigate: NavigateFunction,
     private readonly location: Location,
     private readonly bagStore: BagStore,
     private readonly gearStore: GearStore,
@@ -150,7 +144,7 @@ class BagUseless {
     }
   }
 
-  public async save() {
+  public async save(pop: any) {
     await this.gearStore.updateGears(
       this.gears.map((gear) => {
         if (this.selectedGears.some((selectedGear) => selectedGear.isSame(gear))) {
@@ -160,21 +154,11 @@ class BagUseless {
         }
       })
     );
-    this.back();
+    this.back(pop);
   }
 
-  public back() {
-    if (this.webViewManager.isWebView()) {
-      this.webViewManager.closeWebView();
-    } else {
-      const fromPath = this.location.state?.from;
-
-      if (fromPath?.includes('/bag') || fromPath?.includes(`/bag/${this.id}`)) {
-        this.navigate(-1);
-      } else {
-        this.navigate(`/bag/${this.id}`);
-      }
-    }
+  public back(pop: any) {
+    pop();
   }
 
   public getOrder() {

@@ -1,6 +1,6 @@
 import dayjs from 'dayjs';
 import { makeAutoObservable } from 'mobx';
-import { Location, NavigateFunction } from 'react-router-dom';
+import { Location } from 'react-router-dom';
 import app from '../../App';
 import BagStore from '../../firebase/BagStore';
 import Firebase from '../../firebase/Firebase';
@@ -15,14 +15,8 @@ import WebViewManager from '../../webview/WebViewManager';
 class BagDetail {
   private static readonly ORDER_KEY = 'bag';
 
-  public static from(
-    navigate: NavigateFunction,
-    location: Location,
-    id: string,
-    webViewManager: WebViewManager
-  ) {
+  public static from(location: Location, id: string, webViewManager: WebViewManager) {
     return new BagDetail(
-      navigate,
       location,
       id,
       app.getBagStore(),
@@ -52,7 +46,6 @@ class BagDetail {
   private categoryRefs: Map<string, HTMLDivElement> = new Map();
 
   private constructor(
-    private readonly navigate: NavigateFunction,
     private readonly location: Location,
     private readonly id: string,
     private readonly bagStore: BagStore,
@@ -186,12 +179,12 @@ class BagDetail {
     return this.gears.length;
   }
 
-  public showSearch() {
-    this.navigate(`/bag/${this.id}/edit/search`, { state: { from: '/bag' } });
+  public showSearch(push: any) {
+    push('BagEditWebViewWrapper', { id: this.id });
   }
 
-  public showWrite() {
-    this.navigate(`/warehouse/custom`, { state: { from: '/bag' } });
+  public showWrite(push: any) {
+    push('CustomGearWrapper', {});
   }
 
   public async delete(gear: Gear) {
@@ -288,20 +281,6 @@ class BagDetail {
     }
   }
 
-  public back() {
-    if (this.webViewManager.isWebView()) {
-      this.webViewManager.closeWebView();
-    } else {
-      const fromPath = this.location.state?.from;
-
-      if (fromPath?.includes('/bag')) {
-        this.navigate(-1);
-      } else {
-        this.navigate('/bag');
-      }
-    }
-  }
-
   public getOrder() {
     return this.order;
   }
@@ -382,31 +361,23 @@ class BagDetail {
     await this.initialize();
   }
 
-  public goToEdit() {
-    if (this.webViewManager.isWebView()) {
-      this.webViewManager.navigate(`/bag/${this.getId()}/edit`);
-    } else {
-      this.navigate(`/bag/${this.getId()}/edit`, {
-        state: { from: `/bag/${this.getId()}` },
-      });
-    }
+  public goToEdit(push: any) {
+    push('BagEditWebViewWrapper', { id: this.getId() });
   }
 
-  public goToEditGear(gear: Gear) {
-    if (this.webViewManager.isWebView()) {
-      this.webViewManager.navigate(`/gear-edit/${gear.getId()}`);
-    } else {
-      this.navigate(`/gear/edit/${gear.getId()}`, { state: { from: `/bag/${this.getId()}` } });
-    }
+  public goToEditGear(gear: Gear, push: any) {
+    push('GearEditWrapperView', { id: gear.getId() });
   }
 
-  public goToUseless() {
+  public goToUseless(push: any) {
+    push('BagUselessWebViewWrapper', { id: this.getId() });
+  }
+
+  public back(pop: any) {
     if (this.webViewManager.isWebView()) {
-      this.webViewManager.navigate(`/useless/${this.getId()}`);
+      this.webViewManager.closeWebView();
     } else {
-      this.navigate(`/bag/${this.getId()}/useless`, {
-        state: { from: `/bag/${this.getId()}` },
-      });
+      pop();
     }
   }
 }

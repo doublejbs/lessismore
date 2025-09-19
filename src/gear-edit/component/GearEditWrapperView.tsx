@@ -1,31 +1,21 @@
-import { FC, useEffect, useState } from 'react';
+import { FC, useState } from 'react';
 import { observer } from 'mobx-react-lite';
 import GearEditView from './GearEditView';
 import GearEdit from '../model/GearEdit';
 import GearEditDispatcher from '../model/GearEditDispatcher';
 import CustomGearCategory from '../../custom-gear/model/CustomGearCategory';
-import { useNavigate, useParams, useLocation   } from 'react-router-dom';
+import { AppScreen } from '@stackflow/plugin-basic-ui';
 
 const GearEditWrapperView: FC = () => {
-  const navigate = useNavigate();
-  const location = useLocation();
   const [gearEdit] = useState(() =>
-    GearEdit.from(GearEditDispatcher.new(), navigate, location, CustomGearCategory.new())
+    GearEdit.from(GearEditDispatcher.new(), CustomGearCategory.new())
   );
-  const { id } = useParams();
-  const isInitialized = gearEdit.isInitialized();
 
-  useEffect(() => {
-    if (id) {
-      gearEdit.initialize(id);
-    }
-  }, [id]);
-
-  if (isInitialized) {
-    return <GearEditView gearEdit={gearEdit} />;
-  } else {
-    return null;
-  }
+  return (
+    <AppScreen>
+      <GearEditView gearEdit={gearEdit} />
+    </AppScreen>
+  );
 };
 
 export default observer(GearEditWrapperView);

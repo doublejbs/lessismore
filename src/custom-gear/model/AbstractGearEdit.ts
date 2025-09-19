@@ -31,7 +31,9 @@ abstract class AbstractGearEdit extends FileUpload {
 
   protected abstract _register(): Promise<Gear>;
 
-  protected abstract hide(): void;
+  public hide(pop: any) {
+    pop();
+  }
 
   @action
   public setName(value: string) {
@@ -69,13 +71,14 @@ abstract class AbstractGearEdit extends FileUpload {
     return this.color;
   }
 
-  public async register() {
+  public async register(pop: any) {
     try {
+      console.log('register');
       this.validate();
       this.setLoading(true);
       await this._register();
       this.setLoading(false);
-      this.hide();
+      this.hide(pop);
     } catch (e) {
       console.log(e);
       this.setLoading(false);

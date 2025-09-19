@@ -7,6 +7,7 @@ import LoadingIconView from '../../LoadingIconView';
 import WarehouseFilter from '../../warehouse/model/WarehouseFilter.ts';
 import CustomGearWeightView from './CustomGearWeightView';
 import CustomGearColorView from './CustomGearColorView';
+import { useFlow } from '@stackflow/react/future';
 
 interface Props {
   customGear: CustomGear;
@@ -16,6 +17,7 @@ const CustomGearView: FC<Props> = ({ customGear }) => {
   const name = customGear.getName();
   const company = customGear.getCompany();
   const isLoading = customGear.isLoading();
+  const { pop } = useFlow();
 
   const handleChangeName = (e: React.ChangeEvent<HTMLInputElement>) => {
     customGear.setName(e.target.value);
@@ -26,7 +28,7 @@ const CustomGearView: FC<Props> = ({ customGear }) => {
   };
 
   const handleClickHide = () => {
-    customGear.hide();
+    customGear.hide(pop);
   };
 
   const handleClickSelectFilter = (filter: WarehouseFilter) => {

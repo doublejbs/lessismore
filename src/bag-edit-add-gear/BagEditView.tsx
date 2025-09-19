@@ -6,6 +6,7 @@ import BagEdit from './model/BagEdit';
 import { FlipCounter } from './components/FlipCounter';
 import BagEditWarehouseAddView from './BagEditWarehouseAddView';
 import usePreventScroll from '../hooks/usePreventScroll';
+import { useFlow } from '@stackflow/react/future';
 
 interface Props {
   bagEdit: BagEdit;
@@ -15,15 +16,16 @@ const BagEditView: FC<Props> = ({ bagEdit }) => {
   const weight = bagEdit.getWeight();
   const count = bagEdit.getCount();
   const showMenu = bagEdit.isAddMenuVisible();
+  const { pop } = useFlow();
 
   usePreventScroll(showMenu, false);
 
   const handleClickBack = () => {
-    bagEdit.back();
+    pop();
   };
 
   const handleClickSave = () => {
-    bagEdit.save();
+    bagEdit.save(pop);
   };
 
   const handleClickAddGear = (e: React.MouseEvent<HTMLButtonElement>) => {

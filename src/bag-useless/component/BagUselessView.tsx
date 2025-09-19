@@ -1,30 +1,32 @@
 import { FC, useEffect } from 'react';
-import { useParams } from 'react-router-dom';
 import BagUseless from '../model/BagUseless';
 import { observer } from 'mobx-react-lite';
 import BagUselessGearView from './BagUselessGearView';
+import { useActivityParams } from '@stackflow/react';
+import { useFlow } from '@stackflow/react/future';
 
 interface Props {
   bagUseless: BagUseless;
 }
 
 const BagUselessView: FC<Props> = ({ bagUseless }) => {
-  const { id } = useParams();
+  const { id } = useActivityParams() as { id: string };
   const isInitialized = bagUseless.isInitialized();
   const allCount = bagUseless.getAllCount();
   const selectedCount = bagUseless.getSelectedCount();
   const gears = bagUseless.getGears();
+  const { pop } = useFlow();
 
   const handleClickToggleSelectAll = () => {
     bagUseless.toggleSelectAll();
   };
 
   const handleClickConfirm = () => {
-    bagUseless.save();
+    bagUseless.save(pop);
   };
 
   const handleClickBack = () => {
-    bagUseless.back();
+    bagUseless.back(pop);
   };
 
   useEffect(() => {

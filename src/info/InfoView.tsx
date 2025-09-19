@@ -1,8 +1,8 @@
-import React, { FC, useState } from 'react';
+import { FC, useState } from 'react';
 import Layout from '../Layout';
 import Bottom from '../Bottom';
 import app from '../App';
-import { useNavigate } from 'react-router-dom';
+import { AppScreen } from '@stackflow/plugin-basic-ui';
 
 const privacyPolicyText = `Useless(이하 '회사'라 한다)는 개인정보 보호법 제30조에 따라 정보 주체의 개인정보를 보호하고 이와 관련한 고충을 신속하고 원활하게 처리할 수 있도록 하기 위하여 다음과 같이 개인정보 처리지침을 수립, 공개합니다.
 
@@ -95,7 +95,6 @@ const privacyPolicyText = `Useless(이하 '회사'라 한다)는 개인정보 �
 const InfoView: FC = () => {
   const [open, setOpen] = useState(false);
   const isLoggedIn = app.getFirebase().isLoggedIn();
-  const navigate = useNavigate();
 
   const handleLogout = async () => {
     await app.getFirebase().logout();
@@ -103,7 +102,7 @@ const InfoView: FC = () => {
   };
 
   const handleLogin = () => {
-    navigate('/login');
+    window.NativeBridge.navigateToLogin();
   };
 
   // 버튼 스타일 통일 (테두리 추가)
@@ -123,77 +122,79 @@ const InfoView: FC = () => {
   };
 
   return (
-    <Layout>
-      <div style={{ padding: '24px 0', fontSize: '20px', fontWeight: 'bold' }}>
-        <span>내 정보</span>
-      </div>
-      {isLoggedIn ? (
-        <button
-          onClick={handleLogout}
-          style={{ ...buttonStyle, margin: '0 0 16px 0' }}
-          onMouseOver={(e) => (e.currentTarget.style.backgroundColor = '#f7f7f7')}
-          onMouseOut={(e) => (e.currentTarget.style.backgroundColor = '#fff')}
-        >
-          로그아웃
-        </button>
-      ) : (
-        <button
-          onClick={handleLogin}
-          style={{ ...buttonStyle, margin: '0 0 16px 0' }}
-          onMouseOver={(e) => (e.currentTarget.style.backgroundColor = '#f7f7f7')}
-          onMouseOut={(e) => (e.currentTarget.style.backgroundColor = '#fff')}
-        >
-          로그인
-        </button>
-      )}
-      <button
-        onClick={() => window.open('http://pf.kakao.com/_VJwSn', '_blank')}
-        style={{ ...buttonStyle, margin: '0 0 16px 0' }}
-        onMouseOver={(e) => (e.currentTarget.style.backgroundColor = '#f7f7f7')}
-        onMouseOut={(e) => (e.currentTarget.style.backgroundColor = '#fff')}
-      >
-        서비스 문의
-      </button>
-      <div style={{ marginBottom: 24 }}>
-        <div
-          style={{
-            boxShadow: '0 2px 8px rgba(0,0,0,0.06)',
-            borderRadius: 8,
-            overflow: 'hidden',
-            background: '#fff',
-          }}
-        >
+    <AppScreen>
+      <Layout>
+        <div style={{ padding: '24px 0', fontSize: '20px', fontWeight: 'bold' }}>
+          <span>내 정보</span>
+        </div>
+        {isLoggedIn ? (
           <button
-            onClick={() => setOpen((prev) => !prev)}
-            style={{
-              ...buttonStyle,
-              borderBottom: open ? '1px solid #eee' : 'none',
-              borderRadius: 8,
-            }}
-            aria-expanded={open}
+            onClick={handleLogout}
+            style={{ ...buttonStyle, margin: '0 0 16px 0' }}
             onMouseOver={(e) => (e.currentTarget.style.backgroundColor = '#f7f7f7')}
             onMouseOut={(e) => (e.currentTarget.style.backgroundColor = '#fff')}
           >
-            개인정보 처리방침
+            로그아웃
           </button>
-          {open && (
-            <div
+        ) : (
+          <button
+            onClick={handleLogin}
+            style={{ ...buttonStyle, margin: '0 0 16px 0' }}
+            onMouseOver={(e) => (e.currentTarget.style.backgroundColor = '#f7f7f7')}
+            onMouseOut={(e) => (e.currentTarget.style.backgroundColor = '#fff')}
+          >
+            로그인
+          </button>
+        )}
+        <button
+          onClick={() => window.open('http://pf.kakao.com/_VJwSn', '_blank')}
+          style={{ ...buttonStyle, margin: '0 0 16px 0' }}
+          onMouseOver={(e) => (e.currentTarget.style.backgroundColor = '#f7f7f7')}
+          onMouseOut={(e) => (e.currentTarget.style.backgroundColor = '#fff')}
+        >
+          서비스 문의
+        </button>
+        <div style={{ marginBottom: 24 }}>
+          <div
+            style={{
+              boxShadow: '0 2px 8px rgba(0,0,0,0.06)',
+              borderRadius: 8,
+              overflow: 'hidden',
+              background: '#fff',
+            }}
+          >
+            <button
+              onClick={() => setOpen((prev) => !prev)}
               style={{
-                padding: '16px',
-                fontSize: '15px',
-                whiteSpace: 'pre-line',
-                background: '#fff',
+                ...buttonStyle,
+                borderBottom: open ? '1px solid #eee' : 'none',
+                borderRadius: 8,
               }}
+              aria-expanded={open}
+              onMouseOver={(e) => (e.currentTarget.style.backgroundColor = '#f7f7f7')}
+              onMouseOut={(e) => (e.currentTarget.style.backgroundColor = '#fff')}
             >
-              {privacyPolicyText}
-            </div>
-          )}
+              개인정보 처리방침
+            </button>
+            {open && (
+              <div
+                style={{
+                  padding: '16px',
+                  fontSize: '15px',
+                  whiteSpace: 'pre-line',
+                  background: '#fff',
+                }}
+              >
+                {privacyPolicyText}
+              </div>
+            )}
+          </div>
         </div>
-      </div>
-      {/* 로그인/로그아웃 버튼을 Bottom 바로 위에 위치 */}
+        {/* 로그인/로그아웃 버튼을 Bottom 바로 위에 위치 */}
 
-      <Bottom />
-    </Layout>
+        <Bottom />
+      </Layout>
+    </AppScreen>
   );
 };
 

@@ -4,6 +4,7 @@ import BagDetail from './model/BagDetail';
 import BagDetailImageView from './BagDetailImageView';
 import { observer } from 'mobx-react-lite';
 import usePreventScroll from '../hooks/usePreventScroll';
+import { useFlow } from '@stackflow/react/future';
 
 interface Props {
   gear: Gear;
@@ -14,7 +15,7 @@ const BagDetailGearView: FC<Props> = ({ gear, bagDetail }) => {
   const imageUrl = gear.getImageUrl();
   const isUseless = bagDetail.isUseless(gear);
   const [showMenu, setShowMenu] = useState(false);
-
+  const { push } = useFlow();
   usePreventScroll(showMenu);
 
   const handleClickMenu = () => {
@@ -30,7 +31,7 @@ const BagDetailGearView: FC<Props> = ({ gear, bagDetail }) => {
   const handleClickEdit = (e: React.MouseEvent) => {
     e.stopPropagation();
     setShowMenu(false);
-    bagDetail.goToEditGear(gear);
+    bagDetail.goToEditGear(gear, push);
   };
 
   const handleClickBack = (e: React.MouseEvent) => {

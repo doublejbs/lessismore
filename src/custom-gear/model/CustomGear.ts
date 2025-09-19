@@ -5,14 +5,12 @@ import Gear from '../../model/Gear';
 import { uuidv4 } from '@firebase/util';
 import CustomGearCategory from './CustomGearCategory';
 import AbstractGearEdit from './AbstractGearEdit';
-import { Location, NavigateFunction } from 'react-router-dom';
 import Firebase from '../../firebase/Firebase';
 import LogInAlertManager from '../../alert/login/LogInAlertManager';
+
 class CustomGear extends AbstractGearEdit {
-  public static new(navigate: NavigateFunction, location: Location) {
+  public static new() {
     return new CustomGear(
-      navigate,
-      location,
       app.getGearStore(),
       app.getFirebase(),
       app.getLogInAlertManager(),
@@ -25,8 +23,6 @@ class CustomGear extends AbstractGearEdit {
   }
 
   protected constructor(
-    private readonly navigate: NavigateFunction,
-    private readonly location: Location,
     private readonly gearStore: GearStore,
     private readonly firebase: Firebase,
     private readonly logInAlertManager: LogInAlertManager,
@@ -71,16 +67,6 @@ class CustomGear extends AbstractGearEdit {
 
   public getFileName(): string {
     return `${this.getName()}${this.getCompany()}${this.getWeight()}`;
-  }
-
-  public override hide() {
-    const fromPath = this.location.state?.from;
-
-    if (fromPath.includes('/bag') || fromPath.includes('/warehouse')) {
-      this.navigate(-1);
-    } else {
-      this.navigate('/warehouse');
-    }
   }
 
   public isLoggedIn() {

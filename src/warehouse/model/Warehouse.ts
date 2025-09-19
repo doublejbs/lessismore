@@ -8,6 +8,7 @@ import FilterManager from './FilterManager';
 import WarehouseDispatcher from './WarehouseDispatcher.ts';
 import WarehouseDispatcherType from './WarehouseDispatcherType.ts';
 import WarehouseFilter from './WarehouseFilter.ts';
+import WebViewManager from '../../webview/WebViewManager';
 
 class Warehouse {
   private static readonly ORDER_KEY = 'warehouse';
@@ -15,14 +16,16 @@ class Warehouse {
   public static from(
     dispatcher: WarehouseDispatcher,
     toastManager: ToastManager,
-    firebase: Firebase
+    firebase: Firebase,
+    webViewManager: WebViewManager
   ) {
     return new Warehouse(
       dispatcher,
       toastManager,
       FilterManager.from(),
       Order.new(Warehouse.ORDER_KEY),
-      firebase
+      firebase,
+      webViewManager
     );
   }
 
@@ -36,7 +39,8 @@ class Warehouse {
     private readonly toastManager: ToastManager,
     private readonly filterManager: FilterManager,
     private readonly order: Order,
-    private readonly firebase: Firebase
+    private readonly firebase: Firebase,
+    private readonly webViewManager: WebViewManager
   ) {
     makeAutoObservable(this);
 
@@ -146,6 +150,10 @@ class Warehouse {
 
   private isLoggedIn() {
     return this.firebase.isLoggedIn();
+  }
+
+  public isWebView() {
+    return this.webViewManager.isWebView();
   }
 }
 

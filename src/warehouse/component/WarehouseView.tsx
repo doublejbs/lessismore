@@ -5,7 +5,6 @@ import Warehouse from '../model/Warehouse.ts';
 import { observer } from 'mobx-react-lite';
 import WarehouseGearView from './WarehouseGearView.tsx';
 import WarehouseFiltersView from './WarehouseFiltersView.tsx';
-import WarehouseEditWrapperView from '../../gear-edit/component/GearEditWrapperView.tsx';
 import WarehouseEmptyView from './WarehouseEmptyView';
 import AddButtonView from './AddButtonView';
 import UserMenu from './UserMenu';
@@ -27,32 +26,37 @@ const WarehouseView: FC<Props> = ({ warehouse }) => {
   } else {
     return (
       <Layout>
-        <div style={{ position: 'absolute', top: 20, right: 16, zIndex: 10 }}>
-          <UserMenu />
-        </div>
-        <div
-          style={{
-            display: 'flex',
-            flexDirection: 'column',
-            gap: '16px',
-            marginTop: '8px',
-            marginBottom: '16px',
-          }}
-        >
-          <div
-            style={{
-              fontWeight: '1000',
-              fontSize: '48px',
-              textAlign: 'center',
-              display: 'inline-block',
-              lineHeight: 1,
-              letterSpacing: '-4.5px',
-            }}
-          >
-            useless
-          </div>
-          <WarehouseFiltersView warehouse={warehouse} />
-        </div>
+        {!warehouse.isWebView() && (
+          <>
+            <div style={{ position: 'absolute', top: 20, right: 16, zIndex: 10 }}>
+              <UserMenu />
+            </div>
+            <div
+              style={{
+                display: 'flex',
+                flexDirection: 'column',
+                gap: '16px',
+                marginTop: '8px',
+                marginBottom: '16px',
+              }}
+            >
+              <div
+                style={{
+                  fontWeight: '1000',
+                  fontSize: '48px',
+                  textAlign: 'center',
+                  display: 'inline-block',
+                  lineHeight: 1,
+                  letterSpacing: '-4.5px',
+                }}
+              >
+                useless
+              </div>
+              <WarehouseFiltersView warehouse={warehouse} />
+            </div>
+          </>
+        )}
+        {warehouse.isWebView() && <WarehouseFiltersView warehouse={warehouse} />}
         <div
           style={{
             width: '100%',
@@ -74,8 +78,7 @@ const WarehouseView: FC<Props> = ({ warehouse }) => {
           </ul>
         </div>
         <AddButtonView />
-        <Bottom />
-        <WarehouseEditWrapperView />
+        {!warehouse.isWebView() && <Bottom />}
       </Layout>
     );
   }

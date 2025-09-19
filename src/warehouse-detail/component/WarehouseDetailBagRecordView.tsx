@@ -1,7 +1,7 @@
 import { FC } from 'react';
 import Gear from '../../model/Gear';
 import WarehouseDetail from '../model/WarehouseDetail';
-import { useNavigate } from 'react-router-dom';
+import { useFlow } from '@stackflow/react/future';
 
 interface Props {
   gear: Gear;
@@ -10,7 +10,7 @@ interface Props {
 
 const WarehouseDetailBagRecordView: FC<Props> = ({ gear, warehouseDetail }) => {
   const bagCount = gear.getBagCount();
-  const navigate = useNavigate();
+  const { push } = useFlow();
 
   return (
     <div
@@ -44,7 +44,7 @@ const WarehouseDetailBagRecordView: FC<Props> = ({ gear, warehouseDetail }) => {
             const isUsed = gear.hasUsed(bag.getID());
 
             const handleClick = () => {
-              warehouseDetail.goToBag(bag);
+              push('BagDetailWrapper', { id: bag.getID() });
             };
 
             const renderButton = () => {

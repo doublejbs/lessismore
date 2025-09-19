@@ -12,6 +12,7 @@ import BagDetailUselessDescriptionView from './BagDetailUselessDescriptionView';
 import BagDetailAddButtonView from './component/BagDetailAddButtonView';
 import ShareButtonView from './component/ShareButtonView';
 import BagDetail from './model/BagDetail';
+import { useFlow } from '@stackflow/react/future';
 
 interface Props {
   bagDetail: BagDetail;
@@ -21,9 +22,10 @@ const BagDetailView: FC<Props> = ({ bagDetail }) => {
   const initialized = bagDetail.isInitialized();
   const { setCategoryRef, updateVisibility } = useScrollBasedFilter(bagDetail, initialized);
   const [observer, setObserver] = useState<IntersectionObserver | null>(null);
+  const { pop } = useFlow();
 
   const handleClickBack = () => {
-    bagDetail.back();
+    bagDetail.back(pop);
   };
 
   useEffect(() => {

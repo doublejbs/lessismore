@@ -4,7 +4,7 @@ import BagStore from '../../firebase/BagStore';
 import app from '../../App';
 import BagItem from '../../bag/model/BagItem';
 import GearStore from '../../firebase/GearStore';
-import { NavigateFunction, Location } from 'react-router-dom';
+import { Location } from 'react-router-dom';
 import WarehouseDispatcherType from '../../warehouse/model/WarehouseDispatcherType';
 import AlertManager from '../../alert/AlertManager';
 import ToastManager from '../../toast/ToastManager';
@@ -12,7 +12,6 @@ import WebViewManager from '../../webview/WebViewManager';
 
 class WarehouseDetail {
   public static new(
-    navigate: NavigateFunction,
     dispatcher: WarehouseDispatcherType,
     location: Location,
     webViewManager: WebViewManager
@@ -20,7 +19,6 @@ class WarehouseDetail {
     return new WarehouseDetail(
       app.getBagStore(),
       app.getGearStore(),
-      navigate,
       dispatcher,
       app.getAlertManager(),
       app.getToastManager(),
@@ -37,7 +35,6 @@ class WarehouseDetail {
   private constructor(
     private readonly bagStore: BagStore,
     private readonly gearStore: GearStore,
-    private readonly navigate: NavigateFunction,
     private readonly dispatcher: WarehouseDispatcherType,
     private readonly alertManager: AlertManager,
     private readonly toastManager: ToastManager,
@@ -65,30 +62,24 @@ class WarehouseDetail {
     this.setBags(await this.bagStore.getBags(this.getGear()?.getBags() ?? []));
   }
 
-  public edit() {
-    if (this.getGear()) {
-      if (this.webViewManager.isWebView()) {
-        this.webViewManager.navigate(`/gear-edit/${this.getGear()?.getId()}`);
-      } else {
-        this.navigate(`/gear/edit/${this.getGear()?.getId()}`);
-      }
-    }
+  public edit(push: any) {
+    push('GearEditWrapperView', { id: this.getGear()?.getId() });
   }
 
-  public async delete(gear: Gear) {
+  public async delete(gear: Gear, pop: any) {
     this.alertManager.show({
       message: `${gear.getName()}을 삭제하시겠습니까?`,
       confirmText: '삭제하기',
       onConfirm: async () => {
-        await this.deleteGear(gear);
+        await this.deleteGear(gear, pop);
       },
     });
   }
 
-  private async deleteGear(gear: Gear) {
+  private async deleteGear(gear: Gear, pop: any) {
     await this.dispatcher.remove(gear);
     this.toastManager.show({ message: '삭제 되었습니다.' });
-    this.close();
+    this.close(pop);
   }
 
   private setGear(gear: Gear | null) {
@@ -115,18 +106,8 @@ class WarehouseDetail {
     return this.initialized;
   }
 
-  public close() {
-    if (this.webViewManager.isWebView()) {
-      this.webViewManager.closeWebView();
-    } else {
-      const fromPath = this.location.state?.from;
-
-      if (fromPath?.includes('/warehouse')) {
-        this.navigate(-1);
-      } else {
-        this.navigate('/warehouse');
-      }
-    }
+  public close(pop: any) {
+    pop();
   }
 
   public isWebView() {
@@ -137,11 +118,15 @@ class WarehouseDetail {
     this.id = id;
   }
 
-  public goToBag(bag: BagItem) {
-    if (this.webViewManager.isWebView()) {
-      this.webViewManager.navigate(`/bag/${bag.getID()}`);
+  public goToBag(bag: BagItem, push: any) {
+    push('BagDetailWrapper', { id: bag.getID() });
+  }
+
+  public back(pop: any) {
+    if (this.isWebView()) {
+      this.webViewManager.closeWebView();
     } else {
-      this.navigate(`/bag/${bag.getID()}`, { state: { from: '/warehouse/detail' } });
+      pop();
     }
   }
 }

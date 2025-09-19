@@ -114,6 +114,8 @@ class Firebase {
     if (userDoc.exists()) {
       const userData = userDoc.data();
 
+      console.log(userData);
+
       this.setHasAgreedToTerms(
         userData.termsAgreed === true &&
           userData.privacyAgreed === true &&

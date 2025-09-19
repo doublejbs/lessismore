@@ -1,13 +1,16 @@
 import { FC } from 'react';
 import BagDetail from '../model/BagDetail';
+import { useFlow } from '@stackflow/react/future';
 
 interface Props {
   bagDetail: BagDetail;
 }
 
 const BagDetailAddButtonView: FC<Props> = ({ bagDetail }) => {
+  const { push } = useFlow();
+
   const handleClickAdd = () => {
-    bagDetail.goToEdit();
+    bagDetail.goToEdit(push);
   };
 
   return (

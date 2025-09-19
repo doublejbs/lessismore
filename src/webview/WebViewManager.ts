@@ -35,6 +35,7 @@ class WebViewManager {
       return;
     }
 
+    document.body.style.overflow = 'hidden';
     window.onRefreshFromReactNative = this.handleRefresh.bind(this);
 
     // 1. URL 쿼리 파라미터에서 토큰 가져오기

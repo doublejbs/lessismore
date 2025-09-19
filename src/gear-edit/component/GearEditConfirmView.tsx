@@ -1,6 +1,7 @@
-import React, { FC } from 'react';
+import { FC } from 'react';
 import { observer } from 'mobx-react-lite';
 import GearEdit from '../model/GearEdit';
+import { useFlow } from '@stackflow/react/future';
 
 interface Props {
   gearEdit: GearEdit;
@@ -8,9 +9,10 @@ interface Props {
 
 const GearEditConfirmView: FC<Props> = ({ gearEdit }) => {
   const errorMessage = gearEdit.getErrorMessage();
+  const { pop } = useFlow();
 
   const handleClickConfirm = async () => {
-    await gearEdit.register();
+    await gearEdit.register(pop);
   };
 
   return (

@@ -1,11 +1,11 @@
 import { useState, useRef, useEffect } from 'react';
 import app from '../../App';
-import { useNavigate } from 'react-router-dom';
+import { useFlow } from '@stackflow/react/future';
 
 const UserMenu = () => {
   const [open, setOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
-  const navigate = useNavigate();
+  const { push } = useFlow();
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -30,7 +30,7 @@ const UserMenu = () => {
   };
 
   const handleClickInfo = () => {
-    navigate('/info');
+    push('InfoView', {});
   };
 
   return (

@@ -1,10 +1,10 @@
 import { FC, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
 import app from '../../App';
+import { useFlow } from '@stackflow/react/future';
 
 const AddButtonView: FC = () => {
   const [showMenu, setShowMenu] = useState(false);
-  const navigate = useNavigate();
+  const { push } = useFlow();
 
   const handleClick = () => {
     setShowMenu(!showMenu);
@@ -12,12 +12,12 @@ const AddButtonView: FC = () => {
 
   if (showMenu) {
     const handleClickSearch = () => {
-      navigate('/search', { state: { from: '/warehouse' } });
+      push('SearchWarehouseWrapper', {});
     };
 
     const handleClickCustom = () => {
       if (app.getFirebase().isLoggedIn()) {
-        navigate('/warehouse/custom', { state: { from: '/warehouse' } });
+        push('CustomGearWrapper', {});
       } else {
         app.getLogInAlertManager().show();
       }
@@ -26,7 +26,7 @@ const AddButtonView: FC = () => {
     return (
       <div
         style={{
-          position: 'absolute',
+          position: 'fixed',
           top: 0,
           left: 0,
           backgroundColor: 'rgba(0, 0, 0, 0.5)',

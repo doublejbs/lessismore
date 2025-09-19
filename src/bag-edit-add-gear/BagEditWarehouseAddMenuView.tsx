@@ -1,6 +1,7 @@
 import { FC } from 'react';
 import BagEdit from './model/BagEdit';
 import { observer } from 'mobx-react-lite';
+import { useFlow } from '@stackflow/react/future';
 
 interface Props {
   bagEdit: BagEdit;
@@ -8,16 +9,17 @@ interface Props {
 
 const BagEditWarehouseAddMenuView: FC<Props> = ({ bagEdit }) => {
   const shouldShowAddMenu = bagEdit.shouldShowAddMenu();
+  const { push } = useFlow();
 
   if (shouldShowAddMenu) {
     const handleClickSearch = (e: React.MouseEvent<HTMLDivElement>) => {
       e.stopPropagation();
-      bagEdit.showSearch();
+      bagEdit.showSearch(push);
     };
 
     const handleClickWrite = (e: React.MouseEvent<HTMLDivElement>) => {
       e.stopPropagation();
-      bagEdit.showCustom();
+      bagEdit.showCustom(push);
     };
 
     return (
