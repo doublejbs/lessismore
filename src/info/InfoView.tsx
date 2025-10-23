@@ -1,4 +1,4 @@
-import React, { FC, useState } from 'react';
+import { FC, useState } from 'react';
 import Layout from '../Layout';
 import Bottom from '../Bottom';
 import app from '../App';
@@ -191,6 +191,25 @@ const InfoView: FC = () => {
         </div>
       </div>
       {/* 로그인/로그아웃 버튼을 Bottom 바로 위에 위치 */}
+
+      {isLoggedIn && (
+        <div style={{ textAlign: 'center', marginTop: '16px', paddingBottom: '16px' }}>
+          <button
+            onClick={() => navigate('/info/delete')}
+            style={{
+              background: 'none',
+              border: 'none',
+              fontSize: '12px',
+              color: '#666',
+              textDecoration: 'underline',
+              cursor: 'pointer',
+              padding: '0',
+            }}
+          >
+            탈퇴하기
+          </button>
+        </div>
+      )}
 
       <Bottom />
     </Layout>
