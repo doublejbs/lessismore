@@ -24,6 +24,7 @@ import WarehouseWrapper from './warehouse/component/WarehouseWrapper.tsx';
 import WarehouseWebViewDetailWrapper from './warehouse-detail/component/WarehouseWebViewDetailWrapper';
 import BagEditWebViewWrapper from './bag-edit-add-gear/BagEditWebViewWrapper';
 import BagUselessWebViewWrapper from './bag-useless/component/BagUselessWebViewWrapper';
+import InfoDeleteView from './info/InfoDeleteView';
 
 const ROUTES = [
   {
@@ -75,6 +76,7 @@ const ROUTES = [
   { path: '/search', element: <SearchWarehouseWrapper /> },
   { path: '/manage', element: <ManageView /> },
   { path: '/info', element: <InfoView /> },
+  { path: '/info/delete', element: <InfoDeleteView /> },
   { path: '/open-browser', element: <OpenBrowserView /> },
   { path: '/celebrate', element: <CelebrateView /> },
 ];
@@ -115,7 +117,7 @@ const App = () => {
     } else {
       app.initialize();
     }
-  }, [isInitialized, pathname]); // location.pathname 대신 pathname 사용
+  }, [isInitialized, pathname, isLoggedIn, hasAgreed]); // location.pathname 대신 pathname 사용
 
   if (isInstagram) {
     return <InstagramWebView />;

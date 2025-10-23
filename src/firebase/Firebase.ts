@@ -2,15 +2,28 @@ import { initializeApp } from 'firebase/app';
 import {
   Auth,
   createUserWithEmailAndPassword,
+  deleteUser,
   getAuth,
   GoogleAuthProvider,
+  reauthenticateWithPopup,
   signInWithCredential,
   signInWithEmailAndPassword,
   signInWithPopup,
   signOut,
 } from 'firebase/auth';
 import { makeAutoObservable } from 'mobx';
-import { doc, Firestore, getDoc, getFirestore, setDoc, updateDoc } from 'firebase/firestore';
+import {
+  collection,
+  deleteDoc,
+  doc,
+  Firestore,
+  getDoc,
+  getDocs,
+  getFirestore,
+  setDoc,
+  updateDoc,
+  writeBatch,
+} from 'firebase/firestore';
 import { FirebaseStorage, getStorage } from 'firebase/storage';
 
 class Firebase {
@@ -182,6 +195,55 @@ class Firebase {
   public async signInWithIdToken(idToken: string, accessToken: string) {
     const credential = GoogleAuthProvider.credential(idToken, accessToken);
     await signInWithCredential(this.auth, credential);
+  }
+
+  public async deleteUserAccount() {
+    const user = this.auth.currentUser;
+    if (!user) {
+      throw new Error('로그인된 사용자가 없습니다.');
+    }
+
+    const userId = this.getUserId();
+
+    try {
+      // 0. 재인증 수행 (민감한 작업을 위해 필요)
+      await reauthenticateWithPopup(user, this.googleProvider);
+
+      // 1. 사용자의 모든 배낭 ID 가져오기
+      const userDocRef = doc(this.getStore(), 'users', userId);
+      const userDoc = await getDoc(userDocRef);
+      const bagIds: string[] = userDoc.data()?.bags || [];
+
+      // 2. 모든 배낭 삭제
+      if (bagIds.length > 0) {
+        const batch = writeBatch(this.getStore());
+        bagIds.forEach((bagId) => {
+          const bagRef = doc(this.getStore(), 'bag', bagId);
+          batch.delete(bagRef);
+        });
+        await batch.commit();
+      }
+
+      // 3. 사용자의 모든 장비 삭제
+      const gearsCollection = collection(this.getStore(), 'users', userId, 'gears');
+      const gearsSnapshot = await getDocs(gearsCollection);
+      if (!gearsSnapshot.empty) {
+        const gearBatch = writeBatch(this.getStore());
+        gearsSnapshot.docs.forEach((doc) => {
+          gearBatch.delete(doc.ref);
+        });
+        await gearBatch.commit();
+      }
+
+      // 4. 사용자 문서 삭제
+      await deleteDoc(userDocRef);
+
+      // 5. Firebase Auth 계정 삭제
+      await deleteUser(user);
+    } catch (error) {
+      console.error('회원 탈퇴 중 오류 발생:', error);
+      throw error;
+    }
   }
 }
 

@@ -2,10 +2,14 @@ import { FC } from 'react';
 import Bottom from '../../Bottom';
 import Layout from '../../Layout';
 import AddButtonView from './AddButtonView';
+import UserMenu from './UserMenu';
 
 const WarehouseEmptyView: FC = () => {
   return (
     <Layout vh={true}>
+      <div style={{ position: 'absolute', top: 20, right: 16, zIndex: 10 }}>
+        <UserMenu />
+      </div>
       <div
         style={{
           display: 'flex',

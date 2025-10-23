@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { observer } from 'mobx-react-lite';
 import BagItemView from './BagItemView.tsx';
 import BagAddView from './BagAddView';
@@ -21,9 +21,17 @@ const BagView = () => {
       case isEmpty: {
         return (
           <div
-            style={{ height: '100%', fontSize: '30px', fontWeight: 'bold', position: 'relative' }}
+            style={{
+              flex: 1,
+              fontSize: '30px',
+              fontWeight: 'bold',
+              display: 'flex',
+              flexDirection: 'column',
+              justifyContent: 'center',
+              alignItems: 'center',
+            }}
           >
-            <span style={{ position: 'absolute', top: '30%', left: '20px' }}>
+            <span style={{ textAlign: 'center' }}>
               아직 등록한
               <br /> 배낭이 없어요:(
             </span>
@@ -66,7 +74,10 @@ const BagView = () => {
     <div
       style={{
         position: 'relative',
-        height: '100%',
+        height: '100vh',
+        display: 'flex',
+        flexDirection: 'column',
+        flex: 1,
       }}
     >
       <div
