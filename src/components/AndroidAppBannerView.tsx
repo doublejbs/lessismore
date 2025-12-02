@@ -1,6 +1,7 @@
 import { useState, useEffect, FC } from 'react';
 
 const PLAY_STORE_URL = 'https://play.google.com/store/apps/details?id=com.doublejbs.useless';
+const APP_STORE_URL = 'https://apps.apple.com/app/id6751174681';
 const BANNER_DISMISSED_KEY = 'app-banner-dismissed';
 const DISMISS_DURATION = 7 * 24 * 60 * 60 * 1000;
 
@@ -10,12 +11,18 @@ const AndroidAppBannerView: FC = () => {
 
   useEffect(() => {
     const isAndroid = /Android/i.test(navigator.userAgent);
+    const isIOS = /iPhone|iPad|iPod/i.test(navigator.userAgent);
     const dismissedAt = localStorage.getItem(BANNER_DISMISSED_KEY);
     const isDismissed = dismissedAt && Date.now() - parseInt(dismissedAt) < DISMISS_DURATION;
 
-    if (isAndroid && !isDismissed) {
-      setPlatform('android');
-      setShowBanner(true);
+    if (!isDismissed) {
+      if (isAndroid) {
+        setPlatform('android');
+        setShowBanner(true);
+      } else if (isIOS) {
+        setPlatform('ios');
+        setShowBanner(true);
+      }
     }
   }, []);
 
@@ -25,7 +32,8 @@ const AndroidAppBannerView: FC = () => {
   };
 
   const handleInstall = () => {
-    window.open(PLAY_STORE_URL, '_blank');
+    const url = platform === 'android' ? PLAY_STORE_URL : APP_STORE_URL;
+    window.open(url, '_blank');
   };
 
   if (!showBanner) {
