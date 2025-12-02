@@ -4,7 +4,6 @@ import { Route, Routes, useLocation, useNavigate } from 'react-router-dom';
 import AdminView from './AdminView.tsx';
 import './App.css';
 import app from './App.ts';
-import InstagramWebView from './InstagramWebView.tsx';
 import LoadingView from './LoadingView.tsx';
 import LogIn from './LogIn.tsx';
 import TermsAgreement from './TermsAgreement.tsx';
@@ -27,6 +26,7 @@ import BagUselessWebViewWrapper from './bag-useless/component/BagUselessWebViewW
 import InfoDeleteView from './info/InfoDeleteView';
 import AndroidAppBannerView from './components/AndroidAppBannerView';
 import AppInstallPopupView from './components/AppInstallPopupView';
+import AppInstallView from './app-install/AppInstallView';
 
 const ROUTES = [
   {
@@ -81,6 +81,7 @@ const ROUTES = [
   { path: '/info/delete', element: <InfoDeleteView /> },
   { path: '/open-browser', element: <OpenBrowserView /> },
   { path: '/celebrate', element: <CelebrateView /> },
+  { path: '/app-install', element: <AppInstallView /> },
 ];
 
 const App = () => {
@@ -121,12 +122,12 @@ const App = () => {
     }
   }, [isInitialized, pathname, isLoggedIn, hasAgreed]); // location.pathname 대신 pathname 사용
 
-  if (isInstagram) {
-    return <InstagramWebView />;
-  } else if (isInitialized) {
+  if (isInitialized) {
+    const isAppInstallPage = pathname === '/app-install';
+
     return (
       <>
-        <AndroidAppBannerView />
+        {!isAppInstallPage && <AndroidAppBannerView />}
         <Routes>
           {ROUTES.map(({ path, element }) => {
             if (path === '/terms-agreement') {
@@ -138,7 +139,7 @@ const App = () => {
         </Routes>
         <AlertView alertManager={alertManager} />
         <LogInView logInAlertManager={logInAlertManager} />
-        <AppInstallPopupView />
+        {!isAppInstallPage && <AppInstallPopupView />}
       </>
     );
   } else {
