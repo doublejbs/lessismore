@@ -25,6 +25,8 @@ import WarehouseWebViewDetailWrapper from './warehouse-detail/component/Warehous
 import BagEditWebViewWrapper from './bag-edit-add-gear/BagEditWebViewWrapper';
 import BagUselessWebViewWrapper from './bag-useless/component/BagUselessWebViewWrapper';
 import InfoDeleteView from './info/InfoDeleteView';
+import AndroidAppBannerView from './components/AndroidAppBannerView';
+import AppInstallPopupView from './components/AppInstallPopupView';
 
 const ROUTES = [
   {
@@ -124,6 +126,7 @@ const App = () => {
   } else if (isInitialized) {
     return (
       <>
+        <AndroidAppBannerView />
         <Routes>
           {ROUTES.map(({ path, element }) => {
             if (path === '/terms-agreement') {
@@ -135,6 +138,7 @@ const App = () => {
         </Routes>
         <AlertView alertManager={alertManager} />
         <LogInView logInAlertManager={logInAlertManager} />
+        <AppInstallPopupView />
       </>
     );
   } else {
