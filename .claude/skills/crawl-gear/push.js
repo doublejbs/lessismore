@@ -23,12 +23,6 @@ if (!jsonPath) {
 }
 
 const adminUid = getAdminUid();
-if (!adminUid && !flags['dry-run']) {
-  console.error('ADMIN_UID를 찾을 수 없습니다.');
-  console.error('  방법 1: ADMIN_UID=<uid> node push.js ...');
-  console.error('  방법 2: HTML 편집기에서 "Firestore 저장" 버튼 사용 (UID 자동 저장됨)');
-  process.exit(1);
-}
 
 const gears = JSON.parse(readFileSync(jsonPath, 'utf-8'));
 console.log(`Loaded ${gears.length} items from ${jsonPath}\n`);

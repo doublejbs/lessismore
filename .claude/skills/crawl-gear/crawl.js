@@ -127,11 +127,8 @@ const html = `<!doctype html>
     <div class="flex items-center gap-3 text-xs text-muted-foreground flex-1" id="stat-bar"></div>
     <span class="text-xs text-amber-500 font-medium" id="modified-label"></span>
     <div class="flex items-center gap-2">
-      <!-- ADMIN_UID: hidden if configured, shown as input if not -->
-      <input id="admin-uid" type="text" placeholder="ADMIN_UID 입력"
-        value="${getAdminUid()}"
-        class="sh-input h-8 w-44 text-xs font-mono ${getAdminUid() ? 'hidden' : ''}"
-        title="Firebase UID — 한 번 저장하면 다음부터 자동으로 사용" />
+      <!-- ADMIN_UID: read from config-local.js, not user-facing -->
+      <input id="admin-uid" type="hidden" value="${getAdminUid()}" />
       <button onclick="exportJSON()" class="inline-flex items-center gap-1.5 h-8 rounded-md border border-border px-3 text-xs font-medium text-foreground hover:bg-accent transition-colors">
         <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
         Export
@@ -453,8 +450,8 @@ const server = createServer(async (req, res) => {
   req.on('end', async () => {
     res.setHeader('Content-Type', 'application/json');
     try {
-      const { gears, adminUid } = JSON.parse(body);
-      if (!adminUid) throw new Error('adminUid is required');
+      const { gears, adminUid: reqUid } = JSON.parse(body);
+      const adminUid = reqUid || getAdminUid();
       console.log(`\n[push] ${gears.length}개 → users/${adminUid}/gears`);
       const result = await bulkUpsert(adminUid, gears);
       console.log(`[push] done: inserted=${result.inserted} updated=${result.updated} failed=${result.failed.length}`);
