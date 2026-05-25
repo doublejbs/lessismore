@@ -6,7 +6,7 @@ import { fileURLToPath } from 'node:url';
 import { exec } from 'node:child_process';
 import { SPECS_SCHEMA, CATEGORY_LABELS, CATEGORY_KEYS } from './specs-schema.js';
 import { bulkUpsert } from './push-firestore.js';
-import { getAdminUid, saveAdminUid } from './config-local.js';
+import { getAdminUid, saveAdminUid, autoDetectAndSaveAdminUid } from './config-local.js';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 
@@ -26,6 +26,9 @@ if (!siteKey) {
   console.error('Usage: node crawl.js <site-key> [--categories=url1,url2] [--no-weight] [--no-open]');
   process.exit(1);
 }
+
+// Auto-detect ADMIN_UID from Firestore if not yet configured
+if (!getAdminUid()) await autoDetectAndSaveAdminUid();
 
 const adapter = (await import(`./sites/${siteKey}.js`)).default;
 const browser = await puppeteer.launch({
@@ -373,10 +376,6 @@ function exportJSON() {
 // ── PUSH TO FIRESTORE ─────────────────────────────────────────────
 async function pushToFirestore() {
   const adminUid = document.getElementById('admin-uid').value.trim();
-  if (!adminUid) {
-    showBanner('error', 'ADMIN_UID를 입력해주세요. (ManageView의 ALLOWED_UIDS 참고)');
-    return;
-  }
   const gears = state.filter(g => !g._deleted).map(({ _id, _deleted, ...c }) => c);
   const btn = document.getElementById('push-btn');
   btn.disabled = true;
