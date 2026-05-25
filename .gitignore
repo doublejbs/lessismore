@@ -27,8 +27,10 @@ dist-ssr
 
 .firebase/*
 
-# Firebase Admin service account keys
+# Firebase Admin service account keys (모든 형태)
 **/serviceAccountKey.json
+**/*firebase-adminsdk*.json
+**/*-adminsdk-*.json
 
 # crawl-gear skill output
 .claude/skills/crawl-gear/out/
