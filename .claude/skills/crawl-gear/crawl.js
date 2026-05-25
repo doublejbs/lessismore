@@ -375,7 +375,6 @@ function exportJSON() {
 
 // ── PUSH TO FIRESTORE ─────────────────────────────────────────────
 async function pushToFirestore() {
-  const adminUid = document.getElementById('admin-uid').value.trim();
   const gears = state.filter(g => !g._deleted).map(({ _id, _deleted, ...c }) => c);
   const btn = document.getElementById('push-btn');
   btn.disabled = true;
@@ -385,7 +384,7 @@ async function pushToFirestore() {
     const resp = await fetch('http://127.0.0.1:3847/push', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ gears, adminUid }),
+      body: JSON.stringify({ gears }),
     });
     const result = await resp.json();
     if (result.error) throw new Error(result.error);
@@ -449,16 +448,10 @@ const server = createServer(async (req, res) => {
   req.on('end', async () => {
     res.setHeader('Content-Type', 'application/json');
     try {
-      const { gears, adminUid: reqUid } = JSON.parse(body);
-      const adminUid = reqUid || getAdminUid();
-      console.log(`\n[push] ${gears.length}개 → users/${adminUid}/gears`);
-      const result = await bulkUpsert(adminUid, gears);
+      const { gears } = JSON.parse(body);
+      console.log(`\n[push] ${gears.length}개 → gear`);
+      const result = await bulkUpsert(gears);
       console.log(`[push] done: inserted=${result.inserted} updated=${result.updated} failed=${result.failed.length}`);
-      // Save UID to config so next run doesn't need it
-      if (!getAdminUid()) {
-        saveAdminUid(adminUid);
-        console.log(`[push] ADMIN_UID saved to .config.local.json`);
-      }
       res.writeHead(200);
       res.end(JSON.stringify(result));
     } catch (e) {

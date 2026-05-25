@@ -91,8 +91,8 @@ if (flags['dry-run']) {
   process.exit(0);
 }
 
-console.log(`\nWriting to users/${adminUid}/gears ...`);
-const result = await bulkUpsert(adminUid, finalGears);
+console.log(`\nWriting to gear ...`);
+const result = await bulkUpsert(finalGears);
 console.log(`\nDone. inserted=${result.inserted} updated=${result.updated} failed=${result.failed.length}`);
 if (result.failed.length > 0) {
   console.log('Failures:', JSON.stringify(result.failed.slice(0, 5), null, 2));
