@@ -1,9 +1,11 @@
 import puppeteer from 'puppeteer';
 import { writeFileSync, mkdirSync } from 'node:fs';
+import { createServer } from 'node:http';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { exec } from 'node:child_process';
 import { SPECS_SCHEMA, CATEGORY_LABELS, CATEGORY_KEYS } from './specs-schema.js';
+import { bulkUpsert } from './push-firestore.js';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 
@@ -123,11 +125,24 @@ const html = `<!doctype html>
     </div>
     <div class="flex items-center gap-3 text-xs text-muted-foreground flex-1" id="stat-bar"></div>
     <span class="text-xs text-amber-500 font-medium" id="modified-label"></span>
-    <button onclick="exportJSON()" class="inline-flex items-center gap-1.5 h-8 rounded-md bg-primary px-3 text-xs font-medium text-primary-foreground hover:bg-primary/90 transition-colors">
-      <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-      Export JSON
-    </button>
+    <div class="flex items-center gap-2">
+      <!-- ADMIN_UID: hidden if set via env, shown as input if not -->
+      <input id="admin-uid" type="text" placeholder="ADMIN_UID"
+        value="${process.env.ADMIN_UID ?? ''}"
+        class="sh-input h-8 w-44 text-xs font-mono ${process.env.ADMIN_UID ? 'hidden' : ''}"
+        title="Firebase UID (ManageView ALLOWED_UIDS 참고)" />
+      <button onclick="exportJSON()" class="inline-flex items-center gap-1.5 h-8 rounded-md border border-border px-3 text-xs font-medium text-foreground hover:bg-accent transition-colors">
+        <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+        Export
+      </button>
+      <button id="push-btn" onclick="pushToFirestore()" class="inline-flex items-center gap-1.5 h-8 rounded-md bg-primary px-3 text-xs font-medium text-primary-foreground hover:bg-primary/90 transition-colors">
+        <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+        Firestore 저장
+      </button>
+    </div>
   </div>
+  <!-- push result banner -->
+  <div id="push-banner" class="hidden px-6 py-2 text-xs font-medium"></div>
   <div class="px-6 pb-2 text-[10px] text-muted-foreground/60 font-mono">${jsonPath.replace(/\\/g, '/')}</div>
 </header>
 
@@ -357,6 +372,51 @@ function exportJSON() {
   a.click();
 }
 
+// ── PUSH TO FIRESTORE ─────────────────────────────────────────────
+async function pushToFirestore() {
+  const adminUid = document.getElementById('admin-uid').value.trim();
+  if (!adminUid) {
+    showBanner('error', 'ADMIN_UID를 입력해주세요. (ManageView의 ALLOWED_UIDS 참고)');
+    return;
+  }
+  const gears = state.filter(g => !g._deleted).map(({ _id, _deleted, ...c }) => c);
+  const btn = document.getElementById('push-btn');
+  btn.disabled = true;
+  btn.textContent = '저장 중...';
+  showBanner('loading', '\\u23f3 Firestore에 저장 중... (' + gears.length + '개)');
+  try {
+    const resp = await fetch('http://127.0.0.1:3847/push', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ gears, adminUid }),
+    });
+    const result = await resp.json();
+    if (result.error) throw new Error(result.error);
+    showBanner('success',
+      '\\u2713 완료: inserted=' + result.inserted + ', updated=' + result.updated +
+      (result.failed?.length ? ', failed=' + result.failed.length : ''));
+  } catch (e) {
+    if (e.message.includes('fetch') || e.message.includes('Failed to fetch')) {
+      showBanner('error', '\\u274c 서버 연결 실패. crawl.js가 실행 중인지 확인하세요. (터미널 종료 시 재크롤 필요)');
+    } else {
+      showBanner('error', '\\u274c 오류: ' + e.message);
+    }
+  } finally {
+    btn.disabled = false;
+    btn.innerHTML = '\\u2197 Firestore 저장';
+  }
+}
+
+function showBanner(type, msg) {
+  const el = document.getElementById('push-banner');
+  el.classList.remove('hidden', 'bg-amber-50', 'text-amber-700', 'bg-green-50', 'text-green-700', 'bg-red-50', 'text-red-700', 'bg-blue-50', 'text-blue-700');
+  if (type === 'loading') el.classList.add('bg-blue-50', 'text-blue-700');
+  else if (type === 'success') el.classList.add('bg-green-50', 'text-green-700');
+  else if (type === 'error') el.classList.add('bg-red-50', 'text-red-700');
+  el.textContent = msg;
+  el.classList.remove('hidden');
+}
+
 // ── INIT ──────────────────────────────────────────────────────────
 document.getElementById('grid').innerHTML = state.map(buildCard).join('');
 updateStats();
@@ -375,3 +435,46 @@ console.log(`  ADMIN_UID=<uid> node .claude/skills/crawl-gear/push.js ${jsonPath
 if (!flags['no-open'] && process.platform === 'darwin') {
   exec(`open "${htmlPath}"`);
 }
+
+// ── LOCAL PUSH SERVER ──────────────────────────────────────────────
+// Handles POST /push from the HTML editor's "Firestore 저장" button.
+const PUSH_PORT = 3847;
+const server = createServer(async (req, res) => {
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+  if (req.method === 'OPTIONS') { res.writeHead(204); res.end(); return; }
+  if (req.method !== 'POST' || req.url !== '/push') {
+    res.writeHead(404); res.end('Not found'); return;
+  }
+  let body = '';
+  req.on('data', (c) => (body += c));
+  req.on('end', async () => {
+    res.setHeader('Content-Type', 'application/json');
+    try {
+      const { gears, adminUid } = JSON.parse(body);
+      if (!adminUid) throw new Error('adminUid is required');
+      console.log(`\n[push] ${gears.length}개 → users/${adminUid}/gears`);
+      const result = await bulkUpsert(adminUid, gears);
+      console.log(`[push] done: inserted=${result.inserted} updated=${result.updated} failed=${result.failed.length}`);
+      res.writeHead(200);
+      res.end(JSON.stringify(result));
+    } catch (e) {
+      console.error(`[push] error: ${e.message}`);
+      res.writeHead(500);
+      res.end(JSON.stringify({ error: e.message }));
+    }
+  });
+});
+
+server.on('error', (e) => {
+  if (e.code === 'EADDRINUSE') {
+    console.log(`\n[push 서버] 포트 ${PUSH_PORT} 이미 사용 중 — 기존 서버 재사용`);
+  }
+});
+
+server.listen(PUSH_PORT, '127.0.0.1', () => {
+  console.log(`\n[push 서버] http://127.0.0.1:${PUSH_PORT} 에서 대기 중`);
+  console.log(`  HTML 에디터의 "Firestore 저장" 버튼으로 바로 업로드 가능`);
+  console.log(`  (종료하려면 Ctrl+C)`);
+});
