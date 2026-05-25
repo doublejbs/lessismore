@@ -28,6 +28,7 @@ const adapter = (await import(`./sites/${siteKey}.js`)).default;
 const browser = await puppeteer.launch({
   headless: 'new',
   args: ['--ignore-certificate-errors', '--no-sandbox'],
+  protocolTimeout: 180000,
 });
 console.log(`Crawling "${adapter.name}"...`);
 
