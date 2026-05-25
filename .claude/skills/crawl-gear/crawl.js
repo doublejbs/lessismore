@@ -3,7 +3,7 @@ import { writeFileSync, mkdirSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { exec } from 'node:child_process';
-import { SPECS_SCHEMA, CATEGORY_LABELS, formatSpecValue } from './specs-schema.js';
+import { SPECS_SCHEMA, CATEGORY_LABELS, CATEGORY_KEYS } from './specs-schema.js';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 
@@ -21,7 +21,6 @@ const flags = Object.fromEntries(
 
 if (!siteKey) {
   console.error('Usage: node crawl.js <site-key> [--categories=url1,url2] [--no-weight] [--no-open]');
-  console.error('Available sites: rab');
   process.exit(1);
 }
 
@@ -52,131 +51,324 @@ const htmlPath = join(outDir, `${siteKey}-${stamp}.html`);
 
 writeFileSync(jsonPath, JSON.stringify(gears, null, 2));
 
-const escape = (s) =>
-  String(s ?? '').replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[c]);
-
-const cards = gears
-  .map((g, i) => {
-    const warns = [];
-    if (!g.imageUrl) warns.push('NO IMAGE');
-    if (!g.weight) warns.push('NO WEIGHT');
-    if (!g.name) warns.push('NO NAME');
-
-    const schema = SPECS_SCHEMA[g.category] ?? {};
-    const specEntries = Object.entries(schema);
-    const specRows = specEntries.length
-      ? specEntries
-          .map(([key, def]) => {
-            const v = g.specs?.[key];
-            const has = v != null && v !== '';
-            return `<div class="spec ${has ? '' : 'spec-missing'}"><span>${escape(def.label)}</span><b>${has ? escape(formatSpecValue(key, v, schema)) : '<i>—</i>'}</b></div>`;
-          })
-          .join('')
-      : '';
-    const missingCount = specEntries.filter(([k]) => g.specs?.[k] == null || g.specs?.[k] === '').length;
-    if (specEntries.length > 0 && missingCount === specEntries.length) warns.push('NO SPECS');
-
-    const catLabel = CATEGORY_LABELS[g.category] ?? g.category ?? '-';
-    const colorLine = [g.colorKorean, g.color].filter(Boolean).join(' / ') || '-';
-    const sizeLine = [g.sizeKorean, g.size].filter(Boolean).join(' / ') || '-';
-    return `
-    <div class="card">
-      <div class="thumb">${
-        g.imageUrl
-          ? `<img src="${escape(g.imageUrl)}" loading="lazy" />`
-          : `<div class="empty">?</div>`
-      }</div>
-      <div class="meta">
-        <div class="row"><span class="idx">#${i + 1}</span>${
-          warns.length ? warns.map((w) => `<span class="warn">${w}</span>`).join('') : ''
-        }</div>
-        <div class="name">${escape(g.nameKorean) || '<i>(no name)</i>'}</div>
-        <div class="name-en">${escape(g.name) || ''}</div>
-        <div class="kv"><span>company</span><b>${escape(g.companyKorean ? `${g.companyKorean} / ${g.company}` : g.company)}</b></div>
-        <div class="kv"><span>category</span><b>${escape(catLabel)} <small>(${escape(g.category)})</small></b></div>
-        <div class="kv"><span>weight</span><b>${g.weight ? `${g.weight} g` : '<i>0</i>'}</b></div>
-        <div class="kv"><span>color</span><b>${escape(colorLine)}</b></div>
-        <div class="kv"><span>size</span><b>${escape(sizeLine)}</b></div>
-        ${specRows ? `<div class="specs">${specRows}</div>` : ''}
-        <div class="group-id">${escape(g.groupId ?? '')}</div>
-        <div class="src">${escape(g._source ?? '')}</div>
-      </div>
-    </div>`;
-  })
-  .join('');
-
-const sources = Array.from(new Set(gears.map((g) => g._source).filter(Boolean)));
-const stats = {
-  total: gears.length,
-  noImage: gears.filter((g) => !g.imageUrl).length,
-  noWeight: gears.filter((g) => !g.weight).length,
-  noName: gears.filter((g) => !g.name).length,
-  companies: Array.from(new Set(gears.map((g) => g.company))),
-  categories: Array.from(new Set(gears.map((g) => g.category))),
-};
-
 const html = `<!doctype html>
 <html lang="ko">
 <head>
 <meta charset="utf-8">
-<title>${escape(adapter.name)} crawl preview (${gears.length})</title>
+<title>${adapter.name} — 장비 에디터</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap">
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+  tailwind.config = {
+    theme: {
+      fontFamily: { sans: ['Inter', 'system-ui', 'sans-serif'] },
+      extend: {
+        colors: {
+          border: 'hsl(214.3 31.8% 91.4%)',
+          input:  'hsl(214.3 31.8% 91.4%)',
+          ring:   'hsl(222.2 84% 4.9%)',
+          background: 'hsl(0 0% 100%)',
+          foreground:  'hsl(222.2 84% 4.9%)',
+          primary:   { DEFAULT: 'hsl(222.2 47.4% 11.2%)', foreground: 'hsl(210 40% 98%)' },
+          muted:     { DEFAULT: 'hsl(210 40% 96.1%)',     foreground: 'hsl(215.4 16.3% 46.9%)' },
+          accent:    { DEFAULT: 'hsl(210 40% 96.1%)',     foreground: 'hsl(222.2 47.4% 11.2%)' },
+          destructive: { DEFAULT: 'hsl(0 84.2% 60.2%)',   foreground: 'hsl(210 40% 98%)' },
+          amber: { 400: '#fbbf24' },
+        },
+        boxShadow: { card: '0 1px 3px 0 rgb(0 0 0/.1),0 1px 2px -1px rgb(0 0 0/.1)' },
+      },
+    },
+  };
+</script>
 <style>
-  * { box-sizing: border-box; }
-  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; margin: 0; background: #f5f5f7; color: #1a1a1a; }
-  header { position: sticky; top: 0; background: #fff; border-bottom: 1px solid #e5e5e5; padding: 16px 24px; z-index: 10; }
-  header h1 { margin: 0 0 8px; font-size: 20px; }
-  header .stats { font-size: 13px; color: #666; display: flex; gap: 16px; flex-wrap: wrap; }
-  header .stats b { color: #1a1a1a; }
-  header .warn-summary { color: #c0392b; }
-  header .sources { font-size: 12px; color: #888; margin-top: 8px; word-break: break-all; }
-  header .json-path { font-size: 11px; color: #888; margin-top: 8px; font-family: ui-monospace, monospace; }
-  main { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 16px; padding: 24px; }
-  .card { background: #fff; border-radius: 10px; overflow: hidden; box-shadow: 0 1px 3px rgba(0,0,0,0.05); display: flex; flex-direction: column; }
-  .thumb { aspect-ratio: 4 / 5; background: #fafafa; display: flex; align-items: center; justify-content: center; }
-  .thumb img { width: 100%; height: 100%; object-fit: contain; }
-  .empty { font-size: 40px; color: #ccc; }
-  .meta { padding: 12px; font-size: 13px; }
-  .row { display: flex; align-items: center; gap: 6px; margin-bottom: 6px; }
-  .idx { font-size: 11px; color: #999; }
-  .warn { font-size: 10px; background: #fee; color: #c0392b; padding: 2px 6px; border-radius: 4px; font-weight: 600; }
-  .name { font-weight: 600; font-size: 14px; word-break: keep-all; }
-  .name-en { font-size: 12px; color: #888; margin-bottom: 8px; word-break: break-word; }
-  .kv small { color: #999; font-size: 10px; }
-  .group-id { margin-top: 6px; font-size: 10px; color: #999; font-family: ui-monospace, monospace; }
-  .kv { display: flex; justify-content: space-between; gap: 8px; padding: 2px 0; color: #666; }
-  .kv b { color: #1a1a1a; font-weight: 500; }
-  .kv i { color: #c0392b; font-style: normal; }
-  .specs { margin-top: 10px; padding-top: 10px; border-top: 1px dashed #e5e5e5; }
-  .spec { display: flex; justify-content: space-between; gap: 8px; padding: 2px 0; color: #666; font-size: 12px; }
-  .spec b { color: #2c3e50; font-weight: 500; }
-  .spec i { color: #bbb; font-style: normal; }
-  .spec-missing b { color: #bbb; }
-  .src { margin-top: 8px; font-size: 10px; color: #aaa; word-break: break-all; font-family: ui-monospace, monospace; }
+  body { font-family: 'Inter', system-ui, sans-serif; }
+  /* shadcn-style input */
+  .sh-input {
+    display:flex;width:100%;height:2.25rem;border-radius:.375rem;
+    border:1px solid hsl(214.3 31.8% 91.4%);background:#fff;
+    padding:.25rem .75rem;font-size:.875rem;line-height:1.25rem;
+    outline:none;transition:border-color .15s,box-shadow .15s;
+  }
+  .sh-input:focus { border-color:hsl(222.2 84% 4.9%); box-shadow:0 0 0 1px hsl(222.2 84% 4.9%); }
+  .sh-select {
+    display:flex;width:100%;height:2.25rem;border-radius:.375rem;
+    border:1px solid hsl(214.3 31.8% 91.4%);background:#fff;
+    padding:.25rem .75rem;font-size:.875rem;
+    outline:none;transition:border-color .15s;
+  }
+  .sh-select:focus { border-color:hsl(222.2 84% 4.9%); box-shadow:0 0 0 1px hsl(222.2 84% 4.9%); }
+  .sh-input[type=number] { -moz-appearance:textfield; }
+  .sh-input[type=number]::-webkit-outer-spin-button,
+  .sh-input[type=number]::-webkit-inner-spin-button { -webkit-appearance:none; }
+  /* edit button (hover-only in a field row) */
+  .field-row .edit-trigger { opacity:0; transition:opacity .1s; }
+  .field-row:hover .edit-trigger { opacity:1; }
+  .field-row:focus-within .edit-trigger { opacity:1; }
+  /* field-level modification indicator */
+  .field-mod .f-lbl { color: hsl(32 95% 44%); }
+  .field-mod .f-mod-dot { display:inline !important; }
+  .field-mod .f-val { color: hsl(32 95% 32%); }
 </style>
 </head>
-<body>
-<header>
-  <h1>${escape(adapter.name)} — ${gears.length} items</h1>
-  <div class="stats">
-    <span><b>${stats.total}</b> total</span>
-    <span class="${stats.noImage ? 'warn-summary' : ''}"><b>${stats.noImage}</b> no image</span>
-    <span class="${stats.noWeight ? 'warn-summary' : ''}"><b>${stats.noWeight}</b> no weight</span>
-    <span class="${stats.noName ? 'warn-summary' : ''}"><b>${stats.noName}</b> no name</span>
-    <span>companies: <b>${stats.companies.map(escape).join(', ')}</b></span>
-    <span>categories: <b>${stats.categories.map(escape).join(', ')}</b></span>
+<body class="bg-zinc-50 text-foreground">
+
+<!-- HEADER -->
+<header class="sticky top-0 z-50 w-full border-b border-border bg-background/95 backdrop-blur">
+  <div class="flex h-14 items-center gap-4 px-6">
+    <div class="flex items-center gap-2">
+      <span class="font-semibold text-sm">${adapter.name}</span>
+      <span class="rounded-full bg-muted px-2 py-0.5 text-xs text-muted-foreground" id="total-badge"></span>
+    </div>
+    <div class="flex items-center gap-3 text-xs text-muted-foreground flex-1" id="stat-bar"></div>
+    <span class="text-xs text-amber-500 font-medium" id="modified-label"></span>
+    <button onclick="exportJSON()" class="inline-flex items-center gap-1.5 h-8 rounded-md bg-primary px-3 text-xs font-medium text-primary-foreground hover:bg-primary/90 transition-colors">
+      <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+      Export JSON
+    </button>
   </div>
-  <div class="sources">sources: ${sources.map(escape).join(' | ')}</div>
-  <div class="json-path">JSON: ${escape(jsonPath)}</div>
+  <div class="px-6 pb-2 text-[10px] text-muted-foreground/60 font-mono">${jsonPath.replace(/\\/g, '/')}</div>
 </header>
-<main>${cards}</main>
+
+<!-- GRID -->
+<main id="grid" class="grid gap-4 p-6" style="grid-template-columns:repeat(auto-fill,minmax(300px,1fr))"></main>
+
+<script>
+const SCHEMA = ${JSON.stringify(SPECS_SCHEMA)};
+const CAT_LABELS = ${JSON.stringify(CATEGORY_LABELS)};
+const CAT_KEYS = ${JSON.stringify(CATEGORY_KEYS)};
+const ADAPTER_NAME = ${JSON.stringify(adapter.name)};
+
+// ── STATE ─────────────────────────────────────────────────────────
+let state = (${JSON.stringify(gears)}).map((g, i) => ({
+  ...g, _id: i, _deleted: false, specs: { ...(g.specs ?? {}) },
+}));
+const originals = state.map(g => {
+  const { _id, _deleted, ...c } = g;
+  return JSON.stringify(c);
+});
+
+const esc = s => String(s ?? '').replace(/[&<>"']/g,
+  c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'})[c]);
+
+function isModified(id) {
+  const { _id, _deleted, ...cur } = state[id];
+  return JSON.stringify(cur) !== originals[id];
+}
+function updateCardRing(id) {
+  const el = document.getElementById('card-' + id);
+  if (!el) return;
+  const mod = isModified(id);
+  el.classList.toggle('ring-2',     mod);
+  el.classList.toggle('ring-amber-400/60', mod);
+  const badge = document.getElementById('badge-mod-' + id);
+  if (badge) badge.style.display = mod ? '' : 'none';
+}
+function updateStats() {
+  const live = state.filter(g => !g._deleted);
+  const del  = state.filter(g => g._deleted).length;
+  const noW  = live.filter(g => !g.weight).length;
+  const mod  = live.filter(g => isModified(g._id)).length;
+  document.getElementById('total-badge').textContent = live.length + ' items';
+  document.getElementById('stat-bar').innerHTML =
+    (noW ? '<span class="text-amber-500">' + noW + ' no weight</span>' : '') +
+    (del ? '<span>' + del + ' deleted</span>' : '');
+  const ml = document.getElementById('modified-label');
+  ml.textContent = mod ? mod + ' modified' : '';
+}
+
+// ── FIELD EDIT ───────────────────────────────────────────────────
+function editField(id, key) {
+  const el = document.getElementById('f-' + id + '-' + key);
+  if (!el) return;
+  const isSpec = key.startsWith('spec-');
+  const rk = isSpec ? key.slice(5) : key;
+  const cur = isSpec ? (state[id].specs?.[rk] ?? '') : (state[id][key] ?? '');
+  const inp = el.querySelector('.f-edit input, .f-edit select');
+  if (!inp) return;
+  if (inp.tagName === 'SELECT') inp.value = String(cur);
+  else if (inp.type === 'checkbox') inp.checked = !!cur;
+  else inp.value = String(cur);
+  el.querySelector('.f-read').style.display = 'none';
+  el.querySelector('.f-edit').style.display = 'flex';
+  inp.focus();
+  if (inp.select && inp.type !== 'number') inp.select();
+}
+
+function saveField(id, key) {
+  const el = document.getElementById('f-' + id + '-' + key);
+  const inp = el.querySelector('.f-edit input, .f-edit select');
+  let val;
+  if (inp.type === 'checkbox') val = inp.checked;
+  else if (inp.type === 'number') val = inp.value === '' ? 0 : +inp.value;
+  else val = inp.value;
+  const isSpec = key.startsWith('spec-');
+  const rk = isSpec ? key.slice(5) : key;
+  if (isSpec) { state[id].specs = state[id].specs ?? {}; state[id].specs[rk] = val; }
+  else state[id][key] = val;
+  // update display
+  const dispEl = el.querySelector('.f-val');
+  if (dispEl) { dispEl.textContent = formatDisplay(id, rk, val, isSpec); }
+  if (key === 'category') {
+    const sec = document.getElementById('specs-' + id);
+    if (sec) sec.innerHTML = buildSpecsHTML(id);
+  }
+  // field-level modification indicator
+  const origItem = JSON.parse(originals[id]);
+  const origVal = isSpec ? (origItem.specs?.[rk] ?? '') : (origItem[key] ?? '');
+  el.classList.toggle('field-mod', String(val ?? '') !== String(origVal ?? ''));
+  el.querySelector('.f-read').style.display = '';
+  el.querySelector('.f-edit').style.display = 'none';
+  updateCardRing(id);
+  updateStats();
+}
+
+function cancelField(id, key) {
+  const el = document.getElementById('f-' + id + '-' + key);
+  el.querySelector('.f-read').style.display = '';
+  el.querySelector('.f-edit').style.display = 'none';
+}
+
+function deleteItem(id) {
+  if (!confirm('이 항목을 삭제할까요?')) return;
+  state[id]._deleted = true;
+  const el = document.getElementById('card-' + id);
+  if (el) el.style.display = 'none';
+  updateStats();
+}
+
+// ── FORMAT ───────────────────────────────────────────────────────
+function formatDisplay(id, key, val, isSpec) {
+  if (isSpec) {
+    const def = (SCHEMA[state[id].category] ?? {})[key];
+    if (!def) return String(val ?? '');
+    if (def.type === 'boolean') return val === true ? '예' : val === false ? '아니오' : '';
+    if (def.unit && val !== '' && val != null) return val + ' ' + def.unit;
+    return String(val ?? '');
+  }
+  if (key === 'category') return (CAT_LABELS[val] || val) + ' (' + val + ')';
+  if (key === 'weight') return val ? val + ' g' : '';
+  return String(val ?? '');
+}
+
+// ── BUILD FIELD ──────────────────────────────────────────────────
+function buildField(id, key, label, type, opts = {}) {
+  const isSpec = key.startsWith('spec-');
+  const rk = isSpec ? key.slice(5) : key;
+  const raw = isSpec ? (state[id].specs?.[rk] ?? '') : (state[id][key] ?? '');
+  const disp = formatDisplay(id, rk, raw, isSpec);
+
+  // input HTML
+  let inputHtml;
+  if (type === 'enum') {
+    inputHtml = '<select class="sh-select" onkeydown="if(event.key===\\'Enter\\')saveField(' + id + ',\\'' + key + '\\');if(event.key===\\'Escape\\')cancelField(' + id + ',\\'' + key + '\\')">' +
+      '<option value="">—</option>' +
+      (opts.enum||[]).map(e=>'<option value="'+esc(e)+'">'+esc(e)+'</option>').join('') +
+      '</select>';
+  } else if (type === 'boolean') {
+    inputHtml = '<select class="sh-select" onkeydown="if(event.key===\\'Enter\\')saveField(' + id + ',\\'' + key + '\\');if(event.key===\\'Escape\\')cancelField(' + id + ',\\'' + key + '\\')">' +
+      '<option value="">—</option><option value="true">예</option><option value="false">아니오</option></select>';
+  } else {
+    inputHtml = '<input type="'+(type==='number'?'number':'text')+'" class="sh-input"' +
+      ' onkeydown="if(event.key===\\'Enter\\')saveField('+id+',\\''+key+'\\');if(event.key===\\'Escape\\')cancelField('+id+',\\''+key+'\\');">';
+  }
+
+  const isEmpty = !disp;
+  return '<div class="field-row group" id="f-' + id + '-' + key + '">' +
+    // READ
+    '<div class="f-read flex items-center gap-2 py-[3px]">' +
+      '<span class="f-lbl w-[88px] shrink-0 text-[10px] font-medium text-muted-foreground uppercase tracking-wide">' +
+        '<span class="f-mod-dot hidden text-[8px] mr-0.5">●</span>' + esc(label) +
+      '</span>' +
+      '<span class="f-val flex-1 text-sm' + (isEmpty?' text-muted-foreground/50 italic':' text-foreground') + (opts.bold?' font-semibold':'') + '">' + esc(disp||'—') + '</span>' +
+      '<button class="edit-trigger inline-flex h-6 items-center rounded px-1.5 text-[10px] font-medium text-muted-foreground border border-transparent hover:border-border hover:text-foreground hover:bg-accent transition-colors" onclick="editField('+id+',\\''+key+'\\')">수정</button>' +
+    '</div>' +
+    // EDIT
+    '<div class="f-edit hidden flex-col gap-2 rounded-lg border border-ring/40 bg-accent/50 p-3 my-1">' +
+      '<span class="text-[10px] font-semibold text-primary uppercase tracking-wide">' + esc(label) + '</span>' +
+      inputHtml +
+      '<div class="flex gap-2">' +
+        '<button onclick="saveField('+id+',\\''+key+'\\');" class="inline-flex h-7 items-center rounded-md bg-primary px-3 text-xs font-semibold text-primary-foreground hover:bg-primary/90 transition-colors">저장</button>' +
+        '<button onclick="cancelField('+id+',\\''+key+'\\');" class="inline-flex h-7 items-center rounded-md border border-border px-3 text-xs font-medium text-muted-foreground hover:bg-accent hover:text-foreground transition-colors">취소</button>' +
+      '</div>' +
+    '</div>' +
+  '</div>';
+}
+
+// ── BUILD SPECS ───────────────────────────────────────────────────
+function buildSpecsHTML(id) {
+  const schema = SCHEMA[state[id].category] ?? {};
+  const entries = Object.entries(schema);
+  if (!entries.length) return '';
+  return '<div class="mt-3 pt-3 border-t border-dashed border-border/60">' +
+    '<p class="text-[10px] font-semibold text-primary/70 uppercase tracking-widest mb-2">Specs · ' + esc(CAT_LABELS[state[id].category]||state[id].category) + '</p>' +
+    entries.map(([k, def]) =>
+      buildField(id, 'spec-'+k, def.label + (def.unit?' ('+def.unit+')':''), def.type, { enum: def.enum, isSpec: true })
+    ).join('') +
+  '</div>';
+}
+
+// ── BUILD CARD ────────────────────────────────────────────────────
+function buildCard(g) {
+  const id = g._id;
+  return '<div class="card rounded-xl border border-border bg-background shadow-card flex flex-col overflow-hidden transition-all" id="card-' + id + '">' +
+
+    // thumb
+    '<div class="aspect-[4/5] bg-muted/40 flex items-center justify-center overflow-hidden">' +
+      (g.imageUrl
+        ? '<img src="'+esc(g.imageUrl)+'" loading="lazy" class="w-full h-full object-contain">'
+        : '<span class="text-4xl text-muted-foreground/30">?</span>') +
+    '</div>' +
+
+    // card header
+    '<div class="flex items-center justify-between px-4 pt-3 pb-1">' +
+      '<div class="flex items-center gap-1.5">' +
+        '<span class="text-[10px] text-muted-foreground/60">#' + (id+1) + '</span>' +
+        '<span id="badge-mod-'+id+'" style="display:none" class="rounded-full bg-amber-100 text-amber-700 text-[10px] font-semibold px-1.5 py-0.5">수정됨</span>' +
+      '</div>' +
+      '<button onclick="deleteItem('+id+')" title="삭제" class="h-6 w-6 flex items-center justify-center rounded-md text-muted-foreground/40 hover:bg-destructive/10 hover:text-destructive transition-colors text-base leading-none">×</button>' +
+    '</div>' +
+
+    // fields
+    '<div class="px-4 pb-4 flex-1 flex flex-col gap-0.5">' +
+      buildField(id, 'nameKorean', '한글 제품명', 'text', { bold: true }) +
+      buildField(id, 'name',       '영문 제품명', 'text') +
+      buildField(id, 'category',   '카테고리',   'enum', { enum: CAT_KEYS }) +
+      buildField(id, 'companyKorean','회사 한글', 'text') +
+      buildField(id, 'weight',     '무게 (g)',   'number') +
+      buildField(id, 'color',      '색상 영문',  'text') +
+      buildField(id, 'colorKorean','색상 한글',  'text') +
+      buildField(id, 'size',       '사이즈 영문','text') +
+      buildField(id, 'sizeKorean', '사이즈 한글','text') +
+      '<div id="specs-' + id + '">' + buildSpecsHTML(id) + '</div>' +
+      (g._source ? '<p class="mt-3 text-[9px] font-mono text-muted-foreground/40 break-all">' + esc(g._source) + '</p>' : '') +
+    '</div>' +
+  '</div>';
+}
+
+// ── EXPORT ────────────────────────────────────────────────────────
+function exportJSON() {
+  const out = state.filter(g => !g._deleted).map(({ _id, _deleted, ...c }) => c);
+  const a = Object.assign(document.createElement('a'), {
+    href: URL.createObjectURL(new Blob([JSON.stringify(out, null, 2)], { type: 'application/json' })),
+    download: ADAPTER_NAME + '-edited.json',
+  });
+  a.click();
+}
+
+// ── INIT ──────────────────────────────────────────────────────────
+document.getElementById('grid').innerHTML = state.map(buildCard).join('');
+updateStats();
+</script>
 </body>
 </html>`;
 
 writeFileSync(htmlPath, html);
 
-console.log(`JSON: ${jsonPath}`);
-console.log(`HTML: ${htmlPath}`);
-console.log(`\nTo push after review:`);
+console.log(`\nJSON: ${jsonPath}`);
+console.log(`\n편집기 열기:`);
+console.log(`  file://${htmlPath}`);
+console.log(`\nPush:`);
 console.log(`  ADMIN_UID=<uid> node .claude/skills/crawl-gear/push.js ${jsonPath}`);
 
 if (!flags['no-open'] && process.platform === 'darwin') {
