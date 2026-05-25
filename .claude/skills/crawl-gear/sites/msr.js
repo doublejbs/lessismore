@@ -345,7 +345,7 @@ const crawlCategory = async (browser, categoryUrl, { withWeight = true } = {}) =
       _source: categoryUrl,
     });
   }
-  await page.close();
+  try { await page.close(); } catch (_) {}
   return results;
 };
 

@@ -3,6 +3,7 @@ import { stdin as input, stdout as output } from 'node:process';
 import { readFileSync } from 'node:fs';
 import { bulkUpsert } from './push-firestore.js';
 import { CATEGORY_KEYS, CATEGORY_LABELS } from './specs-schema.js';
+import { getAdminUid } from './config-local.js';
 
 const args = process.argv.slice(2);
 const jsonPath = args[0];
@@ -21,11 +22,7 @@ if (!jsonPath) {
   process.exit(1);
 }
 
-const adminUid = process.env.ADMIN_UID;
-if (!adminUid && !flags['dry-run']) {
-  console.error('ADMIN_UID env var required (or use --dry-run).');
-  process.exit(1);
-}
+const adminUid = getAdminUid();
 
 const gears = JSON.parse(readFileSync(jsonPath, 'utf-8'));
 console.log(`Loaded ${gears.length} items from ${jsonPath}\n`);
@@ -94,8 +91,8 @@ if (flags['dry-run']) {
   process.exit(0);
 }
 
-console.log(`\nWriting to users/${adminUid}/gears ...`);
-const result = await bulkUpsert(adminUid, finalGears);
+console.log(`\nWriting to gear ...`);
+const result = await bulkUpsert(finalGears);
 console.log(`\nDone. inserted=${result.inserted} updated=${result.updated} failed=${result.failed.length}`);
 if (result.failed.length > 0) {
   console.log('Failures:', JSON.stringify(result.failed.slice(0, 5), null, 2));

@@ -22,16 +22,13 @@ const init = () => {
   return db;
 };
 
-const gearsCol = (adminUid) => init().collection('users').doc(adminUid).collection('gears');
+const col = () => init().collection('gear');
 
-// Variant match: same product (groupId), same color + size = same variant.
-// Fallback for legacy data: match by nameKorean against existing name field
-// (old records stored Korean text in `name`).
-const findExistingVariant = async (adminUid, gear) => {
-  const col = gearsCol(adminUid);
+const findExisting = async (gear) => {
+  const c = col();
 
   if (gear.groupId) {
-    const snap = await col
+    const snap = await c
       .where('groupId', '==', gear.groupId)
       .where('color', '==', gear.color ?? '')
       .where('size', '==', gear.size ?? '')
@@ -41,7 +38,7 @@ const findExistingVariant = async (adminUid, gear) => {
   }
 
   if (gear.nameKorean) {
-    const snap = await col
+    const snap = await c
       .where('nameKorean', '==', gear.nameKorean)
       .where('company', '==', gear.company)
       .where('color', '==', gear.color ?? '')
@@ -49,7 +46,7 @@ const findExistingVariant = async (adminUid, gear) => {
       .get();
     if (!snap.empty) return snap.docs[0];
 
-    const legacy = await col
+    const legacy = await c
       .where('name', '==', gear.nameKorean)
       .where('company', '==', gear.company)
       .limit(1)
@@ -58,7 +55,7 @@ const findExistingVariant = async (adminUid, gear) => {
   }
 
   if (gear.name) {
-    const snap = await col
+    const snap = await c
       .where('name', '==', gear.name)
       .where('company', '==', gear.company)
       .limit(1)
@@ -69,8 +66,8 @@ const findExistingVariant = async (adminUid, gear) => {
   return null;
 };
 
-export const upsertGear = async (adminUid, gear) => {
-  const existing = await findExistingVariant(adminUid, gear);
+export const upsertGear = async (gear) => {
+  const existing = await findExisting(gear);
 
   const catalogFields = {
     company: gear.company,
@@ -111,15 +108,15 @@ export const upsertGear = async (adminUid, gear) => {
     createDate: Date.now(),
     specs: gear.specs ?? {},
   };
-  await gearsCol(adminUid).doc(id).set(doc);
+  await col().doc(id).set(doc);
   return { action: 'inserted', id };
 };
 
-export const bulkUpsert = async (adminUid, gears) => {
+export const bulkUpsert = async (gears) => {
   const results = { inserted: 0, updated: 0, failed: [] };
   for (const gear of gears) {
     try {
-      const r = await upsertGear(adminUid, gear);
+      const r = await upsertGear(gear);
       results[r.action] += 1;
     } catch (e) {
       results.failed.push({ gear, error: e.message });
