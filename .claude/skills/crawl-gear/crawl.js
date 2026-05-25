@@ -1,12 +1,12 @@
 import puppeteer from 'puppeteer';
 import { writeFileSync, mkdirSync } from 'node:fs';
-import { createServer } from 'node:http';
+import { createServer } from 'node:net';
+import { spawn } from 'node:child_process';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { exec } from 'node:child_process';
 import { SPECS_SCHEMA, CATEGORY_LABELS, CATEGORY_KEYS } from './specs-schema.js';
-import { bulkUpsert } from './push-firestore.js';
-import { getAdminUid, saveAdminUid, autoDetectAndSaveAdminUid } from './config-local.js';
+import { getAdminUid, autoDetectAndSaveAdminUid } from './config-local.js';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 
@@ -432,44 +432,23 @@ if (!flags['no-open'] && process.platform === 'darwin') {
   exec(`open "${htmlPath}"`);
 }
 
-// ── LOCAL PUSH SERVER ──────────────────────────────────────────────
-// Handles POST /push from the HTML editor's "Firestore 저장" button.
+// ── PUSH SERVER: detached 프로세스로 독립 실행 ──────────────────────
+// server.js를 별도 프로세스로 띄워 crawl 종료 후에도 서버가 유지됨.
 const PUSH_PORT = 3847;
-const server = createServer(async (req, res) => {
-  res.setHeader('Access-Control-Allow-Origin', '*');
-  res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
-  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
-  if (req.method === 'OPTIONS') { res.writeHead(204); res.end(); return; }
-  if (req.method !== 'POST' || req.url !== '/push') {
-    res.writeHead(404); res.end('Not found'); return;
-  }
-  let body = '';
-  req.on('data', (c) => (body += c));
-  req.on('end', async () => {
-    res.setHeader('Content-Type', 'application/json');
-    try {
-      const { gears } = JSON.parse(body);
-      console.log(`\n[push] ${gears.length}개 → gear`);
-      const result = await bulkUpsert(gears);
-      console.log(`[push] done: inserted=${result.inserted} updated=${result.updated} failed=${result.failed.length}`);
-      res.writeHead(200);
-      res.end(JSON.stringify(result));
-    } catch (e) {
-      console.error(`[push] error: ${e.message}`);
-      res.writeHead(500);
-      res.end(JSON.stringify({ error: e.message }));
-    }
+
+const isPortInUse = () =>
+  new Promise((resolve) => {
+    const probe = createServer();
+    probe.once('error', () => resolve(true));
+    probe.once('listening', () => { probe.close(); resolve(false); });
+    probe.listen(PUSH_PORT, '127.0.0.1');
   });
-});
 
-server.on('error', (e) => {
-  if (e.code === 'EADDRINUSE') {
-    console.log(`\n[push 서버] 포트 ${PUSH_PORT} 이미 사용 중 — 기존 서버 재사용`);
-  }
-});
-
-server.listen(PUSH_PORT, '127.0.0.1', () => {
-  console.log(`\n[push 서버] http://127.0.0.1:${PUSH_PORT} 에서 대기 중`);
-  console.log(`  HTML 에디터의 "Firestore 저장" 버튼으로 바로 업로드 가능`);
-  console.log(`  (종료하려면 Ctrl+C)`);
-});
+if (await isPortInUse()) {
+  console.log(`\n[push 서버] 이미 실행 중 (포트 ${PUSH_PORT})`);
+} else {
+  spawn('node', [join(__dirname, 'server.js')], { detached: true, stdio: 'ignore' }).unref();
+  await new Promise((r) => setTimeout(r, 800));
+  console.log(`\n[push 서버] 시작됨 (포트 ${PUSH_PORT}) — crawl 종료 후에도 계속 실행됩니다`);
+  console.log(`  종료하려면: kill $(lsof -ti:${PUSH_PORT})`);
+}
