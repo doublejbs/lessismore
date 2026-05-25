@@ -3,6 +3,7 @@ import { stdin as input, stdout as output } from 'node:process';
 import { readFileSync } from 'node:fs';
 import { bulkUpsert } from './push-firestore.js';
 import { CATEGORY_KEYS, CATEGORY_LABELS } from './specs-schema.js';
+import { getAdminUid } from './config-local.js';
 
 const args = process.argv.slice(2);
 const jsonPath = args[0];
@@ -21,9 +22,11 @@ if (!jsonPath) {
   process.exit(1);
 }
 
-const adminUid = process.env.ADMIN_UID;
+const adminUid = getAdminUid();
 if (!adminUid && !flags['dry-run']) {
-  console.error('ADMIN_UID env var required (or use --dry-run).');
+  console.error('ADMIN_UID를 찾을 수 없습니다.');
+  console.error('  방법 1: ADMIN_UID=<uid> node push.js ...');
+  console.error('  방법 2: HTML 편집기에서 "Firestore 저장" 버튼 사용 (UID 자동 저장됨)');
   process.exit(1);
 }
 

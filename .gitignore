@@ -34,3 +34,5 @@ dist-ssr
 
 # crawl-gear skill output
 .claude/skills/crawl-gear/out/
+# crawl-gear local config (ADMIN_UID 저장)
+.claude/skills/crawl-gear/.config.local.json
