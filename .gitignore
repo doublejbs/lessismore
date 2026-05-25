@@ -26,3 +26,9 @@ dist-ssr
 *.sw?
 
 .firebase/*
+
+# Firebase Admin service account keys
+**/serviceAccountKey.json
+
+# crawl-gear skill output
+.claude/skills/crawl-gear/out/
