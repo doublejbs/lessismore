@@ -22,7 +22,7 @@ const init = () => {
   return db;
 };
 
-const gearsCol = (adminUid) => init().collection('users').doc(adminUid).collection('gears');
+const gearsCol = (adminUid) => init().collection('users').doc(adminUid).collection('gear');
 
 // Variant match: same product (groupId), same color + size = same variant.
 // Fallback for legacy data: match by nameKorean against existing name field
