@@ -1,5 +1,5 @@
 import puppeteer from 'puppeteer';
-import { writeFileSync, mkdirSync } from 'node:fs';
+import { writeFileSync, mkdirSync, readFileSync } from 'node:fs';
 import { createServer } from 'node:net';
 import { spawn } from 'node:child_process';
 import { dirname, join } from 'node:path';
@@ -17,13 +17,16 @@ const flags = Object.fromEntries(
     .slice(1)
     .filter((a) => a.startsWith('--'))
     .map((a) => {
-      const [k, v] = a.replace(/^--/, '').split('=');
-      return [k, v ?? true];
+      const s = a.replace(/^--/, '');
+      const eq = s.indexOf('=');
+      if (eq === -1) return [s, true];
+      // 값 안에 '='(예: cateCd=001)가 있어도 첫 '='만 기준으로 분리
+      return [s.slice(0, eq), s.slice(eq + 1)];
     })
 );
 
 if (!siteKey) {
-  console.error('Usage: node crawl.js <site-key> [--categories=url1,url2] [--no-weight] [--no-open]');
+  console.error('Usage: node crawl.js <site-key> [--categories=url1,url2] [--no-weight] [--no-open] [--from-json=path]');
   process.exit(1);
 }
 
@@ -31,19 +34,28 @@ if (!siteKey) {
 if (!getAdminUid()) await autoDetectAndSaveAdminUid();
 
 const adapter = (await import(`./sites/${siteKey}.js`)).default;
-const browser = await puppeteer.launch({
-  headless: 'new',
-  args: ['--ignore-certificate-errors', '--no-sandbox'],
-  protocolTimeout: 180000,
-});
-console.log(`Crawling "${adapter.name}"...`);
 
-const categoryUrls = flags.categories ? String(flags.categories).split(',') : adapter.defaultCategories;
-const withWeight = !flags['no-weight'];
+let gears;
 
-const gears = await adapter.crawl(browser, { categoryUrls, withWeight });
-await browser.close();
-console.log(`\nCrawled ${gears.length} items.\n`);
+if (flags['from-json']) {
+  // 크롤 없이 기존 JSON 을 그대로 에디터로 띄운다(편집/저장용 재생성).
+  gears = JSON.parse(readFileSync(flags['from-json'], 'utf8'));
+  console.log(`Loaded ${gears.length} items from ${flags['from-json']}`);
+} else {
+  const browser = await puppeteer.launch({
+    headless: 'new',
+    args: ['--ignore-certificate-errors', '--no-sandbox'],
+    protocolTimeout: 180000,
+  });
+  console.log(`Crawling "${adapter.name}"...`);
+
+  const categoryUrls = flags.categories ? String(flags.categories).split(',') : adapter.defaultCategories;
+  const withWeight = !flags['no-weight'];
+
+  gears = await adapter.crawl(browser, { categoryUrls, withWeight });
+  await browser.close();
+  console.log(`\nCrawled ${gears.length} items.\n`);
+}
 
 if (gears.length === 0) {
   console.log('Nothing crawled. Exiting.');
