@@ -41,9 +41,9 @@ node .claude/skills/crawl-gear/discover.js <homepage-url>
 - `fetchDetail()`: 사이트의 무게/스펙 행 패턴
 - `defaultCategories`: 발견된 URL 중 대표 1~2개
 
-상품 카드 셀렉터를 모를 때는 `discover.js`만으로는 부족. 한 카테고리 페이지에 대해 puppeteer 일회성 스크립트로 DOM 덤프해서 셀렉터 확인:
+상품 카드 셀렉터를 모를 때는 `discover.js`만으로는 부족. **Claude in Chrome 으로 한 카테고리 페이지를 열어 `javascript_tool` 로 DOM 확인**(아래 "사이트 확인은 Claude in Chrome 우선" 참고). 브라우저 MCP 가 안 되면 puppeteer 일회성 스크립트로 폴백:
 ```js
-// 임시 스크립트 — 카드 컨테이너의 outerHTML 일부를 보고 셀렉터 결정
+// 카드 컨테이너의 클래스/구조를 보고 셀렉터 결정
 document.querySelectorAll('[class*="product"], [class*="card"], [class*="item"]')
 ```
 
@@ -53,20 +53,11 @@ document.querySelectorAll('[class*="product"], [class*="card"], [class*="item"]'
 
 순서:
 1. `CATEGORY_MAP`에서 그 브랜드가 다루는 카테고리 키 목록 추출
-2. 각 카테고리당 sample detail page 1개씩 puppeteer로 방문 → spec 행 덤프
+2. 각 카테고리당 sample detail page 1개씩 **Claude in Chrome 으로 방문 → leaf-scan 으로 spec 행 덤프** (아래 "사이트 확인은 Claude in Chrome 우선")
 3. 덤프 결과를 보고 `specs-schema.js`의 해당 카테고리 필드 중 추출 가능한 것 매핑
 4. `if (cat === 'XXX') { ... }` 블록 추가
 
-각 카테고리별로 sample URL 1개씩 골라서 한 번에 detail 페이지 비교:
-```js
-const samples = {
-  backpack: 'https://...',
-  clothing: 'https://...',
-  // ... 각 카테고리당 1개
-};
-// puppeteer로 모든 sample 방문 → li 행 / spec rows 출력
-// 출력 보고 카테고리별 추출 패턴 결정
-```
+각 카테고리당 sample URL 1개씩 골라 상세 페이지 spec 위치를 비교한다. spec 이 탭/아코디언 안에 `display:none` 이어도 `textContent` leaf-scan 으로 읽히므로 클릭 불필요.
 
 흔한 추출 패턴 (RAB 케이스):
 - **volume (backpack/vest_pack/pouch)**: URL 슬러그의 `\d+L` 패턴
@@ -105,9 +96,9 @@ HTML 카드 그리드에서 확인:
 
 ### 작업 순서 권장 (시행착오 최소화)
 
-1. **discover.js로 사이트 탐색** — 카테고리 후보 URL 파악
-2. **카드 셀렉터 한 번 확인** — 일회성 puppeteer 스크립트로 한 카테고리 페이지 DOM 덤프
-3. **detail 페이지 spec 위치 확인** — 표/리스트/탭/lazy-load 여부 파악
+1. **discover.js로 사이트 탐색** — 카테고리 후보 URL 파악 (Shopify면 `/collections.json` 으로 전체 컬렉션 확인)
+2. **카드 셀렉터 한 번 확인** — Claude in Chrome 으로 한 카테고리 페이지 열어 leaf-scan (폴백: puppeteer 일회성 스크립트)
+3. **detail 페이지 spec 위치 확인** — Claude in Chrome 으로 표/리스트/탭/lazy-load 여부 파악
 4. **어댑터 초안 작성** — `sites/rab.js` 또는 `sites/msr.js` 복사 후 셀렉터/패턴만 교체
 5. **`--no-weight --no-open` 으로 리스팅 검증** — 빠르게 (1분 안) 카드 추출 확인
 6. **한 카테고리만 풀 크롤** — `--categories=<URL>` 로 spec 추출까지 검증
@@ -119,7 +110,7 @@ HTML 카드 그리드에서 확인:
 
 | 사이트 유형 | 식별 단서 | 주요 셀렉터 |
 |---|---|---|
-| **Shopify** | `cdn.shopify.com` 자산, `.shopify-section` | `.card-wrapper`, `[data-product-id]`, `.product-grid > *` |
+| **Shopify** | `cdn.shopify.com` 자산, `.shopify-section`, `/collections/` | `.card-wrapper`/`.grid__item`, `.card__heading`. **`products.json` API 우선** (무게 `grams` 포함) |
 | **WooCommerce** | `/product-category/`, `wp-content` | `ul.products li.product`, `h3.product-title` |
 | **Magento** | `/catalog/category/view/`, `magento` | `.product-item`, `.product-info` |
 | **Algolia 검색** | `ais-*` 클래스 | `.ais-InfiniteHits-item`, `.ais-Hits-item` |
@@ -186,9 +177,47 @@ const titleEl = document.querySelector('.product__title h1, .product-info h1') ?
 - **원인**: 사이트가 모든 제품에 동일 데이터를 노출하지 않음 (신제품 vs 구형)
 - **해결**: 어댑터로 해결 불가. 가능한 데이터만 추출하고 `""` 으로 두기
 
-### 디버깅 일회성 스크립트 템플릿
+### 사이트 확인은 Claude in Chrome 우선 (권장)
 
-탐색용 puppeteer 스크립트:
+카드 셀렉터·상세 페이지 spec 위치를 확인할 때는 **Claude in Chrome(브라우저 MCP)** 을 먼저 쓴다.
+실제 브라우저라 SPA·lazy-load·봇차단이 puppeteer 일회성 스크립트보다 적게 걸리고, 대화 중 즉시 DOM을 탐색·반복할 수 있다.
+
+흐름:
+1. `list_connected_browsers` → `select_browser(deviceId)` → `tabs_context_mcp({createIfEmpty:true})` 로 탭 확보
+2. `navigate(url, tabId)` 로 카테고리/상세 페이지 이동
+3. `javascript_tool` 로 DOM 탐색 (아래 leaf-scan)
+
+확장이 응답 안 하거나 `disconnected` 가 반복되면 → 사용자에게 Chrome 확장 사이드 패널의 연결/권한 승인 프롬프트 확인을 요청. 승인 후 `deviceId` 가 바뀌므로 `list_connected_browsers` 부터 다시.
+
+#### leaf-scan: 라벨/값 텍스트 한 번에 수집
+
+상품 카드나 spec 행은 대부분 자식이 거의 없는 leaf 요소다. 클래스명을 몰라도 텍스트로 긁어낸다:
+```js
+// javascript_tool 로 실행. 키워드는 카테고리에 맞게 교체.
+(() => {
+  const clean = s => s.replace(/\s+/g, ' ').trim();
+  const kw = /(weight|volume|capacity|material|fabric|cm|mm|oz|gram|length|carbon|nylon)/i;
+  const found = [];
+  document.querySelectorAll('*').forEach(el => {
+    if (el.children.length <= 2) {
+      const t = clean(el.textContent);
+      if (t && t.length < 110 && kw.test(t)) found.push(t);
+    }
+  });
+  return JSON.stringify([...new Set(found)].slice(0, 40), null, 1);
+})()
+```
+
+#### 중요 노하우 (이번 세션 검증)
+
+- **탭/아코디언이 `display:none` 이어도 `textContent` 로 읽힌다.** Specs/Materials 탭을 클릭(`el.click()`)할 필요 없이 leaf-scan 으로 바로 추출됨. (`innerText` 는 숨김 요소를 건너뛰므로 `textContent` 를 쓸 것.)
+- **`javascript_tool` 반환값에 쿼리스트링이 있으면 `[BLOCKED: Cookie/query string data]` 로 차단된다.** 이미지 src 등은 `s.split('?')[0]` 로 쿼리 제거 후 반환.
+- **Shopify 사이트는 브라우저 없이 `products.json` 이 최고.** `/collections/<handle>/products.json?limit=250&page=N` → 이름·이미지·`body_html`·variants(무게 `grams`!)를 구조화 JSON 으로 제공. 전체 컬렉션 목록은 `/collections.json?limit=250`. 브라우저는 `products.json` 에 없는 spec(용량·소재·길이 등 metafield 탭) 위치 확인용으로만 쓴다.
+- 구조화 spec 이 metafield 탭에만 있고 `body_html` 은 마케팅 문구뿐인 경우가 많다 → 리스팅·무게는 `products.json`, spec 은 상세 DOM leaf-scan 의 하이브리드가 안정적.
+
+### 디버깅 일회성 스크립트 템플릿 (Claude in Chrome 불가 시 폴백)
+
+브라우저 MCP 를 못 쓰는 환경이면 puppeteer 일회성 스크립트:
 ```js
 node -e "
 import('puppeteer').then(async ({default: p}) => {
@@ -198,7 +227,7 @@ import('puppeteer').then(async ({default: p}) => {
   await page.goto('<URL>', { waitUntil: 'networkidle2' });
   await new Promise(r => setTimeout(r, 3000));
   const r = await page.evaluate(() => {
-    // 여기에 탐색 코드
+    // 여기에 탐색 코드 (leaf-scan 등)
     return document.querySelector('...').outerHTML.slice(0, 2000);
   });
   console.log(r);
