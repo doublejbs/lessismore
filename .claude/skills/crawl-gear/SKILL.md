@@ -303,6 +303,16 @@ etc
 
 ## 사전 준비
 
+### 다른 컴퓨터에서 처음 쓸 때 (의존성)
+
+스킬 파일·데이터는 레포에 포함돼 git clone 으로 동기화된다. 추가로 필요한 것:
+
+1. **Node 의존성** — 레포 루트에서 `npm install` (이미 `package.json` 에 `puppeteer`, `firebase-admin` 선언됨). 워크트리면 글로벌 규칙대로 메인 클론 `node_modules` 를 심링크.
+2. **Pillow (선택)** — `nemo-specs.py` / `nemo-findtable.py`(한국 고시 이미지 크롭) 사용 시에만. `python3 -m pip install Pillow`. 글로벌 사이트 스크래퍼(`*-global.py`)는 표준 라이브러리만 쓰므로 불필요.
+3. **serviceAccountKey.json** — Firestore push 시점에만 (아래). 머신마다 수동 추가.
+
+`.config.local.json`(adminUid) 은 gitignore 라 동기화 안 되지만, serviceAccountKey 만 있으면 첫 실행 시 Firestore 에서 자동 감지·저장된다.
+
 ### Service Account Key (push 시점에만 필요)
 
 Firebase Console → 프로젝트 설정 → 서비스 계정 → "새 비공개 키 생성" → `.claude/skills/crawl-gear/serviceAccountKey.json`.

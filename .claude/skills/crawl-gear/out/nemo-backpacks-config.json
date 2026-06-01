@@ -1,0 +1,18 @@
+{
+  "category": "backpack",
+  "slugs": ["resolve-15-liter-endless-promise-daypack","resolve-mens-25-liter-endless-promise-daypack","resolve-womens-25-liter-endless-promise-daypack","resolve-mens-35-liter-endless-promise-daypack","resolve-womens-35-liter-endless-promise-daypack","vantage-20-liter-endless-promise-backpack","vantage-26-liter-endless-promise-backpack","vantage-30-liter-endless-promise-backpack","vantage-40-liter-endless-promise-backpack","persist-30l-mens-all-adventure-backpack","persist-30l-womens-all-adventure-backpack","persist-45l-mens-all-adventure-backpack","persist-45l-womens-all-adventure-backpack"],
+  "korMap": {
+    "resolve-15-liter-endless-promise-daypack":"리졸브 15L",
+    "resolve-mens-25-liter-endless-promise-daypack":"리졸브 25L",
+    "resolve-womens-25-liter-endless-promise-daypack":"리졸브 25L",
+    "resolve-mens-35-liter-endless-promise-daypack":"리졸브 35L",
+    "resolve-womens-35-liter-endless-promise-daypack":"리졸브 35L",
+    "vantage-20-liter-endless-promise-backpack":"밴티지 20L",
+    "vantage-26-liter-endless-promise-backpack":"밴티지 26L",
+    "vantage-30-liter-endless-promise-backpack":"밴티지 30L",
+    "persist-30l-mens-all-adventure-backpack":"퍼시스트 30L",
+    "persist-30l-womens-all-adventure-backpack":"퍼시스트 30L",
+    "persist-45l-mens-all-adventure-backpack":"퍼시스트 45L",
+    "persist-45l-womens-all-adventure-backpack":"퍼시스트 45L"
+  }
+}

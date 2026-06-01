@@ -1,0 +1,182 @@
+[
+  {
+    "groupId": "nemo_조르-nx",
+    "category": "mat",
+    "company": "nemo",
+    "companyKorean": "니모",
+    "name": "",
+    "nameKorean": "조르 NX",
+    "color": "알루미늄/굿나잇 그레이",
+    "colorKorean": "",
+    "size": "레귤러/와이드",
+    "sizeKorean": "레귤러/와이드",
+    "weight": 640,
+    "imageUrl": "",
+    "specs": {
+      "type": "인슐레이티드 에어",
+      "shape": "직사각",
+      "material": "100% 재활용 20D 폴리에스터",
+      "rValue": 2.7,
+      "thickness": 25
+    },
+    "_source": "한국 고시이미지"
+  },
+  {
+    "groupId": "nemo_조르-nx",
+    "category": "mat",
+    "company": "nemo",
+    "companyKorean": "니모",
+    "name": "",
+    "nameKorean": "조르 NX",
+    "color": "알루미늄/굿나잇 그레이",
+    "colorKorean": "",
+    "size": "레귤러/머미",
+    "sizeKorean": "레귤러/머미",
+    "weight": 450,
+    "imageUrl": "",
+    "specs": {
+      "type": "인슐레이티드 에어",
+      "shape": "머미",
+      "material": "100% 재활용 20D 폴리에스터",
+      "rValue": 2.7,
+      "thickness": 25
+    },
+    "_source": "한국 고시이미지"
+  },
+  {
+    "groupId": "nemo_조르-nx",
+    "category": "mat",
+    "company": "nemo",
+    "companyKorean": "니모",
+    "name": "",
+    "nameKorean": "조르 NX",
+    "color": "알루미늄/굿나잇 그레이",
+    "colorKorean": "",
+    "size": "미디엄/머미",
+    "sizeKorean": "미디엄/머미",
+    "weight": 415,
+    "imageUrl": "",
+    "specs": {
+      "type": "인슐레이티드 에어",
+      "shape": "머미",
+      "material": "100% 재활용 20D 폴리에스터",
+      "rValue": 2.7,
+      "thickness": 25
+    },
+    "_source": "한국 고시이미지"
+  },
+  {
+    "groupId": "nemo_조르-nx",
+    "category": "mat",
+    "company": "nemo",
+    "companyKorean": "니모",
+    "name": "",
+    "nameKorean": "조르 NX",
+    "color": "알루미늄/굿나잇 그레이",
+    "colorKorean": "",
+    "size": "숏/머미",
+    "sizeKorean": "숏/머미",
+    "weight": 295,
+    "imageUrl": "",
+    "specs": {
+      "type": "인슐레이티드 에어",
+      "shape": "머미",
+      "material": "100% 재활용 20D 폴리에스터",
+      "rValue": 2.7,
+      "thickness": 25
+    },
+    "_source": "한국 고시이미지"
+  },
+  {
+    "groupId": "nemo_오라-nx",
+    "category": "mat",
+    "company": "nemo",
+    "companyKorean": "니모",
+    "name": "",
+    "nameKorean": "오라 NX",
+    "color": "블랙펄/굿나잇 블랙",
+    "colorKorean": "",
+    "size": "레귤러/와이드",
+    "sizeKorean": "레귤러/와이드",
+    "weight": 750,
+    "imageUrl": "",
+    "specs": {
+      "type": "인슐레이티드 에어",
+      "shape": "직사각",
+      "material": "75D PU 폴리에스터 립스탑",
+      "rValue": 2.7,
+      "thickness": 25,
+      "openSize": "183 x 64 x 2.5 cm"
+    },
+    "_source": "한국 고시이미지"
+  },
+  {
+    "groupId": "nemo_오라-nx",
+    "category": "mat",
+    "company": "nemo",
+    "companyKorean": "니모",
+    "name": "",
+    "nameKorean": "오라 NX",
+    "color": "블랙펄/굿나잇 블랙",
+    "colorKorean": "",
+    "size": "롱/와이드",
+    "sizeKorean": "롱/와이드",
+    "weight": 820,
+    "imageUrl": "",
+    "specs": {
+      "type": "인슐레이티드 에어",
+      "shape": "직사각",
+      "material": "75D PU 폴리에스터 립스탑",
+      "rValue": 3.0,
+      "thickness": 30,
+      "openSize": "193 x 64 x 3 cm"
+    },
+    "_source": "한국 고시이미지"
+  },
+  {
+    "groupId": "nemo_오라-nx",
+    "category": "mat",
+    "company": "nemo",
+    "companyKorean": "니모",
+    "name": "",
+    "nameKorean": "오라 NX",
+    "color": "블랙펄/굿나잇 블랙",
+    "colorKorean": "",
+    "size": "레귤러/머미",
+    "sizeKorean": "레귤러/머미",
+    "weight": 530,
+    "imageUrl": "",
+    "specs": {
+      "type": "인슐레이티드 에어",
+      "shape": "머미",
+      "material": "75D PU 폴리에스터 립스탑",
+      "rValue": 2.7,
+      "thickness": 25,
+      "openSize": "183 x 51 x 2.5 cm"
+    },
+    "_source": "한국 고시이미지"
+  },
+  {
+    "groupId": "nemo_오라-nx",
+    "category": "mat",
+    "company": "nemo",
+    "companyKorean": "니모",
+    "name": "",
+    "nameKorean": "오라 NX",
+    "color": "블랙펄/굿나잇 블랙",
+    "colorKorean": "",
+    "size": "미디엄/머미",
+    "sizeKorean": "미디엄/머미",
+    "weight": 500,
+    "imageUrl": "",
+    "specs": {
+      "type": "인슐레이티드 에어",
+      "shape": "머미",
+      "material": "75D PU 폴리에스터 립스탑",
+      "rValue": 2.7,
+      "thickness": 25,
+      "openSize": "160 x 51 x 2.5 cm"
+    },
+    "_source": "한국 고시이미지"
+  }
+]

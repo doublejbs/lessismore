@@ -1,0 +1,31 @@
+{
+  "category": "sleeping_bag",
+  "slugs": [
+    "tempo-mens-synthetic-sleeping-bag",
+    "tempo-womens-synthetic-sleeping-bag",
+    "forte-endless-promise-mens-synthetic-sleeping-bag",
+    "forte-endless-promise-womens-synthetic-sleeping-bag",
+    "soul-endless-promise-synthetic-sleeping-bag",
+    "pulse-ultralite-backpacking-quilt",
+    "riff-mens-endless-promise-down-sleeping-bag",
+    "riff-womens-endless-promise-down-sleeping-bag",
+    "disco-mens-endless-promise-down-sleeping-bag",
+    "disco-womens-endless-promise-down-sleeping-bag",
+    "sonic-ultralight-mummy-sleeping-bag",
+    "coda-genderless-endless-promise-down-sleeping-bag",
+    "jazz"
+  ],
+  "korMap": {
+    "tempo-mens-synthetic-sleeping-bag": "템포 맨",
+    "tempo-womens-synthetic-sleeping-bag": "템포 우먼",
+    "forte-endless-promise-mens-synthetic-sleeping-bag": "포르테 맨",
+    "forte-endless-promise-womens-synthetic-sleeping-bag": "포르테 우먼",
+    "pulse-ultralite-backpacking-quilt": "펄스 UL 퀼트",
+    "riff-mens-endless-promise-down-sleeping-bag": "리프 맨",
+    "riff-womens-endless-promise-down-sleeping-bag": "리프 우먼",
+    "disco-mens-endless-promise-down-sleeping-bag": "디스코 맨",
+    "disco-womens-endless-promise-down-sleeping-bag": "디스코 우먼",
+    "sonic-ultralight-mummy-sleeping-bag": "소닉",
+    "coda-genderless-endless-promise-down-sleeping-bag": "코다"
+  }
+}

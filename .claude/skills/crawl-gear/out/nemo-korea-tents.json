@@ -1,0 +1,77 @@
+[
+  {
+    "groupId": "nemo_타니-OSMO-1P",
+    "category": "tent",
+    "company": "nemo",
+    "companyKorean": "니모",
+    "name": "",
+    "nameKorean": "타니 OSMO 1P",
+    "color": "버치 버드",
+    "colorKorean": "",
+    "size": "1P",
+    "sizeKorean": "",
+    "weight": 1120,
+    "imageUrl": "https://nemoequipmen.hgodo.com/NEMO/Tent/TANI/tani-main1p.jpg",
+    "specs": {
+      "capacity": 1,
+      "wallStructure": "더블월",
+      "innerMaterial": "15D Nylon Ripstop",
+      "flyMaterial": "OSMO Ripstop",
+      "poleMaterial": "aluminum 8.7mm pole",
+      "waterproofRating": 1500,
+      "pitchType": "자립형",
+      "vestibuleArea": "약 80cm"
+    },
+    "_source": "한국 고시이미지"
+  },
+  {
+    "groupId": "nemo_타니-OSMO-2P",
+    "category": "tent",
+    "company": "nemo",
+    "companyKorean": "니모",
+    "name": "",
+    "nameKorean": "타니 OSMO 2P",
+    "color": "버치 버드",
+    "colorKorean": "",
+    "size": "2P",
+    "sizeKorean": "",
+    "weight": 1240,
+    "imageUrl": "https://nemoequipmen.hgodo.com/NEMO/Tent/TANI/tani-main2p.jpg",
+    "specs": {
+      "capacity": 2,
+      "wallStructure": "더블월",
+      "innerMaterial": "15D Nylon Ripstop",
+      "flyMaterial": "OSMO Ripstop",
+      "poleMaterial": "aluminum 8.7mm pole",
+      "waterproofRating": 1500,
+      "pitchType": "자립형",
+      "vestibuleArea": "약 80cm"
+    },
+    "_source": "한국 고시이미지"
+  },
+  {
+    "groupId": "nemo_아톰-오스모-2P",
+    "category": "tent",
+    "company": "nemo",
+    "companyKorean": "니모",
+    "name": "",
+    "nameKorean": "아톰 오스모 2P",
+    "color": "버치 버드/마쉬 보레알",
+    "colorKorean": "",
+    "size": "2P",
+    "sizeKorean": "",
+    "weight": 1600,
+    "imageUrl": "https://nemoequipmen.hgodo.com/NEMO/Tent/atomMa-01.jpg",
+    "specs": {
+      "capacity": 2,
+      "wallStructure": "더블월",
+      "innerMaterial": "40D nylon ripstop",
+      "flyMaterial": "OSMO ripstop",
+      "poleMaterial": "aluminum 8.64mm pole",
+      "waterproofRating": 2000,
+      "pitchType": "자립형",
+      "vestibuleArea": "0.8 sqm"
+    },
+    "_source": "한국 고시이미지"
+  }
+]

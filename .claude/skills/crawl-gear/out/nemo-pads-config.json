@@ -1,0 +1,27 @@
+{
+  "category": "mat",
+  "slugs": [
+    "tensor-elite-ultralight-sleeping-pad",
+    "tensor-all-season-insulated-sleeping-pad",
+    "tensor-trail-insulated-ultralight-sleeping-pad",
+    "tensor-extreme-ultralight-sleeping-pad",
+    "eclipse-all-season-sleeping-pad",
+    "roamer",
+    "flyer-cloud-sleeping-pad",
+    "flyer-bluesign",
+    "switchback-ultralight-sleeping-pad",
+    "astro-lightweight-insulated-sleeping-pad-series",
+    "astro-lightweight-non-insulated-sleeping-pad-series"
+  ],
+  "korMap": {
+    "tensor-elite-ultralight-sleeping-pad": "텐서 엘리트",
+    "tensor-all-season-insulated-sleeping-pad": "텐서 올 시즌",
+    "tensor-extreme-ultralight-sleeping-pad": "텐서 익스트림 컨디션",
+    "eclipse-all-season-sleeping-pad": "이클립스 올시즌",
+    "roamer": "로머",
+    "flyer-cloud-sleeping-pad": "플라이어 클라우드",
+    "flyer-bluesign": "플라이어",
+    "switchback-ultralight-sleeping-pad": "스위치백",
+    "astro-lightweight-insulated-sleeping-pad-series": "아스트로"
+  }
+}

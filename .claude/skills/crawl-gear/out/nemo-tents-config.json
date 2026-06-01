@@ -1,0 +1,30 @@
+{
+  "category": "tent",
+  "slugs": [
+    "hornet-osmo",
+    "hornet-elite-osmo",
+    "dagger-osmo",
+    "dragonfly-osmo",
+    "dragonfly-osmo-bikepack",
+    "aurora-backpacking-tent-and-footprint",
+    "aurora-highrise",
+    "chogori-mountaineering-tent",
+    "kunai-3-4-season-backpacking-tent",
+    "victory-screenhouse-camp-shelter",
+    "dragonfly-bikepack-footprint"
+  ],
+  "korMap": {
+    "hornet-osmo": "호넷 오스모",
+    "hornet-elite-osmo": "호넷 엘리트 오스모",
+    "dagger-osmo": "다이거 오스모",
+    "dragonfly-osmo": "드라곤플라이 오스모",
+    "dragonfly-osmo-bikepack": "드라곤플라이 오스모 바이크팩",
+    "aurora-backpacking-tent-and-footprint": "오로라",
+    "chogori-mountaineering-tent": "초고리",
+    "kunai-3-4-season-backpacking-tent": "쿠나이"
+  },
+  "catMap": {
+    "victory-screenhouse-camp-shelter": "shelter",
+    "dragonfly-bikepack-footprint": "tent_acc"
+  }
+}

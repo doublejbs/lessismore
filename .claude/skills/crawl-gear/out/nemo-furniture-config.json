@@ -1,0 +1,13 @@
+{
+  "category": "chair",
+  "slugs": ["satellite-reclining-camp-chair","moonlite-reclining-camp-chair","moonlite-elite-reclining-camp-chair","stargaze-reclining-camp-chair","stargaze-evo-x-folding-camp-chair","chipper","moonlander-portable-camp-table"],
+  "korMap": {
+    "satellite-reclining-camp-chair":"새틀라이트 체어",
+    "moonlite-reclining-camp-chair":"문라이트 체어",
+    "moonlite-elite-reclining-camp-chair":"문라이트 엘리트 체어",
+    "stargaze-reclining-camp-chair":"스타게이즈 리클라이닝 캠프 체어",
+    "stargaze-evo-x-folding-camp-chair":"스타게이즈 EVO-X",
+    "moonlander-portable-camp-table":"문랜더"
+  },
+  "catMap": {"moonlander-portable-camp-table":"table"}
+}
