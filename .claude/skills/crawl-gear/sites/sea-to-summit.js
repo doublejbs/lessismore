@@ -87,53 +87,67 @@ const cleanCell = (cell) => {
     .trim();
 };
 
-// Parse spec table. Returns { label: [val_variant0, val_variant1, ...] }
-// Column order matches products.json variant order.
+// Parse spec table. Returns { table: { label: [colVals...] }, headers: [colLabels...] }
+// Columns are per spec-variant (e.g. by size/temp), NOT per products.json variant —
+// a product may have more variants (colours) than spec columns, so callers must map
+// each variant to its column via the header labels.
 const parseSpecTable = (html) => {
   const table = {};
+  let headers = [];
   const trBlocks = html.match(/<tr[^>]*>([\s\S]*?)<\/tr>/g) || [];
   for (const tr of trBlocks) {
     const cells = tr.match(/<t[hd][^>]*>([\s\S]*?)<\/t[hd]>/g) || [];
     if (cells.length < 2) continue;
     const label = cleanCell(cells[0]);
-    if (!label) continue;
-    table[label] = cells.slice(1).map(cleanCell);
+    const vals = cells.slice(1).map(cleanCell);
+    if (!label) { if (!headers.length) headers = vals; continue; } // header row (empty first cell)
+    table[label] = vals;
   }
-  return table;
+  return { table, headers };
+};
+
+// Pick the spec column for a variant by matching the column header against the
+// variant's distinguishing option values (size/temp; colour is excluded by caller).
+const normKey = (s) => (s || '').toLowerCase().replace(/[^a-z0-9]/g, '');
+const pickColumn = (headers, optionValues) => {
+  const keys = optionValues.map(normKey).filter(Boolean);
+  if (headers.length <= 1) return 0;
+  if (!keys.length) return 0;
+  const idx = headers.findIndex((h) => {
+    const hn = normKey(h);
+    return keys.every((k) => hn.includes(k));
+  });
+  return idx; // -1 if no column matches
 };
 
 const parseWeight = (text) => {
-  // "782 g27.6 oz" or "782 g" format from spec table
+  // Keep exact metric value (no rounding). "527.1 g27.6 oz" → 527.1
   const gM = text.match(/(\d+(?:\.\d+)?)\s*g\b/i);
-  if (gM) return Math.round(parseFloat(gM[1]));
+  if (gM) return parseFloat(gM[1]);
   const kgM = text.match(/(\d+(?:\.\d+)?)\s*kg\b/i);
-  if (kgM) return Math.round(parseFloat(kgM[1]) * 1000);
+  if (kgM) return parseFloat(kgM[1]) * 1000;
   const lbOzM = text.match(/(\d+)\s*lb\.?\s+(\d+(?:\.\d+)?)\s*oz/i);
-  if (lbOzM) return Math.round(parseInt(lbOzM[1]) * 453.592 + parseFloat(lbOzM[2]) * 28.3495);
+  if (lbOzM) return parseInt(lbOzM[1]) * 453.592 + parseFloat(lbOzM[2]) * 28.3495;
   const ozM = text.match(/(\d+(?:\.\d+)?)\s*oz\b/i);
-  if (ozM) return Math.round(parseFloat(ozM[1]) * 28.3495);
+  if (ozM) return parseFloat(ozM[1]) * 28.3495;
   return 0;
 };
 
-// Returns { variantWeights: [g, g, ...], specs: {} }
-// variantWeights[i] = weight for variant index i (matches products.json order)
+// Returns { table, headers, specs }. weight/temp are read per-variant in crawlCategory
+// using the matching spec column (headers), since variants ≠ spec columns.
 const fetchDetail = async (handle, category, title = '') => {
-  const empty = { variantWeights: [], specs: {}, table: {} };
+  const empty = { table: {}, headers: [], specs: {} };
   try {
     const url = `https://seatosummit.com/products/${handle}`;
     const res = await fetch(url, { headers: { 'User-Agent': UA } });
     if (!res.ok) return empty;
     const html = await res.text();
 
-    const table = parseSpecTable(html);
+    const { table, headers } = parseSpecTable(html);
     const allText = html.replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ');
     const specs = {};
 
-    // Weight per variant: prefer "Packed Weight" row, fall back to "Weight"
-    const weightRow = table['Packed Weight'] ?? table['Weight'] ?? [];
-    const variantWeights = weightRow.map(parseWeight);
-
-    // row(label) → first column value helper
+    // row(label) → first column value helper (for product-wide specs)
     const cell0 = (label) => (table[label]?.[0] ?? '');
 
     if (category === 'sleeping_bag') {
@@ -240,7 +254,7 @@ const fetchDetail = async (handle, category, title = '') => {
       else if (/cotton/i.test(allText)) specs.material = 'cotton';
     }
 
-    return { variantWeights, specs, table };
+    return { table, headers, specs };
   } catch (e) {
     return empty;
   }
@@ -279,43 +293,62 @@ const crawlCategory = async (browser, categoryUrl, { withWeight = true } = {}) =
     const colorOptIdx = optionNames.findIndex((n) => /colou?r/.test(n));
     const sizeOptIdx  = optionNames.findIndex((n) => /size/.test(n));
 
-    let variantWeights = [];
     let baseSpecs = {};
     let table = {};
+    let headers = [];
     if (withWeight) {
       const detail = await fetchDetail(product.handle, category, product.title);
-      variantWeights = detail.variantWeights;
       baseSpecs = detail.specs;
       table = detail.table;
+      headers = detail.headers;
     }
+    // weight row: prefer Packed Weight, then Weight, then Set Weight
+    const weightRow = table['Packed Weight'] ?? table['Weight'] ?? table['Set Weight'] ?? [];
 
     // One entry per variant
     const variants = product.variants ?? [];
     variants.forEach((variant, vi) => {
       const color = colorOptIdx >= 0 ? (variant[`option${colorOptIdx + 1}`] ?? '') : '';
-      const size  = sizeOptIdx  >= 0 ? (variant[`option${sizeOptIdx  + 1}`] ?? '') : '';
+
+      // "One Size" / "Default Title" mean there is no real size choice → treat as blank.
+      const noSize = (v) => !v || /^(one size|default title|default)$/i.test(String(v).trim());
+      const size = sizeOptIdx >= 0 && !noSize(variant[`option${sizeOptIdx + 1}`])
+        ? variant[`option${sizeOptIdx + 1}`] : '';
 
       // Combine non-color, non-size options into size label (e.g. "Temp Rating")
       const extraOpts = optionNames
-        .map((n, i) => (i !== colorOptIdx && i !== sizeOptIdx ? variant[`option${i + 1}`] : null))
+        .map((n, i) => (i !== colorOptIdx && i !== sizeOptIdx && !noSize(variant[`option${i + 1}`]) ? variant[`option${i + 1}`] : null))
         .filter(Boolean);
       const sizeLabel = [size, ...extraOpts].filter(Boolean).join(' / ');
 
-      // Per-variant specs: clone common specs, then fill variant-specific columns by index.
-      // Spec table column order matches products.json variant order.
+      // Map this variant to its spec column by header (colour is excluded — spec
+      // tables don't vary by colour). Fall back to positional index.
+      const nonColorVals = optionNames
+        .map((n, i) => (i !== colorOptIdx ? variant[`option${i + 1}`] : null))
+        .filter(Boolean);
+      let col = pickColumn(headers, nonColorVals);
+      if (col < 0) col = headers.length === weightRow.length ? -1 : vi; // -1 → unknown, leave 0
+      const colIdx = col;
+
+      const weight = colIdx >= 0 ? parseWeight(weightRow[colIdx] ?? '') : 0;
+
+      // Per-variant specs: clone common specs, then fill variant-specific columns.
       const specs = { ...baseSpecs };
-      if (category === 'sleeping_bag') {
-        const lower = parseTempC((table['Temperature Rating (ISO Lower)'] ?? table['Temperature Rating'] ?? [])[vi] ?? '');
+      if (category === 'sleeping_bag' && colIdx >= 0) {
+        const lower = parseTempC((table['Temperature Rating (ISO Lower)'] ?? table['Temperature Rating'] ?? [])[colIdx] ?? '');
         if (lower !== null) specs.limitTemp = lower;
-        const comfort = parseTempC((table["Women's Temperature Rating (ISO Comfort)"] ?? table['Temperature Rating (ISO Comfort)'] ?? [])[vi] ?? '');
+        const comfort = parseTempC((table["Women's Temperature Rating (ISO Comfort)"] ?? table['Temperature Rating (ISO Comfort)'] ?? [])[colIdx] ?? '');
         if (comfort !== null) specs.comfortTemp = comfort;
-        const fwM = ((table['Fill Weight'] ?? [])[vi] ?? '').match(/(\d+)\s*g/);
+        const fwM = ((table['Fill Weight'] ?? [])[colIdx] ?? '').match(/(\d+)\s*g/);
         if (fwM) specs.fillWeight = parseInt(fwM[1], 10);
       }
 
-      // Use image attached to this variant if available, else fallback to first image
+      // Per-variant (per-colour) image: collection products.json puts it on
+      // variant.featured_image; individual product.json uses variant.image_id.
       let imageUrl = baseImageUrl;
-      if (variant.image_id) {
+      if (variant.featured_image?.src) {
+        imageUrl = variant.featured_image.src.split('?')[0];
+      } else if (variant.image_id) {
         const img = product.images?.find((im) => im.id === variant.image_id);
         if (img) imageUrl = img.src.split('?')[0];
       }
@@ -331,7 +364,7 @@ const crawlCategory = async (browser, categoryUrl, { withWeight = true } = {}) =
         colorKorean: '',
         size: sizeLabel,
         sizeKorean: '',
-        weight: variantWeights[vi] ?? 0,
+        weight,
         imageUrl,
         specs,
         _source: categoryUrl,
