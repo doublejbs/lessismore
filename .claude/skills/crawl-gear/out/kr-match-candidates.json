@@ -1,0 +1,3677 @@
+[
+  {
+    "groupId": "sea-to-summit_detour-stainless-steel-bowl",
+    "category": "bowl",
+    "base": "Detour Stainless Steel Collapsible Bowl",
+    "candidates": [
+      {
+        "s": 0.83,
+        "en": "Detour Stainless Steel Collapsible Bowl - L",
+        "ko": "디투어 보울 LG 접이식 그릇 시리즈",
+        "code": "REP10544"
+      },
+      {
+        "s": 0.83,
+        "en": "Detour Stainless Steel Collapsible Bowl - M",
+        "ko": "디투어 보울 MD 접이식 그릇 시리즈",
+        "code": "REP10537"
+      },
+      {
+        "s": 0.67,
+        "en": "Detour Stainless Steel Collapsible Mug",
+        "ko": "디투어 머그 접이식 컵(2종 4개) 세트1",
+        "code": "REP10558"
+      }
+    ]
+  },
+  {
+    "groupId": "sea-to-summit_detour-collapsible-6-piece-dinnerware",
+    "category": "bowl",
+    "base": "Detour Stainless Steel Collapsible Dinnerware Set - [6 Piece]",
+    "candidates": [
+      {
+        "s": 0.5,
+        "en": "Detour Stainless Steel Collapsible One Pot Cook Set",
+        "ko": "디투어 팟 세트(3종 5개) 접이식 코펠 세트",
+        "code": "A3792"
+      },
+      {
+        "s": 0.5,
+        "en": "Detour Stainless Steel Collapsible Mug",
+        "ko": "디투어 머그 접이식 컵(2종 4개) 세트1",
+        "code": "REP10558"
+      },
+      {
+        "s": 0.5,
+        "en": "Detour Stainless Steel Collapsible Mug",
+        "ko": "디투어 머그 접이식 컵 시리즈",
+        "code": "REP10542"
+      }
+    ]
+  },
+  {
+    "groupId": "sea-to-summit_frontier-collapsible-bowl",
+    "category": "bowl",
+    "base": "Frontier Ultralight Collapsible Bowl",
+    "candidates": [
+      {
+        "s": 0.5,
+        "en": "Frontier UL Collapsible Bowl - M",
+        "ko": "프론티어 보울 MD 접이식 그릇 시리즈",
+        "code": "REP10538"
+      },
+      {
+        "s": 0.5,
+        "en": "Frontier UL Collapsible Bowl - L",
+        "ko": "프론티어 보울 LG 접이식 그릇 시리즈",
+        "code": "REP10543"
+      },
+      {
+        "s": 0.33,
+        "en": "Frontier UL Collapsible Cup",
+        "ko": "프론티어 접이식 컵 시리즈",
+        "code": "REP10536"
+      }
+    ]
+  },
+  {
+    "groupId": "sea-to-summit_frontier-collapsible-3-piece-dinnerware",
+    "category": "bowl",
+    "base": "Frontier Ultralight Collapsible Dinnerware Set - [3 Piece]",
+    "candidates": [
+      {
+        "s": 0.33,
+        "en": "Frontier Ultralight Two Pot Cook Set -",
+        "ko": "프론티어 팟 세트(4종 6개) 코펠 세트",
+        "code": "A3854"
+      },
+      {
+        "s": 0.27,
+        "en": "Frontier UL Collapsible Kettle Cook Set w/ Sack",
+        "ko": "프론티어 케틀 세트(2종 3개) 접이식 주전자 세트",
+        "code": "A3982"
+      },
+      {
+        "s": 0.25,
+        "en": "Frontier UL Collapsible Cup",
+        "ko": "프론티어 접이식 컵 시리즈",
+        "code": "REP10536"
+      }
+    ]
+  },
+  {
+    "groupId": "sea-to-summit_frontier-collapsible-6-piece-dinnerware",
+    "category": "bowl",
+    "base": "Frontier Ultralight Collapsible Dinnerware Set - [6 Piece]",
+    "candidates": [
+      {
+        "s": 0.33,
+        "en": "Frontier Ultralight Two Pot Cook Set -",
+        "ko": "프론티어 팟 세트(4종 6개) 코펠 세트",
+        "code": "A3854"
+      },
+      {
+        "s": 0.27,
+        "en": "Frontier UL Collapsible Kettle Cook Set w/ Sack",
+        "ko": "프론티어 케틀 세트(2종 3개) 접이식 주전자 세트",
+        "code": "A3982"
+      },
+      {
+        "s": 0.25,
+        "en": "Frontier UL Collapsible Cup",
+        "ko": "프론티어 접이식 컵 시리즈",
+        "code": "REP10536"
+      }
+    ]
+  },
+  {
+    "groupId": "sea-to-summit_passage-bowl",
+    "category": "bowl",
+    "base": "Passage Bowl",
+    "candidates": [
+      {
+        "s": 0.67,
+        "en": "Passage Bowl - L",
+        "ko": "패시지 LG 보울 그릇 시리즈",
+        "code": "REP10590"
+      },
+      {
+        "s": 0.67,
+        "en": "Passage Bowl - S",
+        "ko": "패시지 SM 보울 그릇 시리즈",
+        "code": "REP10588"
+      },
+      {
+        "s": 0.67,
+        "en": "Passage Bowl - M",
+        "ko": "패시지 MD 보울 그릇 시리즈",
+        "code": "REP10589"
+      }
+    ]
+  },
+  {
+    "groupId": "sea-to-summit_passage-dinnerware-set-7-piece-used",
+    "category": "bowl",
+    "base": "Passage Dinnerware Set - (7 Piece) (Like New)",
+    "candidates": [
+      {
+        "s": 0.33,
+        "en": "Passage Cutlery Set -",
+        "ko": "패시지 커틀러리 세트(3피스) 옐로우",
+        "code": "A3681"
+      },
+      {
+        "s": 0.29,
+        "en": "Passage Cutlery Set Blue",
+        "ko": "패시지 커틀러리 세트(3피스) 블루",
+        "code": "A3765"
+      },
+      {
+        "s": 0.17,
+        "en": "X-Set",
+        "ko": "엑스 세트 31 올리브(3종 5개)",
+        "code": "A2947"
+      }
+    ]
+  },
+  {
+    "groupId": "sea-to-summit_passage-dinnerware-set",
+    "category": "bowl",
+    "base": "Passage Dinnerware Set - [7 Piece]",
+    "candidates": [
+      {
+        "s": 0.4,
+        "en": "Passage Cutlery Set -",
+        "ko": "패시지 커틀러리 세트(3피스) 옐로우",
+        "code": "A3681"
+      },
+      {
+        "s": 0.33,
+        "en": "Passage Cutlery Set Blue",
+        "ko": "패시지 커틀러리 세트(3피스) 블루",
+        "code": "A3765"
+      },
+      {
+        "s": 0.2,
+        "en": "X-Set",
+        "ko": "엑스 세트 31 올리브(3종 5개)",
+        "code": "A2947"
+      }
+    ]
+  },
+  {
+    "groupId": "sea-to-summit_passage-dinnerware-6-piece-set",
+    "category": "bowl",
+    "base": "Passage Dinnerware Set [6 Piece] - Past Season",
+    "candidates": [
+      {
+        "s": 0.4,
+        "en": "Passage Cutlery Set -",
+        "ko": "패시지 커틀러리 세트(3피스) 옐로우",
+        "code": "A3681"
+      },
+      {
+        "s": 0.33,
+        "en": "Passage Cutlery Set Blue",
+        "ko": "패시지 커틀러리 세트(3피스) 블루",
+        "code": "A3765"
+      },
+      {
+        "s": 0.2,
+        "en": "X-Set",
+        "ko": "엑스 세트 31 올리브(3종 5개)",
+        "code": "A2947"
+      }
+    ]
+  },
+  {
+    "groupId": "sea-to-summit_detour-essential-kitchen-kit",
+    "category": "cookware_etc",
+    "base": "Detour Essentials Camp Kitchen Kit - [4 Piece]",
+    "candidates": [
+      {
+        "s": 0.63,
+        "en": "Detour Essentials Camp Kitchen Kit w/ Sack",
+        "ko": "디투어 에센셜 캠프 키친 키트(3종 4개) 접이식 코펠 세트",
+        "code": "A3985"
+      },
+      {
+        "s": 0.27,
+        "en": "Camp Kitchen Tool Kit 10 Piece Set Bottle Only",
+        "ko": "캠프 키친 툴 키트(10종 1세트)",
+        "code": "A3139"
+      },
+      {
+        "s": 0.25,
+        "en": "Camp Kitchen Clean-Up Kit 6 Piece Set Bottle Only",
+        "ko": "캠프 키친 클린 업 키트(6종 1세트)",
+        "code": "A3141"
+      }
+    ]
+  },
+  {
+    "groupId": "sea-to-summit_detour-collapsible-kettle",
+    "category": "cookware_etc",
+    "base": "Detour Stainless Steel Collapsible Kettle",
+    "candidates": [
+      {
+        "s": 0.67,
+        "en": "Detour Stainless Steel Collapsible Mug",
+        "ko": "디투어 머그 접이식 컵(2종 4개) 세트1",
+        "code": "REP10558"
+      },
+      {
+        "s": 0.67,
+        "en": "Detour Stainless Steel Collapsible Mug",
+        "ko": "디투어 머그 접이식 컵 시리즈",
+        "code": "REP10542"
+      },
+      {
+        "s": 0.57,
+        "en": "Detour Stainless Steel Kettle Cook Set",
+        "ko": "디투어 케틀 세트(2종 3개) 접이식 주전자 세트",
+        "code": "A3764"
+      }
+    ]
+  },
+  {
+    "groupId": "sea-to-summit_detour-collapsible-pot",
+    "category": "cookware_etc",
+    "base": "Detour Stainless Steel Collapsible Pot",
+    "candidates": [
+      {
+        "s": 0.67,
+        "en": "Detour Stainless Steel Collapsible Mug",
+        "ko": "디투어 머그 접이식 컵(2종 4개) 세트1",
+        "code": "REP10558"
+      },
+      {
+        "s": 0.67,
+        "en": "Detour Stainless Steel Collapsible Mug",
+        "ko": "디투어 머그 접이식 컵 시리즈",
+        "code": "REP10542"
+      },
+      {
+        "s": 0.63,
+        "en": "Detour Stainless Steel Collapsible One Pot Cook Set",
+        "ko": "디투어 팟 세트(3종 5개) 접이식 코펠 세트",
+        "code": "A3792"
+      }
+    ]
+  },
+  {
+    "groupId": "sea-to-summit_detour-collapsible-pouring-pot",
+    "category": "cookware_etc",
+    "base": "Detour Stainless Steel Collapsible Pouring Pot",
+    "candidates": [
+      {
+        "s": 0.6,
+        "en": "Detour Stainless Steel Collapsible Pouring Pot w/ Sack - 1.8L",
+        "ko": "디투어 팟 1.8리터 접이식 코펠",
+        "code": "A3619"
+      },
+      {
+        "s": 0.57,
+        "en": "Detour Stainless Steel Collapsible Mug",
+        "ko": "디투어 머그 접이식 컵(2종 4개) 세트1",
+        "code": "REP10558"
+      },
+      {
+        "s": 0.57,
+        "en": "Detour Stainless Steel Collapsible Mug",
+        "ko": "디투어 머그 접이식 컵 시리즈",
+        "code": "REP10542"
+      }
+    ]
+  },
+  {
+    "groupId": "sea-to-summit_detour-stainless-steel-kettle-cookset",
+    "category": "cookware_etc",
+    "base": "Detour Stainless Steel Kettle Cook Set - [3 Piece]",
+    "candidates": [
+      {
+        "s": 0.86,
+        "en": "Detour Stainless Steel Kettle Cook Set",
+        "ko": "디투어 케틀 세트(2종 3개) 접이식 주전자 세트",
+        "code": "A3764"
+      },
+      {
+        "s": 0.5,
+        "en": "Detour Stainless Steel Collapsible One Pot Cook Set",
+        "ko": "디투어 팟 세트(3종 5개) 접이식 코펠 세트",
+        "code": "A3792"
+      },
+      {
+        "s": 0.5,
+        "en": "Detour Stainless Steel Cutlery Set -",
+        "ko": "디투어 커틀러리 세트(3피스)",
+        "code": "A3683"
+      }
+    ]
+  },
+  {
+    "groupId": "sea-to-summit_detour-5-piece-cookset",
+    "category": "cookware_etc",
+    "base": "Detour Stainless Steel One Pot Cook Set - [5 Piece]",
+    "candidates": [
+      {
+        "s": 0.78,
+        "en": "Detour Stainless Steel Collapsible One Pot Cook Set",
+        "ko": "디투어 팟 세트(3종 5개) 접이식 코펠 세트",
+        "code": "A3792"
+      },
+      {
+        "s": 0.56,
+        "en": "Detour Stainless Steel Kettle Cook Set",
+        "ko": "디투어 케틀 세트(2종 3개) 접이식 주전자 세트",
+        "code": "A3764"
+      },
+      {
+        "s": 0.44,
+        "en": "Detour Stainless Steel Cutlery Set -",
+        "ko": "디투어 커틀러리 세트(3피스)",
+        "code": "A3683"
+      }
+    ]
+  },
+  {
+    "groupId": "sea-to-summit_detour-stainless-steel-pan",
+    "category": "cookware_etc",
+    "base": "Detour Stainless Steel Pan",
+    "candidates": [
+      {
+        "s": 0.6,
+        "en": "Detour Stainless Steel Plate",
+        "ko": "디투어 플레이트 접시 시리즈",
+        "code": "REP10541"
+      },
+      {
+        "s": 0.6,
+        "en": "Detour Stainless Steel Chopsticks",
+        "ko": "디투어 젓가락",
+        "code": "A3611"
+      },
+      {
+        "s": 0.57,
+        "en": "Detour Stainless Steel Pan w/ Sack - 10in",
+        "ko": "디투어 팬 25cm(케이스 포함)",
+        "code": "A3620"
+      }
+    ]
+  },
+  {
+    "groupId": "sea-to-summit_frontier-collapsible-pouring-pot",
+    "category": "cookware_etc",
+    "base": "Frontier UL Collapsible Pouring Pot",
+    "candidates": [
+      {
+        "s": 0.56,
+        "en": "Frontier UL Collapsible Pouring Pot w/ Sack - 2.2L",
+        "ko": "프론티어 팟 2.2리터 접이식 코펠",
+        "code": "A3607"
+      },
+      {
+        "s": 0.5,
+        "en": "Frontier UL Collapsible Pot w/ Sack - 1L",
+        "ko": "프론티어 팟 1리터 접이식 코펠",
+        "code": "A3846"
+      },
+      {
+        "s": 0.5,
+        "en": "Frontier UL Collapsible Cup",
+        "ko": "프론티어 접이식 컵 시리즈",
+        "code": "REP10536"
+      }
+    ]
+  },
+  {
+    "groupId": "sea-to-summit_frontier-ultralight-3-piece-cookset",
+    "category": "cookware_etc",
+    "base": "Frontier UL One Pot Cook Set 1.3L - [3 Piece]",
+    "candidates": [
+      {
+        "s": 0.55,
+        "en": "Frontier UL One Pot Cook Set w/ Sack",
+        "ko": "프론티어 팟 세트(3종 5개) 코펠 세트",
+        "code": "A3984"
+      },
+      {
+        "s": 0.45,
+        "en": "Frontier UL Pot w/ Sack - 1.3L",
+        "ko": "프론티어 팟 1.3리터 코펠",
+        "code": "A3603"
+      },
+      {
+        "s": 0.43,
+        "en": "Frontier UL Collapsible One Pot Cook Set w/ 2.2L Pot w/ Sack",
+        "ko": "프론티어 팟 세트(3종 5개) 접이식 코펠 세트",
+        "code": "A3983"
+      }
+    ]
+  },
+  {
+    "groupId": "sea-to-summit_frontier-collapsible-kettle",
+    "category": "cookware_etc",
+    "base": "Frontier Ultralight Collapsible Kettle",
+    "candidates": [
+      {
+        "s": 0.43,
+        "en": "Frontier UL Collapsible Kettle w/ Sack",
+        "ko": "프론티어 1.1리터 접이식 케틀 코펠",
+        "code": "A3606"
+      },
+      {
+        "s": 0.33,
+        "en": "Frontier UL Collapsible Kettle Cook Set w/ Sack",
+        "ko": "프론티어 케틀 세트(2종 3개) 접이식 주전자 세트",
+        "code": "A3982"
+      },
+      {
+        "s": 0.33,
+        "en": "Frontier UL Collapsible Cup",
+        "ko": "프론티어 접이식 컵 시리즈",
+        "code": "REP10536"
+      }
+    ]
+  },
+  {
+    "groupId": "sea-to-summit_frontier-collapsible-kettle-cookset",
+    "category": "cookware_etc",
+    "base": "Frontier Ultralight Collapsible Kettle Cook Set with Cup & Bowl",
+    "candidates": [
+      {
+        "s": 0.45,
+        "en": "Frontier UL Collapsible Kettle Cook Set w/ Sack",
+        "ko": "프론티어 케틀 세트(2종 3개) 접이식 주전자 세트",
+        "code": "A3982"
+      },
+      {
+        "s": 0.4,
+        "en": "Frontier Ultralight Two Pot Cook Set -",
+        "ko": "프론티어 팟 세트(4종 6개) 코펠 세트",
+        "code": "A3854"
+      },
+      {
+        "s": 0.33,
+        "en": "Frontier UL Collapsible Cup",
+        "ko": "프론티어 접이식 컵 시리즈",
+        "code": "REP10536"
+      }
+    ]
+  },
+  {
+    "groupId": "sea-to-summit_frontier-collapsible-3-piece-kettle-cookset",
+    "category": "cookware_etc",
+    "base": "Frontier Ultralight Collapsible Kettle Cook Set with Cups",
+    "candidates": [
+      {
+        "s": 0.5,
+        "en": "Frontier UL Collapsible Kettle Cook Set w/ Sack",
+        "ko": "프론티어 케틀 세트(2종 3개) 접이식 주전자 세트",
+        "code": "A3982"
+      },
+      {
+        "s": 0.44,
+        "en": "Frontier Ultralight Two Pot Cook Set -",
+        "ko": "프론티어 팟 세트(4종 6개) 코펠 세트",
+        "code": "A3854"
+      },
+      {
+        "s": 0.3,
+        "en": "Frontier UL Collapsible Kettle w/ Sack",
+        "ko": "프론티어 1.1리터 접이식 케틀 코펠",
+        "code": "A3606"
+      }
+    ]
+  },
+  {
+    "groupId": "sea-to-summit_frontier-collapsible-5-piece-cookset",
+    "category": "cookware_etc",
+    "base": "Frontier Ultralight Collapsible One Pot Cook Set - [5 Piece]",
+    "candidates": [
+      {
+        "s": 0.56,
+        "en": "Frontier Ultralight Two Pot Cook Set -",
+        "ko": "프론티어 팟 세트(4종 6개) 코펠 세트",
+        "code": "A3854"
+      },
+      {
+        "s": 0.46,
+        "en": "Frontier UL Collapsible One Pot Cook Set w/ 2.2L Pot w/ Sack",
+        "ko": "프론티어 팟 세트(3종 5개) 접이식 코펠 세트",
+        "code": "A3983"
+      },
+      {
+        "s": 0.45,
+        "en": "Detour Stainless Steel Collapsible One Pot Cook Set",
+        "ko": "디투어 팟 세트(3종 5개) 접이식 코펠 세트",
+        "code": "A3792"
+      }
+    ]
+  },
+  {
+    "groupId": "sea-to-summit_frontier-ultralight-collapsible-one-pot-cook-set",
+    "category": "cookware_etc",
+    "base": "Frontier Ultralight Collapsible One Pot Cook Set 1L - [3 Piece]",
+    "candidates": [
+      {
+        "s": 0.5,
+        "en": "Frontier Ultralight Two Pot Cook Set -",
+        "ko": "프론티어 팟 세트(4종 6개) 코펠 세트",
+        "code": "A3854"
+      },
+      {
+        "s": 0.43,
+        "en": "Frontier UL Collapsible One Pot Cook Set w/ 2.2L Pot w/ Sack",
+        "ko": "프론티어 팟 세트(3종 5개) 접이식 코펠 세트",
+        "code": "A3983"
+      },
+      {
+        "s": 0.42,
+        "en": "Detour Stainless Steel Collapsible One Pot Cook Set",
+        "ko": "디투어 팟 세트(3종 5개) 접이식 코펠 세트",
+        "code": "A3792"
+      }
+    ]
+  },
+  {
+    "groupId": "sea-to-summit_frontier-ultralight-collapsible-pot",
+    "category": "cookware_etc",
+    "base": "Frontier Ultralight Collapsible Pot - 1L",
+    "candidates": [
+      {
+        "s": 0.5,
+        "en": "Frontier UL Collapsible Pot w/ Sack - 1L",
+        "ko": "프론티어 팟 1리터 접이식 코펠",
+        "code": "A3846"
+      },
+      {
+        "s": 0.38,
+        "en": "Frontier Ultralight Two Pot Cook Set -",
+        "ko": "프론티어 팟 세트(4종 6개) 코펠 세트",
+        "code": "A3854"
+      },
+      {
+        "s": 0.29,
+        "en": "Frontier UL Collapsible Cup",
+        "ko": "프론티어 접이식 컵 시리즈",
+        "code": "REP10536"
+      }
+    ]
+  },
+  {
+    "groupId": "sea-to-summit_frontier-ultralight-pour-over",
+    "category": "cookware_etc",
+    "base": "Frontier Ultralight Collapsible Pour Over",
+    "candidates": [
+      {
+        "s": 0.67,
+        "en": "Frontier UL Collapsible Pour Over",
+        "ko": "프론티어 접이식 드리퍼",
+        "code": "A3602"
+      },
+      {
+        "s": 0.29,
+        "en": "Frontier UL Collapsible Cup",
+        "ko": "프론티어 접이식 컵 시리즈",
+        "code": "REP10536"
+      },
+      {
+        "s": 0.25,
+        "en": "Frontier UL Collapsible Bowl - M",
+        "ko": "프론티어 보울 MD 접이식 그릇 시리즈",
+        "code": "REP10538"
+      }
+    ]
+  },
+  {
+    "groupId": "sea-to-summit_frontier-ultralight-one-pot-cookset",
+    "category": "cookware_etc",
+    "base": "Frontier Ultralight One Pot Cook Set - [3 Piece] 2L Pot",
+    "candidates": [
+      {
+        "s": 0.56,
+        "en": "Frontier Ultralight Two Pot Cook Set -",
+        "ko": "프론티어 팟 세트(4종 6개) 코펠 세트",
+        "code": "A3854"
+      },
+      {
+        "s": 0.46,
+        "en": "Frontier UL Collapsible One Pot Cook Set w/ 2.2L Pot w/ Sack",
+        "ko": "프론티어 팟 세트(3종 5개) 접이식 코펠 세트",
+        "code": "A3983"
+      },
+      {
+        "s": 0.45,
+        "en": "Frontier UL One Pot Cook Set w/ Sack",
+        "ko": "프론티어 팟 세트(3종 5개) 코펠 세트",
+        "code": "A3984"
+      }
+    ]
+  },
+  {
+    "groupId": "sea-to-summit_frontier-ultralight-5-piece-cookset",
+    "category": "cookware_etc",
+    "base": "Frontier Ultralight One Pot Cook Set 2L - [5 Piece]",
+    "candidates": [
+      {
+        "s": 0.56,
+        "en": "Frontier Ultralight Two Pot Cook Set -",
+        "ko": "프론티어 팟 세트(4종 6개) 코펠 세트",
+        "code": "A3854"
+      },
+      {
+        "s": 0.46,
+        "en": "Frontier UL Collapsible One Pot Cook Set w/ 2.2L Pot w/ Sack",
+        "ko": "프론티어 팟 세트(3종 5개) 접이식 코펠 세트",
+        "code": "A3983"
+      },
+      {
+        "s": 0.45,
+        "en": "Frontier UL One Pot Cook Set w/ Sack",
+        "ko": "프론티어 팟 세트(3종 5개) 코펠 세트",
+        "code": "A3984"
+      }
+    ]
+  },
+  {
+    "groupId": "sea-to-summit_frontier-ultralight-pan",
+    "category": "cookware_etc",
+    "base": "Frontier Ultralight Pan",
+    "candidates": [
+      {
+        "s": 0.29,
+        "en": "Frontier Ultralight Two Pot Cook Set -",
+        "ko": "프론티어 팟 세트(4종 6개) 코펠 세트",
+        "code": "A3854"
+      },
+      {
+        "s": 0.29,
+        "en": "Frontier UL Pan w/ Sack - 8in",
+        "ko": "프론티어 팬 20cm(케이스 포함)",
+        "code": "A3608"
+      },
+      {
+        "s": 0.2,
+        "en": "Ultralight Insulated Mat",
+        "ko": "울트라라이트 인슐레이티드 매트리스 시리즈",
+        "code": "REP10511"
+      }
+    ]
+  },
+  {
+    "groupId": "sea-to-summit_frontier-ultralight-pot",
+    "category": "cookware_etc",
+    "base": "Frontier Ultralight Pot",
+    "candidates": [
+      {
+        "s": 0.5,
+        "en": "Frontier Ultralight Two Pot Cook Set -",
+        "ko": "프론티어 팟 세트(4종 6개) 코펠 세트",
+        "code": "A3854"
+      },
+      {
+        "s": 0.29,
+        "en": "Frontier UL Pot w/Sack - 2L",
+        "ko": "프론티어 팟 2리터 코펠",
+        "code": "A3604"
+      },
+      {
+        "s": 0.29,
+        "en": "Frontier UL Pot w/ Sack - 3L",
+        "ko": "프론티어 팟 3리터 코펠",
+        "code": "A3605"
+      }
+    ]
+  },
+  {
+    "groupId": "sea-to-summit_frontier-ultralight-14-piece-cookset",
+    "category": "cookware_etc",
+    "base": "Frontier Ultralight Two Pot Cook Set - [14 Piece]",
+    "candidates": [
+      {
+        "s": 0.86,
+        "en": "Frontier Ultralight Two Pot Cook Set -",
+        "ko": "프론티어 팟 세트(4종 6개) 코펠 세트",
+        "code": "A3854"
+      },
+      {
+        "s": 0.36,
+        "en": "Frontier UL One Pot Cook Set w/ Sack",
+        "ko": "프론티어 팟 세트(3종 5개) 코펠 세트",
+        "code": "A3984"
+      },
+      {
+        "s": 0.29,
+        "en": "Frontier UL Collapsible One Pot Cook Set w/ 2.2L Pot w/ Sack",
+        "ko": "프론티어 팟 세트(3종 5개) 접이식 코펠 세트",
+        "code": "A3983"
+      }
+    ]
+  },
+  {
+    "groupId": "sea-to-summit_frontier-ultralight-6-piece-cookset",
+    "category": "cookware_etc",
+    "base": "Frontier Ultralight Two Pot Cook Set - [6 Piece]",
+    "candidates": [
+      {
+        "s": 0.86,
+        "en": "Frontier Ultralight Two Pot Cook Set -",
+        "ko": "프론티어 팟 세트(4종 6개) 코펠 세트",
+        "code": "A3854"
+      },
+      {
+        "s": 0.36,
+        "en": "Frontier UL One Pot Cook Set w/ Sack",
+        "ko": "프론티어 팟 세트(3종 5개) 코펠 세트",
+        "code": "A3984"
+      },
+      {
+        "s": 0.29,
+        "en": "Frontier UL Collapsible One Pot Cook Set w/ 2.2L Pot w/ Sack",
+        "ko": "프론티어 팟 세트(3종 5개) 접이식 코펠 세트",
+        "code": "A3983"
+      }
+    ]
+  },
+  {
+    "groupId": "sea-to-summit_frontier-ultralight-two-pot-cookset",
+    "category": "cookware_etc",
+    "base": "Frontier Ultralight Two Pot Set - [2 Piece]",
+    "candidates": [
+      {
+        "s": 0.71,
+        "en": "Frontier Ultralight Two Pot Cook Set -",
+        "ko": "프론티어 팟 세트(4종 6개) 코펠 세트",
+        "code": "A3854"
+      },
+      {
+        "s": 0.31,
+        "en": "Frontier UL Collapsible One Pot Cook Set w/ 2.2L Pot w/ Sack",
+        "ko": "프론티어 팟 세트(3종 5개) 접이식 코펠 세트",
+        "code": "A3983"
+      },
+      {
+        "s": 0.27,
+        "en": "Frontier UL One Pot Cook Set w/ Sack",
+        "ko": "프론티어 팟 세트(3종 5개) 코펠 세트",
+        "code": "A3984"
+      }
+    ]
+  },
+  {
+    "groupId": "sea-to-summit_detour-collapsible-mug",
+    "category": "cup",
+    "base": "Detour Stainless Steel Collapsible Mug",
+    "candidates": [
+      {
+        "s": 1,
+        "en": "Detour Stainless Steel Collapsible Mug",
+        "ko": "디투어 머그 접이식 컵(2종 4개) 세트1",
+        "code": "REP10558"
+      },
+      {
+        "s": 1,
+        "en": "Detour Stainless Steel Collapsible Mug",
+        "ko": "디투어 머그 접이식 컵 시리즈",
+        "code": "REP10542"
+      },
+      {
+        "s": 0.57,
+        "en": "Detour Stainless Steel Collapsible Bowl - L",
+        "ko": "디투어 보울 LG 접이식 그릇 시리즈",
+        "code": "REP10544"
+      }
+    ]
+  },
+  {
+    "groupId": "sea-to-summit_frontier-collapsible-cup",
+    "category": "cup",
+    "base": "Frontier Ultralight Collapsible Cup",
+    "candidates": [
+      {
+        "s": 0.6,
+        "en": "Frontier UL Collapsible Cup",
+        "ko": "프론티어 접이식 컵 시리즈",
+        "code": "REP10536"
+      },
+      {
+        "s": 0.29,
+        "en": "Frontier UL Collapsible Bowl - M",
+        "ko": "프론티어 보울 MD 접이식 그릇 시리즈",
+        "code": "REP10538"
+      },
+      {
+        "s": 0.29,
+        "en": "Frontier UL Collapsible Bowl - L",
+        "ko": "프론티어 보울 LG 접이식 그릇 시리즈",
+        "code": "REP10543"
+      }
+    ]
+  },
+  {
+    "groupId": "sea-to-summit_frontier-ultralight-collapsible-kettle-cook-set-with-cups-used",
+    "category": "cup",
+    "base": "Frontier Ultralight Collapsible Kettle Cook Set with Cups (Like New)",
+    "candidates": [
+      {
+        "s": 0.45,
+        "en": "Frontier UL Collapsible Kettle Cook Set w/ Sack",
+        "ko": "프론티어 케틀 세트(2종 3개) 접이식 주전자 세트",
+        "code": "A3982"
+      },
+      {
+        "s": 0.4,
+        "en": "Frontier Ultralight Two Pot Cook Set -",
+        "ko": "프론티어 팟 세트(4종 6개) 코펠 세트",
+        "code": "A3854"
+      },
+      {
+        "s": 0.27,
+        "en": "Frontier UL Collapsible Kettle w/ Sack",
+        "ko": "프론티어 1.1리터 접이식 케틀 코펠",
+        "code": "A3606"
+      }
+    ]
+  },
+  {
+    "groupId": "sea-to-summit_passage-cup",
+    "category": "cup",
+    "base": "Passage Cup",
+    "candidates": [
+      {
+        "s": 0.33,
+        "en": "Passage Plate",
+        "ko": "패시지 플레이트 접시 시리즈",
+        "code": "REP10591"
+      },
+      {
+        "s": 0.25,
+        "en": "Passage Bowl - L",
+        "ko": "패시지 LG 보울 그릇 시리즈",
+        "code": "REP10590"
+      },
+      {
+        "s": 0.25,
+        "en": "Passage Bowl - S",
+        "ko": "패시지 SM 보울 그릇 시리즈",
+        "code": "REP10588"
+      }
+    ]
+  },
+  {
+    "groupId": "sea-to-summit_passage-insulated-mug",
+    "category": "cup",
+    "base": "Passage Insulated Mug",
+    "candidates": [
+      {
+        "s": 0.25,
+        "en": "Passage Plate",
+        "ko": "패시지 플레이트 접시 시리즈",
+        "code": "REP10591"
+      },
+      {
+        "s": 0.2,
+        "en": "Ultralight Insulated Mat",
+        "ko": "울트라라이트 인슐레이티드 매트리스 시리즈",
+        "code": "REP10511"
+      },
+      {
+        "s": 0.2,
+        "en": "Comfort Light Insulated",
+        "ko": "컴포트 라이트 인슐레이티드 매트리스",
+        "code": "REP10391"
+      }
+    ]
+  },
+  {
+    "groupId": "sea-to-summit_camp-fork",
+    "category": "cutlery",
+    "base": "Camp Cutlery Fork",
+    "candidates": [
+      {
+        "s": 0.5,
+        "en": "Camp Cutlery Charcoal",
+        "ko": "캠프 커틀러리 차콜 시리즈",
+        "code": "REP10426"
+      },
+      {
+        "s": 0.2,
+        "en": "Delta Camp Set",
+        "ko": "델타 캠프 세트 그레이",
+        "code": "CSS00020"
+      },
+      {
+        "s": 0.2,
+        "en": "Alpha Light Fork",
+        "ko": "알파라이트 포크",
+        "code": "CSS00405"
+      }
+    ]
+  },
+  {
+    "groupId": "sea-to-summit_camp-knife",
+    "category": "cutlery",
+    "base": "Camp Cutlery Knife",
+    "candidates": [
+      {
+        "s": 0.5,
+        "en": "Camp Cutlery Charcoal",
+        "ko": "캠프 커틀러리 차콜 시리즈",
+        "code": "REP10426"
+      },
+      {
+        "s": 0.2,
+        "en": "Delta Camp Set",
+        "ko": "델타 캠프 세트 그레이",
+        "code": "CSS00020"
+      },
+      {
+        "s": 0.2,
+        "en": "Passage Cutlery Set -",
+        "ko": "패시지 커틀러리 세트(3피스) 옐로우",
+        "code": "A3681"
+      }
+    ]
+  },
+  {
+    "groupId": "sea-to-summit_camp-cutlery-spoon-fork-knife-set",
+    "category": "cutlery",
+    "base": "Camp Cutlery Set - [3 Piece]",
+    "candidates": [
+      {
+        "s": 0.4,
+        "en": "Delta Camp Set",
+        "ko": "델타 캠프 세트 그레이",
+        "code": "CSS00020"
+      },
+      {
+        "s": 0.4,
+        "en": "Camp Cutlery Charcoal",
+        "ko": "캠프 커틀러리 차콜 시리즈",
+        "code": "REP10426"
+      },
+      {
+        "s": 0.4,
+        "en": "Passage Cutlery Set -",
+        "ko": "패시지 커틀러리 세트(3피스) 옐로우",
+        "code": "A3681"
+      }
+    ]
+  },
+  {
+    "groupId": "sea-to-summit_camp-spoon",
+    "category": "cutlery",
+    "base": "Camp Cutlery Spoon",
+    "candidates": [
+      {
+        "s": 0.5,
+        "en": "Camp Cutlery Charcoal",
+        "ko": "캠프 커틀러리 차콜 시리즈",
+        "code": "REP10426"
+      },
+      {
+        "s": 0.33,
+        "en": "Camp Kitchen Folding Serving Spoon",
+        "ko": "캠프 키친 폴딩 서빙 스푼 캠핑 국자",
+        "code": "A3056"
+      },
+      {
+        "s": 0.2,
+        "en": "Delta Camp Set",
+        "ko": "델타 캠프 세트 그레이",
+        "code": "CSS00020"
+      }
+    ]
+  },
+  {
+    "groupId": "sea-to-summit_camp-kitchen-tool-kit-10-piece-set",
+    "category": "cutlery",
+    "base": "Camp Kitchen Tool Kit - [10 Piece]",
+    "candidates": [
+      {
+        "s": 0.63,
+        "en": "Camp Kitchen Tool Kit 10 Piece Set Bottle Only",
+        "ko": "캠프 키친 툴 키트(10종 1세트)",
+        "code": "A3139"
+      },
+      {
+        "s": 0.33,
+        "en": "Detour Essentials Camp Kitchen Kit w/ Sack",
+        "ko": "디투어 에센셜 캠프 키친 키트(3종 4개) 접이식 코펠 세트",
+        "code": "A3985"
+      },
+      {
+        "s": 0.27,
+        "en": "Camp Kitchen Clean-Up Kit 6 Piece Set Bottle Only",
+        "ko": "캠프 키친 클린 업 키트(6종 1세트)",
+        "code": "A3141"
+      }
+    ]
+  },
+  {
+    "groupId": "sea-to-summit_detour-stainless-steel-chopsticks",
+    "category": "cutlery",
+    "base": "Detour Stainless Steel Chopsticks",
+    "candidates": [
+      {
+        "s": 1,
+        "en": "Detour Stainless Steel Chopsticks",
+        "ko": "디투어 젓가락",
+        "code": "A3611"
+      },
+      {
+        "s": 0.6,
+        "en": "Detour Stainless Steel Plate",
+        "ko": "디투어 플레이트 접시 시리즈",
+        "code": "REP10541"
+      },
+      {
+        "s": 0.5,
+        "en": "Detour Stainless Steel Collapsible Mug",
+        "ko": "디투어 머그 접이식 컵(2종 4개) 세트1",
+        "code": "REP10558"
+      }
+    ]
+  },
+  {
+    "groupId": "sea-to-summit_detour-stainless-steel-cultery-set",
+    "category": "cutlery",
+    "base": "Detour Stainless Steel Cutlery Set - [3 Piece]",
+    "candidates": [
+      {
+        "s": 0.83,
+        "en": "Detour Stainless Steel Cutlery Set -",
+        "ko": "디투어 커틀러리 세트(3피스)",
+        "code": "A3683"
+      },
+      {
+        "s": 0.57,
+        "en": "Detour Stainless Steel Utensil Set -",
+        "ko": "디투어 커틀러리 세트(4피스)",
+        "code": "A3684"
+      },
+      {
+        "s": 0.5,
+        "en": "Detour Stainless Steel Kettle Cook Set",
+        "ko": "디투어 케틀 세트(2종 3개) 접이식 주전자 세트",
+        "code": "A3764"
+      }
+    ]
+  },
+  {
+    "groupId": "sea-to-summit_detour-stainless-steel-6-piece-cutlery-set",
+    "category": "cutlery",
+    "base": "Detour Stainless Steel Cutlery Set - [6 Piece]",
+    "candidates": [
+      {
+        "s": 0.83,
+        "en": "Detour Stainless Steel Cutlery Set -",
+        "ko": "디투어 커틀러리 세트(3피스)",
+        "code": "A3683"
+      },
+      {
+        "s": 0.57,
+        "en": "Detour Stainless Steel Utensil Set -",
+        "ko": "디투어 커틀러리 세트(4피스)",
+        "code": "A3684"
+      },
+      {
+        "s": 0.5,
+        "en": "Detour Stainless Steel Kettle Cook Set",
+        "ko": "디투어 케틀 세트(2종 3개) 접이식 주전자 세트",
+        "code": "A3764"
+      }
+    ]
+  },
+  {
+    "groupId": "sea-to-summit_detour-stainless-steel-kitchen-knife",
+    "category": "cutlery",
+    "base": "Detour Stainless Steel Kitchen Knife",
+    "candidates": [
+      {
+        "s": 0.5,
+        "en": "Detour Stainless Steel Plate",
+        "ko": "디투어 플레이트 접시 시리즈",
+        "code": "REP10541"
+      },
+      {
+        "s": 0.5,
+        "en": "Detour Stainless Steel Chopsticks",
+        "ko": "디투어 젓가락",
+        "code": "A3611"
+      },
+      {
+        "s": 0.43,
+        "en": "Detour Stainless Steel Collapsible Mug",
+        "ko": "디투어 머그 접이식 컵(2종 4개) 세트1",
+        "code": "REP10558"
+      }
+    ]
+  },
+  {
+    "groupId": "sea-to-summit_detour-stainless-steel-pairing-knife",
+    "category": "cutlery",
+    "base": "Detour Stainless Steel Paring Knife",
+    "candidates": [
+      {
+        "s": 0.5,
+        "en": "Detour Stainless Steel Plate",
+        "ko": "디투어 플레이트 접시 시리즈",
+        "code": "REP10541"
+      },
+      {
+        "s": 0.5,
+        "en": "Detour Stainless Steel Chopsticks",
+        "ko": "디투어 젓가락",
+        "code": "A3611"
+      },
+      {
+        "s": 0.43,
+        "en": "Detour Stainless Steel Collapsible Mug",
+        "ko": "디투어 머그 접이식 컵(2종 4개) 세트1",
+        "code": "REP10558"
+      }
+    ]
+  },
+  {
+    "groupId": "sea-to-summit_detour-utensil-set",
+    "category": "cutlery",
+    "base": "Detour Stainless Steel Utensil Set",
+    "candidates": [
+      {
+        "s": 1,
+        "en": "Detour Stainless Steel Utensil Set -",
+        "ko": "디투어 커틀러리 세트(4피스)",
+        "code": "A3684"
+      },
+      {
+        "s": 0.67,
+        "en": "Detour Stainless Steel Cutlery Set -",
+        "ko": "디투어 커틀러리 세트(3피스)",
+        "code": "A3683"
+      },
+      {
+        "s": 0.57,
+        "en": "Detour Stainless Steel Kettle Cook Set",
+        "ko": "디투어 케틀 세트(2종 3개) 접이식 주전자 세트",
+        "code": "A3764"
+      }
+    ]
+  },
+  {
+    "groupId": "sea-to-summit_folding-serving-spoon",
+    "category": "cutlery",
+    "base": "Folding Serving Spoon",
+    "candidates": [
+      {
+        "s": 0.6,
+        "en": "Camp Kitchen Folding Serving Spoon",
+        "ko": "캠프 키친 폴딩 서빙 스푼 캠핑 국자",
+        "code": "A3056"
+      },
+      {
+        "s": 0.14,
+        "en": "Frontier UL Long Handle Spoon",
+        "ko": "프론티어 롱 핸들 스푼",
+        "code": "A3596"
+      },
+      {
+        "s": 0.13,
+        "en": "Camp Kitchen Folding Spatula Small Black",
+        "ko": "캠프 키친 폴딩 스패츌라 뒤집개",
+        "code": "A3138"
+      }
+    ]
+  },
+  {
+    "groupId": "sea-to-summit_folding-spatula",
+    "category": "cutlery",
+    "base": "Folding Spatula",
+    "candidates": [
+      {
+        "s": 0.33,
+        "en": "Camp Kitchen Folding Spatula Small Black",
+        "ko": "캠프 키친 폴딩 스패츌라 뒤집개",
+        "code": "A3138"
+      },
+      {
+        "s": 0.17,
+        "en": "Camp Kitchen Folding Serving Spoon",
+        "ko": "캠프 키친 폴딩 서빙 스푼 캠핑 국자",
+        "code": "A3056"
+      },
+      {
+        "s": 0,
+        "en": "Ikos Evo Tent - TR4",
+        "ko": "아이코스 에보 TR4 텐트",
+        "code": "A4078"
+      }
+    ]
+  },
+  {
+    "groupId": "sea-to-summit_frontier-ultralight-cutlery-set",
+    "category": "cutlery",
+    "base": "Frontier UL Cutlery Long Handle Set - [2 Piece]",
+    "candidates": [
+      {
+        "s": 0.57,
+        "en": "Frontier UL Cutlery Set -",
+        "ko": "프론티어 커틀러리 롱 핸들 세트(2피스)",
+        "code": "A3813"
+      },
+      {
+        "s": 0.5,
+        "en": "Frontier UL Long Handle Spoon",
+        "ko": "프론티어 롱 핸들 스푼",
+        "code": "A3596"
+      },
+      {
+        "s": 0.33,
+        "en": "Frontier UL Long Handle Spork - Aluminium Hard Anodised Grey",
+        "ko": "프론티어 롱 핸들 스포크",
+        "code": "A3597"
+      }
+    ]
+  },
+  {
+    "groupId": "sea-to-summit_frontier-ultralight-spork-knife-set",
+    "category": "cutlery",
+    "base": "Frontier UL Cutlery Set - [2 Piece]",
+    "candidates": [
+      {
+        "s": 0.8,
+        "en": "Frontier UL Cutlery Set -",
+        "ko": "프론티어 커틀러리 롱 핸들 세트(2피스)",
+        "code": "A3813"
+      },
+      {
+        "s": 0.33,
+        "en": "Frontier UL Collapsible One Pot Cook Set w/ 2.2L Pot w/ Sack",
+        "ko": "프론티어 팟 세트(3종 5개) 접이식 코펠 세트",
+        "code": "A3983"
+      },
+      {
+        "s": 0.33,
+        "en": "Frontier UL Spork",
+        "ko": "프론티어 스포크",
+        "code": "A3600"
+      }
+    ]
+  },
+  {
+    "groupId": "sea-to-summit_frontier-ultralight-cultery-set",
+    "category": "cutlery",
+    "base": "Frontier UL Cutlery Set - [3 Piece]",
+    "candidates": [
+      {
+        "s": 0.8,
+        "en": "Frontier UL Cutlery Set -",
+        "ko": "프론티어 커틀러리 롱 핸들 세트(2피스)",
+        "code": "A3813"
+      },
+      {
+        "s": 0.33,
+        "en": "Frontier UL Spork",
+        "ko": "프론티어 스포크",
+        "code": "A3600"
+      },
+      {
+        "s": 0.33,
+        "en": "Passage Cutlery Set -",
+        "ko": "패시지 커틀러리 세트(3피스) 옐로우",
+        "code": "A3681"
+      }
+    ]
+  },
+  {
+    "groupId": "sea-to-summit_frontier-ultralight-long-spoon",
+    "category": "cutlery",
+    "base": "Frontier Ultralight Spoon - Long Handle",
+    "candidates": [
+      {
+        "s": 0.67,
+        "en": "Frontier UL Long Handle Spoon",
+        "ko": "프론티어 롱 핸들 스푼",
+        "code": "A3596"
+      },
+      {
+        "s": 0.27,
+        "en": "Frontier UL Long Handle Spork - Aluminium Hard Anodised Grey",
+        "ko": "프론티어 롱 핸들 스포크",
+        "code": "A3597"
+      },
+      {
+        "s": 0.25,
+        "en": "Frontier UL Spork - Short Handle",
+        "ko": "프론티어 숏 핸들 스포크",
+        "code": "A3847"
+      }
+    ]
+  },
+  {
+    "groupId": "sea-to-summit_frontier-ultralight-spork",
+    "category": "cutlery",
+    "base": "Frontier Ultralight Spork",
+    "candidates": [
+      {
+        "s": 0.5,
+        "en": "Frontier UL Spork",
+        "ko": "프론티어 스포크",
+        "code": "A3600"
+      },
+      {
+        "s": 0.33,
+        "en": "Frontier UL Spork - Short Handle",
+        "ko": "프론티어 숏 핸들 스포크",
+        "code": "A3847"
+      },
+      {
+        "s": 0.29,
+        "en": "Frontier Ultralight Two Pot Cook Set -",
+        "ko": "프론티어 팟 세트(4종 6개) 코펠 세트",
+        "code": "A3854"
+      }
+    ]
+  },
+  {
+    "groupId": "sea-to-summit_frontier-ultralight-long-spork",
+    "category": "cutlery",
+    "base": "Frontier Ultralight Spork - Long Handle",
+    "candidates": [
+      {
+        "s": 0.43,
+        "en": "Frontier UL Long Handle Spoon",
+        "ko": "프론티어 롱 핸들 스푼",
+        "code": "A3596"
+      },
+      {
+        "s": 0.43,
+        "en": "Frontier UL Spork - Short Handle",
+        "ko": "프론티어 숏 핸들 스포크",
+        "code": "A3847"
+      },
+      {
+        "s": 0.4,
+        "en": "Frontier UL Long Handle Spork - Aluminium Hard Anodised Grey",
+        "ko": "프론티어 롱 핸들 스포크",
+        "code": "A3597"
+      }
+    ]
+  },
+  {
+    "groupId": "sea-to-summit_frontier-ultralight-short-handle-spork",
+    "category": "cutlery",
+    "base": "Frontier Ultralight Spork - Short Handle",
+    "candidates": [
+      {
+        "s": 0.67,
+        "en": "Frontier UL Spork - Short Handle",
+        "ko": "프론티어 숏 핸들 스포크",
+        "code": "A3847"
+      },
+      {
+        "s": 0.33,
+        "en": "Frontier UL Spork",
+        "ko": "프론티어 스포크",
+        "code": "A3600"
+      },
+      {
+        "s": 0.27,
+        "en": "Frontier UL Long Handle Spork - Aluminium Hard Anodised Grey",
+        "ko": "프론티어 롱 핸들 스포크",
+        "code": "A3597"
+      }
+    ]
+  },
+  {
+    "groupId": "sea-to-summit_horizon-cutlery-set-2-piece",
+    "category": "cutlery",
+    "base": "Horizon Cutlery Set - [2 Piece]",
+    "candidates": [
+      {
+        "s": 0.4,
+        "en": "Passage Cutlery Set -",
+        "ko": "패시지 커틀러리 세트(3피스) 옐로우",
+        "code": "A3681"
+      },
+      {
+        "s": 0.33,
+        "en": "DeltaLight Camp Set 2.2",
+        "ko": "델타라이트 캠프 세트 2.2",
+        "code": "A1927"
+      },
+      {
+        "s": 0.33,
+        "en": "Frontier UL Cutlery Set -",
+        "ko": "프론티어 커틀러리 롱 핸들 세트(2피스)",
+        "code": "A3813"
+      }
+    ]
+  },
+  {
+    "groupId": "sea-to-summit_passage-2-piece-cutlery-set",
+    "category": "cutlery",
+    "base": "Passage Cutlery Set - [2 Piece]",
+    "candidates": [
+      {
+        "s": 0.75,
+        "en": "Passage Cutlery Set -",
+        "ko": "패시지 커틀러리 세트(3피스) 옐로우",
+        "code": "A3681"
+      },
+      {
+        "s": 0.6,
+        "en": "Passage Cutlery Set Blue",
+        "ko": "패시지 커틀러리 세트(3피스) 블루",
+        "code": "A3765"
+      },
+      {
+        "s": 0.33,
+        "en": "DeltaLight Camp Set 2.2",
+        "ko": "델타라이트 캠프 세트 2.2",
+        "code": "A1927"
+      }
+    ]
+  },
+  {
+    "groupId": "sea-to-summit_passage-cutlery",
+    "category": "cutlery",
+    "base": "Passage Cutlery Set - [3 Piece]",
+    "candidates": [
+      {
+        "s": 0.75,
+        "en": "Passage Cutlery Set -",
+        "ko": "패시지 커틀러리 세트(3피스) 옐로우",
+        "code": "A3681"
+      },
+      {
+        "s": 0.6,
+        "en": "Passage Cutlery Set Blue",
+        "ko": "패시지 커틀러리 세트(3피스) 블루",
+        "code": "A3765"
+      },
+      {
+        "s": 0.33,
+        "en": "Frontier UL Cutlery Set -",
+        "ko": "프론티어 커틀러리 롱 핸들 세트(2피스)",
+        "code": "A3813"
+      }
+    ]
+  },
+  {
+    "groupId": "sea-to-summit_air-chair",
+    "category": "mat",
+    "base": "Air Chair",
+    "candidates": [
+      {
+        "s": 0,
+        "en": "Ikos Evo Tent - TR4",
+        "ko": "아이코스 에보 TR4 텐트",
+        "code": "A4078"
+      },
+      {
+        "s": 0,
+        "en": "Telos TR2 Bikepack Grey",
+        "ko": "텔러스 TR2 바이크팩 그레이 텐트",
+        "code": "A3877"
+      },
+      {
+        "s": 0,
+        "en": "Ikos TR2 Laurel Wreath",
+        "ko": "아이코스 TR2 텐트",
+        "code": "A3537"
+      }
+    ]
+  },
+  {
+    "groupId": "sea-to-summit_air-seat",
+    "category": "mat",
+    "base": "Air Seat",
+    "candidates": [
+      {
+        "s": 0,
+        "en": "Ikos Evo Tent - TR4",
+        "ko": "아이코스 에보 TR4 텐트",
+        "code": "A4078"
+      },
+      {
+        "s": 0,
+        "en": "Telos TR2 Bikepack Grey",
+        "ko": "텔러스 TR2 바이크팩 그레이 텐트",
+        "code": "A3877"
+      },
+      {
+        "s": 0,
+        "en": "Ikos TR2 Laurel Wreath",
+        "ko": "아이코스 TR2 텐트",
+        "code": "A3537"
+      }
+    ]
+  },
+  {
+    "groupId": "sea-to-summit_air-seat-insulated",
+    "category": "mat",
+    "base": "Air Seat Insulated",
+    "candidates": [
+      {
+        "s": 0.2,
+        "en": "Ultralight Insulated Mat",
+        "ko": "울트라라이트 인슐레이티드 매트리스 시리즈",
+        "code": "REP10511"
+      },
+      {
+        "s": 0.2,
+        "en": "Comfort Light Insulated",
+        "ko": "컴포트 라이트 인슐레이티드 매트리스",
+        "code": "REP10391"
+      },
+      {
+        "s": 0.14,
+        "en": "Ultralight XR Insulated Mat - Arrowwood",
+        "ko": "울트라라이트 XR 인슐레이티드 에어 매트리스",
+        "code": "REP10615"
+      }
+    ]
+  },
+  {
+    "groupId": "sea-to-summit_air-sprung-cell-mat-repair-kit",
+    "category": "mat",
+    "base": "Air Sleeping Pad Repair Kit",
+    "candidates": [
+      {
+        "s": 0.11,
+        "en": "Boab Synthetic Sleeping Bag -1C",
+        "ko": "보아브 -1도 레귤러 침낭",
+        "code": "A3841"
+      },
+      {
+        "s": 0.11,
+        "en": "Boab Synthetic Sleeping Bag -9C",
+        "ko": "보아브 -9도 레귤러 침낭",
+        "code": "A3842"
+      },
+      {
+        "s": 0.11,
+        "en": "Boab Synthetic Sleeping Bag -1C",
+        "ko": "보아브 -1도 레귤러 와이드 침낭",
+        "code": "A4074"
+      }
+    ]
+  },
+  {
+    "groupId": "sea-to-summit_air-stream-dry-sack-pump",
+    "category": "mat",
+    "base": "Airstream Pump Sack",
+    "candidates": [
+      {
+        "s": 0.14,
+        "en": "eVent dry Compression sack Medium",
+        "ko": "이벤트 드라이 컴프레션 색 MD 그레이",
+        "code": "CSS00236"
+      },
+      {
+        "s": 0.14,
+        "en": "eVent dry Compression sack Large",
+        "ko": "이벤트 드라이 컴프레션 색 LG 그레이",
+        "code": "CSS00237"
+      },
+      {
+        "s": 0.14,
+        "en": "eVent dry Compression sack Small",
+        "ko": "이벤트 드라이 컴프레션 색 SM 그레이",
+        "code": "CSS00045"
+      }
+    ]
+  },
+  {
+    "groupId": "sea-to-summit_camp-plus-self-inflating-sleeping-pad",
+    "category": "mat",
+    "base": "Camp Plus Self Inflating Sleeping Pad",
+    "candidates": [
+      {
+        "s": 0.67,
+        "en": "Camp Plus Self Inflating",
+        "ko": "캠프 플러스 SI 자충 매트리스",
+        "code": "REP10313"
+      },
+      {
+        "s": 0.57,
+        "en": "Camp Plus Self Inflating Rectangular",
+        "ko": "캠프 플러스 SI RT 자충 매트리스",
+        "code": "REP10314"
+      },
+      {
+        "s": 0.5,
+        "en": "Comfort Plus Self Inflating Sleeping Mat",
+        "ko": "컴포트 플러스 SI 다크 레드 자충 매트리스 시리즈",
+        "code": "REP10438"
+      }
+    ]
+  },
+  {
+    "groupId": "sea-to-summit_camp-self-inflating-pad",
+    "category": "mat",
+    "base": "Camp Self Inflating Sleeping Pad",
+    "candidates": [
+      {
+        "s": 0.5,
+        "en": "Camp Plus Self Inflating",
+        "ko": "캠프 플러스 SI 자충 매트리스",
+        "code": "REP10313"
+      },
+      {
+        "s": 0.5,
+        "en": "Camp Mat Self Inflating",
+        "ko": "캠프 매트 SI RT 자충 매트리스",
+        "code": "REP10312"
+      },
+      {
+        "s": 0.43,
+        "en": "Camp Plus Self Inflating Rectangular",
+        "ko": "캠프 플러스 SI RT 자충 매트리스",
+        "code": "REP10314"
+      }
+    ]
+  },
+  {
+    "groupId": "sea-to-summit_camp-self-inflating-pad-past-season",
+    "category": "mat",
+    "base": "Camp Self Inflating Sleeping Pad - Past Season",
+    "candidates": [
+      {
+        "s": 0.5,
+        "en": "Camp Plus Self Inflating",
+        "ko": "캠프 플러스 SI 자충 매트리스",
+        "code": "REP10313"
+      },
+      {
+        "s": 0.5,
+        "en": "Camp Mat Self Inflating",
+        "ko": "캠프 매트 SI RT 자충 매트리스",
+        "code": "REP10312"
+      },
+      {
+        "s": 0.43,
+        "en": "Camp Plus Self Inflating Rectangular",
+        "ko": "캠프 플러스 SI RT 자충 매트리스",
+        "code": "REP10314"
+      }
+    ]
+  },
+  {
+    "groupId": "sea-to-summit_comfort-deluxe-self-inflating-sleeping-pad",
+    "category": "mat",
+    "base": "Comfort Deluxe Self Inflating Sleeping Pad",
+    "candidates": [
+      {
+        "s": 0.5,
+        "en": "Comfort Plus Self Inflating Sleeping Mat",
+        "ko": "컴포트 플러스 SI 다크 레드 자충 매트리스 시리즈",
+        "code": "REP10438"
+      },
+      {
+        "s": 0.43,
+        "en": "Comfort Plus Self Inflating",
+        "ko": "컴포트 플러스 SI 자충 매트리스",
+        "code": "REP10383"
+      },
+      {
+        "s": 0.38,
+        "en": "Comfort Light Self Inflating Large",
+        "ko": "컴포트 라이트 SI LG",
+        "code": "A0437"
+      }
+    ]
+  },
+  {
+    "groupId": "sea-to-summit_comfort-light-insulated-pad",
+    "category": "mat",
+    "base": "Comfort Light Insulated Air Sleeping Pad",
+    "candidates": [
+      {
+        "s": 0.5,
+        "en": "Comfort Light Insulated",
+        "ko": "컴포트 라이트 인슐레이티드 매트리스",
+        "code": "REP10391"
+      },
+      {
+        "s": 0.22,
+        "en": "Comfort Light Self Inflating Large",
+        "ko": "컴포트 라이트 SI LG",
+        "code": "A0437"
+      },
+      {
+        "s": 0.22,
+        "en": "Comfort Light Self Inflating Womens",
+        "ko": "컴포트 라이트 SI 여성용 자충 매트리스",
+        "code": "REP10382"
+      }
+    ]
+  },
+  {
+    "groupId": "sea-to-summit_comfort-light-insulated-womens-sleeping-pad",
+    "category": "mat",
+    "base": "Comfort Light Women's Insulated Air Sleeping Pad",
+    "candidates": [
+      {
+        "s": 0.38,
+        "en": "Comfort Light Insulated",
+        "ko": "컴포트 라이트 인슐레이티드 매트리스",
+        "code": "REP10391"
+      },
+      {
+        "s": 0.18,
+        "en": "Comfort Light Self Inflating Large",
+        "ko": "컴포트 라이트 SI LG",
+        "code": "A0437"
+      },
+      {
+        "s": 0.18,
+        "en": "Comfort Light Self Inflating Womens",
+        "ko": "컴포트 라이트 SI 여성용 자충 매트리스",
+        "code": "REP10382"
+      }
+    ]
+  },
+  {
+    "groupId": "sea-to-summit_comfort-plus-insulated-pad",
+    "category": "mat",
+    "base": "Comfort Plus Insulated Air Sleeping Pad",
+    "candidates": [
+      {
+        "s": 0.33,
+        "en": "Comfort Plus",
+        "ko": "컴포트 플러스 인슐레이티드 매트리스 시리즈",
+        "code": "REP10339"
+      },
+      {
+        "s": 0.33,
+        "en": "Comfort Plus Self Inflating Sleeping Mat",
+        "ko": "컴포트 플러스 SI 다크 레드 자충 매트리스 시리즈",
+        "code": "REP10438"
+      },
+      {
+        "s": 0.3,
+        "en": "Comfort Plus XT ASC Insulated Mat Rectangular",
+        "ko": "컴포트 플러스 인슐레이티드 XT RT 매트리스 시리즈",
+        "code": "REP10437"
+      }
+    ]
+  },
+  {
+    "groupId": "sea-to-summit_delta-self-inflating-seat",
+    "category": "mat",
+    "base": "Delta SI V Seat",
+    "candidates": [
+      {
+        "s": 0.2,
+        "en": "Delta Bowl",
+        "ko": "델타 보울 오렌지",
+        "code": "CSS00361"
+      },
+      {
+        "s": 0.2,
+        "en": "Delta Bowl",
+        "ko": "델타 보울 그레이",
+        "code": "CSS00362"
+      },
+      {
+        "s": 0.2,
+        "en": "Delta Bowl",
+        "ko": "델타 보울 퍼시픽 블루",
+        "code": "CSS00014"
+      }
+    ]
+  },
+  {
+    "groupId": "sea-to-summit_ether-light-xr-insulated-air-sleeping-pad",
+    "category": "mat",
+    "base": "Ether Light XR Insulated Air Sleeping Pad",
+    "candidates": [
+      {
+        "s": 0.36,
+        "en": "Ether Light XR Pro Insulated ASC Mat - Regular",
+        "ko": "에테르 라이트 XR 프로 인슐레이티드 레귤러 에어 매트리스",
+        "code": "A3945"
+      },
+      {
+        "s": 0.36,
+        "en": "Ether Light XR Pro Insulated ASC Mat - Large",
+        "ko": "에테르 라이트 XR 프로 인슐레이티드 LG 에어 매트리스",
+        "code": "A3946"
+      },
+      {
+        "s": 0.33,
+        "en": "Ether Light XR Pro Insulated ASC Mat - Large Rectangular",
+        "ko": "에테르 라이트 XR 프로 인슐레이티드 LG 사각 에어 매트리스",
+        "code": "A3948"
+      }
+    ]
+  },
+  {
+    "groupId": "sea-to-summit_ether-light-xr-pro-insulated-air-sleeping-pad",
+    "category": "mat",
+    "base": "Ether Light XR Pro Insulated Air Sleeping Pad",
+    "candidates": [
+      {
+        "s": 0.45,
+        "en": "Ether Light XR Pro Insulated ASC Mat - Regular",
+        "ko": "에테르 라이트 XR 프로 인슐레이티드 레귤러 에어 매트리스",
+        "code": "A3945"
+      },
+      {
+        "s": 0.45,
+        "en": "Ether Light XR Pro Insulated ASC Mat - Large",
+        "ko": "에테르 라이트 XR 프로 인슐레이티드 LG 에어 매트리스",
+        "code": "A3946"
+      },
+      {
+        "s": 0.42,
+        "en": "Ether Light XR Pro Insulated ASC Mat - Large Rectangular",
+        "ko": "에테르 라이트 XR 프로 인슐레이티드 LG 사각 에어 매트리스",
+        "code": "A3948"
+      }
+    ]
+  },
+  {
+    "groupId": "sea-to-summit_mat-coupler-kit-loops",
+    "category": "mat",
+    "base": "Pad Coupler Kit Loops",
+    "candidates": [
+      {
+        "s": 0.1,
+        "en": "Detour Essentials Camp Kitchen Kit w/ Sack",
+        "ko": "디투어 에센셜 캠프 키친 키트(3종 4개) 접이식 코펠 세트",
+        "code": "A3985"
+      },
+      {
+        "s": 0.09,
+        "en": "Camp Kitchen Tool Kit 10 Piece Set Bottle Only",
+        "ko": "캠프 키친 툴 키트(10종 1세트)",
+        "code": "A3139"
+      },
+      {
+        "s": 0.08,
+        "en": "Camp Kitchen Clean-Up Kit 6 Piece Set Bottle Only",
+        "ko": "캠프 키친 클린 업 키트(6종 1세트)",
+        "code": "A3141"
+      }
+    ]
+  },
+  {
+    "groupId": "sea-to-summit_pursuit-plus-self-inflating-sleeping-pad",
+    "category": "mat",
+    "base": "Pursuit Plus Self Inflating Sleeping Pad",
+    "candidates": [
+      {
+        "s": 0.5,
+        "en": "Comfort Plus Self Inflating Sleeping Mat",
+        "ko": "컴포트 플러스 SI 다크 레드 자충 매트리스 시리즈",
+        "code": "REP10438"
+      },
+      {
+        "s": 0.43,
+        "en": "Camp Plus Self Inflating",
+        "ko": "캠프 플러스 SI 자충 매트리스",
+        "code": "REP10313"
+      },
+      {
+        "s": 0.43,
+        "en": "Comfort Plus Self Inflating",
+        "ko": "컴포트 플러스 SI 자충 매트리스",
+        "code": "REP10383"
+      }
+    ]
+  },
+  {
+    "groupId": "sea-to-summit_pursuit-self-inflating-sleeping-pad",
+    "category": "mat",
+    "base": "Pursuit Self Inflating Sleeping Pad",
+    "candidates": [
+      {
+        "s": 0.38,
+        "en": "Comfort Plus Self Inflating Sleeping Mat",
+        "ko": "컴포트 플러스 SI 다크 레드 자충 매트리스 시리즈",
+        "code": "REP10438"
+      },
+      {
+        "s": 0.29,
+        "en": "Camp Plus Self Inflating",
+        "ko": "캠프 플러스 SI 자충 매트리스",
+        "code": "REP10313"
+      },
+      {
+        "s": 0.29,
+        "en": "Comfort Plus Self Inflating",
+        "ko": "컴포트 플러스 SI 자충 매트리스",
+        "code": "REP10383"
+      }
+    ]
+  },
+  {
+    "groupId": "sea-to-summit_ultralight-sleeping-pad",
+    "category": "mat",
+    "base": "Ultralight Air Sleeping Pad",
+    "candidates": [
+      {
+        "s": 0.17,
+        "en": "Ultralight Insulated Mat",
+        "ko": "울트라라이트 인슐레이티드 매트리스 시리즈",
+        "code": "REP10511"
+      },
+      {
+        "s": 0.17,
+        "en": "Ultralight Mat Reg",
+        "ko": "울트라라이트 RG",
+        "code": "CSS00201"
+      },
+      {
+        "s": 0.17,
+        "en": "Aeros Ultralight Pillow Ultralight",
+        "ko": "에어로 필로우 울트라라이트 베개",
+        "code": "REP10311"
+      }
+    ]
+  },
+  {
+    "groupId": "sea-to-summit_ultralight-insulated-mat",
+    "category": "mat",
+    "base": "Ultralight Insulated Air Sleeping Pad",
+    "candidates": [
+      {
+        "s": 0.33,
+        "en": "Ultralight Insulated Mat",
+        "ko": "울트라라이트 인슐레이티드 매트리스 시리즈",
+        "code": "REP10511"
+      },
+      {
+        "s": 0.25,
+        "en": "Ultralight XR Insulated Mat - Arrowwood",
+        "ko": "울트라라이트 XR 인슐레이티드 에어 매트리스",
+        "code": "REP10615"
+      },
+      {
+        "s": 0.25,
+        "en": "Ultralight ASC Insulated Mat Womens",
+        "ko": "울트라라이트 인슐레이티드 여성용 매트리스 시리즈",
+        "code": "REP10499"
+      }
+    ]
+  },
+  {
+    "groupId": "sea-to-summit_ultralight-insulated-womens-sleeping-pad",
+    "category": "mat",
+    "base": "Ultralight Women's Insulated Air Sleeping Pad",
+    "candidates": [
+      {
+        "s": 0.25,
+        "en": "Ultralight Insulated Mat",
+        "ko": "울트라라이트 인슐레이티드 매트리스 시리즈",
+        "code": "REP10511"
+      },
+      {
+        "s": 0.2,
+        "en": "Ultralight XR Insulated Mat - Arrowwood",
+        "ko": "울트라라이트 XR 인슐레이티드 에어 매트리스",
+        "code": "REP10615"
+      },
+      {
+        "s": 0.2,
+        "en": "Ultralight ASC Insulated Mat Womens",
+        "ko": "울트라라이트 인슐레이티드 여성용 매트리스 시리즈",
+        "code": "REP10499"
+      }
+    ]
+  },
+  {
+    "groupId": "sea-to-summit_ultralight-xr-insulated-air-sleeping-pad",
+    "category": "mat",
+    "base": "Ultralight XR Insulated Air Sleeping Pad",
+    "candidates": [
+      {
+        "s": 0.38,
+        "en": "Ultralight XR Insulated Mat - Arrowwood",
+        "ko": "울트라라이트 XR 인슐레이티드 에어 매트리스",
+        "code": "REP10615"
+      },
+      {
+        "s": 0.29,
+        "en": "Ultralight Insulated Mat",
+        "ko": "울트라라이트 인슐레이티드 매트리스 시리즈",
+        "code": "REP10511"
+      },
+      {
+        "s": 0.22,
+        "en": "Ultralight ASC Insulated Mat Womens",
+        "ko": "울트라라이트 인슐레이티드 여성용 매트리스 시리즈",
+        "code": "REP10499"
+      }
+    ]
+  },
+  {
+    "groupId": "sea-to-summit_aeros-down-pillow",
+    "category": "pillow",
+    "base": "Aeros Down Pillow",
+    "candidates": [
+      {
+        "s": 0.5,
+        "en": "Aeros Down Pillow - XL Neutral Grey",
+        "ko": "에어로 필로우 다운 XL 내추럴그레이 베개",
+        "code": "A4321"
+      },
+      {
+        "s": 0.5,
+        "en": "Aeros Down Pillow - Large Neutral Grey",
+        "ko": "에어로 필로우 다운 LG 내추럴그레이 베개",
+        "code": "A4080"
+      },
+      {
+        "s": 0.5,
+        "en": "Aeros Ultralight Pillow Ultralight",
+        "ko": "에어로 필로우 울트라라이트 베개",
+        "code": "REP10311"
+      }
+    ]
+  },
+  {
+    "groupId": "sea-to-summit_aeros-pillow-premium",
+    "category": "pillow",
+    "base": "Aeros Premium Pillow",
+    "candidates": [
+      {
+        "s": 1,
+        "en": "Aeros Premium Pillow",
+        "ko": "에어로 필로우 프리미엄 LG 베개(필로우 락 패치)",
+        "code": "REP10621"
+      },
+      {
+        "s": 1,
+        "en": "Aeros Premium Pillow",
+        "ko": "에어로 필로우 프리미엄 레귤러 베개(필로우 락 패치)",
+        "code": "REP10620"
+      },
+      {
+        "s": 1,
+        "en": "Aeros Premium Pillow",
+        "ko": "에어로 필로우 프리미엄 베개",
+        "code": "REP10306"
+      }
+    ]
+  },
+  {
+    "groupId": "sea-to-summit_aeros-pillow-premium-past-season",
+    "category": "pillow",
+    "base": "Aeros Premium Pillow - Past Season",
+    "candidates": [
+      {
+        "s": 1,
+        "en": "Aeros Premium Pillow",
+        "ko": "에어로 필로우 프리미엄 LG 베개(필로우 락 패치)",
+        "code": "REP10621"
+      },
+      {
+        "s": 1,
+        "en": "Aeros Premium Pillow",
+        "ko": "에어로 필로우 프리미엄 레귤러 베개(필로우 락 패치)",
+        "code": "REP10620"
+      },
+      {
+        "s": 1,
+        "en": "Aeros Premium Pillow",
+        "ko": "에어로 필로우 프리미엄 베개",
+        "code": "REP10306"
+      }
+    ]
+  },
+  {
+    "groupId": "sea-to-summit_aeros-premium-traveller-pillow",
+    "category": "pillow",
+    "base": "Aeros Premium Traveller Pillow",
+    "candidates": [
+      {
+        "s": 0.75,
+        "en": "Aeros Premium Pillow",
+        "ko": "에어로 필로우 프리미엄 LG 베개(필로우 락 패치)",
+        "code": "REP10621"
+      },
+      {
+        "s": 0.75,
+        "en": "Aeros Premium Pillow",
+        "ko": "에어로 필로우 프리미엄 레귤러 베개(필로우 락 패치)",
+        "code": "REP10620"
+      },
+      {
+        "s": 0.75,
+        "en": "Aeros Premium Traveller",
+        "ko": "에어로 필로우 프리미엄 트래블러 베개",
+        "code": "REP10305"
+      }
+    ]
+  },
+  {
+    "groupId": "sea-to-summit_aeros-pillow-ultra-light",
+    "category": "pillow",
+    "base": "Aeros Ultralight Pillow",
+    "candidates": [
+      {
+        "s": 1,
+        "en": "Aeros Ultralight Pillow Ultralight",
+        "ko": "에어로 필로우 울트라라이트 베개",
+        "code": "REP10311"
+      },
+      {
+        "s": 0.75,
+        "en": "Aeros Ultralight Pillow - Regular",
+        "ko": "에어로 필로우 울트라라이트 레귤러 베개(필로우 락 패치)",
+        "code": "REP10616"
+      },
+      {
+        "s": 0.75,
+        "en": "Aeros Ultralight Pillow - Large",
+        "ko": "에어로 필로우 울트라라이트 LG 베개(필로우 락 패치)",
+        "code": "REP10617"
+      }
+    ]
+  },
+  {
+    "groupId": "sea-to-summit_aeros-pillow-ultra-light-past-season",
+    "category": "pillow",
+    "base": "Aeros Ultralight Pillow - Past Season",
+    "candidates": [
+      {
+        "s": 1,
+        "en": "Aeros Ultralight Pillow Ultralight",
+        "ko": "에어로 필로우 울트라라이트 베개",
+        "code": "REP10311"
+      },
+      {
+        "s": 0.75,
+        "en": "Aeros Ultralight Pillow - Regular",
+        "ko": "에어로 필로우 울트라라이트 레귤러 베개(필로우 락 패치)",
+        "code": "REP10616"
+      },
+      {
+        "s": 0.75,
+        "en": "Aeros Ultralight Pillow - Large",
+        "ko": "에어로 필로우 울트라라이트 LG 베개(필로우 락 패치)",
+        "code": "REP10617"
+      }
+    ]
+  },
+  {
+    "groupId": "sea-to-summit_aeros-traveller-pillow",
+    "category": "pillow",
+    "base": "Aeros Ultralight Traveller Pillow",
+    "candidates": [
+      {
+        "s": 1,
+        "en": "Aeros Ultralight Pillow Traveller",
+        "ko": "에어로 필로우 울트라라이트 트래블러 베개",
+        "code": "REP10299"
+      },
+      {
+        "s": 0.75,
+        "en": "Aeros Ultralight Pillow Ultralight",
+        "ko": "에어로 필로우 울트라라이트 베개",
+        "code": "REP10311"
+      },
+      {
+        "s": 0.6,
+        "en": "Aeros Ultralight Pillow - Regular",
+        "ko": "에어로 필로우 울트라라이트 레귤러 베개(필로우 락 패치)",
+        "code": "REP10616"
+      }
+    ]
+  },
+  {
+    "groupId": "sea-to-summit_foam-core-pillow",
+    "category": "pillow",
+    "base": "Foam Core Pillow",
+    "candidates": [
+      {
+        "s": 0.2,
+        "en": "Aeros Ultralight Pillow Ultralight",
+        "ko": "에어로 필로우 울트라라이트 베개",
+        "code": "REP10311"
+      },
+      {
+        "s": 0.2,
+        "en": "Aeros Premium Pillow",
+        "ko": "에어로 필로우 프리미엄 LG 베개(필로우 락 패치)",
+        "code": "REP10621"
+      },
+      {
+        "s": 0.2,
+        "en": "Aeros Premium Pillow",
+        "ko": "에어로 필로우 프리미엄 레귤러 베개(필로우 락 패치)",
+        "code": "REP10620"
+      }
+    ]
+  },
+  {
+    "groupId": "sea-to-summit_memory-lux-pillow",
+    "category": "pillow",
+    "base": "Memory Lux Pillow",
+    "candidates": [
+      {
+        "s": 0.2,
+        "en": "Aeros Ultralight Pillow Ultralight",
+        "ko": "에어로 필로우 울트라라이트 베개",
+        "code": "REP10311"
+      },
+      {
+        "s": 0.2,
+        "en": "Aeros Premium Pillow",
+        "ko": "에어로 필로우 프리미엄 LG 베개(필로우 락 패치)",
+        "code": "REP10621"
+      },
+      {
+        "s": 0.2,
+        "en": "Aeros Premium Pillow",
+        "ko": "에어로 필로우 프리미엄 레귤러 베개(필로우 락 패치)",
+        "code": "REP10620"
+      }
+    ]
+  },
+  {
+    "groupId": "sea-to-summit_big-river-dry-backpack",
+    "category": "pouch",
+    "base": "Big River Dry Backpack",
+    "candidates": [
+      {
+        "s": 0.43,
+        "en": "Big River Dry Bag - 20 Litre",
+        "ko": "빅 리버 드라이 백 20L 블루",
+        "code": "CSS00239"
+      },
+      {
+        "s": 0.43,
+        "en": "Big River Dry Bag - 35 Litre",
+        "ko": "빅 리버 드라이 백 35L 애플그린",
+        "code": "CSS00240"
+      },
+      {
+        "s": 0.43,
+        "en": "Big River Dry Bag - 35 Litre",
+        "ko": "빅 리버 드라이 백 35L 블루",
+        "code": "CSS00241"
+      }
+    ]
+  },
+  {
+    "groupId": "sea-to-summit_the-big-river-dry-bag",
+    "category": "pouch",
+    "base": "Big River Dry Bag",
+    "candidates": [
+      {
+        "s": 0.67,
+        "en": "Big River Dry Bag - 20 Litre",
+        "ko": "빅 리버 드라이 백 20L 블루",
+        "code": "CSS00239"
+      },
+      {
+        "s": 0.67,
+        "en": "Big River Dry Bag - 35 Litre",
+        "ko": "빅 리버 드라이 백 35L 애플그린",
+        "code": "CSS00240"
+      },
+      {
+        "s": 0.67,
+        "en": "Big River Dry Bag - 35 Litre",
+        "ko": "빅 리버 드라이 백 35L 블루",
+        "code": "CSS00241"
+      }
+    ]
+  },
+  {
+    "groupId": "sea-to-summit_dry-bag-sling",
+    "category": "pouch",
+    "base": "Dry Bag Sling",
+    "candidates": [
+      {
+        "s": 0.4,
+        "en": "Lightweight Dry Bag 20L",
+        "ko": "라이트웨이트 드라이 백 20L 시리즈",
+        "code": "REP10594"
+      },
+      {
+        "s": 0.4,
+        "en": "Lightweight Dry Bag 3L",
+        "ko": "라이트웨이트 드라이 백 3L 시리즈",
+        "code": "REP10563"
+      },
+      {
+        "s": 0.4,
+        "en": "Lightweight Dry Bag 5L",
+        "ko": "라이트웨이트 드라이 백 5L 시리즈",
+        "code": "REP10564"
+      }
+    ]
+  },
+  {
+    "groupId": "sea-to-summit_evac-compression-dry-bag-hd",
+    "category": "pouch",
+    "base": "Evac Heavy Duty Compression Dry Bag",
+    "candidates": [
+      {
+        "s": 0.4,
+        "en": "Evac Compression Dry Bag UL 20L High Rise",
+        "ko": "이벤트 컴프레션 UL 드라이 백 20L 하이 라이즈",
+        "code": "A3426"
+      },
+      {
+        "s": 0.4,
+        "en": "Evac Compression Dry Bag UL 13L High Rise",
+        "ko": "이벤트 컴프레션 UL 드라이 백 13L 하이 라이즈",
+        "code": "A3425"
+      },
+      {
+        "s": 0.4,
+        "en": "Evac Compression Dry Bag UL 8L High Rise",
+        "ko": "이벤트 컴프레션 UL 드라이 백 8L 하이 라이즈",
+        "code": "A3424"
+      }
+    ]
+  },
+  {
+    "groupId": "sea-to-summit_the-evac-compression-dry-bag",
+    "category": "pouch",
+    "base": "Evac Lightweight Compression Dry Bag",
+    "candidates": [
+      {
+        "s": 0.5,
+        "en": "Lightweight Dry Bag 20L",
+        "ko": "라이트웨이트 드라이 백 20L 시리즈",
+        "code": "REP10594"
+      },
+      {
+        "s": 0.5,
+        "en": "Lightweight Dry Bag 3L",
+        "ko": "라이트웨이트 드라이 백 3L 시리즈",
+        "code": "REP10563"
+      },
+      {
+        "s": 0.5,
+        "en": "Lightweight Dry Bag 5L",
+        "ko": "라이트웨이트 드라이 백 5L 시리즈",
+        "code": "REP10564"
+      }
+    ]
+  },
+  {
+    "groupId": "sea-to-summit_the-evac-dry-bag",
+    "category": "pouch",
+    "base": "Evac Lightweight Dry Bag",
+    "candidates": [
+      {
+        "s": 0.6,
+        "en": "Lightweight Dry Bag 20L",
+        "ko": "라이트웨이트 드라이 백 20L 시리즈",
+        "code": "REP10594"
+      },
+      {
+        "s": 0.6,
+        "en": "Lightweight Dry Bag 3L",
+        "ko": "라이트웨이트 드라이 백 3L 시리즈",
+        "code": "REP10563"
+      },
+      {
+        "s": 0.6,
+        "en": "Lightweight Dry Bag 5L",
+        "ko": "라이트웨이트 드라이 백 5L 시리즈",
+        "code": "REP10564"
+      }
+    ]
+  },
+  {
+    "groupId": "sea-to-summit_evac-compression-dry-bag-ul",
+    "category": "pouch",
+    "base": "Evac Ultralight Compression Dry Bag",
+    "candidates": [
+      {
+        "s": 0.44,
+        "en": "Evac Compression Dry Bag UL 20L High Rise",
+        "ko": "이벤트 컴프레션 UL 드라이 백 20L 하이 라이즈",
+        "code": "A3426"
+      },
+      {
+        "s": 0.44,
+        "en": "Evac Compression Dry Bag UL 13L High Rise",
+        "ko": "이벤트 컴프레션 UL 드라이 백 13L 하이 라이즈",
+        "code": "A3425"
+      },
+      {
+        "s": 0.44,
+        "en": "Evac Compression Dry Bag UL 8L High Rise",
+        "ko": "이벤트 컴프레션 UL 드라이 백 8L 하이 라이즈",
+        "code": "A3424"
+      }
+    ]
+  },
+  {
+    "groupId": "sea-to-summit_lightweight-dry-bag",
+    "category": "pouch",
+    "base": "Lightweight Dry Bag",
+    "candidates": [
+      {
+        "s": 0.75,
+        "en": "Lightweight Dry Bag 20L",
+        "ko": "라이트웨이트 드라이 백 20L 시리즈",
+        "code": "REP10594"
+      },
+      {
+        "s": 0.75,
+        "en": "Lightweight Dry Bag 3L",
+        "ko": "라이트웨이트 드라이 백 3L 시리즈",
+        "code": "REP10563"
+      },
+      {
+        "s": 0.75,
+        "en": "Lightweight Dry Bag 5L",
+        "ko": "라이트웨이트 드라이 백 5L 시리즈",
+        "code": "REP10564"
+      }
+    ]
+  },
+  {
+    "groupId": "sea-to-summit_lightweight-first-aid-dry-bag",
+    "category": "pouch",
+    "base": "Lightweight Dry Bag First Aid",
+    "candidates": [
+      {
+        "s": 0.71,
+        "en": "Lightweight Dry Bag First Aid Spicy Orange",
+        "ko": "퍼스트 에이드 드라이 백 스파이시 오렌지 시리즈",
+        "code": "REP10488"
+      },
+      {
+        "s": 0.5,
+        "en": "Lightweight Dry Bag 20L",
+        "ko": "라이트웨이트 드라이 백 20L 시리즈",
+        "code": "REP10594"
+      },
+      {
+        "s": 0.5,
+        "en": "Lightweight Dry Bag 3L",
+        "ko": "라이트웨이트 드라이 백 3L 시리즈",
+        "code": "REP10563"
+      }
+    ]
+  },
+  {
+    "groupId": "sea-to-summit_lightweight-dry-bag-set",
+    "category": "pouch",
+    "base": "Lightweight Dry Bag Set",
+    "candidates": [
+      {
+        "s": 0.6,
+        "en": "Lightweight Dry Bag 20L",
+        "ko": "라이트웨이트 드라이 백 20L 시리즈",
+        "code": "REP10594"
+      },
+      {
+        "s": 0.6,
+        "en": "Lightweight Dry Bag 3L",
+        "ko": "라이트웨이트 드라이 백 3L 시리즈",
+        "code": "REP10563"
+      },
+      {
+        "s": 0.6,
+        "en": "Lightweight Dry Bag 5L",
+        "ko": "라이트웨이트 드라이 백 5L 시리즈",
+        "code": "REP10564"
+      }
+    ]
+  },
+  {
+    "groupId": "sea-to-summit_lightweight-dry-bag-view",
+    "category": "pouch",
+    "base": "Lightweight Dry Bag View",
+    "candidates": [
+      {
+        "s": 0.6,
+        "en": "Lightweight Dry Bag 20L",
+        "ko": "라이트웨이트 드라이 백 20L 시리즈",
+        "code": "REP10594"
+      },
+      {
+        "s": 0.6,
+        "en": "Lightweight Dry Bag 3L",
+        "ko": "라이트웨이트 드라이 백 3L 시리즈",
+        "code": "REP10563"
+      },
+      {
+        "s": 0.6,
+        "en": "Lightweight Dry Bag 5L",
+        "ko": "라이트웨이트 드라이 백 5L 시리즈",
+        "code": "REP10564"
+      }
+    ]
+  },
+  {
+    "groupId": "sea-to-summit_lightweight-stuff-sack",
+    "category": "pouch",
+    "base": "Lightweight Stuff Sack",
+    "candidates": [
+      {
+        "s": 0.29,
+        "en": "Lightweight 70D Dry Sack - 20 Litre",
+        "ko": "라이트웨이트 드라이 색 20L 블랙",
+        "code": "CSS00231"
+      },
+      {
+        "s": 0.29,
+        "en": "Lightweight 70D Dry Sack - 20 Litre",
+        "ko": "라이트웨이트 드라이 색 20L 옐로우",
+        "code": "CSS00227"
+      },
+      {
+        "s": 0.29,
+        "en": "Lightweight 70D Dry Sack - 8 Litre",
+        "ko": "라이트웨이트 드라이 색 8L 블랙",
+        "code": "CSS00221"
+      }
+    ]
+  },
+  {
+    "groupId": "sea-to-summit_lightweight-stuff-sack-set",
+    "category": "pouch",
+    "base": "Lightweight Stuff Sack Set",
+    "candidates": [
+      {
+        "s": 0.25,
+        "en": "Lightweight 70D Dry Sack - 20 Litre",
+        "ko": "라이트웨이트 드라이 색 20L 블랙",
+        "code": "CSS00231"
+      },
+      {
+        "s": 0.25,
+        "en": "Lightweight 70D Dry Sack - 20 Litre",
+        "ko": "라이트웨이트 드라이 색 20L 옐로우",
+        "code": "CSS00227"
+      },
+      {
+        "s": 0.25,
+        "en": "Lightweight 70D Dry Sack - 8 Litre",
+        "ko": "라이트웨이트 드라이 색 8L 블랙",
+        "code": "CSS00221"
+      }
+    ]
+  },
+  {
+    "groupId": "sea-to-summit_mesh-stuff-sack-set",
+    "category": "pouch",
+    "base": "Mesh Stuff Sack Set",
+    "candidates": [
+      {
+        "s": 0.2,
+        "en": "X-Set",
+        "ko": "엑스 세트 31 올리브(3종 5개)",
+        "code": "A2947"
+      },
+      {
+        "s": 0.2,
+        "en": "X-Set",
+        "ko": "엑스 세트 31 퍼시픽 블루(3종 5개)",
+        "code": "A0214"
+      },
+      {
+        "s": 0.2,
+        "en": "Frontier UL One Pot Cook Set w/ Sack",
+        "ko": "프론티어 팟 세트(3종 5개) 코펠 세트",
+        "code": "A3984"
+      }
+    ]
+  },
+  {
+    "groupId": "sea-to-summit_ultra-sil-dry-bag",
+    "category": "pouch",
+    "base": "Ultra-Sil Dry Bag",
+    "candidates": [
+      {
+        "s": 0.33,
+        "en": "Lightweight Dry Bag 20L",
+        "ko": "라이트웨이트 드라이 백 20L 시리즈",
+        "code": "REP10594"
+      },
+      {
+        "s": 0.33,
+        "en": "Lightweight Dry Bag 3L",
+        "ko": "라이트웨이트 드라이 백 3L 시리즈",
+        "code": "REP10563"
+      },
+      {
+        "s": 0.33,
+        "en": "Lightweight Dry Bag 5L",
+        "ko": "라이트웨이트 드라이 백 5L 시리즈",
+        "code": "REP10564"
+      }
+    ]
+  },
+  {
+    "groupId": "sea-to-summit_ultra-sil-dry-bag-set",
+    "category": "pouch",
+    "base": "Ultra-Sil Dry Bag Set",
+    "candidates": [
+      {
+        "s": 0.29,
+        "en": "Lightweight Dry Bag 20L",
+        "ko": "라이트웨이트 드라이 백 20L 시리즈",
+        "code": "REP10594"
+      },
+      {
+        "s": 0.29,
+        "en": "Lightweight Dry Bag 3L",
+        "ko": "라이트웨이트 드라이 백 3L 시리즈",
+        "code": "REP10563"
+      },
+      {
+        "s": 0.29,
+        "en": "Lightweight Dry Bag 5L",
+        "ko": "라이트웨이트 드라이 백 5L 시리즈",
+        "code": "REP10564"
+      }
+    ]
+  },
+  {
+    "groupId": "sea-to-summit_the-ultra-sil-stuff-sack",
+    "category": "pouch",
+    "base": "Ultra-Sil Stuff Sack",
+    "candidates": [
+      {
+        "s": 0.13,
+        "en": "eVent dry Compression sack Medium",
+        "ko": "이벤트 드라이 컴프레션 색 MD 그레이",
+        "code": "CSS00236"
+      },
+      {
+        "s": 0.13,
+        "en": "eVent dry Compression sack Large",
+        "ko": "이벤트 드라이 컴프레션 색 LG 그레이",
+        "code": "CSS00237"
+      },
+      {
+        "s": 0.13,
+        "en": "eVent dry Compression sack Small",
+        "ko": "이벤트 드라이 컴프레션 색 SM 그레이",
+        "code": "CSS00045"
+      }
+    ]
+  },
+  {
+    "groupId": "sea-to-summit_the-ultra-sil-stuff-sack-set",
+    "category": "pouch",
+    "base": "Ultra-Sil Stuff Sack Set",
+    "candidates": [
+      {
+        "s": 0.18,
+        "en": "Frontier UL One Pot Cook Set w/ Sack",
+        "ko": "프론티어 팟 세트(3종 5개) 코펠 세트",
+        "code": "A3984"
+      },
+      {
+        "s": 0.18,
+        "en": "Frontier UL Collapsible Kettle Cook Set w/ Sack",
+        "ko": "프론티어 케틀 세트(2종 3개) 접이식 주전자 세트",
+        "code": "A3982"
+      },
+      {
+        "s": 0.17,
+        "en": "X-Set",
+        "ko": "엑스 세트 31 올리브(3종 5개)",
+        "code": "A2947"
+      }
+    ]
+  },
+  {
+    "groupId": "sea-to-summit_alpine-down-sleeping-bag",
+    "category": "sleeping_bag",
+    "base": "Alpine Down Sleeping Bag",
+    "candidates": [
+      {
+        "s": 0.57,
+        "en": "Alpine -29C/-20F Down Sleeping Bag - R",
+        "ko": "알파인 -29도 레귤러 850필파워 구스다운침낭(지퍼링크L)",
+        "code": "A3631"
+      },
+      {
+        "s": 0.5,
+        "en": "Basecamp Down Sleeping Bag -9C",
+        "ko": "베이스캠프 -9도 레귤러 다운 침낭(지퍼링크RL)",
+        "code": "A3960"
+      },
+      {
+        "s": 0.5,
+        "en": "Basecamp Down Sleeping Bag -9C",
+        "ko": "베이스캠프 -9도 롱 다운 침낭(지퍼링크RL)",
+        "code": "A3959"
+      }
+    ]
+  },
+  {
+    "groupId": "sea-to-summit_the-ascent-down-sleeping-bag",
+    "category": "sleeping_bag",
+    "base": "Ascent Down Sleeping Bag",
+    "candidates": [
+      {
+        "s": 0.5,
+        "en": "Basecamp Down Sleeping Bag -9C",
+        "ko": "베이스캠프 -9도 레귤러 다운 침낭(지퍼링크RL)",
+        "code": "A3960"
+      },
+      {
+        "s": 0.5,
+        "en": "Basecamp Down Sleeping Bag -9C",
+        "ko": "베이스캠프 -9도 롱 다운 침낭(지퍼링크RL)",
+        "code": "A3959"
+      },
+      {
+        "s": 0.43,
+        "en": "Spark 7C/45F Down Sleeping Bag",
+        "ko": "스파크 7도 850필파워 구스다운 침낭 시리즈",
+        "code": "REP10556"
+      }
+    ]
+  },
+  {
+    "groupId": "sea-to-summit_ascent-womens-down-sleeping-bag",
+    "category": "sleeping_bag",
+    "base": "Ascent Women's Down Sleeping Bag",
+    "candidates": [
+      {
+        "s": 0.38,
+        "en": "Basecamp Down Sleeping Bag -9C",
+        "ko": "베이스캠프 -9도 레귤러 다운 침낭(지퍼링크RL)",
+        "code": "A3960"
+      },
+      {
+        "s": 0.38,
+        "en": "Basecamp Down Sleeping Bag -9C",
+        "ko": "베이스캠프 -9도 롱 다운 침낭(지퍼링크RL)",
+        "code": "A3959"
+      },
+      {
+        "s": 0.33,
+        "en": "Spark 7C/45F Down Sleeping Bag",
+        "ko": "스파크 7도 850필파워 구스다운 침낭 시리즈",
+        "code": "REP10556"
+      }
+    ]
+  },
+  {
+    "groupId": "sea-to-summit_basecamp-down-sleeping-bag",
+    "category": "sleeping_bag",
+    "base": "Basecamp Down Sleeping Bag",
+    "candidates": [
+      {
+        "s": 0.8,
+        "en": "Basecamp Down Sleeping Bag -9C",
+        "ko": "베이스캠프 -9도 레귤러 다운 침낭(지퍼링크RL)",
+        "code": "A3960"
+      },
+      {
+        "s": 0.8,
+        "en": "Basecamp Down Sleeping Bag -9C",
+        "ko": "베이스캠프 -9도 롱 다운 침낭(지퍼링크RL)",
+        "code": "A3959"
+      },
+      {
+        "s": 0.43,
+        "en": "Spark 7C/45F Down Sleeping Bag",
+        "ko": "스파크 7도 850필파워 구스다운 침낭 시리즈",
+        "code": "REP10556"
+      }
+    ]
+  },
+  {
+    "groupId": "sea-to-summit_boab-synthetic-sleeping-bag",
+    "category": "sleeping_bag",
+    "base": "Boab Synthetic Sleeping Bag",
+    "candidates": [
+      {
+        "s": 0.8,
+        "en": "Boab Synthetic Sleeping Bag -1C",
+        "ko": "보아브 -1도 레귤러 침낭",
+        "code": "A3841"
+      },
+      {
+        "s": 0.8,
+        "en": "Boab Synthetic Sleeping Bag -9C",
+        "ko": "보아브 -9도 레귤러 침낭",
+        "code": "A3842"
+      },
+      {
+        "s": 0.8,
+        "en": "Boab Synthetic Sleeping Bag -1C",
+        "ko": "보아브 -1도 레귤러 와이드 침낭",
+        "code": "A4074"
+      }
+    ]
+  },
+  {
+    "groupId": "sea-to-summit_the-ember-down-quilt",
+    "category": "sleeping_bag",
+    "base": "Ember Down Quilt",
+    "candidates": [
+      {
+        "s": 0.14,
+        "en": "Basecamp Down Sleeping Bag -9C",
+        "ko": "베이스캠프 -9도 레귤러 다운 침낭(지퍼링크RL)",
+        "code": "A3960"
+      },
+      {
+        "s": 0.14,
+        "en": "Basecamp Down Sleeping Bag -9C",
+        "ko": "베이스캠프 -9도 롱 다운 침낭(지퍼링크RL)",
+        "code": "A3959"
+      },
+      {
+        "s": 0.13,
+        "en": "Alpine -29C/-20F Down SB-L",
+        "ko": "알파인 -29도 롱 850필파워 구스다운침낭(지퍼링크L)",
+        "code": "A3774"
+      }
+    ]
+  },
+  {
+    "groupId": "sea-to-summit_hamelin-synthetic-sleeping-bag",
+    "category": "sleeping_bag",
+    "base": "Hamelin Synthetic Sleeping Bag",
+    "candidates": [
+      {
+        "s": 0.67,
+        "en": "Hamelin Womens Synthetic Sleeping Bag -9C",
+        "ko": "하멜린 -16도 롱 유니섹스 침낭(지퍼링크R)",
+        "code": "A3961"
+      },
+      {
+        "s": 0.5,
+        "en": "Boab Synthetic Sleeping Bag -1C",
+        "ko": "보아브 -1도 레귤러 침낭",
+        "code": "A3841"
+      },
+      {
+        "s": 0.5,
+        "en": "Boab Synthetic Sleeping Bag -9C",
+        "ko": "보아브 -9도 레귤러 침낭",
+        "code": "A3842"
+      }
+    ]
+  },
+  {
+    "groupId": "sea-to-summit_hamelin-womens-synthetic-sleeping-bag",
+    "category": "sleeping_bag",
+    "base": "Hamelin Women's Synthetic Sleeping Bag",
+    "candidates": [
+      {
+        "s": 0.5,
+        "en": "Hamelin Womens Synthetic Sleeping Bag -9C",
+        "ko": "하멜린 -16도 롱 유니섹스 침낭(지퍼링크R)",
+        "code": "A3961"
+      },
+      {
+        "s": 0.38,
+        "en": "Boab Synthetic Sleeping Bag -1C",
+        "ko": "보아브 -1도 레귤러 침낭",
+        "code": "A3841"
+      },
+      {
+        "s": 0.38,
+        "en": "Boab Synthetic Sleeping Bag -9C",
+        "ko": "보아브 -9도 레귤러 침낭",
+        "code": "A3842"
+      }
+    ]
+  },
+  {
+    "groupId": "sea-to-summit_spark-down-sleeping-bag",
+    "category": "sleeping_bag",
+    "base": "Spark Down Sleeping Bag",
+    "candidates": [
+      {
+        "s": 0.67,
+        "en": "Spark 7C/45F Down Sleeping Bag",
+        "ko": "스파크 7도 850필파워 구스다운 침낭 시리즈",
+        "code": "REP10556"
+      },
+      {
+        "s": 0.57,
+        "en": "Spark -9C/15F Down Sleeping Bag - R",
+        "ko": "스파크 -9도 레귤러 850필파워 구스다운침낭(지퍼링크L)",
+        "code": "A3634"
+      },
+      {
+        "s": 0.57,
+        "en": "Spark -18C/0F Down Sleeping Bag - R",
+        "ko": "스파크 -18도 레귤러 850필파워 구스다운 침낭(지퍼링크L)",
+        "code": "A4072"
+      }
+    ]
+  },
+  {
+    "groupId": "sea-to-summit_spark-pro-down-sleeping-bag",
+    "category": "sleeping_bag",
+    "base": "Spark Pro Down Sleeping Bag",
+    "candidates": [
+      {
+        "s": 0.63,
+        "en": "Spark Pro -9C/15F Down Sleeping Bag - R",
+        "ko": "스파크 프로 -9도 레귤러 950필파워 구스다운침낭(지퍼링크L)",
+        "code": "A3632"
+      },
+      {
+        "s": 0.57,
+        "en": "Spark 7C/45F Down Sleeping Bag",
+        "ko": "스파크 7도 850필파워 구스다운 침낭 시리즈",
+        "code": "REP10556"
+      },
+      {
+        "s": 0.5,
+        "en": "Spark -9C/15F Down Sleeping Bag - R",
+        "ko": "스파크 -9도 레귤러 850필파워 구스다운침낭(지퍼링크L)",
+        "code": "A3634"
+      }
+    ]
+  },
+  {
+    "groupId": "sea-to-summit_spark-womens-down-sleeping-bag",
+    "category": "sleeping_bag",
+    "base": "Spark Women's Down Sleeping Bag",
+    "candidates": [
+      {
+        "s": 0.5,
+        "en": "Spark 7C/45F Down Sleeping Bag",
+        "ko": "스파크 7도 850필파워 구스다운 침낭 시리즈",
+        "code": "REP10556"
+      },
+      {
+        "s": 0.44,
+        "en": "Spark -9C/15F Down Sleeping Bag - R",
+        "ko": "스파크 -9도 레귤러 850필파워 구스다운침낭(지퍼링크L)",
+        "code": "A3634"
+      },
+      {
+        "s": 0.44,
+        "en": "Spark -18C/0F Down Sleeping Bag - R",
+        "ko": "스파크 -18도 레귤러 850필파워 구스다운 침낭(지퍼링크L)",
+        "code": "A4072"
+      }
+    ]
+  },
+  {
+    "groupId": "sea-to-summit_tanami-down-comforter",
+    "category": "sleeping_bag",
+    "base": "Tanami Down Comforter",
+    "candidates": [
+      {
+        "s": 0.25,
+        "en": "Comforter - S",
+        "ko": "타나미 7도 싱글 다운 침낭",
+        "code": "A3645"
+      },
+      {
+        "s": 0.14,
+        "en": "Basecamp Down Sleeping Bag -9C",
+        "ko": "베이스캠프 -9도 레귤러 다운 침낭(지퍼링크RL)",
+        "code": "A3960"
+      },
+      {
+        "s": 0.14,
+        "en": "Basecamp Down Sleeping Bag -9C",
+        "ko": "베이스캠프 -9도 롱 다운 침낭(지퍼링크RL)",
+        "code": "A3959"
+      }
+    ]
+  },
+  {
+    "groupId": "sea-to-summit_the-traveller-down-sleeping-bag",
+    "category": "sleeping_bag",
+    "base": "Traveller Down Sleeping Bag",
+    "candidates": [
+      {
+        "s": 0.5,
+        "en": "Basecamp Down Sleeping Bag -9C",
+        "ko": "베이스캠프 -9도 레귤러 다운 침낭(지퍼링크RL)",
+        "code": "A3960"
+      },
+      {
+        "s": 0.5,
+        "en": "Basecamp Down Sleeping Bag -9C",
+        "ko": "베이스캠프 -9도 롱 다운 침낭(지퍼링크RL)",
+        "code": "A3959"
+      },
+      {
+        "s": 0.43,
+        "en": "Spark 7C/45F Down Sleeping Bag",
+        "ko": "스파크 7도 850필파워 구스다운 침낭 시리즈",
+        "code": "REP10556"
+      }
+    ]
+  },
+  {
+    "groupId": "sea-to-summit_trek-down-sleeping-bag",
+    "category": "sleeping_bag",
+    "base": "Trek Down Sleeping Bag",
+    "candidates": [
+      {
+        "s": 0.57,
+        "en": "Trek -18C/0F Down Sleeping Bag - R",
+        "ko": "트렉 -18도 레귤러 다운 침낭(지퍼링크L)",
+        "code": "A3637"
+      },
+      {
+        "s": 0.57,
+        "en": "Trek -1C/30F Down Sleeping Bag - R",
+        "ko": "트렉 -1도 레귤러 다운 침낭(지퍼링크L)",
+        "code": "A3636"
+      },
+      {
+        "s": 0.57,
+        "en": "Trek -9C/15F Down Sleeping Bag - L",
+        "ko": "트렉 -9도 롱 다운 침낭(지퍼링크L)",
+        "code": "A4261"
+      }
+    ]
+  },
+  {
+    "groupId": "sea-to-summit_trek-womens-down-sleeping-bag",
+    "category": "sleeping_bag",
+    "base": "Trek Women's Down Sleeping Bag",
+    "candidates": [
+      {
+        "s": 0.44,
+        "en": "Trek -18C/0F Down Sleeping Bag - R",
+        "ko": "트렉 -18도 레귤러 다운 침낭(지퍼링크L)",
+        "code": "A3637"
+      },
+      {
+        "s": 0.44,
+        "en": "Trek -1C/30F Down Sleeping Bag - R",
+        "ko": "트렉 -1도 레귤러 다운 침낭(지퍼링크L)",
+        "code": "A3636"
+      },
+      {
+        "s": 0.44,
+        "en": "Trek -9C/15F Down Sleeping Bag - L",
+        "ko": "트렉 -9도 롱 다운 침낭(지퍼링크L)",
+        "code": "A4261"
+      }
+    ]
+  },
+  {
+    "groupId": "sea-to-summit_escapist-evo-tarp",
+    "category": "tarp",
+    "base": "Escapist Evo Tarp",
+    "candidates": [
+      {
+        "s": 0.6,
+        "en": "Escapist Evo Tarp - L Tarragon",
+        "ko": "이스캐피스트 에보 타프 LG 타라곤",
+        "code": "A4215"
+      },
+      {
+        "s": 0.5,
+        "en": "Escapist 15D Tarp",
+        "ko": "이스캐피스트 타프 LG",
+        "code": "CSS00074"
+      },
+      {
+        "s": 0.2,
+        "en": "Nano Tarp Poncho",
+        "ko": "울트라실 나노 타프 판초 시리즈",
+        "code": "REP10569"
+      }
+    ]
+  },
+  {
+    "groupId": "sea-to-summit_escapist-mesh-bug-shelter",
+    "category": "tarp",
+    "base": "Escapist Mesh Bug Shelter",
+    "candidates": [
+      {
+        "s": 0.67,
+        "en": "Escapist Mesh Bug Shelter - M Tarragon",
+        "ko": "이스캐피스트 메쉬 버그 쉘터 MD 타라곤",
+        "code": "A4217"
+      },
+      {
+        "s": 0.17,
+        "en": "Escapist 15D Tarp",
+        "ko": "이스캐피스트 타프 LG",
+        "code": "CSS00074"
+      },
+      {
+        "s": 0.13,
+        "en": "Escapist Evo Tarp - L Tarragon",
+        "ko": "이스캐피스트 에보 타프 LG 타라곤",
+        "code": "A4215"
+      }
+    ]
+  },
+  {
+    "groupId": "sea-to-summit_minimalist-tarp",
+    "category": "tarp",
+    "base": "Minimalist Tarp",
+    "candidates": [
+      {
+        "s": 0.25,
+        "en": "Escapist 15D Tarp",
+        "ko": "이스캐피스트 타프 LG",
+        "code": "CSS00074"
+      },
+      {
+        "s": 0.25,
+        "en": "Nano Tarp Poncho",
+        "ko": "울트라실 나노 타프 판초 시리즈",
+        "code": "REP10569"
+      },
+      {
+        "s": 0.17,
+        "en": "Escapist Evo Tarp - L Tarragon",
+        "ko": "이스캐피스트 에보 타프 LG 타라곤",
+        "code": "A4215"
+      }
+    ]
+  },
+  {
+    "groupId": "sea-to-summit_ultra-sil-nano-tarp-poncho",
+    "category": "tarp",
+    "base": "Ultra-Sil Nano Tarp Poncho",
+    "candidates": [
+      {
+        "s": 0.6,
+        "en": "Nano Tarp Poncho",
+        "ko": "울트라실 나노 타프 판초 시리즈",
+        "code": "REP10569"
+      },
+      {
+        "s": 0.14,
+        "en": "Escapist 15D Tarp",
+        "ko": "이스캐피스트 타프 LG",
+        "code": "CSS00074"
+      },
+      {
+        "s": 0.11,
+        "en": "Escapist Evo Tarp - L Tarragon",
+        "ko": "이스캐피스트 에보 타프 LG 타라곤",
+        "code": "A4215"
+      }
+    ]
+  },
+  {
+    "groupId": "sea-to-summit_ikos-evo-tent",
+    "category": "tent",
+    "base": "Ikos Evo Tent",
+    "candidates": [
+      {
+        "s": 0.75,
+        "en": "Ikos Evo Tent - TR4",
+        "ko": "아이코스 에보 TR4 텐트",
+        "code": "A4078"
+      },
+      {
+        "s": 0.33,
+        "en": "Telos Evo Tent - TR3 Tarragon",
+        "ko": "텔러스 에보 TR3 타라곤 텐트",
+        "code": "A4256"
+      },
+      {
+        "s": 0.29,
+        "en": "Telos Evo Bikepack Tent - TR2 Tarragon",
+        "ko": "텔러스 에보 TR2 컴팩트 타라곤 텐트",
+        "code": "A4255"
+      }
+    ]
+  },
+  {
+    "groupId": "sea-to-summit_telos-evo-bikepack-tent",
+    "category": "tent",
+    "base": "Telos Evo Bikepack Tent",
+    "candidates": [
+      {
+        "s": 0.67,
+        "en": "Telos Evo Bikepack Tent - TR2 Tarragon",
+        "ko": "텔러스 에보 TR2 컴팩트 타라곤 텐트",
+        "code": "A4255"
+      },
+      {
+        "s": 0.5,
+        "en": "Telos Evo Tent - TR3 Tarragon",
+        "ko": "텔러스 에보 TR3 타라곤 텐트",
+        "code": "A4256"
+      },
+      {
+        "s": 0.33,
+        "en": "Ikos Evo Tent - TR4",
+        "ko": "아이코스 에보 TR4 텐트",
+        "code": "A4078"
+      }
+    ]
+  },
+  {
+    "groupId": "sea-to-summit_telos-evo-tent",
+    "category": "tent",
+    "base": "Telos Evo Tent",
+    "candidates": [
+      {
+        "s": 0.6,
+        "en": "Telos Evo Tent - TR3 Tarragon",
+        "ko": "텔러스 에보 TR3 타라곤 텐트",
+        "code": "A4256"
+      },
+      {
+        "s": 0.5,
+        "en": "Telos Evo Bikepack Tent - TR2 Tarragon",
+        "ko": "텔러스 에보 TR2 컴팩트 타라곤 텐트",
+        "code": "A4255"
+      },
+      {
+        "s": 0.4,
+        "en": "Ikos Evo Tent - TR4",
+        "ko": "아이코스 에보 TR4 텐트",
+        "code": "A4078"
+      }
+    ]
+  },
+  {
+    "groupId": "sea-to-summit_alto-bigfoot-footprint",
+    "category": "tent_acc",
+    "base": "Alto Bigfoot Footprint",
+    "candidates": [
+      {
+        "s": 0.4,
+        "en": "Alto TR1 BigFoot Groundsheet",
+        "ko": "알토 TR1 빅 풋프린트",
+        "code": "A2775"
+      },
+      {
+        "s": 0.25,
+        "en": "Alto TR2",
+        "ko": "알토 TR2 UL 그린 텐트",
+        "code": "A2777"
+      },
+      {
+        "s": 0.25,
+        "en": "Alto TR2",
+        "ko": "알토 TR2 UL 그레이 텐트",
+        "code": "A2778"
+      }
+    ]
+  },
+  {
+    "groupId": "sea-to-summit_alto-gear-loft",
+    "category": "tent_acc",
+    "base": "Alto Gear Loft",
+    "candidates": [
+      {
+        "s": 0.25,
+        "en": "Alto TR2",
+        "ko": "알토 TR2 UL 그린 텐트",
+        "code": "A2777"
+      },
+      {
+        "s": 0.25,
+        "en": "Alto TR2",
+        "ko": "알토 TR2 UL 그레이 텐트",
+        "code": "A2778"
+      },
+      {
+        "s": 0.25,
+        "en": "Alto TR1",
+        "ko": "알토 TR1 UL 그린 텐트",
+        "code": "A2770"
+      }
+    ]
+  },
+  {
+    "groupId": "sea-to-summit_alto-lightfoot-footprint",
+    "category": "tent_acc",
+    "base": "Alto Lightfoot Footprint",
+    "candidates": [
+      {
+        "s": 0.4,
+        "en": "Alto TR1 LightFoot Groundsheet",
+        "ko": "알토 TR1 라이트 풋프린트",
+        "code": "A2774"
+      },
+      {
+        "s": 0.25,
+        "en": "Alto TR2",
+        "ko": "알토 TR2 UL 그린 텐트",
+        "code": "A2777"
+      },
+      {
+        "s": 0.25,
+        "en": "Alto TR2",
+        "ko": "알토 TR2 UL 그레이 텐트",
+        "code": "A2778"
+      }
+    ]
+  },
+  {
+    "groupId": "sea-to-summit_ground-control-guy-cords",
+    "category": "tent_acc",
+    "base": "Ground Control Guy Cords - [4 Pack]",
+    "candidates": [
+      {
+        "s": 0.25,
+        "en": "Pack Tap 4 Litre",
+        "ko": "팩 탭 4L 그린",
+        "code": "CSS00119"
+      },
+      {
+        "s": 0.22,
+        "en": "Ultralight Ground Control Tent Pegs",
+        "ko": "울트라라이트 그라운드 컨트롤 텐트 펙",
+        "code": "A2791"
+      },
+      {
+        "s": 0.14,
+        "en": "Pack Tap",
+        "ko": "팩 탭 2~6L 교체용 이너 백",
+        "code": "A1603"
+      }
+    ]
+  },
+  {
+    "groupId": "sea-to-summit_light-tent-pegs",
+    "category": "tent_acc",
+    "base": "Ground Control Light Tent Pegs - [6 Pack]",
+    "candidates": [
+      {
+        "s": 0.5,
+        "en": "Ultralight Ground Control Tent Pegs",
+        "ko": "울트라라이트 그라운드 컨트롤 텐트 펙",
+        "code": "A2791"
+      },
+      {
+        "s": 0.22,
+        "en": "Pack Tap 6 Litre",
+        "ko": "팩 탭 6L 블루",
+        "code": "CSS00120"
+      },
+      {
+        "s": 0.13,
+        "en": "Pack Tap",
+        "ko": "팩 탭 2~6L 교체용 이너 백",
+        "code": "A1603"
+      }
+    ]
+  },
+  {
+    "groupId": "sea-to-summit_ground-control-tent-pegs",
+    "category": "tent_acc",
+    "base": "Ground Control Tent Pegs",
+    "candidates": [
+      {
+        "s": 0.8,
+        "en": "Ultralight Ground Control Tent Pegs",
+        "ko": "울트라라이트 그라운드 컨트롤 텐트 펙",
+        "code": "A2791"
+      },
+      {
+        "s": 0.14,
+        "en": "Ikos Evo Tent - TR4",
+        "ko": "아이코스 에보 TR4 텐트",
+        "code": "A4078"
+      },
+      {
+        "s": 0.13,
+        "en": "Telos Evo Tent - TR3 Tarragon",
+        "ko": "텔러스 에보 TR3 타라곤 텐트",
+        "code": "A4256"
+      }
+    ]
+  },
+  {
+    "groupId": "sea-to-summit_telos-hangout-pole-set-grey",
+    "category": "tent_acc",
+    "base": "Hangout Mode Poleset",
+    "candidates": [
+      {
+        "s": 0.5,
+        "en": "Telos Hangout Poleset",
+        "ko": "텔러스 행아웃 폴 세트(2개 1세트)",
+        "code": "A2674"
+      },
+      {
+        "s": 0,
+        "en": "Ikos Evo Tent - TR4",
+        "ko": "아이코스 에보 TR4 텐트",
+        "code": "A4078"
+      },
+      {
+        "s": 0,
+        "en": "Telos TR2 Bikepack Grey",
+        "ko": "텔러스 TR2 바이크팩 그레이 텐트",
+        "code": "A3877"
+      }
+    ]
+  },
+  {
+    "groupId": "sea-to-summit_ikos-footprint",
+    "category": "tent_acc",
+    "base": "Ikos Footprint",
+    "candidates": [
+      {
+        "s": 0.4,
+        "en": "Ikos TR2 - Footprint - Shale Grey",
+        "ko": "아이코스 TR2 풋프린트",
+        "code": "A3530"
+      },
+      {
+        "s": 0.4,
+        "en": "Ikos TR3 - Footprint - Shale Grey",
+        "ko": "아이코스 TR3 풋프린트",
+        "code": "A3531"
+      },
+      {
+        "s": 0.2,
+        "en": "Ikos Evo Tent - TR4",
+        "ko": "아이코스 에보 TR4 텐트",
+        "code": "A4078"
+      }
+    ]
+  },
+  {
+    "groupId": "sea-to-summit_telos-bigfoot-footprint",
+    "category": "tent_acc",
+    "base": "Telos Bigfoot Footprint",
+    "candidates": [
+      {
+        "s": 0.4,
+        "en": "Telos TR3 Bigfoot Groundsheet",
+        "ko": "텔러스 TR3 빅 풋프린트",
+        "code": "A2788"
+      },
+      {
+        "s": 0.25,
+        "en": "Telos TR2",
+        "ko": "텔러스 TR2 그린 텐트",
+        "code": "A2782"
+      },
+      {
+        "s": 0.25,
+        "en": "Telos TR3",
+        "ko": "텔러스 TR3 그레이 텐트",
+        "code": "A2786"
+      }
+    ]
+  },
+  {
+    "groupId": "sea-to-summit_telos-gear-loft",
+    "category": "tent_acc",
+    "base": "Telos Gear Loft",
+    "candidates": [
+      {
+        "s": 0.25,
+        "en": "Telos TR2",
+        "ko": "텔러스 TR2 그린 텐트",
+        "code": "A2782"
+      },
+      {
+        "s": 0.25,
+        "en": "Telos TR3",
+        "ko": "텔러스 TR3 그레이 텐트",
+        "code": "A2786"
+      },
+      {
+        "s": 0.25,
+        "en": "Telos TR3",
+        "ko": "텔러스 TR3 기어 로프트",
+        "code": "A2789"
+      }
+    ]
+  },
+  {
+    "groupId": "sea-to-summit_telos-lightfoot-footprint",
+    "category": "tent_acc",
+    "base": "Telos Lightfoot Footprint",
+    "candidates": [
+      {
+        "s": 0.25,
+        "en": "Telos TR2",
+        "ko": "텔러스 TR2 그린 텐트",
+        "code": "A2782"
+      },
+      {
+        "s": 0.25,
+        "en": "Telos TR3",
+        "ko": "텔러스 TR3 그레이 텐트",
+        "code": "A2786"
+      },
+      {
+        "s": 0.25,
+        "en": "Telos TR3",
+        "ko": "텔러스 TR3 기어 로프트",
+        "code": "A2789"
+      }
+    ]
+  },
+  {
+    "groupId": "sea-to-summit_utensil-peg-bag",
+    "category": "tent_acc",
+    "base": "Ultra-Sil Peg & Utensil Bag",
+    "candidates": [
+      {
+        "s": 0.13,
+        "en": "Lightweight Dry Bag 20L",
+        "ko": "라이트웨이트 드라이 백 20L 시리즈",
+        "code": "REP10594"
+      },
+      {
+        "s": 0.13,
+        "en": "Lightweight Dry Bag 3L",
+        "ko": "라이트웨이트 드라이 백 3L 시리즈",
+        "code": "REP10563"
+      },
+      {
+        "s": 0.13,
+        "en": "Lightweight Dry Bag 5L",
+        "ko": "라이트웨이트 드라이 백 5L 시리즈",
+        "code": "REP10564"
+      }
+    ]
+  },
+  {
+    "groupId": "sea-to-summit_airlite-towel",
+    "category": "towel",
+    "base": "Airlite Towel",
+    "candidates": [
+      {
+        "s": 1,
+        "en": "Airlite Towel",
+        "ko": "에어라이트 타월 MD 여행용 수건 시리즈",
+        "code": "REP10457"
+      },
+      {
+        "s": 1,
+        "en": "Airlite Towel",
+        "ko": "에어라이트 타월 SM 여행용 수건 시리즈",
+        "code": "REP10456"
+      },
+      {
+        "s": 1,
+        "en": "Airlite Towel",
+        "ko": "에어라이트 타월 LG 여행용 수건 시리즈",
+        "code": "REP10460"
+      }
+    ]
+  },
+  {
+    "groupId": "sea-to-summit_drylite-towel",
+    "category": "towel",
+    "base": "Drylite Towel",
+    "candidates": [
+      {
+        "s": 0.67,
+        "en": "DryLite Towel Small",
+        "ko": "드라이라이트 타월 SM 여행용 수건 시리즈",
+        "code": "REP10440"
+      },
+      {
+        "s": 0.67,
+        "en": "DryLite Towel Large",
+        "ko": "드라이라이트 타월 LG 여행용 수건 시리즈",
+        "code": "REP10444"
+      },
+      {
+        "s": 0.5,
+        "en": "DryLite Towel X-Small",
+        "ko": "드라이라이트 타월 XSM 여행용 수건 시리즈",
+        "code": "REP10441"
+      }
+    ]
+  },
+  {
+    "groupId": "sea-to-summit_pocket-towel",
+    "category": "towel",
+    "base": "Pocket Towel",
+    "candidates": [
+      {
+        "s": 1,
+        "en": "Pocket Towel",
+        "ko": "포켓 타월 SM 여행용 수건 시리즈",
+        "code": "REP10447"
+      },
+      {
+        "s": 1,
+        "en": "Pocket Towel",
+        "ko": "포켓 타월 MD 여행용 수건 시리즈",
+        "code": "REP10448"
+      },
+      {
+        "s": 1,
+        "en": "Pocket Towel",
+        "ko": "포켓 타월 LG 여행용 수건 시리즈",
+        "code": "REP10449"
+      }
+    ]
+  },
+  {
+    "groupId": "sea-to-summit_tek-towel",
+    "category": "towel",
+    "base": "Tek Towel",
+    "candidates": [
+      {
+        "s": 1,
+        "en": "Tek Towel",
+        "ko": "텍 타월 LG 여행용 수건 시리즈",
+        "code": "REP10453"
+      },
+      {
+        "s": 0.67,
+        "en": "Tek Towel Medium",
+        "ko": "텍 타월 MD 여행용 수건 시리즈",
+        "code": "REP10452"
+      },
+      {
+        "s": 0.5,
+        "en": "Tek Towel X-Small",
+        "ko": "텍 타월 XSM 여행용 수건 시리즈",
+        "code": "REP10446"
+      }
+    ]
+  }
+]

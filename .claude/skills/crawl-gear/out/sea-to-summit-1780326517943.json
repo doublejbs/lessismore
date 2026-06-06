@@ -1,0 +1,67 @@
+[
+  {
+    "groupId": "sea-to-summit_telos-evo-tent",
+    "category": "tent",
+    "company": "sea-to-summit",
+    "companyKorean": "씨투써밋",
+    "name": "Telos Evo Tent",
+    "nameKorean": "",
+    "color": "",
+    "colorKorean": "",
+    "size": "TR2",
+    "sizeKorean": "",
+    "weight": 1624,
+    "imageUrl": "https://cdn.shopify.com/s/files/1/2467/2501/files/046301_TelosEvoTR2Tent_Tarragon_PRIMARY_1500.jpg",
+    "specs": {
+      "capacity": 2,
+      "poleMaterial": "Carbon",
+      "waterproofRating": 2500,
+      "flyMaterial": "10D nylon",
+      "vestibuleArea": 1.8
+    },
+    "_source": "https://seatosummit.com/collections/ultralight-backpacking-tents"
+  },
+  {
+    "groupId": "sea-to-summit_ikos-evo-tent",
+    "category": "tent",
+    "company": "sea-to-summit",
+    "companyKorean": "씨투써밋",
+    "name": "Ikos Evo Tent",
+    "nameKorean": "",
+    "color": "",
+    "colorKorean": "",
+    "size": "TR2",
+    "sizeKorean": "",
+    "weight": 2515,
+    "imageUrl": "https://cdn.shopify.com/s/files/1/2467/2501/files/046101_IkosEvoTR2Tent_LaurelWreath_PRIMARY_1500.jpg",
+    "specs": {
+      "capacity": 2,
+      "poleMaterial": "DAC pole",
+      "flyMaterial": "10D nylon",
+      "vestibuleArea": 1.75
+    },
+    "_source": "https://seatosummit.com/collections/ultralight-backpacking-tents"
+  },
+  {
+    "groupId": "sea-to-summit_telos-evo-bikepack-tent",
+    "category": "tent",
+    "company": "sea-to-summit",
+    "companyKorean": "씨투써밋",
+    "name": "Telos Evo Bikepack Tent",
+    "nameKorean": "",
+    "color": "",
+    "colorKorean": "",
+    "size": "TR2",
+    "sizeKorean": "",
+    "weight": 1639,
+    "imageUrl": "https://cdn.shopify.com/s/files/1/2467/2501/files/046201_TelosEvoTR2BikepackTent_Tarragon_PRIMARY_1500.jpg",
+    "specs": {
+      "capacity": 2,
+      "poleMaterial": "Carbon",
+      "waterproofRating": 2500,
+      "flyMaterial": "10D nylon",
+      "vestibuleArea": 1.8
+    },
+    "_source": "https://seatosummit.com/collections/ultralight-backpacking-tents"
+  }
+]
