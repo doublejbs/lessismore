@@ -110,7 +110,7 @@ HTML 카드 그리드에서 확인:
 
 | 사이트 유형 | 식별 단서 | 주요 셀렉터 |
 |---|---|---|
-| **Shopify** | `cdn.shopify.com` 자산, `.shopify-section`, `/collections/` | `.card-wrapper`/`.grid__item`, `.card__heading`. **`products.json` API 우선** (무게 `grams` 포함) |
+| **Shopify** | `cdn.shopify.com` 자산, `.shopify-section`, `/collections/` | `.card-wrapper`/`.grid__item`, `.card__heading`. **리스팅·이미지·변형은 `products.json` API 우선.** 단 `grams`는 배송무게라 부정확 → 무게/스펙은 상세 페이지 스펙 테이블에서. 색상별 이미지는 `variant.featured_image.src` |
 | **WooCommerce** | `/product-category/`, `wp-content` | `ul.products li.product`, `h3.product-title` |
 | **Magento** | `/catalog/category/view/`, `magento` | `.product-item`, `.product-info` |
 | **Algolia 검색** | `ais-*` 클래스 | `.ais-InfiniteHits-item`, `.ais-Hits-item` |
@@ -324,11 +324,49 @@ etc
 | pouch / backpack_cover | material, isWaterproof, capacity |
 | tent_acc / pillow / food / towel / hand_warmer / shovel / hammer / microspikes / etc | material, size |
 
-## 변형 처리
+## 변형 처리 (Sea to Summit 세션에서 확립한 룰)
 
-같은 제품의 색상/사이즈/무게가 다르면 별도 행, 같은 `groupId`로 묶임.
+같은 제품의 색상/사이즈/온도가 다르면 **별도 행**, 같은 `groupId`로 묶임.
 
-현재는 리스팅에 노출된 색상 1개만 추출 (간단). 다른 색상은 같은 URL 슬러그면 같은 `groupId`로 묶이도록 설계됨. 다중 색상 추출은 사이트마다 별도 작업.
+**핵심 룰:**
+- **옵션(사이즈·색상·온도)별로 모두 개별 제품으로 수집.** Shopify면 `products.json`의 `variants` 전체를 순회해 한 변형당 한 행. (예: 4사이즈×7색상 = 28행)
+- **사이즈를 영문 `name` 끝에 부착** (예: `Ascent Down Sleeping Bag Long / 15°F`). 사이즈+온도 등 비색상 옵션을 ` / `로 이어붙임.
+- **`One Size` / `Default Title` 은 사이즈 없음으로 처리** — `size`/`sizeKorean` 빈값, 이름에도 안 붙임.
+- **색상별 이미지를 각각 수집.** Shopify 컬렉션 `products.json`은 variant에 `image_id`가 없고 **`variant.featured_image.src`** 에 색상별 사진을 담는다 (개별 `product.json`은 `image_id` 사용). featured_image 우선.
+
+**무게·스펙은 변형 인덱스가 아니라 "스펙 컬럼 헤더"로 매핑한다 (중요):**
+- 스펙 테이블 컬럼 수 < 변형 수인 경우가 흔하다 (스펙은 사이즈/온도별, 색상엔 무관). 변형 인덱스(vi)로 컬럼을 읽으면 색상 변형이 전부 어긋나 0/오값이 된다.
+- 각 변형의 **비색상 옵션값(사이즈·온도)** 을 스펙 테이블 **헤더 라벨** 과 매칭해 컬럼을 찾고, 그 컬럼에서 무게/온도/충전재를 읽는다.
+
+**무게 추출 룰:**
+- 우선순위: `Packed Weight` → `Weight` → `Set Weight` (쿡세트류는 Set Weight만 있음).
+- **Shopify `variants[].grams` 는 배송무게라 부정확** — 스펙 테이블 값을 쓴다.
+- 단위 토글(metric/imperial)이 `<span class="met">`/`<span class="imp">`로 동시 렌더되면 **met(미터법) 값만** 추출 (버튼 클릭 불필요).
+- **반올림 금지** — 사이트 표기 그대로 (예: `527.1g`).
+
+## 한글화 (nameKorean / sizeKorean / colorKorean)
+
+영문 카탈로그를 한글명까지 채우는 워크플로우 (Sea to Summit 세션에서 확립). 참고 구현: `kr-reference.js`, `kr-match.js`, `kr-apply.js`.
+
+**원칙: 한국 공식 수입사/유통사 사이트에서 동일 제품을 찾으면 그 공식 한글명을 그대로(verbatim) 쓰고, 못 찾으면 음역으로 생성.**
+
+### 1. KR 레퍼런스 수집 (`kr-reference.js` 패턴)
+- 브랜드의 **한국 공식 수입사 사이트**를 찾는다 (예: 씨투써밋 → 니오 seatosummit.co.kr). 봇차단(403)은 User-Agent 헤더로 우회.
+- 카테고리 리스트 → `(제품코드, 한글명)`, 상세 페이지 → **영문 모델명** 추출 → `{en, ko}` 레퍼런스 구축. (KR 사이트는 보통 한글명만 노출하고 상세에 영문명이 있어, 영문명이 매칭 키가 됨.)
+
+### 2. 변형 단위 매칭 (핵심 룰)
+**동일 제품 판정은 모델 + 온도 + 사이즈 + 색상 + 타입이 "모두" 일치해야 한다.** 하나라도 다르면 다른 제품 → 생성으로 폴백. (라인 단위로 대충 매칭하면 US 15°F 변형에 KR -10도 이름이 박히는 오류 발생.)
+- 가드 예시: 침낭 `limitTemp(℃)` ↔ KR "N도", 매트 자충(SI)/에어 타입, 침낭 다운/신세틱, 텐트 TR코드, 사이즈/용량 충돌.
+- 매칭됨 → **KR 공식명 verbatim**. 공식명에 사이즈가 없으면 끝에 `sizeKorean` 부착.
+- 미매칭 → **음역 생성** (모델라인 음역 + 한글 카테고리어) + `sizeKorean`.
+
+### 3. sizeKorean 규칙
+- 단어형 음역: Regular→레귤러, Long→롱, Small→스몰, Large→라지, S/M/L/XL→스몰/미디엄/라지/엑스라지, Wide→와이드, Rectangular→렉탱귤러.
+- **온도 °F→℃ 변환** (예: 15°F→-9℃). 용량(5L)·텐트코드(TR2)·인치(10in)는 그대로. One Size/Default→빈값.
+- 매칭 시엔 KR 표기(약어 LG/RG/사각 등)와 음역을 같은 사이즈로 취급(canonical)해 중복 부착 방지.
+
+### 4. colorKorean 규칙
+- KR 사이트 표기 스타일로 음역 (Beluga→벨루가, Tarragon→타라곤, Spicy Orange→스파이시 오렌지). 멀티컬러는 `/`로 분리해 각각 변환.
 
 ## 사전 준비
 
@@ -337,6 +375,7 @@ etc
 스킬 파일·데이터는 레포에 포함돼 git clone 으로 동기화된다. 추가로 필요한 것:
 
 1. **Node 의존성** — 레포 루트에서 `npm install` (이미 `package.json` 에 `puppeteer`, `firebase-admin` 선언됨). 워크트리면 글로벌 규칙대로 메인 클론 `node_modules` 를 심링크.
+   - **Node 버전 주의:** 크롤(`crawl.js`)은 최신 Node 무방하지만, **Firestore push(firebase-admin)는 Node 20 LTS 로 실행**해야 한다. Node 22+(특히 26)에선 firebase-admin 의 전이 의존성이 제거된 `SlowBuffer` 를 참조해 크래시한다. 푸시만 `node@20` 바이너리로: `/opt/homebrew/opt/node@20/bin/node server.js`.
 2. **Pillow (선택)** — `nemo-specs.py` / `nemo-findtable.py`(한국 고시 이미지 크롭) 사용 시에만. `python3 -m pip install Pillow`. 글로벌 사이트 스크래퍼(`*-global.py`)는 표준 라이브러리만 쓰므로 불필요.
 3. **serviceAccountKey.json** — Firestore push 시점에만 (아래). 머신마다 수동 추가.
 
@@ -367,3 +406,8 @@ Firebase Console → 프로젝트 설정 → 서비스 계정 → "새 비공개
 - weight=0 다수 → 상세 페이지 무게 정규식이 사이트와 안 맞음. `fetchDetail`의 regex 수정
 - specs 비어있음 → 해당 카테고리 블록을 어댑터 `fetchDetail`에 추가 필요
 - Firestore 권한 오류 → serviceAccountKey.json 누락
+- **무게/온도가 색상 변형에서만 0/오값** → 변형 인덱스로 스펙 컬럼을 읽고 있는 것. 헤더 라벨(사이즈/온도) 매칭으로 컬럼을 찾아야 함 (위 "변형 처리" 참고)
+- **무게가 정수로 깎임** → `parseWeight`에서 `Math.round` 제거, met span 값 그대로
+- **HTML "저장" 시 서버 연결 실패** → 푸시 서버 미실행. `node@20 server.js`로 포트 3847 기동 (`--from-json`은 서버 안 띄움). `lsof -ti:3847`로 확인
+- **firebase-admin `SlowBuffer` 크래시** → Node 버전 너무 최신. `node@20`으로 푸시
+- **네이버 스마트스토어 등 강차단 쇼핑몰** → 서버 fetch는 429, Claude in Chrome도 쇼핑몰 안전제한으로 차단되어 현재 도구로 크롤 불가. 공식 브랜드 사이트를 우선 타깃으로
