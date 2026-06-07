@@ -115,6 +115,8 @@ HTML 카드 그리드에서 확인:
 | **Magento** | `/catalog/category/view/`, `magento` | `.product-item`, `.product-info` |
 | **Algolia 검색** | `ais-*` 클래스 | `.ais-InfiniteHits-item`, `.ais-Hits-item` |
 | **자체 SPA** | React/Vue 빌드 | 사이트별 다름 — 일회성 DOM 덤프 필요 |
+| **SPA + POST 리스팅 API** (몽벨 케이스) | 카테고리 링크가 전부 같은 경로(예: `/products/list`)에 `?c=N` 쿼리로만 구분, 리스팅이 빈 DOM | fetch 인터셉트(`window.fetch` 래핑 후 더보기 클릭)로 XHR 찾기 → POST 엔드포인트(예: `/products/more?c=N` body `{o:offset,l:limit}`)가 **색상·사이즈·무게 포함 구조화 JSON** 반환. 브라우저 same-origin fetch에 `meta[name=csrf-token]` 얹어 호출 |
+| **한국형 PHP 쇼핑몰** (youngcart/cafe24, KR 한글명 레퍼런스용) | `list.php?ca_id=`, `item.php?it_id=`, gnuboard 흔적 | 서버렌더라 node fetch 직접 가능(봇차단 적음), 페이지네이션 `&page=N`. `<div class="model">코드</div><div class="name">한글명</div>` 패턴 |
 
 ### 자주 마주치는 문제 + 해결책
 
@@ -411,3 +413,20 @@ Firebase Console → 프로젝트 설정 → 서비스 계정 → "새 비공개
 - **HTML "저장" 시 서버 연결 실패** → 푸시 서버 미실행. `node@20 server.js`로 포트 3847 기동 (`--from-json`은 서버 안 띄움). `lsof -ti:3847`로 확인
 - **firebase-admin `SlowBuffer` 크래시** → Node 버전 너무 최신. `node@20`으로 푸시
 - **네이버 스마트스토어 등 강차단 쇼핑몰** → 서버 fetch는 429, Claude in Chrome도 쇼핑몰 안전제한으로 차단되어 현재 도구로 크롤 불가. 공식 브랜드 사이트를 우선 타깃으로
+- HTML 미리보기만 다시 만들려면 크롤 없이 `node crawl.js <brand> --from-json=<json> --no-open` (서버 spawn이 죽어도 HTML/JSON은 이미 생성됨)
+
+### 몽벨 세션에서 확립한 룰 (일반화)
+
+- **리스팅 JSON의 정렬/배송용 무게 필드를 믿지 말 것.** Shopify `grams`, 몽벨 `sorting_weight` 같은 필드는 실제 스펙 무게와 다를 수 있다(예: Stellaridge Tent 3 Rain Fly — `sorting_weight` 420 vs 스펙 Weight 470g). **무게는 상세 스펙 테이블의 표시값**(Weight → Total/Packed Weight → Set Weight 우선순위)에서 파싱하고, 없을 때만 리스팅 필드로 폴백. kg→g 변환만 하고 측정값 반올림은 금지.
+- **스펙 셀에 규제 고지문이 구분자 없이 붙는다.** 예: 소재 셀 끝에 `...(urethane coating)This product contains PFAS and cannot be shipped to some jurisdictions.` → 마커("This product contains PFAS")부터 문자열 끝까지 제거. **주의**: `value.slice(0, N)`로 먼저 잘리면 고지문이 중간에 끊겨(`...cannot be shipped to`) 전체-문장 정규식이 안 맞는다 → 슬라이스 **전에** 제거하거나 `/마커[\s\S]*$/` 로 마커 이후 전체 제거. `(PFAS-free ...)` 같은 정상 소재 표기는 보존.
+- **변형이 색상→사이즈 2단 중첩**인 리스팅 JSON이 흔하다(`colors{ CODE: { sizes{ ... } } }`). 두 단계를 모두 순회해 (색상×사이즈) 행 생성. 색상별 이미지 코드가 이미지 URL에 박히는 경우가 많다(`{productCode}_{colorCode}.webp`).
+
+### 한글화 — KR 레퍼런스 사이트에 영문/코드가 전혀 없을 때 (몽벨 변형)
+
+S2S처럼 KR 수입사 상세에 **영문 모델명**이 있으면 영문-토큰 매칭이 쉽지만, montbell.co.kr 처럼 **한글명만 있고 글로벌 코드·영문이 전무**한 경우가 있다. 이때 매칭 브리지:
+
+1. **KR 레퍼런스 수집** (`kr-reference-montbell.js`): 한국형 PHP 몰 전 카테고리 순회 → `(it_id, 한글명)`. 한글명은 보통 `모델 + 남/여 + 말미 영문색상` 형태.
+2. **US 영문명 → 음역** (EN→KO 사전): 구조어(Down→다운, Jacket→자켓 …)+모델어(Stellaridge→스텔라릿지 …). 사전은 KR 레퍼런스의 실제 한글 표기를 정답으로 삼아 구축.
+3. **매칭** (`kr-apply-montbell.js`): 음역결과 ↔ KR 한글명을 **숫자집합 완전일치 + 성별 일치 + bigram Dice ≥ 0.85(근접 길이 우선)** 로 매칭. 매칭되면 KR 공식명 verbatim, 아니면 음역 폴백.
+   - **반드시 가드**: ① 성별(Men's↔남 / Women's↔여) — 없으면 여성 제품에 남성 이름이 박힘. ② KR 시장 프리픽스(`US`/`PS`/`WIC`/`SIC`)·말미 영문색상 제거. ③ 숫자집합은 *정확히* 일치(부분집합 X) — `30L`↔`30L 2`(버전), `20L`↔`30L` 오매칭 방지.
+   - 팩 카테고리는 KR 관례상 용량에 `L` 부착(차차 팩 30 → 30L)해 패밀리 내 표기 통일.
