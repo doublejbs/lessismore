@@ -11,7 +11,7 @@
     "size": "레귤러/와이드",
     "sizeKorean": "레귤러/와이드",
     "weight": 640,
-    "imageUrl": "",
+    "imageUrl": "https://nemoequipmen.hgodo.com/NEMO/PAD/Zor/Regular%20Wide/01.jpg",
     "specs": {
       "type": "인슐레이티드 에어",
       "shape": "직사각",
@@ -33,7 +33,7 @@
     "size": "레귤러/머미",
     "sizeKorean": "레귤러/머미",
     "weight": 450,
-    "imageUrl": "",
+    "imageUrl": "https://nemoequipmen.hgodo.com/NEMO/PAD/Zor/Regular%20Mummy/01.jpg",
     "specs": {
       "type": "인슐레이티드 에어",
       "shape": "머미",
@@ -55,7 +55,7 @@
     "size": "미디엄/머미",
     "sizeKorean": "미디엄/머미",
     "weight": 415,
-    "imageUrl": "",
+    "imageUrl": "https://nemoequipmen.hgodo.com/NEMO/PAD/Zor/Medium%20Mummy/01.jpg",
     "specs": {
       "type": "인슐레이티드 에어",
       "shape": "머미",
@@ -77,7 +77,7 @@
     "size": "숏/머미",
     "sizeKorean": "숏/머미",
     "weight": 295,
-    "imageUrl": "",
+    "imageUrl": "https://nemoequipmen.hgodo.com/NEMO/PAD/Zor/Short%20Mummy/01.jpg",
     "specs": {
       "type": "인슐레이티드 에어",
       "shape": "머미",
@@ -99,7 +99,7 @@
     "size": "레귤러/와이드",
     "sizeKorean": "레귤러/와이드",
     "weight": 750,
-    "imageUrl": "",
+    "imageUrl": "https://nemoequipmen.hgodo.com/NEMO/PAD/Ora/RegularWide/01.jpg",
     "specs": {
       "type": "인슐레이티드 에어",
       "shape": "직사각",
@@ -122,7 +122,7 @@
     "size": "롱/와이드",
     "sizeKorean": "롱/와이드",
     "weight": 820,
-    "imageUrl": "",
+    "imageUrl": "https://nemoequipmen.hgodo.com/NEMO/PAD/Ora/LongWide/01.jpg",
     "specs": {
       "type": "인슐레이티드 에어",
       "shape": "직사각",
@@ -145,7 +145,7 @@
     "size": "레귤러/머미",
     "sizeKorean": "레귤러/머미",
     "weight": 530,
-    "imageUrl": "",
+    "imageUrl": "https://nemoequipmen.hgodo.com/NEMO/PAD/Ora/Regular/01.jpg",
     "specs": {
       "type": "인슐레이티드 에어",
       "shape": "머미",
@@ -168,7 +168,7 @@
     "size": "미디엄/머미",
     "sizeKorean": "미디엄/머미",
     "weight": 500,
-    "imageUrl": "",
+    "imageUrl": "https://nemoequipmen.hgodo.com/NEMO/PAD/Ora/Medium/01.jpg",
     "specs": {
       "type": "인슐레이티드 에어",
       "shape": "머미",

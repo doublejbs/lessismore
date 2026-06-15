@@ -334,7 +334,7 @@ etc
 - **옵션(사이즈·색상·온도)별로 모두 개별 제품으로 수집.** Shopify면 `products.json`의 `variants` 전체를 순회해 한 변형당 한 행. (예: 4사이즈×7색상 = 28행)
 - **사이즈를 영문 `name` 끝에 부착** (예: `Ascent Down Sleeping Bag Long / 15°F`). 사이즈+온도 등 비색상 옵션을 ` / `로 이어붙임.
 - **`One Size` / `Default Title` 은 사이즈 없음으로 처리** — `size`/`sizeKorean` 빈값, 이름에도 안 붙임.
-- **색상별 이미지를 각각 수집.** Shopify 컬렉션 `products.json`은 variant에 `image_id`가 없고 **`variant.featured_image.src`** 에 색상별 사진을 담는다 (개별 `product.json`은 `image_id` 사용). featured_image 우선.
+- **변형별 이미지를 각각 수집(색상 변형뿐 아니라 사이즈 변형도).** Shopify 컬렉션 `products.json`은 variant에 `image_id`가 없고 **`variant.featured_image.src`** 에 색상별 사진을 담는다. 단 사이트에 따라 컬렉션엔 featured_image도 없을 수 있다(NEMO) → 이때는 **개별 `/products/<slug>.json`의 `variant.image_id` → `images[].id`** 로 매핑한다. 한 제품에 이미지 한 장 일괄 금지. (자세히는 아래 "니모 세션" #2.)
 
 **무게·스펙은 변형 인덱스가 아니라 "스펙 컬럼 헤더"로 매핑한다 (중요):**
 - 스펙 테이블 컬럼 수 < 변형 수인 경우가 흔하다 (스펙은 사이즈/온도별, 색상엔 무관). 변형 인덱스(vi)로 컬럼을 읽으면 색상 변형이 전부 어긋나 0/오값이 된다.
@@ -430,3 +430,21 @@ S2S처럼 KR 수입사 상세에 **영문 모델명**이 있으면 영문-토큰
 3. **매칭** (`kr-apply-montbell.js`): 음역결과 ↔ KR 한글명을 **숫자집합 완전일치 + 성별 일치 + bigram Dice ≥ 0.85(근접 길이 우선)** 로 매칭. 매칭되면 KR 공식명 verbatim, 아니면 음역 폴백.
    - **반드시 가드**: ① 성별(Men's↔남 / Women's↔여) — 없으면 여성 제품에 남성 이름이 박힘. ② KR 시장 프리픽스(`US`/`PS`/`WIC`/`SIC`)·말미 영문색상 제거. ③ 숫자집합은 *정확히* 일치(부분집합 X) — `30L`↔`30L 2`(버전), `20L`↔`30L` 오매칭 방지.
    - 팩 카테고리는 KR 관례상 용량에 `L` 부착(차차 팩 30 → 30L)해 패밀리 내 표기 통일.
+
+### 니모(NEMO) 세션에서 확립한 룰 (일반화 — 영문 글로벌 + Shopify)
+
+참고 구현: `nemo-global.py`(영문 스펙 빌더), `nemo-variants.py`(변형 정규화 후처리), `nemo-kr-apply.py`(침낭·매트 공식명).
+
+1. **무게는 `Packed Weight` 우선 — Minimum/Trail Weight 를 우선하지 말 것.** NEMO 처럼 `Minimum Weight`(트레일)와 `Packed Weight`(패킹)를 둘 다 노출하는 사이트가 많다. 스킬 룰대로 `Packed Weight → Weight → Set Weight`, 셋 다 없을 때만 `Minimum Weight` 폴백. (이번에 Minimum 을 우선했다가 전 품목 무게가 트레일 무게로 잘못 들어갔음.)
+
+2. **변형별 이미지는 개별 `product.json` 의 `variant.image_id` → `images[].id` 로 매핑한다.** 컬렉션 `products.json` 은 variant 에 `featured_image`/`image_id` 가 **없을 수 있다**(NEMO 는 전부 None). 개별 `/products/<slug>.json` 을 받아 `variant.image_id` 가 가리키는 `images[].src` 를 변형마다 넣는다. **색상 변형뿐 아니라 사이즈 변형(매트 Regular/Long Wide 등)도 각자 다른 image_id 를 가진다** → 한 제품에 이미지 한 장 일괄 금지. 매핑 없는 제품(폼매트·풋프린트 등)만 og:image 폴백. (`images[].variant_ids` 로도 역매핑 가능.)
+
+3. **색상 전용 옵션 제품은 변형 라벨이 "사이즈가 아니라 색상"이다.** 스펙 테이블의 변형 컬럼을 무조건 `size` 로 넣으면, 옵션축이 색상 하나뿐인 제품(체어·베개·더플·일부 백팩)에서 **색상이 size 로 누출**된다. `products.json` `options[].name` 으로 축을 판별: `Color` → `color`/`colorKorean`, `Size`/`Capacity`/`Temperature`/`Length` → `size`(이름 끝 부착). 변형 매칭은 `variant.title`(= 옵션값 ` / ` join)로 한다.
+
+4. **영문 글로벌 크롤러도 `colorKorean`/`sizeKorean` 을 반드시 채운다.** 빌더에서 `""` 하드코딩하지 말고 후처리 음역 패스를 돌린다(색상 사전 + 사이즈 음역 + 온도 `°F→℃`). 사이즈는 영문 `name` 끝, 한글 사이즈는 `nameKorean` 끝에 부착(`One Size`/`Default Title` 은 미부착, 색상은 부착 안 함).
+
+5. **한글 모델명은 카테고리별로 KR 공식명과 대조하라 — 음역이 이미 일치하는 경우가 많다.** 니모 코리아(nemoequipment.co.kr godomall) 수집 결과 필로우·체어·백팩·테이블·파우치 6개 카테고리는 config 음역이 공식 모델명과 이미 일치했다. 침낭·매트만 공식 표기 형식이 달랐다(침낭 `리프 맨 15 EP 레귤러` = 모델+℉+EP+사이즈, 매트 `텐서 올 시즌 레귤러/와이드` = 슬래시 구분). **KR 카탈로그가 일부만 노출되면 strict verbatim 은 한 제품 안에서 표기가 섞인다**(매칭분 "15 EP" vs 미매칭분 "-9℃") → 매칭 샘플로 공식 형식을 학습해 전 변형에 일관 생성하고, 생성 결과를 KR 노출명과 대조해 일치율로 검증. (nameKorean 은 공식대로 `℉` 유지, `sizeKorean` 필드는 별도로 `℃` 변환.)
+
+6. **Shopify+Cloudflare WAF 403 은 curl 로 우회.** python `urllib` 의 TLS/헤더 지문이 403 으로 막히면(헤더 추가로 안 풀림 = JA3 지문 문제) `curl`(브라우저 UA) `subprocess` 로 위임. 429 는 지수 백오프 + 요청 간 딜레이. (`collections.json`/`products.json` API 는 curl+UA 로 통과.)
+
+7. **push 전 KR-전용 행의 `_source` 를 카테고리별로 분리.** 여러 KR 소스 파일이 같은 `_source` 문자열(예 `"한국 고시이미지"`)을 쓰면 `push.js` 가 그 source 첫 항목 카테고리로 전부 덮는다(mat+tent 혼합 → 전부 mat). push 전에 `_source = 'brand_' + category` 로 정리. (위 "Firestore push 시 _source 주의" 의 구체 사례.)

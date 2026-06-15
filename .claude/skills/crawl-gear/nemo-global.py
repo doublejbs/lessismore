@@ -87,9 +87,9 @@ def grams(s):
 
 
 def pick_weight(specs):
-    # 텐트/침낭/매트는 "Minimum Weight"(트레일 무게)를 표준으로 우선.
-    # 없으면 Packed Weight → Weight → Set Weight 순으로 폴백(스테이크/샤워/블랭킷 등).
-    for label in ("Minimum Weight", "Packed Weight", "Weight", "Set Weight"):
+    # 스킬 무게 룰: Packed Weight → Weight → Set Weight 우선.
+    # 셋 다 없을 때만 Minimum Weight(트레일 무게)로 폴백(무게 0 방지).
+    for label in ("Packed Weight", "Weight", "Set Weight", "Minimum Weight"):
         for k, v in specs.items():
             if k.strip().lower() == label.lower():
                 g = grams(v)
