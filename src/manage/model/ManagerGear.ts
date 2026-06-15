@@ -10,6 +10,9 @@ class ManagerGear {
   createDate: number;
   imageUrl: string;
   color?: string;
+  colorKorean?: string;
+  size?: string;
+  sizeKorean?: string;
   nameKorean: string;
 
   constructor({
@@ -24,6 +27,9 @@ class ManagerGear {
     createDate,
     imageUrl = '',
     color = '',
+    colorKorean = '',
+    size = '',
+    sizeKorean = '',
     nameKorean = '',
   }: {
     id: string;
@@ -37,6 +43,9 @@ class ManagerGear {
     createDate: number;
     imageUrl?: string;
     color?: string;
+    colorKorean?: string;
+    size?: string;
+    sizeKorean?: string;
     nameKorean?: string;
   }) {
     this.id = id;
@@ -50,6 +59,9 @@ class ManagerGear {
     this.createDate = createDate;
     this.imageUrl = imageUrl;
     this.color = color;
+    this.colorKorean = colorKorean;
+    this.size = size;
+    this.sizeKorean = sizeKorean;
     this.nameKorean = nameKorean;
   }
 }
