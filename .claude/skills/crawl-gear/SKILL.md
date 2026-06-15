@@ -117,6 +117,7 @@ HTML 카드 그리드에서 확인:
 | **자체 SPA** | React/Vue 빌드 | 사이트별 다름 — 일회성 DOM 덤프 필요 |
 | **SPA + POST 리스팅 API** (몽벨 케이스) | 카테고리 링크가 전부 같은 경로(예: `/products/list`)에 `?c=N` 쿼리로만 구분, 리스팅이 빈 DOM | fetch 인터셉트(`window.fetch` 래핑 후 더보기 클릭)로 XHR 찾기 → POST 엔드포인트(예: `/products/more?c=N` body `{o:offset,l:limit}`)가 **색상·사이즈·무게 포함 구조화 JSON** 반환. 브라우저 same-origin fetch에 `meta[name=csrf-token]` 얹어 호출 |
 | **한국형 PHP 쇼핑몰** (youngcart/cafe24, KR 한글명 레퍼런스용) | `list.php?ca_id=`, `item.php?it_id=`, gnuboard 흔적 | 서버렌더라 node fetch 직접 가능(봇차단 적음), 페이지네이션 `&page=N`. `<div class="model">코드</div><div class="name">한글명</div>` 패턴 |
+| **Cafe24 쇼핑몰 카테고리 페이지** (예: bozeman.kr, `/category/<name>/<번호>/`, `xans-product` 클래스) | URL에 `/category/`, HTML에 `xans-element- xans-product` | 서버렌더 → curl + User-Agent로 직접 가능. 상품 카드: `<li id="anchorBoxId_<번호>">` 안에 `strong.name > a > span` (상품명, `[브랜드명]` 접두어 포함), `img alt`에도 동일 텍스트, `ec-data-price` 속성에 가격. 페이지네이션은 `?page=N` (마지막 페이지는 `<a>` 링크가 사라짐). 특정 브랜드 전용 카테고리는 보통 그 브랜드 상품만 있지만 "브랜드명만 크롤링" 요청 시 상품명에 브랜드명 포함 여부로 한 번 더 필터링. |
 | **Cafe24 + 스펙이 이미지** (코베아 케이스) | `cafe24`, `/product/<slug>/<no>/`, 상세 스펙이 텍스트 아닌 **긴 이미지**(koveaimage CDN / `/web/upload/NNEditor`) | 리스팅·이름(og:title)·옵션은 fetch, **스펙·무게·온도·색상은 macOS Vision OCR**(타일 분할). 전체 제품은 `/sitemap.xml`. 아래 "스펙이 이미지 안에 있을 때" 참고 |
 
 ### 자주 마주치는 문제 + 해결책
@@ -336,6 +337,7 @@ etc
 - **사이즈를 영문 `name` 끝에 부착** (예: `Ascent Down Sleeping Bag Long / 15°F`). 사이즈+온도 등 비색상 옵션을 ` / `로 이어붙임.
 - **`One Size` / `Default Title` 은 사이즈 없음으로 처리** — `size`/`sizeKorean` 빈값, 이름에도 안 붙임.
 - **색상별 이미지를 각각 수집.** Shopify 컬렉션 `products.json`은 variant에 `image_id`가 없고 **`variant.featured_image.src`** 에 색상별 사진을 담는다 (개별 `product.json`은 `image_id` 사용). featured_image 우선.
+- **이미지-색상 매핑은 사후 검증 필수 (SAMAYA 세션에서 발견).** featured_image/image_id가 잘못된 색상 사진을 가리키는 경우가 다수 있다 (예: Bleu 변형인데 pink 파일명 이미지). 개별 `product.json`을 받아 `images[].variant_ids` ↔ `variants[].option1`(색상)을 직접 매칭해 `imageUrl`을 재검증·교정한다. 파일명에 `blue/pink/black` 등 색상 키워드가 있으면 1차 sanity check로 활용.
 
 **무게·스펙은 변형 인덱스가 아니라 "스펙 컬럼 헤더"로 매핑한다 (중요):**
 - 스펙 테이블 컬럼 수 < 변형 수인 경우가 흔하다 (스펙은 사이즈/온도별, 색상엔 무관). 변형 인덱스(vi)로 컬럼을 읽으면 색상 변형이 전부 어긋나 0/오값이 된다.
@@ -362,6 +364,7 @@ etc
 - 가드 예시: 침낭 `limitTemp(℃)` ↔ KR "N도", 매트 자충(SI)/에어 타입, 침낭 다운/신세틱, 텐트 TR코드, 사이즈/용량 충돌.
 - 매칭됨 → **KR 공식명 verbatim**. 공식명에 사이즈가 없으면 끝에 `sizeKorean` 부착.
 - 미매칭 → **음역 생성** (모델라인 음역 + 한글 카테고리어) + `sizeKorean`.
+- **KR 판매 페이지의 "옵션" 선택지가 소재/그레이드 변형을 드러낼 수 있다 (SAMAYA 세션).** 제목만으로는 나일론/다이니마 구분이 안 되지만 `<select>` 옵션값(예: "베스티뷸 다이니마")이 실제로는 Dyneema 버전임을 알려줌 → 그 카탈로그 항목의 `nameKorean`에 옵션명의 소재어(다이니마/나일론)를 반영해 나란히 있는 형제 변형(나일론 버전)과 구분되게 한다.
 
 ### 3. sizeKorean 규칙
 - 단어형 음역: Regular→레귤러, Long→롱, Small→스몰, Large→라지, S/M/L/XL→스몰/미디엄/라지/엑스라지, Wide→와이드, Rectangular→렉탱귤러.
