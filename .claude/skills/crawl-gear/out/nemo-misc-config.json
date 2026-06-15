@@ -1,12 +1,13 @@
 {
   "category":"etc",
-  "slugs":["tracer-sleeping-bag-liner","tracer-blaze-sleeping-bag-liner","helio-pressure-shower","helio-lx-pressure-shower","heliopolis-privacy-shelter-and-shower-tent","victory-patio-blanket-2025"],
+  "slugs":["tracer-sleeping-bag-liner","tracer-blaze-sleeping-bag-liner","helio-pressure-shower","helio-lx-pressure-shower","heliopolis-privacy-shelter-and-shower-tent","victory-patio-blanket-2025","vortex-pump-sack"],
   "korMap":{
     "tracer-sleeping-bag-liner":"트레이서",
     "tracer-blaze-sleeping-bag-liner":"트레이서 블레이즈",
     "helio-pressure-shower":"헬리오 프레셔 샤워",
     "helio-lx-pressure-shower":"헬리오 LX 프레셔 샤워",
     "heliopolis-privacy-shelter-and-shower-tent":"헬리오폴리스",
-    "victory-patio-blanket-2025":"빅토리 파티오 블랭킷"
+    "victory-patio-blanket-2025":"빅토리 파티오 블랭킷",
+    "vortex-pump-sack":"볼텍스 펌프 색"
   }
 }
