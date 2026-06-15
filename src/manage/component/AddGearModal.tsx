@@ -119,6 +119,15 @@ const AddGearModal: React.FC<AddGearModalProps> = ({ open, onClose, manager }) =
         <Form.Item name='color' label='색상' initialValue=''>
           <Input />
         </Form.Item>
+        <Form.Item name='colorKorean' label='색상(한글)' initialValue=''>
+          <Input />
+        </Form.Item>
+        <Form.Item name='size' label='사이즈' initialValue=''>
+          <Input />
+        </Form.Item>
+        <Form.Item name='sizeKorean' label='사이즈(한글)' initialValue=''>
+          <Input />
+        </Form.Item>
       </Form>
     </Modal>
   );
