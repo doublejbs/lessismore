@@ -64,7 +64,10 @@ const ALLOWED_UIDS = ['M3yk9SzrGZN3veiyd2SE6LmTrsk1', 'KkmaLpxPYLbmJKGkSTLMuMcD5
 | `category` | `string` | 1차 카테고리 (필수) |
 | `secondaryCategory` | `string?` | 2차 카테고리 (기본 `''`) |
 | `tertiaryCategory` | `string?` | 3차 카테고리 (기본 `''`) |
-| `color` | `string?` | 색상 (기본 `''`) |
+| `color` | `string?` | 색상(영문) (기본 `''`) |
+| `colorKorean` | `string?` | 색상(한글) (기본 `''`) |
+| `size` | `string?` | 사이즈(영문) (기본 `''`) |
+| `sizeKorean` | `string?` | 사이즈(한글) (기본 `''`) |
 | `imageUrl` | `string` | 대표 이미지 URL (기본 `''`) |
 | `createDate` | `number` | 등록 시각 `Date.now()` (ms) |
 
@@ -78,6 +81,15 @@ const ALLOWED_UIDS = ['M3yk9SzrGZN3veiyd2SE6LmTrsk1', 'KkmaLpxPYLbmJKGkSTLMuMcD5
 - `createDate: Date.now()`
 
 > `gear` 컬렉션은 manage 외 앱 기능(가방 구성 등)도 함께 읽는 **공유 데이터**다. 필드를 추가/삭제할 때는 다른 소비자 영향을 반드시 확인한다.
+
+### 4.3 실데이터 스키마와 manage 처리 범위
+
+`gear` 컬렉션에는 **두 종류의 쓰기 주체**가 있다.
+
+- **crawl-gear 파이프라인** ([`.claude/skills/crawl-gear/push-firestore.js`](../../.claude/skills/crawl-gear/push-firestore.js)) — 브랜드 공식몰을 크롤해 `color`/`colorKorean`, `size`/`sizeKorean`, `groupId`, `specs`(material/type/isWaterproof 등 객체)까지 풀 스키마로 기록한다.
+- **manage 화면** — 운영자가 직접 추가/편집.
+
+manage는 위 필드 중 **`colorKorean`, `size`, `sizeKorean`까지 표시·편집을 지원한다**(이 절 기준). 단, `groupId`와 `specs`는 **manage에서 표시·편집하지 않는다**(크롤 파이프라인이 관리). 인라인 편집은 `updateDoc(부분 필드)`라 manage가 모르는 `groupId`/`specs`는 **덮어쓰지 않고 보존**된다.
 
 ## 5. 데이터 소스 (이원화)
 
@@ -102,7 +114,8 @@ const ALLOWED_UIDS = ['M3yk9SzrGZN3veiyd2SE6LmTrsk1', 'KkmaLpxPYLbmJKGkSTLMuMcD5
 - antd `Table`의 실제 스크롤 컨테이너(`.ant-table-body`)에 `IntersectionObserver`를 걸어, 하단 로더 행이 보이면 `canFetchMore()`일 때 `fetchNextPage()` 호출.
 - `canFetchMore = hasMore && !loading`. 받은 개수가 100 미만이면 `hasMore = false`.
 - **정렬**: 컬럼 헤더 클릭 → `onChange` → `Manage.setSort(field, order)` → `resetList()`로 재조회. 정렬 가능 컬럼: 이름, 이름(한글), 회사, 회사(한글), 무게, 카테고리, 2·3차 카테고리, 등록일.
-- 표시 컬럼: 체크박스 / 이름 / 이름(한글) / 회사 / 회사(한글) / 이미지(썸네일) / 이미지URL / 색상 / 무게 / 카테고리 / 2차 / 3차 / 등록일 / 액션.
+- 표시 컬럼: 체크박스 / 이름 / 이름(한글) / 회사 / 회사(한글) / 이미지(썸네일) / 이미지URL / 색상 / 색상(한글) / 사이즈 / 사이즈(한글) / 무게 / 카테고리 / 2차 / 3차 / 등록일 / 액션.
+- 색상(한글)·사이즈·사이즈(한글)은 색상과 동일하게 **정렬 비대상**이다(자유 텍스트 + Firestore 인덱스 부담 회피).
 
 ### 6.2 검색 ([`SearchInput.tsx`](../../src/manage/SearchInput.tsx))
 
@@ -113,7 +126,7 @@ const ALLOWED_UIDS = ['M3yk9SzrGZN3veiyd2SE6LmTrsk1', 'KkmaLpxPYLbmJKGkSTLMuMcD5
 ### 6.3 행 인라인 편집 ([`GearRow.tsx`](../../src/manage/GearRow.tsx))
 
 - "수정" 클릭 → 해당 행이 편집 모드로 전환, 모든 셀이 입력 필드로 바뀜.
-- 편집 가능 필드: name, nameKorean, company, companyKorean, imageUrl(텍스트 + 파일 업로드), color, weight, category, secondary/tertiaryCategory.
+- 편집 가능 필드: name, nameKorean, company, companyKorean, imageUrl(텍스트 + 파일 업로드), color, colorKorean, size, sizeKorean, weight, category, secondary/tertiaryCategory.
 - "저장" → (파일이 선택된 경우) **Firebase Storage에 직접 업로드** 후 `imageUrl` 교체 → `Manage.updateGear(id, values)` 호출.
   - 파일명: `{company}_{name}_{category}_{timestamp}.{ext}` (영숫자·한글 외 문자는 `_`로 치환)
   - 업로드 경로: `gears/{fileName}` ([`FirebaseImageStorage.uploadFileToPublic`](../../src/firebase/FirebaseImageStorage.ts))
@@ -129,7 +142,7 @@ const ALLOWED_UIDS = ['M3yk9SzrGZN3veiyd2SE6LmTrsk1', 'KkmaLpxPYLbmJKGkSTLMuMcD5
 ### 6.4 장비 추가 ([`component/AddGearModal.tsx`](../../src/manage/component/AddGearModal.tsx))
 
 - "장비 추가" 버튼 → 모달.
-- 필수: 이름, 회사, 회사(한글), 카테고리. 선택: 무게(기본 0), 색상, 이미지 파일.
+- 필수: 이름, 회사, 회사(한글), 카테고리. 선택: 무게(기본 0), 색상, 색상(한글), 사이즈, 사이즈(한글), 이미지 파일.
 - 이미지 파일 선택 시 Storage `gears/`에 직접 업로드 후 그 URL로 등록.
 - 등록은 `Manage.addGear` → `ManageStore.addGear`(§4.2 필드 세팅) → `resetList()`.
 
@@ -215,5 +228,6 @@ const ALLOWED_UIDS = ['M3yk9SzrGZN3veiyd2SE6LmTrsk1', 'KkmaLpxPYLbmJKGkSTLMuMcD5
 - 업로드 경로가 3가지(Storage 직접 / Cloud Run / Cloud Functions)로 혼재한다(§7).
 - `weight`는 모델에선 `string`, 저장 시 `number`로 변환된다.
 - `SearchInput`이 디바운스 타이머를 전역(`window`)에 저장한다.
+- 크롤 파이프라인이 기록하는 `groupId`/`specs`는 **manage에서 표시·편집하지 않는다**(§4.3). 인라인 편집 시 보존되지만 운영자가 manage에서 볼 수는 없다.
 
 > 위 항목들은 "현재 이렇게 동작한다"는 사실 기록이다. 개선/리팩토링이 필요하면 별도 이슈로 분리하고, 변경 시 이 문서를 함께 갱신한다.

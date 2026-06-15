@@ -22,6 +22,9 @@ interface GearRowProps {
     createDate: number;
     imageUrl?: string;
     color?: string;
+    colorKorean?: string;
+    size?: string;
+    sizeKorean?: string;
     nameKorean?: string;
   };
   manage: Manage;
@@ -232,6 +235,45 @@ const GearRow: React.FC<GearRowProps> = ({ gear, manage }) => {
           </span>
         ) : (
           '-'
+        )}
+      </td>
+      <td>
+        {editing ? (
+          <Input
+            value={values.colorKorean || ''}
+            onChange={(e) => handleChange('colorKorean', e.target.value)}
+            size='small'
+            style={{ width: 80, fontSize: 12 }}
+            placeholder='색상(한글)'
+          />
+        ) : (
+          values.colorKorean || '-'
+        )}
+      </td>
+      <td>
+        {editing ? (
+          <Input
+            value={values.size || ''}
+            onChange={(e) => handleChange('size', e.target.value)}
+            size='small'
+            style={{ width: 80, fontSize: 12 }}
+            placeholder='사이즈'
+          />
+        ) : (
+          values.size || '-'
+        )}
+      </td>
+      <td>
+        {editing ? (
+          <Input
+            value={values.sizeKorean || ''}
+            onChange={(e) => handleChange('sizeKorean', e.target.value)}
+            size='small'
+            style={{ width: 80, fontSize: 12 }}
+            placeholder='사이즈(한글)'
+          />
+        ) : (
+          values.sizeKorean || '-'
         )}
       </td>
       <td>
