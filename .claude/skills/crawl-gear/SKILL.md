@@ -117,6 +117,8 @@ HTML 카드 그리드에서 확인:
 | **자체 SPA** | React/Vue 빌드 | 사이트별 다름 — 일회성 DOM 덤프 필요 |
 | **SPA + POST 리스팅 API** (몽벨 케이스) | 카테고리 링크가 전부 같은 경로(예: `/products/list`)에 `?c=N` 쿼리로만 구분, 리스팅이 빈 DOM | fetch 인터셉트(`window.fetch` 래핑 후 더보기 클릭)로 XHR 찾기 → POST 엔드포인트(예: `/products/more?c=N` body `{o:offset,l:limit}`)가 **색상·사이즈·무게 포함 구조화 JSON** 반환. 브라우저 same-origin fetch에 `meta[name=csrf-token]` 얹어 호출 |
 | **한국형 PHP 쇼핑몰** (youngcart/cafe24, KR 한글명 레퍼런스용) | `list.php?ca_id=`, `item.php?it_id=`, gnuboard 흔적 | 서버렌더라 node fetch 직접 가능(봇차단 적음), 페이지네이션 `&page=N`. `<div class="model">코드</div><div class="name">한글명</div>` 패턴 |
+| **Cafe24 쇼핑몰 카테고리 페이지** (예: bozeman.kr, `/category/<name>/<번호>/`, `xans-product` 클래스) | URL에 `/category/`, HTML에 `xans-element- xans-product` | 서버렌더 → curl + User-Agent로 직접 가능. 상품 카드: `<li id="anchorBoxId_<번호>">` 안에 `strong.name > a > span` (상품명, `[브랜드명]` 접두어 포함), `img alt`에도 동일 텍스트, `ec-data-price` 속성에 가격. 페이지네이션은 `?page=N` (마지막 페이지는 `<a>` 링크가 사라짐). 특정 브랜드 전용 카테고리는 보통 그 브랜드 상품만 있지만 "브랜드명만 크롤링" 요청 시 상품명에 브랜드명 포함 여부로 한 번 더 필터링. |
+| **Cafe24 + 스펙이 이미지** (코베아 케이스) | `cafe24`, `/product/<slug>/<no>/`, 상세 스펙이 텍스트 아닌 **긴 이미지**(koveaimage CDN / `/web/upload/NNEditor`) | 리스팅·이름(og:title)·옵션은 fetch, **스펙·무게·온도·색상은 macOS Vision OCR**(타일 분할). 전체 제품은 `/sitemap.xml`. 아래 "스펙이 이미지 안에 있을 때" 참고 |
 
 ### 자주 마주치는 문제 + 해결책
 
@@ -334,7 +336,8 @@ etc
 - **옵션(사이즈·색상·온도)별로 모두 개별 제품으로 수집.** Shopify면 `products.json`의 `variants` 전체를 순회해 한 변형당 한 행. (예: 4사이즈×7색상 = 28행)
 - **사이즈를 영문 `name` 끝에 부착** (예: `Ascent Down Sleeping Bag Long / 15°F`). 사이즈+온도 등 비색상 옵션을 ` / `로 이어붙임.
 - **`One Size` / `Default Title` 은 사이즈 없음으로 처리** — `size`/`sizeKorean` 빈값, 이름에도 안 붙임.
-- **변형별 이미지를 각각 수집(색상 변형뿐 아니라 사이즈 변형도).** Shopify 컬렉션 `products.json`은 variant에 `image_id`가 없고 **`variant.featured_image.src`** 에 색상별 사진을 담는다. 단 사이트에 따라 컬렉션엔 featured_image도 없을 수 있다(NEMO) → 이때는 **개별 `/products/<slug>.json`의 `variant.image_id` → `images[].id`** 로 매핑한다. 한 제품에 이미지 한 장 일괄 금지. (자세히는 아래 "니모 세션" #2.)
+- **변형별 이미지를 각각 수집(색상 변형뿐 아니라 사이즈 변형도).** Shopify 컬렉션 `products.json`은 variant에 `image_id`가 없고 **`variant.featured_image.src`** 에 색상별 사진을 담는다 (개별 `product.json`은 `image_id` 사용). 단 컬렉션에 featured_image조차 없을 수 있다(NEMO) → 개별 `/products/<slug>.json`의 **`variant.image_id` → `images[].id`** 로 매핑한다. 한 제품에 이미지 한 장 일괄 금지. (자세히는 아래 "니모 세션" #2.)
+- **이미지-색상 매핑은 사후 검증 필수 (SAMAYA 세션에서 발견).** featured_image/image_id가 잘못된 색상 사진을 가리키는 경우가 다수 있다 (예: Bleu 변형인데 pink 파일명 이미지). 개별 `product.json`을 받아 `images[].variant_ids` ↔ `variants[].option1`(색상)을 직접 매칭해 `imageUrl`을 재검증·교정한다. 파일명에 `blue/pink/black` 등 색상 키워드가 있으면 1차 sanity check로 활용.
 
 **무게·스펙은 변형 인덱스가 아니라 "스펙 컬럼 헤더"로 매핑한다 (중요):**
 - 스펙 테이블 컬럼 수 < 변형 수인 경우가 흔하다 (스펙은 사이즈/온도별, 색상엔 무관). 변형 인덱스(vi)로 컬럼을 읽으면 색상 변형이 전부 어긋나 0/오값이 된다.
@@ -361,6 +364,7 @@ etc
 - 가드 예시: 침낭 `limitTemp(℃)` ↔ KR "N도", 매트 자충(SI)/에어 타입, 침낭 다운/신세틱, 텐트 TR코드, 사이즈/용량 충돌.
 - 매칭됨 → **KR 공식명 verbatim**. 공식명에 사이즈가 없으면 끝에 `sizeKorean` 부착.
 - 미매칭 → **음역 생성** (모델라인 음역 + 한글 카테고리어) + `sizeKorean`.
+- **KR 판매 페이지의 "옵션" 선택지가 소재/그레이드 변형을 드러낼 수 있다 (SAMAYA 세션).** 제목만으로는 나일론/다이니마 구분이 안 되지만 `<select>` 옵션값(예: "베스티뷸 다이니마")이 실제로는 Dyneema 버전임을 알려줌 → 그 카탈로그 항목의 `nameKorean`에 옵션명의 소재어(다이니마/나일론)를 반영해 나란히 있는 형제 변형(나일론 버전)과 구분되게 한다.
 
 ### 3. sizeKorean 규칙
 - 단어형 음역: Regular→레귤러, Long→롱, Small→스몰, Large→라지, S/M/L/XL→스몰/미디엄/라지/엑스라지, Wide→와이드, Rectangular→렉탱귤러.
@@ -378,8 +382,9 @@ etc
 
 1. **Node 의존성** — 레포 루트에서 `npm install` (이미 `package.json` 에 `puppeteer`, `firebase-admin` 선언됨). 워크트리면 글로벌 규칙대로 메인 클론 `node_modules` 를 심링크.
    - **Node 버전 주의:** 크롤(`crawl.js`)은 최신 Node 무방하지만, **Firestore push(firebase-admin)는 Node 20 LTS 로 실행**해야 한다. Node 22+(특히 26)에선 firebase-admin 의 전이 의존성이 제거된 `SlowBuffer` 를 참조해 크래시한다. 푸시만 `node@20` 바이너리로: `/opt/homebrew/opt/node@20/bin/node server.js`.
-2. **Pillow (선택)** — `nemo-specs.py` / `nemo-findtable.py`(한국 고시 이미지 크롭) 사용 시에만. `python3 -m pip install Pillow`. 글로벌 사이트 스크래퍼(`*-global.py`)는 표준 라이브러리만 쓰므로 불필요.
-3. **serviceAccountKey.json** — Firestore push 시점에만 (아래). 머신마다 수동 추가.
+2. **Pillow (선택)** — `nemo-specs.py` / `nemo-findtable.py`(한국 고시 이미지 크롭), 코베아 OCR 스크립트의 이미지 타일링에 사용. `python3 -m pip install Pillow`. 글로벌 사이트 스크래퍼(`*-global.py`)는 표준 라이브러리만 쓰므로 불필요.
+3. **pyobjc (선택)** — 스펙이 이미지 안에 있는 사이트(코베아 등) OCR 시에만. `python3 -m pip install pyobjc-framework-Vision pyobjc-framework-Quartz`. macOS Vision 한국어 OCR(`ocr.py`, `kovea-*.py`)에 필요. (swift 직접 컴파일은 베타 SDK 충돌로 실패할 수 있음 → pyobjc 사용)
+4. **serviceAccountKey.json** — Firestore push 시점에만 (아래). 머신마다 수동 추가.
 
 `.config.local.json`(adminUid) 은 gitignore 라 동기화 안 되지만, serviceAccountKey 만 있으면 첫 실행 시 Firestore 에서 자동 감지·저장된다.
 
@@ -448,3 +453,30 @@ S2S처럼 KR 수입사 상세에 **영문 모델명**이 있으면 영문-토큰
 6. **Shopify+Cloudflare WAF 403 은 curl 로 우회.** python `urllib` 의 TLS/헤더 지문이 403 으로 막히면(헤더 추가로 안 풀림 = JA3 지문 문제) `curl`(브라우저 UA) `subprocess` 로 위임. 429 는 지수 백오프 + 요청 간 딜레이. (`collections.json`/`products.json` API 는 curl+UA 로 통과.)
 
 7. **push 전 KR-전용 행의 `_source` 를 카테고리별로 분리.** 여러 KR 소스 파일이 같은 `_source` 문자열(예 `"한국 고시이미지"`)을 쓰면 `push.js` 가 그 source 첫 항목 카테고리로 전부 덮는다(mat+tent 혼합 → 전부 mat). push 전에 `_source = 'brand_' + category` 로 정리. (위 "Firestore push 시 _source 주의" 의 구체 사례.)
+### 스펙이 이미지 안에 있을 때 — macOS Vision OCR (코베아 세션에서 확립)
+
+국내 브랜드(코베아 등)는 무게·크기·재질이 **본문 텍스트가 아니라 긴 상세 이미지** 안에 있다. 한국 표준 "상품 정보 제공 고시" 표(크기/중량/재질/수용인원/내수압)가 이미지 하단에, 일부는 영문 "Specification" 표가 들어있다. 도구·스크립트: `ocr.py`(범용 Vision OCR), `kovea-specs.py`(고시/Spec 파싱), `kovea-fixweight.py`(위치기반 무게/내하중), `kovea-sleeptemp.py`(침낭 온도), `kovea-imgcolor.py`(이미지 색상항목), `kovea-options.py`(옵션 변형), `kovea-sitemap-add.js`(사이트맵 전체 제품).
+
+**OCR (`ocr.py`):**
+- pyobjc로 macOS Vision 사용 (`pip install pyobjc-framework-Vision pyobjc-framework-Quartz`). swift는 베타 SDK 충돌로 막힐 수 있어 pyobjc가 안전.
+- **한국어(ko-KR)는 이 머신에서 fast 레벨(0)에서만 지원** — accurate(1)는 라틴 전용. `setRevision_(3)` + `setRecognitionLevel_(0)`.
+- **긴 이미지(900×20000px 등)는 Vision이 다운샘플해 글자가 깨진다 → 반드시 ~1500px 타일로 잘라 OCR.** 직접 통짜 OCR 금지.
+- 바운딩박스(x,y)를 주므로 **라벨↔값을 같은 행(y)으로 정렬** 가능 — 세로 컬럼 레이아웃(라벨열/값열 분리: `규격/중량/내하중` → `…/1.45kg/120kg`)에서 필수. 텍스트만으로 파싱하면 중량 옆에 온 내하중 값을 무게로 오인한다.
+
+**무게/스펙 파싱 함정 (실제 겪음):**
+- 셀 "중량 : 970 / 내하중 : 30kg" → 단위 없는 970(=970g)을 건너뛰고 30kg(내하중)을 무게로 잡음. **라벨별로 sub-값을 분리**하고, 단위 없는 숫자는 `<50 ⇒ kg, 그외 ⇒ g`로 추정.
+- 고시 표는 **마지막 상세 이미지 하단**에 있는 경우가 대부분이나 부속 이미지가 뒤에 붙으면 끝에서 2~3번째에 있다 → 마지막 3장 스캔.
+- 침낭 온도는 하단 고시가 아니라 **이미지 중간**에 ISO 23537 표("Comfort 15°C~0°C / Lower Limit") 또는 3단계 "N°C / °F"(쾌적/숙면/극한)로 있다. **세탁 온도(물 30°C)는 `/°F` 페어 조건으로 제외**.
+
+**색상 — 3소스 결합:**
+1. 이름의 **`[그레이]` 대괄호** 또는 `(블루)` 소괄호 (색상 키워드일 때만; 메쉬/하드탑/M 등 변형어는 제외)
+2. 이미지 **"색상" 항목** OCR (단일 색상만 채택, "Moss / Black"처럼 복수 선택지는 비움). 영문→한글 변환(Sand→샌드).
+3. **Cafe24 옵션 셀렉트** → 옵션마다 개별 제품 행(같은 groupId, 색상/사이즈 다름). **색상·사이즈 옵션만 확장** — "기타" 옵션(폴 길이·모델호환)까지 cartesian 하면 수천 행 폭발. `[A/S SHOP]` 스페어부품은 제외.
+
+**완전 수집 — 사이트맵:** 카테고리 리스팅은 품절·단종을 누락한다. `/sitemap.xml`이 전체 제품(품절 포함)을 담으므로 마스터로 쓰고, 사이트맵엔 카테고리가 없으니 **제품명 키워드로 분류**(국내 브랜드는 이름에 종류 명시). 단 브레드크럼은 유입경로(리퍼존/기획전)라 카테고리로 못 씀.
+
+**데이터 미존재 구분:** 무게 0이 추출 버그인지 데이터 부재인지 — 표본 OCR로 이미지에 중량 표기가 아예 없으면 사이트에 데이터가 없는 것(액세서리·신상 다수). 어댑터로 해결 불가.
+
+### Firestore push 시 _source 주의 (코베아/몽벨 공통)
+
+`push.js`는 비대화형에서 **`_source`별로 카테고리를 일괄 적용**한다(그 source 첫 항목의 category). 한 source에 여러 카테고리가 섞이면(예: 몽벨 c=34=침낭+매트, 코베아 sitemap source) 전부 한 카테고리로 덮인다 → **push 전에 `_source = 'brand_' + category`로 정리**해 source-카테고리를 1:1로 맞춘다. push는 `node@20 push.js <json>` (firebase-admin은 Node 20 필요).

@@ -22,6 +22,9 @@ interface RowType {
   createDate: number;
   imageUrl?: string;
   color?: string;
+  colorKorean?: string;
+  size?: string;
+  sizeKorean?: string;
   nameKorean?: string;
 }
 
@@ -151,7 +154,7 @@ const ManageView = () => {
         if (rowKey === 'loader') {
           return (
             <tr>
-              <td colSpan={11} style={{ textAlign: 'center', padding: 16 }}>
+              <td colSpan={17} style={{ textAlign: 'center', padding: 16 }}>
                 <div ref={loaderRef}>
                   <Spin />
                 </div>
@@ -303,6 +306,27 @@ const ManageView = () => {
         ) : (
           '-'
         ),
+    },
+    {
+      title: '색상(한글)',
+      dataIndex: 'colorKorean',
+      key: 'colorKorean',
+      width: 100,
+      render: (text: string) => <div style={{ wordBreak: 'break-all' }}>{text || '-'}</div>,
+    },
+    {
+      title: '사이즈',
+      dataIndex: 'size',
+      key: 'size',
+      width: 100,
+      render: (text: string) => <div style={{ wordBreak: 'break-all' }}>{text || '-'}</div>,
+    },
+    {
+      title: '사이즈(한글)',
+      dataIndex: 'sizeKorean',
+      key: 'sizeKorean',
+      width: 100,
+      render: (text: string) => <div style={{ wordBreak: 'break-all' }}>{text || '-'}</div>,
     },
     {
       title: '무게',
