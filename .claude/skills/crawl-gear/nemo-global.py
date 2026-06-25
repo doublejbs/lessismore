@@ -6,17 +6,34 @@
 import html
 import json
 import re
+import subprocess
 import sys
-import urllib.request
+import time
 
-UA = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 Chrome/120.0.0.0 Safari/537.36"
+UA = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
 BASE = "https://www.nemoequipment.com"
 
 
 def fetch(url):
-    req = urllib.request.Request(url, headers={"User-Agent": UA})
-    with urllib.request.urlopen(req, timeout=40) as r:
-        return r.read().decode("utf-8", "replace")
+    # Shopify/Cloudflare WAF 가 urllib 의 TLS/헤더 지문을 403 으로 차단한다.
+    # curl(브라우저 UA)로 받으면 통과 → subprocess 로 위임.
+    # 429(rate limit) 는 지수 백오프로 재시도. 매 요청 사이 짧은 딜레이.
+    time.sleep(0.8)
+    last = ""
+    for attempt in range(5):
+        out = subprocess.run(
+            ["curl", "-sS", "-f", "-A", UA, "-H", "Accept-Language: en-US,en;q=0.9", url],
+            capture_output=True,
+            timeout=60,
+        )
+        if out.returncode == 0:
+            return out.stdout.decode("utf-8", "replace")
+        last = out.stderr.decode("utf-8", "replace")[:200]
+        if "429" in last:
+            time.sleep(3 * (attempt + 1))
+            continue
+        break
+    raise RuntimeError(last or "curl failed")
 
 
 def strip(s):
@@ -66,6 +83,18 @@ def grams(s):
     m = re.search(r"([\d.]+)\s*oz", s)
     if m:
         return round(float(m.group(1)) * 28.35)
+    return 0
+
+
+def pick_weight(specs):
+    # 스킬 무게 룰: Packed Weight → Weight → Set Weight 우선.
+    # 셋 다 없을 때만 Minimum Weight(트레일 무게)로 폴백(무게 0 방지).
+    for label in ("Packed Weight", "Weight", "Set Weight", "Minimum Weight"):
+        for k, v in specs.items():
+            if k.strip().lower() == label.lower():
+                g = grams(v)
+                if g:
+                    return g
     return 0
 
 
@@ -132,7 +161,7 @@ def build_mat(slug, title, img, variants, kor, ptype):
             "colorKorean": "",
             "size": v["variant"],
             "sizeKorean": "",
-            "weight": grams(s.get("Minimum Weight", "")),
+            "weight": pick_weight(s),
             "imageUrl": img,
             "specs": sp,
             "_source": BASE + "/products/" + slug,
@@ -193,7 +222,7 @@ def build_tent(slug, title, img, variants, kor, cat):
             "vestibuleArea": s.get("Vestibule Area", ""),
         }
         rows.append(make_row(slug, title, img, v["variant"], s.get("Color", ""),
-                             grams(s.get("Minimum Weight", "")), cat, kor, sp))
+                             pick_weight(s), cat, kor, sp))
     return rows
 
 
@@ -224,7 +253,7 @@ def build_bag(slug, title, img, variants, kor, cat):
             "zipperSide": zk,
         }
         rows.append(make_row(slug, title, img, v["variant"], s.get("Color", ""),
-                             grams(s.get("Minimum Weight", "")), cat, kor, sp))
+                             pick_weight(s), cat, kor, sp))
     return rows
 
 
@@ -256,7 +285,7 @@ def build_furniture(slug, title, img, variants, kor, cat):
                 "packedSize": s.get("Packed Size", ""),
             }
         rows.append(make_row(slug, title, img, v["variant"], s.get("Color", ""),
-                             grams(s.get("Minimum Weight", "")), cat, kor, sp))
+                             pick_weight(s), cat, kor, sp))
     return rows
 
 
@@ -296,7 +325,7 @@ def build_pack(slug, title, img, variants, kor, cat):
                 "capacity": vol,
             }
         rows.append(make_row(slug, title, img, v["variant"], s.get("Color", ""),
-                             grams(s.get("Minimum Weight", "")), cat, kor, sp))
+                             pick_weight(s), cat, kor, sp))
     return rows
 
 
@@ -310,7 +339,7 @@ def build_simple(slug, title, img, variants, kor, cat):
             "size": s.get("Dimensions", "") or s.get("Packed Size", ""),
         }
         rows.append(make_row(slug, title, img, v["variant"], s.get("Color", ""),
-                             grams(s.get("Minimum Weight", "")), cat, kor, sp))
+                             pick_weight(s), cat, kor, sp))
     return rows
 
 
@@ -341,14 +370,14 @@ def main():
             rows += build_furniture(slug, title, img, variants, kor, c)
         elif c in ("backpack", "pouch", "backpack_cover"):
             rows += build_pack(slug, title, img, variants, kor, c)
-        elif c in ("pillow", "towel", "etc"):
+        elif c in ("pillow", "towel", "etc", "tent_acc"):
             rows += build_simple(slug, title, img, variants, kor, c)
         else:
             # 폴백: 무게+색상만
             for v in variants:
                 s = v["specs"]
                 rows.append(make_row(slug, title, img, v["variant"], s.get("Color", ""),
-                                     grams(s.get("Minimum Weight", "")), c, kor, {}))
+                                     pick_weight(s), c, kor, {}))
     json.dump(rows, open(out_path, "w"), ensure_ascii=False, indent=2)
     print(f"\n{len(rows)} rows -> {out_path}")
 
