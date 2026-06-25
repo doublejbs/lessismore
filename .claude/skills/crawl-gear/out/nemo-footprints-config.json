@@ -1,0 +1,27 @@
+{
+  "category": "tent_acc",
+  "slugs": [
+    "hornet-footprint",
+    "dagger-osmo-footprint",
+    "dragonfly-footprint",
+    "dragonfly-bikepack-footprint",
+    "tracker-osmo-footprint",
+    "mayfly-osmo-backpacking-footprint",
+    "kunai-footprint",
+    "aurora-highrise-footprint",
+    "airpin-ultralight-tent-stakes",
+    "sweepstake-tent-stake"
+  ],
+  "korMap": {
+    "hornet-footprint": "호넷 풋프린트",
+    "dagger-osmo-footprint": "다이거 오스모 풋프린트",
+    "dragonfly-footprint": "드라곤플라이 풋프린트",
+    "dragonfly-bikepack-footprint": "드라곤플라이 바이크팩 풋프린트",
+    "tracker-osmo-footprint": "트래커 오스모 풋프린트",
+    "mayfly-osmo-backpacking-footprint": "메이플라이 오스모 풋프린트",
+    "kunai-footprint": "쿠나이 풋프린트",
+    "aurora-highrise-footprint": "오로라 하이라이즈 풋프린트",
+    "airpin-ultralight-tent-stakes": "에어핀 울트라라이트 텐트 스테이크",
+    "sweepstake-tent-stake": "스윕스테이크 텐트 스테이크"
+  }
+}
