@@ -81,15 +81,19 @@ const findExisting = async (gear) => {
     const legacy = await c
       .where('name', '==', gear.nameKorean)
       .where('company', '==', gear.company)
+      .where('color', '==', gear.color ?? '')
       .limit(1)
       .get();
     if (!legacy.empty) return legacy.docs[0];
   }
 
   if (gear.name) {
+    // color 를 포함해야 한다. name 에 색상을 넣지 않는 스킬 룰상, 색상만 다른 변형들이
+    // name+company 로만 매칭하면 같은 doc 으로 덮어써져 변형이 합쳐진다(데이터 손실).
     const snap = await c
       .where('name', '==', gear.name)
       .where('company', '==', gear.company)
+      .where('color', '==', gear.color ?? '')
       .limit(1)
       .get();
     if (!snap.empty) return snap.docs[0];
