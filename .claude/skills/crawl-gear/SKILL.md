@@ -453,6 +453,17 @@ S2S처럼 KR 수입사 상세에 **영문 모델명**이 있으면 영문-토큰
 6. **Shopify+Cloudflare WAF 403 은 curl 로 우회.** python `urllib` 의 TLS/헤더 지문이 403 으로 막히면(헤더 추가로 안 풀림 = JA3 지문 문제) `curl`(브라우저 UA) `subprocess` 로 위임. 429 는 지수 백오프 + 요청 간 딜레이. (`collections.json`/`products.json` API 는 curl+UA 로 통과.)
 
 7. **push 전 KR-전용 행의 `_source` 를 카테고리별로 분리.** 여러 KR 소스 파일이 같은 `_source` 문자열(예 `"한국 고시이미지"`)을 쓰면 `push.js` 가 그 source 첫 항목 카테고리로 전부 덮는다(mat+tent 혼합 → 전부 mat). push 전에 `_source = 'brand_' + category` 로 정리. (위 "Firestore push 시 _source 주의" 의 구체 사례.)
+
+### 지팩스(Zpacks) 세션에서 확립한 룰 (일반화)
+
+참고 구현: `zpacks.py`(Shopify products.json + 백팩 HTML data-weight), `sites/zpacks.js`(미리보기 스텁).
+
+1. **push 후 색상 변형이 합쳐지면(문서 수 < 행 수) `findExisting` 의 `name+company` 매치가 color 를 무시한 것.** 색상은 `name` 에 안 넣는 룰(스킬) 때문에, 색상만 다른 변형들이 `name+company` 로만 매칭돼 같은 doc 으로 덮어써진다(데이터 손실). **`push-firestore.js` 의 `name` 매치(및 legacy `name==nameKorean` 매치)에 `color` 를 포함**해야 한다. (Zpacks 1496행 → 첫 push 815문서로 합쳐짐 → color 추가 후 1496문서. push 후 `company` 필터로 문서 수를 행 수와 대조해 검증할 것.)
+2. **Shopify `grams` 가 항상 배송무게는 아니다 — 사이트별로 검증하라.** Zpacks 는 `grams` 가 상세 페이지 표시 무게와 정확히 일치(실제 무게). 표본 1~2개의 `grams` ↔ 상세 `data-weight`/스펙표를 대조해 일치하면 `grams` 사용 가능, 어긋나면 스펙표 값 사용.
+3. **변형별 무게가 products.json 에 0 인 카테고리(백팩 등)는 상세 HTML 의 `data-...` 속성에서 가져온다.** Zpacks 백팩은 `grams=0` 이고, 상세 페이지에 변형 컨테이너마다 `data-option1/2/3` + `data-weight="X oz / Y g"` + `data-image` 가 있다 → option 값으로 매칭해 변형별 g·이미지 추출. (단 같은 페이지에 부속/add-on 의 작은 `data-weight`(3g·38g 등)가 섞여 오매칭될 수 있으니, `grams` 가 있는 카테고리는 `grams` 우선.)
+4. **fit 옵션(허리 벨트 길이 등 무게 영향 미미한 축)은 전개하지 않고 접는다.** 백팩은 색상×토르소×스트랩만 전개하고 벨트 길이는 대표 1개로 접어 행 폭발 방지(색상×토르소×스트랩×벨트 2454행 → 618행). `(groupId, color, size)` dedup 으로 접는다.
+5. **결합 옵션값 분해.** `"Color | Torso"` 옵션명은 ` | ` 로, `"Blue w/ Lite Floor"` 값은 ` w/ ` 로 쪼개 색상/사이즈(구성)로 분리한다.
+
 ### 스펙이 이미지 안에 있을 때 — macOS Vision OCR (코베아 세션에서 확립)
 
 국내 브랜드(코베아 등)는 무게·크기·재질이 **본문 텍스트가 아니라 긴 상세 이미지** 안에 있다. 한국 표준 "상품 정보 제공 고시" 표(크기/중량/재질/수용인원/내수압)가 이미지 하단에, 일부는 영문 "Specification" 표가 들어있다. 도구·스크립트: `ocr.py`(범용 Vision OCR), `kovea-specs.py`(고시/Spec 파싱), `kovea-fixweight.py`(위치기반 무게/내하중), `kovea-sleeptemp.py`(침낭 온도), `kovea-imgcolor.py`(이미지 색상항목), `kovea-options.py`(옵션 변형), `kovea-sitemap-add.js`(사이트맵 전체 제품).
