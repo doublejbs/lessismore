@@ -2,7 +2,7 @@
 
 - **공식**: https://www.samaya-equipment.com  (Shopify, 프랑스 경량 산악)
 - 크롤러: `samaya-global.py`(curl + 메타필드 파싱)
-- 마지막 크롤: 2026-06
+- 마지막 크롤: 2026-06, 67행
 
 ## ⚠️ 주의사항
 1. 스펙은 제품 페이지 **metafield-rich_text_field 블록(프랑스어)** 에 서버렌더 → curl 로 파싱.

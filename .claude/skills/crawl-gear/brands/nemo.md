@@ -13,3 +13,6 @@
 4. **Shopify+Cloudflare WAF 403** → python urllib 막힘 → curl(브라우저 UA) 로 우회 + 429 백오프.
 5. 한국 한정 제품(조르/오라 NX 매트, 타니/아톰 텐트)은 글로벌에 없음 → 한국 상세 이미지 OCR 별도 수집.
 6. 침낭/매트 한글명은 니모 코리아 공식 표기 형식(℉+EP 등)으로. 색상/사이즈 음역, ℉→℃ 변환.
+7. **push 전 KR-전용 행의 `_source` 를 `nemo_<category>` 로 분리.** 여러 KR 소스가 같은 `_source`
+   문자열을 쓰면 `push.js` 가 그 source 첫 항목 카테고리로 전부 덮어씀(mat+tent 혼합 → 전부 mat).
+   글로벌 크롤은 firebase-admin 때문에 **Node 20**(`/opt/homebrew/opt/node@20/bin/node`)으로 push.
