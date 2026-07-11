@@ -264,6 +264,7 @@ import('puppeteer').then(async ({default: p}) => {
 - [ ] 같은 제품의 다른 색상이 같은 `groupId`인가?
 - [ ] spec 필드가 schema 키와 일치하는가? (오타 없음)
 - [ ] empty 값이 `""` (null/undefined 아님)?
+- [ ] **`color`(영문)에 한글이 없는가? `colorKorean`(한글)에 영문이 없는가?** (KR 사이트가 색상을 한글로만 표기하면 색상 사전으로 `color`를 영문 변환할 것 — `color`에 한글이 들어가면 안 됨. `name`/`sizeKorean`도 동일: `name`·`size`=영문, `nameKorean`·`sizeKorean`=한글.)
 
 ### 어댑터 코드 컨벤션
 
