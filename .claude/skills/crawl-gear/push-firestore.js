@@ -125,6 +125,7 @@ export const upsertGear = async (gear) => {
     imageUrl,
     category: gear.category,
     groupId: gear.groupId ?? '',
+    productUrl: gear.productUrl ?? '',
   };
 
   if (existing) {
