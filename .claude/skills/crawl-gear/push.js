@@ -80,6 +80,7 @@ const finalGears = gears.map((g) => ({
   imageUrl: g.imageUrl ?? '',
   category: categoryOverrides[g._source ?? '(no source)'] ?? g.category ?? 'etc',
   groupId: g.groupId ?? '',
+  productUrl: g._source ?? '',
   specs: g.specs ?? {},
 }));
 
