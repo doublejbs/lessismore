@@ -80,7 +80,8 @@ const finalGears = gears.map((g) => ({
   imageUrl: g.imageUrl ?? '',
   category: categoryOverrides[g._source ?? '(no source)'] ?? g.category ?? 'etc',
   groupId: g.groupId ?? '',
-  productUrl: g._source ?? '',
+  // _detailUrl(실제 상품 상세페이지) 우선, 없는 옛 어댑터는 _source로 폴백.
+  productUrl: g._detailUrl ?? g._source ?? '',
   specs: g.specs ?? {},
 }));
 
