@@ -7,8 +7,9 @@
 ## ⚠️ 주의사항
 1. **범위 = 핵심기어 + 지팩스 정품 액세서리.** 제외: bargain(할인중복)·resale(타브랜드 Toaks/Evernew 등)·
    materials(원료)·dummy·add-on·교체부품/스트랩.
-2. **무게는 `grams`**(상세 표시무게와 일치 검증됨). 단 **백팩은 grams=0** → 상세 HTML 의
-   `data-option1/2/3` + `data-weight="X oz / Y g"` 블록에서 추출.
+2. **무게는 `grams`**(상세 표시무게와 일치 검증됨 — 표본 대조 후 사용). 단 **백팩은 grams=0** → 상세 HTML 의
+   변형 컨테이너마다 `data-option1/2/3` + `data-weight="X oz / Y g"` + `data-image` 로 추출.
+   ⚠️ 같은 페이지 부속/add-on 의 작은 `data-weight`(3g·38g)가 섞여 오매칭될 수 있음 → grams 있는 카테고리는 grams 우선.
 3. **백팩 변형 폭발 주의**: 색상×토르소×스트랩×벨트 = 수백 개. **벨트 길이는 접기**(무게 ~10g 차이).
    → 색상×토르소×스트랩만 전개.
 4. **한글명은 음역**(공식 한국명 없음). EPX/DCF 등 소재코드는 유지.

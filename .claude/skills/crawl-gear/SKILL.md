@@ -147,6 +147,7 @@ if (!resp || resp.status() >= 400) {
   await page.setContent(await r.text());
 }
 ```
+- **Shopify+Cloudflare WAF 403 은 `curl` 로 우회.** python `urllib` 의 TLS/헤더 지문이 막히면(헤더 추가로 안 풀림 = JA3 지문 문제) `curl`(브라우저 UA) `subprocess` 로 위임한다. 429 는 지수 백오프 + 요청 간 딜레이. (`collections.json`/`products.json` API 도 curl+UA 로 통과.)
 
 #### 2. SPA + 동적 로딩
 - **증상**: `document.querySelectorAll('...').length === 0` (DOM 비어있음)
@@ -265,6 +266,9 @@ import('puppeteer').then(async ({default: p}) => {
 - [ ] spec 필드가 schema 키와 일치하는가? (오타 없음)
 - [ ] empty 값이 `""` (null/undefined 아님)?
 - [ ] **`color`(영문)에 한글이 없는가? `colorKorean`(한글)에 영문이 없는가?** (KR 사이트가 색상을 한글로만 표기하면 색상 사전으로 `color`를 영문 변환할 것 — `color`에 한글이 들어가면 안 됨. `name`/`sizeKorean`도 동일: `name`·`size`=영문, `nameKorean`·`sizeKorean`=한글.)
+- [ ] **`imageUrl` 이 전부 빈값은 아닌가?** 이미지 셀렉터는 사이트마다 다르다 — `og:image` → `data-large_image`(WooCommerce 갤러리) → `wp-post-image` 순 폴백. WM 은 og:image 가 없고, MSR 은 있다. **크롤 후 `imageUrl` 채움률을 반드시 확인**(MSR 은 초기에 전부 빈값이었음).
+- [ ] **상세 텍스트 파싱 전 `html.unescape` 했는가?** `&#8211;`(en-dash)·`&amp;` 를 안 풀면 `중량: R &#8211; 680g` 같은 사이즈별 값이 정규식에 안 맞아 전멸한다(MSR 매트 무게). 태그 제거(`<[^>]+>`)만으로는 부족 — 엔티티는 `html.unescape` 로.
+- [ ] **멀티브랜드 몰이면 `company`/`companyKorean`을 브랜드별로 분리했는가?** 한 사이트가 여러 브랜드를 팔면(MSR 몰 = MSR+써마레스트+플래티퍼스+팩타월) 카테고리·이름으로 브랜드를 판별해 회사를 나누고 **`groupId` 접두도 회사명**으로 맞춘다(전부 한 브랜드로 넣지 말 것).
 
 ### 어댑터 코드 컨벤션
 
@@ -351,8 +355,11 @@ etc
 - **옵션(사이즈·색상·온도)별로 모두 개별 제품으로 수집.** Shopify면 `products.json`의 `variants` 전체를 순회해 한 변형당 한 행. (예: 4사이즈×7색상 = 28행)
 - **사이즈를 영문 `name` 끝에 부착** (예: `Ascent Down Sleeping Bag Long / 15°F`). 사이즈+온도 등 비색상 옵션을 ` / `로 이어붙임.
 - **`One Size` / `Default Title` 은 사이즈 없음으로 처리** — `size`/`sizeKorean` 빈값, 이름에도 안 붙임.
-- **변형별 이미지를 각각 수집(색상 변형뿐 아니라 사이즈 변형도).** Shopify 컬렉션 `products.json`은 variant에 `image_id`가 없고 **`variant.featured_image.src`** 에 색상별 사진을 담는다 (개별 `product.json`은 `image_id` 사용). 단 컬렉션에 featured_image조차 없을 수 있다(NEMO) → 개별 `/products/<slug>.json`의 **`variant.image_id` → `images[].id`** 로 매핑한다. 한 제품에 이미지 한 장 일괄 금지. (자세히는 아래 "니모 세션" #2.)
+- **변형별 이미지를 각각 수집(색상 변형뿐 아니라 사이즈 변형도).** Shopify 컬렉션 `products.json`은 variant에 `image_id`가 없고 **`variant.featured_image.src`** 에 색상별 사진을 담는다 (개별 `product.json`은 `image_id` 사용). 단 컬렉션에 featured_image조차 없을 수 있다(NEMO) → 개별 `/products/<slug>.json`의 **`variant.image_id` → `images[].id`** 로 매핑한다. 한 제품에 이미지 한 장 일괄 금지. (자세히는 `brands/nemo.md`.)
 - **이미지-색상 매핑은 사후 검증 필수 (SAMAYA 세션에서 발견).** featured_image/image_id가 잘못된 색상 사진을 가리키는 경우가 다수 있다 (예: Bleu 변형인데 pink 파일명 이미지). 개별 `product.json`을 받아 `images[].variant_ids` ↔ `variants[].option1`(색상)을 직접 매칭해 `imageUrl`을 재검증·교정한다. 파일명에 `blue/pink/black` 등 색상 키워드가 있으면 1차 sanity check로 활용.
+- **옵션축을 판별해 색상↔사이즈를 구분한다.** 스펙/옵션 컬럼을 무조건 `size` 로 넣으면, 옵션축이 색상 하나뿐인 제품(체어·베개·더플·일부 백팩)에서 **색상이 size 로 누출**된다. `options[].name`(`Color` → color, `Size`/`Capacity`/`Temperature`/`Length` → size) 또는 값 형태로 축을 판별한다.
+- **무게에 영향 미미한 fit 옵션(허리 벨트 길이 등)은 전개하지 않고 접는다.** 색상×사이즈만 전개하고 그런 축은 대표 1개로 접어 행 폭발을 막는다(예: 색상×토르소×스트랩×벨트 2454행 → 618행). `(groupId, color, size)` dedup 으로 접는다.
+- **🔴 사이즈/옵션 토큰 정규식은 긴 것부터 나열한다.** Python `re` 의 교대(`|`)는 *최장이 아니라 먼저 나온 대안* 을 택한다 — `(?:M|MW)` 는 `"MW"` 에서 `M` 만 잡아 `findall("MW LW LXW")` 가 `['M','W',…]` 로 쪼개진다(사이즈-무게 매핑 전멸). 복합/긴 토큰(`LXW|MW|LW|SW|XL`)을 단일(`S|M|L|W`)보다 **앞에** 둘 것. `^(?:M|MW)` 앵커드 매치도 동일. 대소문자 변형(`UNO` vs `Uno`)은 각각 등재/정규화.
 
 **무게·스펙은 변형 인덱스가 아니라 "스펙 컬럼 헤더"로 매핑한다 (중요):**
 - 스펙 테이블 컬럼 수 < 변형 수인 경우가 흔하다 (스펙은 사이즈/온도별, 색상엔 무관). 변형 인덱스(vi)로 컬럼을 읽으면 색상 변형이 전부 어긋나 0/오값이 된다.
@@ -435,53 +442,7 @@ Firebase Console → 프로젝트 설정 → 서비스 계정 → "새 비공개
 - **네이버 스마트스토어 등 강차단 쇼핑몰** → 서버 fetch는 429, Claude in Chrome도 쇼핑몰 안전제한으로 차단되어 현재 도구로 크롤 불가. 공식 브랜드 사이트를 우선 타깃으로
 - HTML 미리보기만 다시 만들려면 크롤 없이 `node crawl.js <brand> --from-json=<json> --no-open` (서버 spawn이 죽어도 HTML/JSON은 이미 생성됨)
 
-### 몽벨 세션에서 확립한 룰 (일반화)
-
-- **리스팅 JSON의 정렬/배송용 무게 필드를 믿지 말 것.** Shopify `grams`, 몽벨 `sorting_weight` 같은 필드는 실제 스펙 무게와 다를 수 있다(예: Stellaridge Tent 3 Rain Fly — `sorting_weight` 420 vs 스펙 Weight 470g). **무게는 상세 스펙 테이블의 표시값**(Weight → Total/Packed Weight → Set Weight 우선순위)에서 파싱하고, 없을 때만 리스팅 필드로 폴백. kg→g 변환만 하고 측정값 반올림은 금지.
-- **스펙 셀에 규제 고지문이 구분자 없이 붙는다.** 예: 소재 셀 끝에 `...(urethane coating)This product contains PFAS and cannot be shipped to some jurisdictions.` → 마커("This product contains PFAS")부터 문자열 끝까지 제거. **주의**: `value.slice(0, N)`로 먼저 잘리면 고지문이 중간에 끊겨(`...cannot be shipped to`) 전체-문장 정규식이 안 맞는다 → 슬라이스 **전에** 제거하거나 `/마커[\s\S]*$/` 로 마커 이후 전체 제거. `(PFAS-free ...)` 같은 정상 소재 표기는 보존.
-- **변형이 색상→사이즈 2단 중첩**인 리스팅 JSON이 흔하다(`colors{ CODE: { sizes{ ... } } }`). 두 단계를 모두 순회해 (색상×사이즈) 행 생성. 색상별 이미지 코드가 이미지 URL에 박히는 경우가 많다(`{productCode}_{colorCode}.webp`).
-
-### 한글화 — KR 레퍼런스 사이트에 영문/코드가 전혀 없을 때 (몽벨 변형)
-
-S2S처럼 KR 수입사 상세에 **영문 모델명**이 있으면 영문-토큰 매칭이 쉽지만, montbell.co.kr 처럼 **한글명만 있고 글로벌 코드·영문이 전무**한 경우가 있다. 이때 매칭 브리지:
-
-1. **KR 레퍼런스 수집** (`kr-reference-montbell.js`): 한국형 PHP 몰 전 카테고리 순회 → `(it_id, 한글명)`. 한글명은 보통 `모델 + 남/여 + 말미 영문색상` 형태.
-2. **US 영문명 → 음역** (EN→KO 사전): 구조어(Down→다운, Jacket→자켓 …)+모델어(Stellaridge→스텔라릿지 …). 사전은 KR 레퍼런스의 실제 한글 표기를 정답으로 삼아 구축.
-3. **매칭** (`kr-apply-montbell.js`): 음역결과 ↔ KR 한글명을 **숫자집합 완전일치 + 성별 일치 + bigram Dice ≥ 0.85(근접 길이 우선)** 로 매칭. 매칭되면 KR 공식명 verbatim, 아니면 음역 폴백.
-   - **반드시 가드**: ① 성별(Men's↔남 / Women's↔여) — 없으면 여성 제품에 남성 이름이 박힘. ② KR 시장 프리픽스(`US`/`PS`/`WIC`/`SIC`)·말미 영문색상 제거. ③ 숫자집합은 *정확히* 일치(부분집합 X) — `30L`↔`30L 2`(버전), `20L`↔`30L` 오매칭 방지.
-   - 팩 카테고리는 KR 관례상 용량에 `L` 부착(차차 팩 30 → 30L)해 패밀리 내 표기 통일.
-
-### 니모(NEMO) 세션에서 확립한 룰 (일반화 — 영문 글로벌 + Shopify)
-
-참고 구현: `nemo-global.py`(영문 스펙 빌더), `nemo-variants.py`(변형 정규화 후처리), `nemo-kr-apply.py`(침낭·매트 공식명).
-
-1. **무게는 `Packed Weight` 우선 — Minimum/Trail Weight 를 우선하지 말 것.** NEMO 처럼 `Minimum Weight`(트레일)와 `Packed Weight`(패킹)를 둘 다 노출하는 사이트가 많다. 스킬 룰대로 `Packed Weight → Weight → Set Weight`, 셋 다 없을 때만 `Minimum Weight` 폴백. (이번에 Minimum 을 우선했다가 전 품목 무게가 트레일 무게로 잘못 들어갔음.)
-
-2. **변형별 이미지는 개별 `product.json` 의 `variant.image_id` → `images[].id` 로 매핑한다.** 컬렉션 `products.json` 은 variant 에 `featured_image`/`image_id` 가 **없을 수 있다**(NEMO 는 전부 None). 개별 `/products/<slug>.json` 을 받아 `variant.image_id` 가 가리키는 `images[].src` 를 변형마다 넣는다. **색상 변형뿐 아니라 사이즈 변형(매트 Regular/Long Wide 등)도 각자 다른 image_id 를 가진다** → 한 제품에 이미지 한 장 일괄 금지. 매핑 없는 제품(폼매트·풋프린트 등)만 og:image 폴백. (`images[].variant_ids` 로도 역매핑 가능.)
-
-3. **색상 전용 옵션 제품은 변형 라벨이 "사이즈가 아니라 색상"이다.** 스펙 테이블의 변형 컬럼을 무조건 `size` 로 넣으면, 옵션축이 색상 하나뿐인 제품(체어·베개·더플·일부 백팩)에서 **색상이 size 로 누출**된다. `products.json` `options[].name` 으로 축을 판별: `Color` → `color`/`colorKorean`, `Size`/`Capacity`/`Temperature`/`Length` → `size`(이름 끝 부착). 변형 매칭은 `variant.title`(= 옵션값 ` / ` join)로 한다.
-
-4. **영문 글로벌 크롤러도 `colorKorean`/`sizeKorean` 을 반드시 채운다.** 빌더에서 `""` 하드코딩하지 말고 후처리 음역 패스를 돌린다(색상 사전 + 사이즈 음역 + 온도 `°F→℃`). 사이즈는 영문 `name` 끝, 한글 사이즈는 `nameKorean` 끝에 부착(`One Size`/`Default Title` 은 미부착, 색상은 부착 안 함).
-
-5. **한글 모델명은 카테고리별로 KR 공식명과 대조하라 — 음역이 이미 일치하는 경우가 많다.** 니모 코리아(nemoequipment.co.kr godomall) 수집 결과 필로우·체어·백팩·테이블·파우치 6개 카테고리는 config 음역이 공식 모델명과 이미 일치했다. 침낭·매트만 공식 표기 형식이 달랐다(침낭 `리프 맨 15 EP 레귤러` = 모델+℉+EP+사이즈, 매트 `텐서 올 시즌 레귤러/와이드` = 슬래시 구분). **KR 카탈로그가 일부만 노출되면 strict verbatim 은 한 제품 안에서 표기가 섞인다**(매칭분 "15 EP" vs 미매칭분 "-9℃") → 매칭 샘플로 공식 형식을 학습해 전 변형에 일관 생성하고, 생성 결과를 KR 노출명과 대조해 일치율로 검증. (nameKorean 은 공식대로 `℉` 유지, `sizeKorean` 필드는 별도로 `℃` 변환.)
-
-6. **Shopify+Cloudflare WAF 403 은 curl 로 우회.** python `urllib` 의 TLS/헤더 지문이 403 으로 막히면(헤더 추가로 안 풀림 = JA3 지문 문제) `curl`(브라우저 UA) `subprocess` 로 위임. 429 는 지수 백오프 + 요청 간 딜레이. (`collections.json`/`products.json` API 는 curl+UA 로 통과.)
-
-7. **push 전 KR-전용 행의 `_source` 를 카테고리별로 분리.** 여러 KR 소스 파일이 같은 `_source` 문자열(예 `"한국 고시이미지"`)을 쓰면 `push.js` 가 그 source 첫 항목 카테고리로 전부 덮는다(mat+tent 혼합 → 전부 mat). push 전에 `_source = 'brand_' + category` 로 정리. (위 "Firestore push 시 _source 주의" 의 구체 사례.)
-
-### 지팩스(Zpacks) 세션에서 확립한 룰 (일반화)
-
-참고 구현: `zpacks.py`(Shopify products.json + 백팩 HTML data-weight), `sites/zpacks.js`(미리보기 스텁).
-
-1. **push 후 색상 변형이 합쳐지면(문서 수 < 행 수) `findExisting` 의 `name+company` 매치가 color 를 무시한 것.** 색상은 `name` 에 안 넣는 룰(스킬) 때문에, 색상만 다른 변형들이 `name+company` 로만 매칭돼 같은 doc 으로 덮어써진다(데이터 손실). **`push-firestore.js` 의 `name` 매치(및 legacy `name==nameKorean` 매치)에 `color` 를 포함**해야 한다. (Zpacks 1496행 → 첫 push 815문서로 합쳐짐 → color 추가 후 1496문서. push 후 `company` 필터로 문서 수를 행 수와 대조해 검증할 것.)
-2. **Shopify `grams` 가 항상 배송무게는 아니다 — 사이트별로 검증하라.** Zpacks 는 `grams` 가 상세 페이지 표시 무게와 정확히 일치(실제 무게). 표본 1~2개의 `grams` ↔ 상세 `data-weight`/스펙표를 대조해 일치하면 `grams` 사용 가능, 어긋나면 스펙표 값 사용.
-3. **변형별 무게가 products.json 에 0 인 카테고리(백팩 등)는 상세 HTML 의 `data-...` 속성에서 가져온다.** Zpacks 백팩은 `grams=0` 이고, 상세 페이지에 변형 컨테이너마다 `data-option1/2/3` + `data-weight="X oz / Y g"` + `data-image` 가 있다 → option 값으로 매칭해 변형별 g·이미지 추출. (단 같은 페이지에 부속/add-on 의 작은 `data-weight`(3g·38g 등)가 섞여 오매칭될 수 있으니, `grams` 가 있는 카테고리는 `grams` 우선.)
-4. **fit 옵션(허리 벨트 길이 등 무게 영향 미미한 축)은 전개하지 않고 접는다.** 백팩은 색상×토르소×스트랩만 전개하고 벨트 길이는 대표 1개로 접어 행 폭발 방지(색상×토르소×스트랩×벨트 2454행 → 618행). `(groupId, color, size)` dedup 으로 접는다.
-5. **결합 옵션값 분해.** `"Color | Torso"` 옵션명은 ` | ` 로, `"Blue w/ Lite Floor"` 값은 ` w/ ` 로 쪼개 색상/사이즈(구성)로 분리한다.
-
-### 엑스패드(Exped) 세션에서 확립한 룰 (일반화)
-
-1. **🔴 정규식 교대(`|`) 순서 — 사이즈/옵션 토큰은 긴 것부터 나열하라.** Python `re` 의 교대는 *최장 매치가 아니라 먼저 나온 대안* 을 택한다. `(?:M|MW)` 는 `"MW"` 에서 **`M` 만** 잡는다. 사이즈 토큰 정규식 `SIZE_HEAD` 에 단일(`S|M|L|W`)을 복합(`LXW|MW\+|LW\+|MW|LW|SW|XL|XXL`)보다 **앞에** 두면, `findall(SIZE_HEAD, "MW LW LXW")` 가 `['M','W','L','W','L','W']` 로 쪼개져 사이즈-무게 매핑이 전부 어긋난다(엑스패드 딥슬립 무게 전멸 → 원인). **복합/긴 토큰을 먼저, 단일 글자를 맨 뒤에** 배치할 것. `match`(앵커드)도 같은 함정 — `^(?:M|MW)` 는 "MW사이즈"에서 M 만 잡는다. 대소문자 변형(`UNO` vs `Uno`)도 각각 등재하거나 정규화.
+### 스펙이 이미지 안에 있을 때 — macOS Vision OCR (코베아 등)
 
 국내 브랜드(코베아 등)는 무게·크기·재질이 **본문 텍스트가 아니라 긴 상세 이미지** 안에 있다. 한국 표준 "상품 정보 제공 고시" 표(크기/중량/재질/수용인원/내수압)가 이미지 하단에, 일부는 영문 "Specification" 표가 들어있다. 도구·스크립트: `ocr.py`(범용 Vision OCR), `kovea-specs.py`(고시/Spec 파싱), `kovea-fixweight.py`(위치기반 무게/내하중), `kovea-sleeptemp.py`(침낭 온도), `kovea-imgcolor.py`(이미지 색상항목), `kovea-options.py`(옵션 변형), `kovea-sitemap-add.js`(사이트맵 전체 제품).
 
@@ -490,6 +451,8 @@ S2S처럼 KR 수입사 상세에 **영문 모델명**이 있으면 영문-토큰
 - **한국어(ko-KR)는 이 머신에서 fast 레벨(0)에서만 지원** — accurate(1)는 라틴 전용. `setRevision_(3)` + `setRecognitionLevel_(0)`.
 - **긴 이미지(900×20000px 등)는 Vision이 다운샘플해 글자가 깨진다 → 반드시 ~1500px 타일로 잘라 OCR.** 직접 통짜 OCR 금지.
 - 바운딩박스(x,y)를 주므로 **라벨↔값을 같은 행(y)으로 정렬** 가능 — 세로 컬럼 레이아웃(라벨열/값열 분리: `규격/중량/내하중` → `…/1.45kg/120kg`)에서 필수. 텍스트만으로 파싱하면 중량 옆에 온 내하중 값을 무게로 오인한다.
+- **OCR 은 구분자(콜론)를 자주 빠뜨린다.** 이미지의 `색상: 망고`가 `색상 망고`로 읽힌다 → OCR 텍스트의 라벨 파싱은 **구분자를 선택적(`[:：]?`)** 으로. 텍스트(HTML)용 정규식을 OCR 결과에 그대로 쓰면 실패(MSR 색상 OCR 전멸 원인). 오탐 방지가 필요하면 영문 병기 `(English)` 같은 명확한 앵커로 콜론을 대신한다.
+- **OCR 폴백은 데이터가 있을 법한 카테고리로 한정한다.** 전 품목 OCR 은 느리고 낭비(거대 이미지 타일 × 수백 제품). MSR 색상은 써마레스트/텐트에만 있고 스토브·쿡웨어는 단색 → 그 카테고리만 OCR. **크롤러 재실행하면 OCR 로 채운 값이 초기화**되므로 재크롤 후엔 후처리(OCR) 스크립트를 다시 돌린다.
 
 **무게/스펙 파싱 함정 (실제 겪음):**
 - 셀 "중량 : 970 / 내하중 : 30kg" → 단위 없는 970(=970g)을 건너뛰고 30kg(내하중)을 무게로 잡음. **라벨별로 sub-값을 분리**하고, 단위 없는 숫자는 `<50 ⇒ kg, 그외 ⇒ g`로 추정.
