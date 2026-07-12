@@ -71,8 +71,14 @@ const LEAF_CATEGORIES = [
   { code: '002011', cat: 'clothing' }, // 아우터
   { code: '002010', cat: 'clothing' }, // 상의
   { code: '002009', cat: 'clothing' }, // 하의
+  // SHOES/모자/양말/기타 ACC는 33개 스키마에 전용 키가 없지만, rab.js·montbell.js 관례대로
+  // 제외하지 않고 'etc'로 수집한다 (신발 'accessories-equipment/footwear': 'etc',
+  // 양말/모자 '18'/'20': 'etc' 등 기존 어댑터 선례).
+  { code: '005', cat: 'etc' }, // SHOES
+  { code: '010001', cat: 'etc' }, // 모자
+  { code: '010002', cat: 'etc' }, // 양말
+  { code: '010003', cat: 'etc' }, // 악세사리 (다른 leaf와 중복 많음 — 새 아이템만 순증)
 ];
-// SHOES(005), 모자/양말/기타 ACC(010)는 33개 카테고리 스키마에 대응 키가 없어 크롤 대상에서 제외.
 
 const resolveCategory = (catField, name) => (typeof catField === 'function' ? catField(name) : catField);
 

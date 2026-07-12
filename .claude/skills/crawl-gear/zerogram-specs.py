@@ -123,19 +123,30 @@ WEIGHT_LABELS = {
 DEFAULT_WEIGHT_LABELS = ["무게", "본체무게", "패킹무게", "배낭무게"]
 
 
+def _weight_match(window, size_code):
+    """window에서 무게 숫자+단위를 찾되, "±5g 오차" 같은 오차범위 표기는 제외한다."""
+    if size_code:
+        for m in re.finditer(re.escape(size_code) + r"([\d.]+)(kg|g)", window, re.I):
+            if window[max(0, m.start() - 1):m.start()] != "±":
+                return m.group(1), m.group(2)
+    for m in re.finditer(r"([\d.]+)(kg|g)", window, re.I):
+        if window[max(0, m.start() - 1):m.start()] == "±":
+            continue
+        return m.group(1), m.group(2)
+    return None
+
+
 def find_weight(text, category, size_code, spans=None):
     spans = spans if spans is not None else label_spans(text)
     for label in WEIGHT_LABELS.get(category, DEFAULT_WEIGHT_LABELS):
-        window = value_for(text, spans, label, numeric=True)
-        if not window:
-            continue
-        if size_code:
-            m = re.search(re.escape(size_code) + r"([\d.]+)(kg|g)", window, re.I)
+        for idx, (s, e, lbl) in enumerate(spans):
+            if lbl != label:
+                continue
+            forward = text[e: spans[idx + 1][0]] if idx + 1 < len(spans) else text[e:e + 60]
+            backward = text[spans[idx - 1][1]: s] if idx > 0 else ""
+            m = _weight_match(forward, size_code) or _weight_match(backward, size_code)
             if m:
-                return grams(m.group(1), m.group(2))
-        m = re.search(r"([\d.]+)(kg|g)", window, re.I)
-        if m:
-            return grams(m.group(1), m.group(2))
+                return grams(m[0], m[1])
     return 0
 
 
@@ -143,7 +154,7 @@ def find_weight(text, category, size_code, spans=None):
 ALL_LABELS = ["품명", "품번", "색상", "이너사이즈", "패킹사이즈", "사이즈", "소재", "재질", "코팅",
               "용량", "구성품", "제조국명", "제조국", "제조사", "추천용도", "추천 용도",
               "사용인원", "도어개수", "도어수", "플라이소재", "내수압", "폴소재", "미니멈무게", "풀패킹무게",
-              "R-value", "두께", "패드무게", "침낭크기", "압축시크기", "겉감", "안감", "충전재무게",
+              "R-value", "두께", "패드무게", "침낭크기", "압축시크기", "충전재무게",
               "충전재", "침낭무게", "패킹무게", "수납가방", "Extreme", "LowerLimit", "Comfort",
               "배낭무게(전체옵션포함)", "배낭무게", "기본배낭무게", "본체무게", "팁프로텍터", "바스켓",
               "사용길이", "폴딩길이", "내하중테스트", "밝기", "방수방진사양", "점등시간", "충전시간",
