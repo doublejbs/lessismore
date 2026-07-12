@@ -210,7 +210,10 @@ const buildRows = (item, category, categoryUrl) => {
     sizeKorean,
     weight: 0,
     specs: {},
-    _source: categoryUrl,
+    // push.js는 같은 _source의 첫 항목 카테고리를 그룹 전체에 덮어쓴다(비대화형 모드).
+    // 한 leaf 카테고리 URL에 여러 내부 카테고리가 섞여 있어(쿡웨어/체어·스틱/가방/타프·쉘터/
+    // GEAR ACC catch-all) URL만으로는 1:1이 아니므로 카테고리를 프래그먼트로 붙여 맞춘다.
+    _source: `${categoryUrl}#${category}`,
     _itemCode: item.itemCode,
   };
   if (!item.colors || item.colors.length === 0) {
