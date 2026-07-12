@@ -59,11 +59,13 @@ def ocr_tokens(path):
     return out
 
 
-def pick_spec_image(images):
-    for url in images:
-        if re.search(r"_size\.jpg$", url, re.I):
-            return url
-    return images[-1] if images else None
+def spec_image_candidates(images):
+    """_size.jpg 패턴을 우선 시도하고, 실패하면 뒤에서부터 순서대로 재시도할 후보 목록.
+    2023년 이전 구형 템플릿은 _size.jpg가 없고 "Product info" 표가 끝에서 2~3번째 이미지에
+    있는 경우가 있어(예: ..._05.jpg, 마지막 _06.jpg는 로고뿐) 한 장만 보고 포기하지 않는다."""
+    sized = [u for u in images if re.search(r"_size\.jpg$", u, re.I)]
+    rest = [u for u in reversed(images) if u not in sized]
+    return (sized + rest)[:5]
 
 
 def get_product_info_text(url):
@@ -78,7 +80,8 @@ def get_product_info_text(url):
         _ocr_cache[url] = ""
         return ""
     full = re.sub(r"\s+", "", "".join(t["t"] for t in tokens))
-    idx = full.find("PRODUCTINFO")
+    # 구형 템플릿은 "Product info"(대소문자 혼용)로 적혀있어 대소문자 구분 없이 찾는다.
+    idx = full.upper().find("PRODUCTINFO")
     text = full[idx:] if idx != -1 else full
     _ocr_cache[url] = text
     return text
@@ -124,15 +127,17 @@ DEFAULT_WEIGHT_LABELS = ["무게", "본체무게", "패킹무게", "배낭무게
 
 
 def _weight_match(window, size_code):
-    """window에서 무게 숫자+단위를 찾되, "±5g 오차" 같은 오차범위 표기는 제외한다."""
+    """window에서 무게 숫자+단위를 찾되, "±5g 오차" 같은 오차범위 표기는 제외한다.
+    "1,989g"처럼 천단위 콤마가 들어간 표기도 허용(콤마 없으면 콤마 뒤 "989g"만 걸려
+    "1,"이 잘려나가는 버그가 있었다)."""
     if size_code:
-        for m in re.finditer(re.escape(size_code) + r"([\d.]+)(kg|g)", window, re.I):
+        for m in re.finditer(re.escape(size_code) + r"([\d,]+(?:\.\d+)?)(kg|g)", window, re.I):
             if window[max(0, m.start() - 1):m.start()] != "±":
-                return m.group(1), m.group(2)
-    for m in re.finditer(r"([\d.]+)(kg|g)", window, re.I):
+                return m.group(1).replace(",", ""), m.group(2)
+    for m in re.finditer(r"([\d,]+(?:\.\d+)?)(kg|g)", window, re.I):
         if window[max(0, m.start() - 1):m.start()] == "±":
             continue
-        return m.group(1), m.group(2)
+        return m.group(1).replace(",", ""), m.group(2)
     return None
 
 
@@ -397,26 +402,31 @@ def extract_specs(category, text, name_korean, size_code=None):
 
 def process(item):
     images = item.get("_specImages") or []
-    url = pick_spec_image(images)
-    if not url:
-        return False
-    text = get_product_info_text(url)
-    if "PRODUCTINFO" not in text and len(text) < 20:
+    if not images:
         return False
     category = item.get("category", "etc")
     size_code = size_code_of(item)
-    weight = find_weight(text, category, size_code)
-    # zerogram은 초경량 백패킹 브랜드라 12kg을 넘는 값은 대개 OCR이 "1.8kg"의 소수점을 놓쳐
-    # "18kg"으로 읽은 오독이다 — 잘못된 큰 값을 심는 대신 0(미확인)으로 둔다.
-    if weight and weight > 12000:
-        print(f"   suspicious weight {weight}g for {item.get('groupId')} — discarding")
-        weight = 0
-    if weight:
-        item["weight"] = weight
-    specs = extract_specs(category, text, item.get("nameKorean", ""), size_code=size_code)
-    if specs:
-        item["specs"] = {**item.get("specs", {}), **specs}
-    return bool(weight or specs)
+    # 선택 필드(weight 등)도 한 이미지에서 못 찾았다고 바로 포기하지 않고 후보 이미지를
+    # 순서대로 재시도한다 (SKILL.md "선택 필드도 여러 번 시도" 규칙) — 2023년 이전 구형
+    # 템플릿은 _size.jpg가 없고 진짜 스펙표가 끝에서 2~3번째 이미지에 있는 경우가 있다.
+    for url in spec_image_candidates(images):
+        text = get_product_info_text(url)
+        if len(text) < 20:
+            continue
+        weight = find_weight(text, category, size_code)
+        # zerogram은 초경량 백패킹 브랜드라 12kg을 넘는 값은 대개 OCR이 "1.8kg"의 소수점을
+        # 놓쳐 "18kg"으로 읽은 오독이다 — 잘못된 큰 값을 심는 대신 0(미확인)으로 둔다.
+        if weight and weight > 12000:
+            print(f"   suspicious weight {weight}g for {item.get('groupId')} — discarding")
+            weight = 0
+        specs = extract_specs(category, text, item.get("nameKorean", ""), size_code=size_code)
+        if weight or specs:
+            if weight:
+                item["weight"] = weight
+            if specs:
+                item["specs"] = {**item.get("specs", {}), **specs}
+            return True
+    return False
 
 
 def main():

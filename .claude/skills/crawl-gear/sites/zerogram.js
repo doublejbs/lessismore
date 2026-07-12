@@ -90,14 +90,46 @@ const slugify = (s) =>
     .replace(/[^\p{L}\p{N}-]/gu, '')
     .toLowerCase();
 
+// 국내 전용 브랜드라 영문 제품명이 아예 없다 — `name`을 비워두지 않고 nameKorean을 표준 로마자
+// 표기법(Revised Romanization)으로 음역해서 채운다 (SKILL.md "국내 전용 브랜드 name(영문)
+// 채우기" 규칙). 한글이 아닌 문자(모델코드 UL/DAC, 숫자 등)는 그대로 둔다.
+const RR_INITIALS = ['g', 'kk', 'n', 'd', 'tt', 'r', 'm', 'b', 'pp', 's', 'ss', '', 'j', 'jj', 'ch', 'k', 't', 'p', 'h'];
+const RR_MEDIALS = ['a', 'ae', 'ya', 'yae', 'eo', 'e', 'yeo', 'ye', 'o', 'wa', 'wae', 'oe', 'yo', 'u', 'wo', 'we', 'wi', 'yu', 'eu', 'ui', 'i'];
+const RR_FINALS = ['', 'k', 'k', 'k', 'n', 'n', 'n', 't', 'l', 'k', 'm', 'l', 'l', 'l', 'p', 'l', 'm', 'p', 'p', 't', 't', 'ng', 't', 't', 'k', 't', 'p', 't'];
+const romanizeSyllable = (code) => {
+  const base = code - 0xac00;
+  const initial = Math.floor(base / (21 * 28));
+  const medial = Math.floor((base % (21 * 28)) / 28);
+  const final = base % 28;
+  return RR_INITIALS[initial] + RR_MEDIALS[medial] + RR_FINALS[final];
+};
+const romanize = (text) => {
+  let out = '';
+  for (const ch of text) {
+    const code = ch.codePointAt(0);
+    out += code >= 0xac00 && code <= 0xd7a3 ? romanizeSyllable(code) : ch;
+  }
+  return out;
+};
+const capitalizeFirstLetter = (s) => {
+  const idx = s.search(/[a-zA-Z]/);
+  return idx === -1 ? s : s.slice(0, idx) + s[idx].toUpperCase() + s.slice(idx + 1);
+};
+const romanizeToken = (token) => (/[가-힣]/.test(token) ? capitalizeFirstLetter(romanize(token)) : token);
+const romanizeName = (koreanText) =>
+  koreanText
+    .split(/(\s+)/)
+    .map((t) => (/\s+/.test(t) ? t : romanizeToken(t)))
+    .join('');
+
 // 사이즈 단어가 상품명 끝에 붙는 관례(예: "타이벡 UL 매트 M", "라모나 에어썸 UL 400 LARGE")를
 // 분리해 size/sizeKorean을 채우고, 사이즈를 뗀 base 이름으로 같은 라인의 색상/사이즈 변형을 묶는다.
 const SIZE_WORD_RE = /\s+(스몰|미디엄|라지|엑스라지|SMALL|MEDIUM|LARGE|X-?LARGE|XS|XL|[SML])$/i;
 const SIZE_MAP = {
-  스몰: ['Small', '스몰'], small: ['Small', '스몰'],
-  미디엄: ['Medium', '미디엄'], medium: ['Medium', '미디엄'],
-  라지: ['Large', '라지'], large: ['Large', '라지'],
-  엑스라지: ['X-Large', '엑스라지'],
+  스몰: ['Small', '스몰'], small: ['Small', '스몰'], s: ['Small', '스몰'],
+  미디엄: ['Medium', '미디엄'], medium: ['Medium', '미디엄'], m: ['Medium', '미디엄'],
+  라지: ['Large', '라지'], large: ['Large', '라지'], l: ['Large', '라지'],
+  엑스라지: ['X-Large', '엑스라지'], xl: ['X-Large', '엑스라지'],
 };
 const extractSize = (name) => {
   const m = name.match(SIZE_WORD_RE);
@@ -110,17 +142,38 @@ const extractSize = (name) => {
   return { base, size: norm.length <= 3 ? norm.toUpperCase() : norm, sizeKorean: '' };
 };
 
+// 크롤에서 실제로 관측된 색상 단어를 모두 커버 (색상이 있으면 colorKorean도 반드시 채워야 하는
+// 규칙 — SKILL.md 공통 필드 표 참고). 단어 단위 사전이라 조합("Stone Gray" 등)도 자동 처리된다.
 const COLOR_KO = {
   BLACK: '블랙', WHITE: '화이트', GRAY: '그레이', GREY: '그레이', NAVY: '네이비', BLUE: '블루',
   GREEN: '그린', BROWN: '브라운', YELLOW: '옐로우', RED: '레드', ORANGE: '오렌지', BEIGE: '베이지',
   PINK: '핑크', PURPLE: '퍼플', OLIVE: '올리브', KHAKI: '카키', CHARCOAL: '차콜', SAND: '샌드',
   STONE: '스톤', SILVER: '실버', GOLD: '골드', MINT: '민트', CARBON: '카본', LIME: '라임',
+  LIGHT: '라이트', DARK: '다크', GRAYISH: '그레이시', LAKE: '레이크', SPINACH: '스피니치',
+  INDI: '인디', MELANGE: '멜란지', DEEP: '딥', SYMPHONIC: '심포닉', NIAGARA: '나이아가라',
+  MIST: '미스트', SUNSET: '선셋', MUSTARD: '머스타드', OATMEAL: '오트밀', LAVENDER: '라벤더',
+  WINE: '와인', SKYWAY: '스카이웨이', COLOR: '컬러', MIX: '믹스', IVORY: '아이보리', LILAC: '라일락',
 };
-const colorToKorean = (colorEnglish) => {
+// 사전에 없는 새 색상 단어(신규 컬러웨이 등)가 나왔을 때의 최후 폴백 — 정교한 영→한 음역은
+// 아니지만 "color 있으면 colorKorean도 필수" 규칙 위반(빈 값)만은 피한다.
+const EN_SOUND = {
+  a: '아', b: '브', c: '크', d: '드', e: '에', f: '프', g: '그', h: '흐', i: '이', j: '지',
+  k: '크', l: '을', m: '므', n: '느', o: '오', p: '프', q: '크', r: '르', s: '스', t: '트',
+  u: '우', v: '브', w: '우', x: '스', y: '이', z: '즈',
+};
+const roughTransliterate = (word) => [...word.toLowerCase()].map((c) => EN_SOUND[c] ?? '').join('');
+const colorToKorean = (colorEnglish, nameKorean) => {
   const words = colorEnglish.split(/\s+/).filter(Boolean);
   if (!words.length) return '';
-  const ko = words.map((w) => COLOR_KO[w.toUpperCase()]).filter(Boolean);
-  return ko.length === words.length ? ko.join(' ') : '';
+  const mapped = words.map((w) => COLOR_KO[w.toUpperCase()]);
+  if (mapped.every(Boolean)) return mapped.join(' '); // 사전으로 전부 커버되면 그대로 신뢰
+  // 사전에 없는 단어가 섞였을 때만: 사이트가 컬렉션/컬러웨이명을 제품명 괄호 안에 공식 한글로
+  // 적어둔 경우가 있어 그걸 우선 쓴다 (예: "오크리프 2P (나이아가라 미스트)"). 단, "(플러스)"
+  // 처럼 색상과 무관한 제품명 접미사도 있어 "사전이 이미 다 커버" 케이스에서는 이 경로를 타지
+  // 않도록 위에서 먼저 걸러낸다.
+  const paren = (nameKorean || '').match(/\(([^)]+)\)\s*$/);
+  if (paren && /[가-힣]/.test(paren[1])) return paren[1].trim();
+  return words.map((w, i) => mapped[i] ?? roughTransliterate(w)).join(' ');
 };
 // colorOptionCode는 "BLACK#000000" / "STONEGRAY" 처럼 hex나 붙임표기가 섞여 있어 정리한다.
 // "FREE"는 색상이 아니라 "단일 옵션"(사이즈의 One Size에 대응) 표기라 빈 색상으로 처리.
@@ -205,12 +258,14 @@ const fetchSpecImages = async (itemCode) => {
 
 const buildRows = (item, category, categoryUrl) => {
   const { base, size, sizeKorean } = extractSize(item.itemName);
+  // name(영문)은 필수 — 국내 전용 브랜드라 원문 영문명이 없으므로 로마자 음역 + 사이즈 부착.
+  const nameEnglish = romanizeName(base) + (size ? ` / ${size}` : '');
   const common = {
     groupId: `zerogram_${slugify(base)}`,
     category,
     company: 'zerogram',
     companyKorean: '제로그램',
-    name: '',
+    name: nameEnglish,
     nameKorean: item.itemName,
     size,
     sizeKorean,
@@ -220,6 +275,8 @@ const buildRows = (item, category, categoryUrl) => {
     // 한 leaf 카테고리 URL에 여러 내부 카테고리가 섞여 있어(쿡웨어/체어·스틱/가방/타프·쉘터/
     // GEAR ACC catch-all) URL만으로는 1:1이 아니므로 카테고리를 프래그먼트로 붙여 맞춘다.
     _source: `${categoryUrl}#${category}`,
+    // 상품 개별 상세페이지 URL (필수 필드 — 카테고리 리스팅 URL인 _source와 다른 용도).
+    _detailUrl: `${BASE}/product/${item.itemCode}`,
     _itemCode: item.itemCode,
   };
   if (!item.colors || item.colors.length === 0) {
@@ -233,11 +290,16 @@ const buildRows = (item, category, categoryUrl) => {
     ];
   }
   return item.colors.map((c) => {
-    const colorEnglish = cleanColorName(c.optionVal);
+    let colorEnglish = cleanColorName(c.optionVal);
+    // 일부 상품(예: 윌도 폴딩 컵 S/L)은 "색상" 옵션축이 실은 사이즈코드를 그대로 담고 있다 —
+    // 이미 size로 뽑아둔 값과 겹치는 단독 알파벳이면 진짜 색상이 아니므로 비운다.
+    if (/^[A-Z]{1,2}$/.test(colorEnglish) && size && size.toUpperCase().startsWith(colorEnglish)) {
+      colorEnglish = '';
+    }
     return {
       ...common,
       color: colorEnglish,
-      colorKorean: colorToKorean(colorEnglish),
+      colorKorean: colorEnglish ? colorToKorean(colorEnglish, item.itemName) : '',
       imageUrl: (c.repImg || item.itemImg) ? IMG_BASE + (c.repImg || item.itemImg) : '',
     };
   });
