@@ -70,10 +70,16 @@ const findExisting = async (gear) => {
   }
 
   if (gear.nameKorean) {
+    // color 뿐 아니라 size 도 포함해야 한다. 같은 제품명+색상인데 사이즈만 다른 변형이
+    // size 를 안 보는 이 매칭으로 같은 doc 에 겹쳐써지는 사고가 실제로 있었다(블랙다이아몬드
+    // 502개 그룹에서 사이즈 변형이 유실됨 — bulkUpsert 가 5개씩 동시처리하다보니 앞선
+    // 사이즈가 아직 인덱싱되기 전엔 정상 insert 되다가도, 이미 insert 된 앞 사이즈 doc 을
+    // 나중 배치의 다른 사이즈 row 가 size 없는 이 쿼리로 찾아내 덮어씀).
     const snap = await c
       .where('nameKorean', '==', gear.nameKorean)
       .where('company', '==', gear.company)
       .where('color', '==', gear.color ?? '')
+      .where('size', '==', gear.size ?? '')
       .limit(1)
       .get();
     if (!snap.empty) return snap.docs[0];
@@ -82,18 +88,20 @@ const findExisting = async (gear) => {
       .where('name', '==', gear.nameKorean)
       .where('company', '==', gear.company)
       .where('color', '==', gear.color ?? '')
+      .where('size', '==', gear.size ?? '')
       .limit(1)
       .get();
     if (!legacy.empty) return legacy.docs[0];
   }
 
   if (gear.name) {
-    // color 를 포함해야 한다. name 에 색상을 넣지 않는 스킬 룰상, 색상만 다른 변형들이
-    // name+company 로만 매칭하면 같은 doc 으로 덮어써져 변형이 합쳐진다(데이터 손실).
+    // color/size 를 모두 포함해야 한다. 색상·사이즈만 다른 변형들이 name+company 로만
+    // 매칭되면 같은 doc 으로 덮어써져 변형이 합쳐진다(데이터 손실).
     const snap = await c
       .where('name', '==', gear.name)
       .where('company', '==', gear.company)
       .where('color', '==', gear.color ?? '')
+      .where('size', '==', gear.size ?? '')
       .limit(1)
       .get();
     if (!snap.empty) return snap.docs[0];
