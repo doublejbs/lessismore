@@ -8,6 +8,8 @@ import AlertView from './alert/AlertView';
 import LogInView from './alert/login/LogInView';
 import AppInstallView from './app-install/AppInstallView';
 import BagShareWrapper from './bag-share/component/BagShareWrapper.tsx';
+import CampShareWrapper from './camp-share/component/CampShareWrapper.tsx';
+import GearShareWrapper from './gear-share/component/GearShareWrapper.tsx';
 import CelebrateView from './celebrate/CelebrateView';
 import AndroidAppBannerView from './components/AndroidAppBannerView';
 import ManageView from './manage/ManageView';
@@ -16,6 +18,14 @@ const ROUTES = [
   {
     path: '/bag-share/:id',
     element: <BagShareWrapper />,
+  },
+  {
+    path: '/camp-share/:id',
+    element: <CampShareWrapper />,
+  },
+  {
+    path: '/gear-share/:id',
+    element: <GearShareWrapper />,
   },
   { path: '/manage', element: <ManageView /> },
   { path: '/celebrate', element: <CelebrateView /> },
