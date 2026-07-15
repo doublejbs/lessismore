@@ -20,3 +20,14 @@
 7. **push 전 KR-전용 행의 `_source` 를 `nemo_<category>` 로 분리.** 여러 KR 소스가 같은 `_source`
    문자열을 쓰면 `push.js` 가 그 source 첫 항목 카테고리로 전부 덮어씀(mat+tent 혼합 → 전부 mat).
    글로벌 크롤은 firebase-admin 때문에 **Node 20**(`/opt/homebrew/opt/node@20/bin/node`)으로 push.
+8. **한국·일본 한정 제품(§5)은 영문화 단계가 통째로 빠지기 쉽다.** 2026-07 세션에서 실제로 겪음
+   — 오라/조르 NX(매트), 타니/아톰 오스모(텐트) 11건이 Firestore에 `name`(영문) 완전 공백,
+   `size` 필드에도 영문 대신 한글 텍스트가 그대로 들어가 있었음(예: `size="레귤러/와이드"`).
+   글로벌에 없는 제품이라도 **모델의 실제 영문 정식명은 웹 검색으로 확인 가능한 경우가 많다**
+   (Aura NX/Zor NX/Tani OSMO/Atom OSMO 전부 실존 NEMO 라인업, 로마자 음역 대신 이걸 우선 사용).
+   `size`는 반드시 영문(Regular Wide 등)으로, 인원수처럼 이미 로마자인 값(`1P`/`2P`)은 그대로 둬도 무방.
+9. **같은 모델의 사이즈 변형이 `nameKorean`에서 구분 안 되는 사고 있었음(로머/Roamer 매트).**
+   Single/Double/Single Wide/Double Wide 4개 변형인데 `nameKorean`이 "로머"/"로머 와이드" 2종류뿐이었음
+   (사이즈 단어가 이름에 안 붙음). 매트류는 `nameKorean`에 `sizeKorean` 텍스트를 붙이는 게 기본 컨벤션
+   (예: "텐서 트레일 레귤러/머미") — 새 매트 어댑터 작성 시 이 패턴 누락 여부를 반드시 확인.
+   (침낭은 예외: `nameKorean`은 `℉`+EP 표기, `sizeKorean`은 `℃` 변환이라 서로 텍스트가 다른 게 정상.)
