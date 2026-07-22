@@ -15,6 +15,8 @@ interface Props {
   items: PreviewItem[];
   buttonLabel?: string;
   showSkip: boolean;
+  forced: boolean;
+  hasButtonLink: boolean;
 }
 
 const PREVIEW_FONT_FAMILY = "'Pretendard', -apple-system, 'Apple SD Gothic Neo', sans-serif";
@@ -51,9 +53,21 @@ const ItemThumb: FC<{ imageUrl?: string }> = ({ imageUrl }) => {
 };
 
 // 앱의 신기능 팝업(중앙 카드)을 폰 프레임 안에 축소 재현하는 순수 프레젠테이션 컴포넌트.
-const FeaturePopupPreview: FC<Props> = ({ title, subtitle, items, buttonLabel, showSkip }) => {
+const FeaturePopupPreview: FC<Props> = ({
+  title,
+  subtitle,
+  items,
+  buttonLabel,
+  showSkip,
+  forced,
+  hasButtonLink,
+}) => {
   // 제목이 입력된 항목만 표시한다(입력 중인 빈 행 제외).
   const visibleItems = items.filter((item) => !!item?.title);
+
+  // 강제 모드: 메인 버튼은 buttonLink가 있을 때만 표시, 건너뛰기·아이템 chevron은 숨긴다.
+  const showButton = !forced || hasButtonLink;
+  const showSkipRow = !forced && showSkip;
 
   return (
     <div style={{ fontFamily: PREVIEW_FONT_FAMILY }}>
@@ -168,30 +182,32 @@ const FeaturePopupPreview: FC<Props> = ({ title, subtitle, items, buttonLabel, s
                         </div>
                       )}
                     </div>
-                    {item.link && (
+                    {item.link && !forced && (
                       <div style={{ fontSize: 16, color: '#B0B8C1', flexShrink: 0 }}>›</div>
                     )}
                   </div>
                 ))}
               </div>
             )}
-            <div
-              style={{
-                marginTop: 16,
-                height: 44,
-                borderRadius: 22,
-                backgroundColor: '#000000',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                fontSize: 14,
-                fontWeight: 700,
-                color: '#FFFFFF',
-              }}
-            >
-              {buttonLabel || '확인'}
-            </div>
-            {showSkip && (
+            {showButton && (
+              <div
+                style={{
+                  marginTop: 16,
+                  height: 44,
+                  borderRadius: 22,
+                  backgroundColor: '#000000',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  fontSize: 14,
+                  fontWeight: 700,
+                  color: '#FFFFFF',
+                }}
+              >
+                {buttonLabel || '확인'}
+              </div>
+            )}
+            {showSkipRow && (
               <div
                 style={{
                   marginTop: 8,
