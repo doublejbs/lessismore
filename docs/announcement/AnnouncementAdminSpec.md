@@ -44,7 +44,8 @@
 | `items` | array? | (선택) 소개 항목. **앱은 앞 3개만 렌더**. 각 항목: `{ imageUrl?, title, description?, link? }` |
 | `buttonLabel` | string? | (선택) 주 버튼 문구. 비면 앱 기본 '확인' |
 | `buttonLink` | string? | (선택) 주 버튼 이동 대상 |
-| `showSkip` | boolean? | (선택) 건너뛰기 노출. 기본 true |
+| `showSkip` | boolean? | (선택) 건너뛰기 노출. 기본 true. **forced=true면 무시**(항상 숨김) |
+| `forced` | boolean? | (선택) **강제(차단형) 모드**. 기본 미지정=일반. true면 앱에서 팝업을 닫을 수 없다 — 건너뛰기 숨김·딤 탭·back 무시, 닫음 저장 안 함(이전에 닫은 id여도 표시). 아이템 링크 탭 비활성(정보 표시만, chevron 없음). 메인 버튼은 `buttonLink` 있으면 이동만 하고 팝업 유지, 없으면 버튼 숨김. 내리는 방법은 원격뿐: active=false / 문서 삭제 / forced=false |
 | `startAt` / `endAt` | string?(ISO) | (선택) 노출 기간 |
 
 ### 3.2 보관함 컬렉션 (어드민 전용 — 앱은 읽지 않음)
@@ -65,6 +66,7 @@
 | --- | --- | --- |
 | `id`, `title`, `subtitle?`, `items?`, `buttonLabel?`, `buttonLink?`, `startAt?`, `endAt?` | — | 라이브 문서와 동일 의미 (`active` 없음) |
 | `showSkip` | boolean | 폼 Switch 값을 **항상 저장**(기본 ON=true). 명시 저장으로 발행 시 모호함 제거 |
+| `forced` | boolean | showSkip과 동일하게 **항상 boolean으로 저장**(기본 OFF=false). 발행 시 라이브 문서에도 항상 boolean으로 포함 |
 | `createdAt` / `updatedAt` | string(ISO) | announcements와 동일 규칙 |
 
 ## 4. 기능 명세
@@ -87,19 +89,20 @@
 
 **라이브 상태 카드**
 - 현재 라이브 문서를 `getDoc` 1회 조회(발행/끄기/내리기 후 상태 갱신).
-- 표시: id, 본문(공지=message) / 제목(팝업=title) 요약, active 상태 Tag(ON/OFF), 기간.
+- 표시: id, 본문(공지=message) / 제목(팝업=title) 요약, active 상태 Tag(ON/OFF), 기간. 팝업 탭은 라이브 문서가 `forced`면 빨간 '강제' Tag를 병행 표시.
 - 액션: [끄기](active=false 저장, active일 때만 활성), [내리기](deleteDoc, confirm).
 - 라이브 문서 없으면 "발행된 항목 없음".
 
 **보관함 목록 (antd Table)**
 - 컬럼: id · 요약(공지=message 앞부분 / 팝업=title) · 기간(startAt~endAt, 없으면 '-') · 수정일(updatedAt) · 액션([발행] [편집] [삭제]).
 - `updatedAt` 내림차순(`query` + `orderBy('updatedAt', 'desc')`).
-- 라이브 문서와 id가 같은 행에 'LIVE' Tag.
+- 라이브 문서와 id가 같은 행에 'LIVE' Tag. 팝업 탭은 `forced` 항목에 빨간 '강제' Tag 병행 표시.
 - 상단 [새로 만들기] 버튼.
 
 **작성/편집 폼 (antd Modal + Form)**
 - 공지 폼: `id`(필수) · `message`(필수, TextArea) · `link`(선택) · `startAt`/`endAt`(DatePicker showTime, 선택). ~~active 스위치~~ 제거 — **발행이 노출을 결정**.
-- 팝업 폼: `id`(필수) · `title`(필수, TextArea 2줄 — 줄바꿈 허용) · `subtitle`(선택) · **`items`: `Form.List`(최대 3개)** — 각 항목 imageUrl(선택)/title(필수)/description(선택)/link(선택), 항목 추가·삭제 버튼(3개 도달 시 추가 버튼 숨김) · `buttonLabel`(선택, 비면 앱 기본 '확인' 안내) · `buttonLink`(선택) · `showSkip`(Switch, 기본 ON) · `startAt`/`endAt`(선택).
+- 팝업 폼: `id`(필수) · `title`(필수, TextArea 2줄 — 줄바꿈 허용) · `subtitle`(선택) · **`items`: `Form.List`(최대 3개)** — 각 항목 imageUrl(선택)/title(필수)/description(선택)/link(선택), 항목 추가·삭제 버튼(3개 도달 시 추가 버튼 숨김) · `buttonLabel`(선택, 비면 앱 기본 '확인' 안내) · `buttonLink`(선택) · `showSkip`(Switch, 기본 ON) · `forced`(Switch '강제 모드', 기본 OFF — extra로 차단형 동작 요약 안내) · `startAt`/`endAt`(선택).
+- `forced` ON이면 `showSkip` Switch는 **disabled** 처리하고 extra 문구로 "무시됨(항상 숨김)"을 안내한다(저장 값 자체는 유지).
 - 저장 → 보관함 컬렉션에 `setDoc`(문서 키 = id, `createdAt`은 신규일 때만, `updatedAt` 항상 갱신) 후 목록 갱신.
 - **편집 중 id 변경** = 새 항목으로 저장됨(기존 항목은 남음)을 폼 extra로 안내. 바뀐 id가 기존 다른 항목과 같으면 그 항목을 덮어쓴다(createdAt은 그 항목 것 유지).
 
@@ -108,13 +111,15 @@
 - 미리보기는 고정 크기 **폰 프레임**(약 320×640, 라운드 16, 테두리 `#E5E5E5`) 안에 앱 화면 위 딤(`rgba(0,0,0,0.5)`)이 깔린 모습을 렌더하고, 프레임 밖 상단에 "앱 미리보기" 캡션을 둔다.
   - 공지: 프레임 **하단 앵커 바텀 시트** 재현 — 그랩 핸들 · 본문(줄바꿈 유지, 비면 플레이스홀더) · link 입력 시 "자세히 보기" 밑줄 텍스트 · [닫기]/[하루동안 보지않기] 버튼 행.
   - 팝업: 프레임 **중앙 카드** 재현 — 제목(줄바꿈 유지, 비면 플레이스홀더) · 부제목 · 소개 항목 리스트(제목이 입력된 항목만, 썸네일 이미지 로드 실패 시 회색 박스 폴백, link 있으면 chevron) · 메인 버튼(buttonLabel 비면 '확인') · showSkip ON일 때 "건너뛰기".
-- **실시간 갱신**: `Form.useWatch`로 관련 필드(공지 message/link, 팝업 title/subtitle/items/buttonLabel/showSkip)를 구독해 입력 즉시 미리보기에 반영한다. `useWatch`는 Modal이 닫혀 있어도 안전하다.
+  - 팝업 **강제 모드 반영**: `forced` ON이면 "건너뛰기" 미표시, 아이템 chevron 미표시, 메인 버튼은 `buttonLink`가 있을 때만 표시(없으면 숨김). 이를 위해 미리보기 props에 `forced`/`hasButtonLink`를 받는다.
+- **실시간 갱신**: `Form.useWatch`로 관련 필드(공지 message/link, 팝업 title/subtitle/items/buttonLabel/buttonLink/showSkip/forced)를 구독해 입력 즉시 미리보기에 반영한다. `useWatch`는 Modal이 닫혀 있어도 안전하다.
 - 미리보기는 **앱 원본 대비 비율 축소 재현**이다(폰 프레임이 실제 기기보다 작아 수치를 축소·근사). 픽셀 정합 목적이 아니라 구성·문안 확인 목적. 폰트는 웹 레포에 이미 로드된 Pretendard(+시스템 폴백)를 쓴다.
 - 미리보기 컴포넌트는 순수 프레젠테이션(FC, 상태는 이미지 onError 폴백 정도만)이다.
 
 **발행 confirm**
 - "이 항목을 라이브로 발행할까요?"
 - 라이브 문서와 다른 id를 발행하면 "닫았던 사용자에게도 새로 노출됩니다" 안내. **팝업 탭은 특히 강조**(닫음이 id 단위 영구 저장).
+- 팝업 탭에서 `forced` 항목 발행 시 강한 경고를 병행 표시: "⚠️ 강제(차단형) 팝업입니다. 발행하면 사용자가 닫을 수 없고, 내리려면 이 어드민에서 라이브를 끄거나 내려야 합니다." (id 변경 경고와 동시에 해당하면 둘 다 표시).
 - 발행 성공 시 `message.success` + 라이브 카드 갱신.
 
 ### 4.3 날짜 처리
