@@ -9,6 +9,7 @@ import AddGearModal from './component/AddGearModal';
 import AddGearExcelModal from './component/AddGearExcelModal';
 import NaverShoppingImageModal from './component/NaverShoppingImageModal';
 import SaveKoreanNameButtonView from './SaveKoreanNameButtonView';
+import { ALLOWED_UIDS } from '../common/AllowedUids';
 
 interface RowType {
   id: string;
@@ -49,7 +50,6 @@ const ManageView = () => {
   const firebase = app.getFirebase();
   const isLoggedIn = firebase.isLoggedIn();
   const userId = firebase.getUserId();
-  const ALLOWED_UIDS = ['M3yk9SzrGZN3veiyd2SE6LmTrsk1', 'KkmaLpxPYLbmJKGkSTLMuMcD5l82'];
 
   const handleClickGoogle = async () => {
     await firebase.logInWithGoogle();
