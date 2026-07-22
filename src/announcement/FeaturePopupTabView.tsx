@@ -38,6 +38,7 @@ interface FeaturePopupFormValues {
   buttonLabel?: string;
   buttonLink?: string;
   showSkip: boolean;
+  forced: boolean;
   startAt?: Dayjs;
   endAt?: Dayjs;
 }
@@ -51,6 +52,7 @@ interface FeaturePopupArchiveDoc {
   buttonLabel?: string;
   buttonLink?: string;
   showSkip: boolean;
+  forced: boolean;
   startAt?: string;
   endAt?: string;
   createdAt: string;
@@ -67,6 +69,7 @@ interface FeaturePopupLiveDoc {
   buttonLabel?: string;
   buttonLink?: string;
   showSkip: boolean;
+  forced: boolean;
   startAt?: string;
   endAt?: string;
 }
@@ -89,7 +92,9 @@ const FeaturePopupTabView = () => {
   const watchedSubtitle = Form.useWatch('subtitle', form);
   const watchedItems = Form.useWatch('items', form);
   const watchedButtonLabel = Form.useWatch('buttonLabel', form);
+  const watchedButtonLink = Form.useWatch('buttonLink', form);
   const watchedShowSkip = Form.useWatch('showSkip', form);
+  const watchedForced = Form.useWatch('forced', form);
 
   const firebase = app.getFirebase();
 
@@ -176,6 +181,7 @@ const FeaturePopupTabView = () => {
       id,
       title: values.title.trim(),
       showSkip: !!values.showSkip,
+      forced: !!values.forced,
       createdAt: existing ? existing.createdAt : now,
       updatedAt: now,
     };
@@ -226,6 +232,7 @@ const FeaturePopupTabView = () => {
       active: true,
       title: item.title,
       showSkip: item.showSkip,
+      forced: !!item.forced,
     };
 
     if (item.subtitle) {
@@ -276,6 +283,7 @@ const FeaturePopupTabView = () => {
       buttonLabel: item.buttonLabel ?? '',
       buttonLink: item.buttonLink ?? '',
       showSkip: item.showSkip ?? true,
+      forced: item.forced ?? false,
       startAt: toDayjs(item.startAt),
       endAt: toDayjs(item.endAt),
     });
@@ -318,12 +326,35 @@ const FeaturePopupTabView = () => {
   // 팝업 닫음은 id 단위 영구라, 라이브와 다른 id를 발행하면 닫았던 사용자에게도 다시 뜬다.
   const handleClickPublish = (item: FeaturePopupArchiveDoc) => {
     const isNewId = !!liveDoc && liveDoc.id !== item.id;
+    const isForced = !!item.forced;
+
+    // 경고 문구 구성: 강제 모드 경고와 id 변경 경고는 병행 표시한다.
+    const warnings: string[] = [];
+
+    if (isForced) {
+      warnings.push(
+        '⚠️ 강제(차단형) 팝업입니다. 발행하면 사용자가 닫을 수 없고, 내리려면 이 어드민에서 라이브를 끄거나 내려야 합니다.'
+      );
+    }
+
+    if (isNewId) {
+      warnings.push(
+        `⚠️ 현재 라이브 팝업(id: ${liveDoc?.id})과 id가 다릅니다. 팝업 닫음은 id 단위로 영구 저장되므로, 이전 팝업을 닫았던 모든 사용자에게 새로 노출됩니다.`
+      );
+    }
 
     Modal.confirm({
       title: '이 항목을 라이브로 발행할까요?',
-      content: isNewId
-        ? `⚠️ 현재 라이브 팝업(id: ${liveDoc?.id})과 id가 다릅니다. 팝업 닫음은 id 단위로 영구 저장되므로, 이전 팝업을 닫았던 모든 사용자에게 새로 노출됩니다.`
-        : `id "${item.id}" 항목이 앱에 즉시 노출됩니다.`,
+      content:
+        warnings.length > 0 ? (
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+            {warnings.map((warning, index) => (
+              <div key={index}>{warning}</div>
+            ))}
+          </div>
+        ) : (
+          `id "${item.id}" 항목이 앱에 즉시 노출됩니다.`
+        ),
       okText: '발행',
       cancelText: '취소',
       onOk: async () => {
@@ -414,10 +445,11 @@ const FeaturePopupTabView = () => {
       title: 'id',
       dataIndex: 'id',
       key: 'id',
-      render: (id: string) => (
+      render: (id: string, item: FeaturePopupArchiveDoc) => (
         <Space>
           <span>{id}</span>
           {liveDoc?.id === id && <Tag color='green'>LIVE</Tag>}
+          {item.forced && <Tag color='red'>강제</Tag>}
         </Space>
       ),
     },
@@ -469,7 +501,10 @@ const FeaturePopupTabView = () => {
             <Descriptions column={1} size='small' style={{ marginBottom: 16 }}>
               <Descriptions.Item label='id'>{liveDoc.id}</Descriptions.Item>
               <Descriptions.Item label='상태'>
-                {liveDoc.active ? <Tag color='green'>ON</Tag> : <Tag>OFF</Tag>}
+                <Space>
+                  {liveDoc.active ? <Tag color='green'>ON</Tag> : <Tag>OFF</Tag>}
+                  {liveDoc.forced && <Tag color='red'>강제</Tag>}
+                </Space>
               </Descriptions.Item>
               <Descriptions.Item label='제목'>
                 <Typography.Text style={{ maxWidth: 400 }} ellipsis>
@@ -535,7 +570,7 @@ const FeaturePopupTabView = () => {
               layout='vertical'
               disabled={saving}
               requiredMark
-              initialValues={{ showSkip: true }}
+              initialValues={{ showSkip: true, forced: false }}
             >
               <Form.Item
                 label='팝업 id'
@@ -626,7 +661,20 @@ const FeaturePopupTabView = () => {
                 label='건너뛰기 노출'
                 name='showSkip'
                 valuePropName='checked'
-                extra='끄면 팝업에 "건너뛰기"가 표시되지 않습니다.'
+                extra={
+                  watchedForced
+                    ? '강제 모드가 켜져 있어 이 설정은 무시됩니다(건너뛰기 항상 숨김).'
+                    : '끄면 팝업에 "건너뛰기"가 표시되지 않습니다.'
+                }
+              >
+                <Switch checkedChildren='ON' unCheckedChildren='OFF' disabled={!!watchedForced} />
+              </Form.Item>
+
+              <Form.Item
+                label='강제 모드'
+                name='forced'
+                valuePropName='checked'
+                extra='켜면 사용자가 닫을 수 없는 차단형 팝업이 됩니다. 건너뛰기·닫기 경로가 사라지고, 아이템 링크는 비활성, 메인 버튼은 링크 이동만 합니다(링크 없으면 버튼 숨김). 내리려면 라이브를 끄거나 내려야 합니다.'
               >
                 <Switch checkedChildren='ON' unCheckedChildren='OFF' />
               </Form.Item>
@@ -647,6 +695,8 @@ const FeaturePopupTabView = () => {
               items={watchedItems ?? []}
               buttonLabel={watchedButtonLabel?.trim() ? watchedButtonLabel.trim() : undefined}
               showSkip={watchedShowSkip ?? true}
+              forced={watchedForced ?? false}
+              hasButtonLink={!!watchedButtonLink?.trim()}
             />
           </div>
         </div>
