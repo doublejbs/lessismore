@@ -13,6 +13,7 @@ import GearShareWrapper from './gear-share/component/GearShareWrapper.tsx';
 import CelebrateView from './celebrate/CelebrateView';
 import AndroidAppBannerView from './components/AndroidAppBannerView';
 import ManageView from './manage/ManageView';
+import AnnouncementAdminView from './announcement/AnnouncementAdminView';
 
 const ROUTES = [
   {
@@ -28,6 +29,7 @@ const ROUTES = [
     element: <GearShareWrapper />,
   },
   { path: '/manage', element: <ManageView /> },
+  { path: '/announcement', element: <AnnouncementAdminView /> },
   { path: '/celebrate', element: <CelebrateView /> },
   { path: '/app-install', element: <AppInstallView /> },
   { path: '*', element: <Navigate to='/app-install' replace /> },
