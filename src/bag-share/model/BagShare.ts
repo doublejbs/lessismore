@@ -95,7 +95,8 @@ class BagShare {
 
   public mapGears<R>(callback: (gear: Gear) => R) {
     return this.gears
-      .filter((gear) => this.filterManager.hasFilter(gear.getCategory() as GearFilter))
+      // 세분 카테고리는 1차 그룹으로 접어 비교한다(Gear.getGroupCategory 주석 참고).
+      .filter((gear) => this.filterManager.hasFilter(gear.getGroupCategory()))
       .map(callback);
   }
 
