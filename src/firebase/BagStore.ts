@@ -16,6 +16,7 @@ import {
   where,
 } from 'firebase/firestore';
 import BagItem from '../bag/model/BagItem';
+import { isOwnGearImageUrl } from '../gear-image/GearImageOwnership';
 import Gear from '../model/Gear';
 import OrderType from '../order/OrderType.ts';
 import GearFilter from '../warehouse/model/GearFilter';
@@ -120,7 +121,11 @@ class BagStore {
                     name,
                     company,
                     weight,
-                    imageUrl,
+                    // 배낭 주인이 **직접 올린 사진만** 넘긴다 — 크롤한 브랜드 이미지는
+                    // 저작권상 노출하지 않는다(GearImageOwnership 주석 참고).
+                    // 사용자 문서의 `imageUrl`에는 옛 등록 경로가 복사해 넣은 크롤 URL이
+                    // 섞여 있어, 값의 존재만으로는 본인 사진인지 알 수 없다.
+                    isOwnGearImageUrl(imageUrl, userId) ? imageUrl : '',
                     true,
                     isCustom,
                     category,
