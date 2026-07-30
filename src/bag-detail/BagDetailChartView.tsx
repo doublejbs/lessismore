@@ -35,11 +35,14 @@ const BagDetailChartView: FC<Props> = ({ bagDetail }) => {
     let totalWeight = 0;
 
     gears.forEach((gear) => {
-      const gearFilterCategory = gear.getCategory() || GearFilter.Etc;
+      // 세분 카테고리(`bottle` 등)를 1차 그룹으로 접는다 — 원본 값을 그대로 쓰면
+      // 차트에 그룹이 아닌 세분 키가 따로 잡힌다(Gear.getGroupCategory 주석 참고).
+      const gearFilterCategory = gear.getGroupCategory();
       const weight = Number(gear.getWeight());
 
-      // 텐트, 침낭, 매트, 배낭을 베이스로 분류
-      let category = gearFilterCategory;
+      // 텐트, 침낭, 매트, 배낭을 베이스로 분류.
+      // 아래에서 그룹이 아닌 묶음 라벨('베이스…')로도 덮어쓰므로 타입은 string이다.
+      let category: string = gearFilterCategory;
       if (
         gearFilterCategory === GearFilter.Tent ||
         gearFilterCategory === GearFilter.SleepingBag ||

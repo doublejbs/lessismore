@@ -17,6 +17,7 @@ import {
   where,
 } from 'firebase/firestore';
 import BagItem from '../bag/model/BagItem';
+import { getGroupForCategory } from '../gear/GearCategoryGroups';
 import { isOwnGearImageUrl } from '../gear-image/GearImageOwnership';
 import Gear from '../model/Gear';
 import OrderType from '../order/OrderType.ts';
@@ -91,7 +92,10 @@ class BagStore {
           .filter((doc) =>
             filters.length === 1 && filters[0] === GearFilter.All
               ? true
-              : filters.some((filter) => (doc.data() as GearData).category.includes(filter))
+              : filters.some(
+                  (filter) =>
+                    getGroupForCategory((doc.data() as GearData).category) === filter
+                )
           )
           .map((doc) => ({
             ...(doc.data() as GearData),

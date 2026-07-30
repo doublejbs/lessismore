@@ -87,7 +87,11 @@ class BagDetailFilterManager {
     return this.filters
       .map((filter) => ({
         category: filter,
-        gears: gears.filter((gear) => gear.getCategory() === filter.getFilter())
+        // 세분 카테고리(`bottle` 등)는 1차 그룹으로 접어 비교한다 — 원본 값으로 비교하면
+        // 어느 그룹에도 안 걸려 장비가 목록에서 조용히 사라진다.
+        gears: gears.filter(
+          (gear) => gear.getGroupCategory() === filter.getFilter()
+        )
       }))
       .filter(({ gears }) => gears.length > 0);
   }
@@ -99,7 +103,7 @@ class BagDetailFilterManager {
 
   public getFiltersWithGears(gears: Gear[]) {
     return this.filters.filter((filter) => 
-      gears.some((gear) => gear.getCategory() === filter.getFilter())
+      gears.some((gear) => gear.getGroupCategory() === filter.getFilter())
     );
   }
 }

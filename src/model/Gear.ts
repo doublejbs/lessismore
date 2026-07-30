@@ -1,3 +1,6 @@
+import { getGroupForCategory } from '../gear/GearCategoryGroups';
+import GearFilter from '../warehouse/model/GearFilter';
+
 class Gear {
   public constructor(
     private readonly id: string,
@@ -46,6 +49,17 @@ class Gear {
 
   public getCategory() {
     return this.category;
+  }
+
+  /**
+   * 카테고리 필터·그룹핑에 쓰는 **1차 그룹**.
+   *
+   * `category`에는 크롤 파이프라인이 넣은 세분 키(`bottle`·`chair` 등)가 들어올 수 있어
+   * 원본 값을 그대로 필터와 비교하면 어느 그룹에도 안 걸려 목록에서 사라진다.
+   * 화면에서 카테고리를 비교할 때는 `getCategory()`가 아니라 이 값을 쓴다.
+   */
+  public getGroupCategory(): GearFilter {
+    return getGroupForCategory(this.category);
   }
 
   public getData() {
