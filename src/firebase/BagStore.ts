@@ -5,12 +5,13 @@ import {
   arrayRemove,
   arrayUnion,
   collection,
+  CollectionReference,
   doc,
   DocumentData,
   getDoc,
   getDocs,
-  orderBy,
   query,
+  QueryDocumentSnapshot,
   QuerySnapshot,
   updateDoc,
   where,
@@ -22,6 +23,10 @@ import OrderType from '../order/OrderType.ts';
 import GearFilter from '../warehouse/model/GearFilter';
 import Firebase from './Firebase';
 import GearStore, { GearData } from './GearStore.ts';
+
+// Firestore `in` 절에 한 번에 넣을 수 있는 값의 개수 상한. 넘기면 쿼리가 예외로 실패한다.
+const IN_CLAUSE_LIMIT = 30;
+
 class BagStore {
   public constructor(
     private readonly firebase: Firebase,
@@ -35,15 +40,14 @@ class BagStore {
       ).data()?.['bags'];
 
       if (bagIDs.length) {
-        const bags = await getDocs(
-          query(
-            collection(this.getStore(), 'bag'),
-            where('__name__', 'in', bagIDs),
-            orderBy('startDate', 'desc')
-          )
+        const docs = await this.getDocsByIDs(
+          collection(this.getStore(), 'bag'),
+          bagIDs
         );
 
-        return this.convertToArray(bags);
+        return this.convertDocsToArray(
+          BagStore.sortDocsByOrder(docs, 'startDate', true)
+        );
       } else {
         return [];
       }
@@ -74,14 +78,16 @@ class BagStore {
           shared,
         };
       } else {
-        const warehouseSnapshot = await getDocs(
-          query(
+        const { field, descending } = BagStore.getOrderField(order);
+        const warehouseDocs = BagStore.sortDocsByOrder(
+          await this.getDocsByIDs(
             collection(this.getStore(), 'users', userId, 'gears'),
-            where('__name__', 'in', gears),
-            this.getOrderQuery(order)
-          )
+            gears
+          ),
+          field,
+          descending
         );
-        const warehouseGears = warehouseSnapshot.docs
+        const warehouseGears = warehouseDocs
           .filter((doc) =>
             filters.length === 1 && filters[0] === GearFilter.All
               ? true
@@ -182,14 +188,16 @@ class BagStore {
         shared,
       };
     } else {
-      const warehouseSnapshot = await getDocs(
-        query(
+      const { field, descending } = BagStore.getOrderField(order);
+      const warehouseDocs = BagStore.sortDocsByOrder(
+        await this.getDocsByIDs(
           collection(this.getStore(), 'users', this.getUserID(), 'gears'),
-          where('__name__', 'in', gears),
-          this.getOrderQuery(order)
-        )
+          gears
+        ),
+        field,
+        descending
       );
-      const warehouseGears = warehouseSnapshot.docs
+      const warehouseGears = warehouseDocs
         .filter((doc) =>
           filters.length === 1 && filters[0] === GearFilter.All
             ? true
@@ -246,35 +254,106 @@ class BagStore {
     }
   }
 
-  private getOrderQuery(order: OrderType) {
+  /**
+   * 문서 ID 목록으로 문서를 가져온다.
+   *
+   * Firestore `in` 절은 값 **30개 제한**이 있어 31개부터는 쿼리 자체가 예외로 실패한다 —
+   * 장비를 31개 이상 담은 배낭은 조회가 통째로 깨졌다. 30개씩 잘라 병렬 조회하고 합친다.
+   *
+   * **정렬은 청크 경계를 넘지 못하므로 여기서 하지 않는다.** 서버 `orderBy`를 붙여도
+   * 청크별로만 정렬되니, 합친 결과를 호출부가 직접 정렬해야 한다.
+   */
+  private async getDocsByIDs(
+    collectionRef: CollectionReference<DocumentData>,
+    ids: string[]
+  ): Promise<QueryDocumentSnapshot<DocumentData>[]> {
+    const chunks: string[][] = [];
+
+    for (let index = 0; index < ids.length; index += IN_CLAUSE_LIMIT) {
+      chunks.push(ids.slice(index, index + IN_CLAUSE_LIMIT));
+    }
+
+    const snapshots = await Promise.all(
+      chunks.map((chunk) =>
+        getDocs(query(collectionRef, where('__name__', 'in', chunk)))
+      )
+    );
+
+    return snapshots.flatMap((snapshot) => snapshot.docs);
+  }
+
+  /**
+   * 합친 결과에 적용하는 정렬(위 `getDocsByIDs` 주석 참고).
+   *
+   * **저장된 값을 그대로 비교해 기존 노출 순서를 유지한다.** 무게가 문자열로 저장돼 있어
+   * 사전순으로 비교되는 것(`1000g`이 `90g`보다 앞) 역시 서버 `orderBy`가 하던 그대로다 —
+   * 여기서 숫자 비교로 바꾸면 이 수정과 무관한 순서 변경이 섞인다.
+   */
+  private static sortDocsByOrder(
+    docs: QueryDocumentSnapshot<DocumentData>[],
+    field: string,
+    descending: boolean
+  ) {
+    return [...docs].sort((left, right) => {
+      const leftValue = left.data()[field];
+      const rightValue = right.data()[field];
+
+      if (leftValue === rightValue) {
+        return 0;
+      }
+
+      const ascending = leftValue < rightValue ? -1 : 1;
+
+      return descending ? -ascending : ascending;
+    });
+  }
+
+  /**
+   * `OrderType`을 정렬 기준 필드로 옮긴다.
+   *
+   * 예전 `getOrderQuery`(서버 `orderBy` 절)를 대체한 것이다 — ID 목록 조회를 청크로 나눈
+   * 뒤에는 서버 정렬을 쓸 수 없어(청크별로만 정렬됨) 같은 매핑을 클라이언트에서 재현한다.
+   */
+  private static getOrderField(order: OrderType): {
+    field: string;
+    descending: boolean;
+  } {
     switch (order) {
-      case OrderType.NameAsc:
-        return orderBy('name', 'asc');
       case OrderType.NameDesc:
-        return orderBy('name', 'desc');
+        return { field: 'name', descending: true };
       case OrderType.WeightAsc:
-        return orderBy('weight', 'asc');
+        return { field: 'weight', descending: false };
       case OrderType.WeightDesc:
-        return orderBy('weight', 'desc');
+        return { field: 'weight', descending: true };
       case OrderType.CreatedAsc:
-        return orderBy('createDate', 'asc');
+        return { field: 'createDate', descending: false };
       case OrderType.CreatedDesc:
-        return orderBy('createDate', 'desc');
+        return { field: 'createDate', descending: true };
+      case OrderType.NameAsc:
       default:
-        return orderBy('name', 'asc');
+        return { field: 'name', descending: false };
     }
   }
 
+
   private convertToArray(data: QuerySnapshot<DocumentData, DocumentData>) {
-    const result: BagItem[] = [];
-    data.forEach((doc) => {
+    return this.convertDocsToArray(data.docs);
+  }
+
+  // 청크로 나눠 조회하면 스냅샷이 여러 개라 문서 배열을 직접 받는 입구가 필요하다.
+  private convertDocsToArray(docs: QueryDocumentSnapshot<DocumentData>[]) {
+    return docs.map((doc) => {
       const { name, weight, editDate, startDate, endDate } = doc.data();
 
-      result.push(
-        new BagItem(doc.id, name, weight, dayjs(editDate), dayjs(startDate), dayjs(endDate))
+      return new BagItem(
+        doc.id,
+        name,
+        weight,
+        dayjs(editDate),
+        dayjs(startDate),
+        dayjs(endDate)
       );
     });
-    return result;
   }
 
   public async add(name: string, startDate: Dayjs, endDate: Dayjs) {
@@ -407,8 +486,9 @@ class BagStore {
 
   public async getBags(bagIDs: string[]) {
     if (bagIDs.length) {
-      return this.convertToArray(
-        await getDocs(query(collection(this.getStore(), 'bag'), where('__name__', 'in', bagIDs)))
+      // 여기는 원래 정렬을 걸지 않았으므로 합친 순서를 그대로 쓴다.
+      return this.convertDocsToArray(
+        await this.getDocsByIDs(collection(this.getStore(), 'bag'), bagIDs)
       );
     } else {
       return [];
