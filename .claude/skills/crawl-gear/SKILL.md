@@ -257,6 +257,13 @@ import('puppeteer').then(async ({default: p}) => {
 
 ### 출력 검증 체크리스트
 
+**먼저 자동 검증기를 돌린다:** `node .claude/skills/crawl-gear/validate.js <크롤-json>`
+아래 체크리스트를 코드로 전부 검사한다(ERROR=규칙 위반 0이어야 함 / FLAG=사이트가 원래 영문만 주는
+등 정당한 예외일 수 있어 사람 검토 / INFO=커버리지). ⚠ **언어 방향을 양방향으로 검사한다** —
+영문 필드(name·size·color)에 한글, **한글 필드(nameKorean·sizeKorean·colorKorean)에 영문**,
+둘 다 잡는다(과거에 한 방향만 검사해 nameKorean/colorKorean 영문 누출을 통째로 놓친 실수 재발 방지).
+검증기가 놓치는 브랜드별 함정(무게 출처, 카테고리 오분류 등)은 여전히 눈으로 확인.
+
 크롤 후 JSON 또는 HTML에서 확인:
 - [ ] `nameKorean`이 비어있지 않은가? (필수)
 - [ ] `name` 필드가 실제 상품명인가? (네비/메뉴 텍스트 아님), 비어있지 않은가? (필수 — 국내 전용 브랜드는 로마자 음역으로 채움, § "국내 전용 브랜드 name(영문) 채우기" 참고)
