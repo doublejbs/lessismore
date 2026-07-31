@@ -160,6 +160,32 @@ const classifyAccessory = (n) => {
   return 'clothing'; // 캡/모자/비니/양말/샌들/벨트/스카프 등 착용류
 };
 
+// gear 상품을 이름만으로 분류(카테고리 미상/누락분·Lifestyle·Gear전체용). ⚠ 랜턴은 모델명(세레스/
+// 닉스)·부속(맨틀/글로브/쉐이드/파일드라이버)이라 "랜턴" 키워드가 없는 경우가 많다 → 함께 lighting.
+const LANTERN_RE = /랜턴|lantern|라이트|light|호즈키|hozuki|세레스|celes|맨틀|mantle|글로브|globe|쉐이드|shade|파일드라이버|pile\s*driver|랜턴행거|램프|lamp|캔들|candle/i;
+const classifyGearByName = (n) => {
+  if (/타프|tarp/i.test(n)) return 'tarp';
+  if (/쉘터|shelter/i.test(n)) return 'shelter';
+  if (/텐트|tent|돔|dome/i.test(n)) return 'tent';
+  if (/체어|chair|의자|스툴|stool|벤치|bench/i.test(n)) return 'chair';
+  if (/테이블|table|쉘프|shelf/i.test(n)) return 'table';
+  if (/침낭|슬리핑|sleeping/i.test(n)) return 'sleeping_bag';
+  if (/매트|mat|패드/i.test(n)) return 'mat';
+  if (/필로우|pillow|베개/i.test(n)) return 'pillow';
+  if (LANTERN_RE.test(n)) return 'lighting';
+  if (/토치|torch/i.test(n)) return 'torch';
+  if (/버너|스토브|stove|burner/i.test(n)) return 'stove';
+  if (/컵|cup|머그|mug/i.test(n)) return 'cup';
+  if (/보틀|bottle|물통|보온병/i.test(n)) return 'bottle';
+  if (/볼$|보울|bowl|접시|plate/i.test(n)) return 'bowl';
+  if (/스푼|포크|나이프|커틀러리|cutlery|수저/i.test(n)) return 'cutlery';
+  if (/냄비|쿠커|cooker|\bpot|팬|더치|케틀|그릴|grill|화로|takibi/i.test(n)) return 'cookware_etc';
+  if (/배낭|백팩|backpack/i.test(n)) return 'backpack';
+  if (/백|bag|가방|파우치|pouch|더플|duffel|케이스|case|큐브/i.test(n)) return 'pouch';
+  if (/폴|pole|펙|peg|스트링|로프/i.test(n)) return 'tent_acc';
+  return 'etc';
+};
+
 const classify = (cateCd, name) => {
   const n = name || '';
   switch (cateCd) {
@@ -175,7 +201,7 @@ const classify = (cateCd, name) => {
       if (/필로우|pillow|베개/i.test(n)) return 'pillow';
       return 'sleeping_bag';
     case '0111': // 스토브&랜턴
-      if (/랜턴|lantern|라이트|light|호즈키|hozuki|테이블등|등$|램프|lamp/i.test(n)) return 'lighting';
+      if (LANTERN_RE.test(n) || /테이블등|등$/.test(n)) return 'lighting';
       if (/토치|torch/i.test(n)) return 'torch';
       return 'stove';
     case '0113': // IGT (아이언그릴테이블 시스템)
@@ -204,11 +230,10 @@ const classify = (cateCd, name) => {
       if (/스토브|버너|stove|burner/i.test(n)) return 'stove';
       if (/쿠커|팟|\bpot|cook|케틀/i.test(n)) return 'cookware_etc';
       return 'backpack';
-    case '0137': // Lifestyle
-      if (/백팩|backpack|배낭/i.test(n)) return 'backpack';
-      if (/백|bag|가방|토트|tote|파우치|pouch|월렛|wallet/i.test(n)) return 'pouch';
+    case '0137': // Lifestyle — 의류·잡화 먼저, 나머지는 공통 gear 이름분류(테이블/랜턴 등 제대로 잡게)
       if (/자켓|jacket|팬츠|pants|셔츠|shirt|웨어|wear|장갑|글러브|glove|캡|cap|비니|모자|hat|삭스|sock/i.test(n)) return 'clothing';
-      return 'etc';
+      if (/백팩|backpack|배낭/i.test(n)) return 'backpack';
+      return classifyGearByName(n);
     case '0139': // 부품
       if (/폴|pole|펙|peg|팩\b|스트링|string|로프|rope|가이|guy|프레임|frame|다리|leg|캡|cap|시트|sheet|스토퍼/i.test(n)) return 'tent_acc';
       return 'etc';
@@ -230,26 +255,7 @@ const classify = (cateCd, name) => {
       if (/\b백\b|bag|가방|토트|tote|사코슈|sacoche|월렛|wallet|파우치|pouch/i.test(n)) return 'pouch';
       return 'clothing';
     default: // 0100 Gear 전체 — 세부 카테고리에 못 잡힌 누락분, 이름으로 최선 분류
-      if (/타프|tarp/i.test(n)) return 'tarp';
-      if (/쉘터|shelter/i.test(n)) return 'shelter';
-      if (/텐트|tent|돔|dome/i.test(n)) return 'tent';
-      if (/체어|chair|의자|스툴/i.test(n)) return 'chair';
-      if (/테이블|table/i.test(n)) return 'table';
-      if (/침낭|슬리핑|sleeping/i.test(n)) return 'sleeping_bag';
-      if (/매트|mat|패드/i.test(n)) return 'mat';
-      if (/필로우|pillow|베개/i.test(n)) return 'pillow';
-      if (/랜턴|lantern|라이트|light|호즈키/i.test(n)) return 'lighting';
-      if (/토치|torch/i.test(n)) return 'torch';
-      if (/버너|스토브|stove|burner/i.test(n)) return 'stove';
-      if (/컵|cup|머그|mug/i.test(n)) return 'cup';
-      if (/보틀|bottle|물통|보온병/i.test(n)) return 'bottle';
-      if (/볼$|보울|bowl|접시|plate/i.test(n)) return 'bowl';
-      if (/스푼|포크|나이프|커틀러리|cutlery|수저/i.test(n)) return 'cutlery';
-      if (/냄비|쿠커|cooker|\bpot|팬|더치|케틀|그릴|grill|화로|takibi/i.test(n)) return 'cookware_etc';
-      if (/배낭|백팩|backpack/i.test(n)) return 'backpack';
-      if (/백|bag|가방|파우치|pouch|더플|duffel|케이스|case|큐브/i.test(n)) return 'pouch';
-      if (/폴|pole|펙|peg|스트링|로프/i.test(n)) return 'tent_acc';
-      return 'etc';
+      return classifyGearByName(n);
   }
 };
 
