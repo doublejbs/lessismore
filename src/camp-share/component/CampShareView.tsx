@@ -58,7 +58,7 @@ const CampShareView: FC<Props> = ({ campShare }) => {
     return (
       <div style={styles.center}>
         <p style={styles.muted}>박지 정보를 찾을 수 없어요.</p>
-        <a href='https://useless.my' style={styles.linkMuted}>
+        <a href='https://lessismore-7e070.web.app' style={styles.linkMuted}>
           useless 홈으로
         </a>
       </div>

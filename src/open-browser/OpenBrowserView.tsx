@@ -4,7 +4,7 @@ const OpenBrowserView = () => {
   const ua = navigator.userAgent.toLowerCase();
 
   useEffect(() => {
-    window.open('https://useless.my', '_blank');
+    window.open('https://lessismore-7e070.web.app', '_blank');
   }, []);
 
   if (ua.includes('instagram') || ua.includes('fbav')) {
@@ -34,7 +34,7 @@ const OpenBrowserView = () => {
       >
         <button
           onClick={() => {
-            window.open('https://useless.my', '_blank');
+            window.open('https://lessismore-7e070.web.app', '_blank');
           }}
           style={{
             backgroundColor: 'black',

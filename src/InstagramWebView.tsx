@@ -2,7 +2,7 @@ import { useEffect } from 'react';
 
 const InstagramWebView = () => {
   useEffect(() => {
-    window.location.href = 'x-safari-https://useless.my';
+    window.location.href = 'x-safari-https://lessismore-7e070.web.app';
   }, []);
 
 

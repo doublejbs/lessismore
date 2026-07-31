@@ -70,7 +70,7 @@ const GearShareView: FC<Props> = ({ gearShare }) => {
     return (
       <main style={styles.center}>
         <p style={styles.muted}>장비 정보를 찾을 수 없어요.</p>
-        <a href='https://useless.my' style={styles.linkMuted}>
+        <a href='https://lessismore-7e070.web.app' style={styles.linkMuted}>
           useless 홈으로
         </a>
       </main>
