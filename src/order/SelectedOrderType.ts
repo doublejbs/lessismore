@@ -1,0 +1,1 @@
+export const SELECTED_ORDER_TYPE_KEY = 'selectedOrderType'; 

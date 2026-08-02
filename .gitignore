@@ -1,0 +1,41 @@
+# Logs
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+node_modules
+dist
+dist-ssr
+*.local
+
+# Editor directories and files
+.vscode/*
+.firebase/*
+.firebase/
+!.vscode/extensions.json
+.idea
+.DS_Store
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+.firebase/*
+
+# Firebase Admin service account keys (모든 형태)
+**/serviceAccountKey.json
+**/*firebase-adminsdk*.json
+**/*-adminsdk-*.json
+
+# crawl-gear skill output
+.claude/skills/crawl-gear/out/
+# crawl-gear local config (ADMIN_UID 저장)
+.claude/skills/crawl-gear/.config.local.json
+
+# git worktrees
+.worktrees/

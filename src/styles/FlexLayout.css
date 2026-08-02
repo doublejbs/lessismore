@@ -1,0 +1,80 @@
+/* 방법 1: 빈 요소 추가 방식 */
+.flex-container-method1 {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.flex-container-method1 .spacer {
+  width: 0;
+}
+
+/* 방법 2: margin auto 방식 */
+.flex-container-method2 {
+  display: flex;
+  align-items: center;
+}
+
+.flex-container-method2 .center-item {
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* 방법 3: absolute positioning 방식 */
+.flex-container-method3 {
+  display: flex;
+  align-items: center;
+  position: relative;
+}
+
+.flex-container-method3 .absolute-center {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+/* 방법 4: flex-grow 방식 */
+.flex-container-method4 {
+  display: flex;
+  align-items: center;
+}
+
+.flex-container-method4 .flex-center {
+  flex: 1;
+  text-align: center;
+}
+
+.flex-container-method4 .flex-center > * {
+  display: inline-block;
+}
+
+/* 방법 5: CSS Grid 방식 */
+.grid-container {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: center;
+}
+
+.grid-container .grid-center {
+  justify-self: center;
+}
+
+/* 공통 스타일 */
+.item {
+  padding: 10px;
+  color: white;
+}
+
+.item-left {
+  background: #ff6b6b;
+}
+
+.item-center {
+  background: #4ecdc4;
+}
+
+.container {
+  padding: 20px;
+  border: 1px solid #ccc;
+  margin-bottom: 20px;
+}
