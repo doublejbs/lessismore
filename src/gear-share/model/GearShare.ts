@@ -9,24 +9,55 @@ export interface GearData {
   company?: string;
   companyKorean?: string;
   weight?: string | number;
-  imageUrl?: string;
   category?: string;
   color?: string;
   colorKorean?: string;
+  size?: string;
+  sizeKorean?: string;
 }
 
 const CATEGORY_LABEL: Record<string, string> = {
   tent: '텐트',
+  tarp: '타프',
+  shelter: '쉘터',
+  tent_acc: '텐트ACC',
+  sleeping_bag: '침낭',
   sleepingBag: '침낭',
   backpack: '배낭',
+  vest_pack: '베스트 배낭',
+  backpack_cover: '배낭 커버',
+  pouch: '파우치·수납가방',
   clothing: '의류',
+  gloves: '장갑',
+  gaiter: '스패츠',
+  sunglasses: '선글라스',
   mat: '매트',
+  pillow: '필로우',
   furniture: '가구',
+  chair: '체어',
+  table: '테이블',
+  furniture_etc: '그 외 기타',
   lantern: '랜턴',
+  lighting: '조명',
+  headlamp: '헤드랜턴',
   cooking: '조리',
+  cookware: '코펠·쿡웨어',
+  stove: '버너',
+  torch: '토치',
+  cup: '컵',
+  bowl: '그릇',
+  cutlery: '수저',
+  bottle: '물통',
+  cookware_etc: '식기류 기타',
   electronic: '전자기기',
   food: '음식',
   etc: '기타',
+  towel: '수건',
+  hand_warmer: '핫팩',
+  shovel: '삽',
+  hammer: '망치',
+  microspikes: '아이젠',
+  trekking_pole: '트레킹폴',
 };
 
 class GearShare {
@@ -99,18 +130,15 @@ class GearShare {
     return w != null && String(w).length > 0 ? `${w}g` : '';
   }
 
-  public getImageUrl() {
-    return this.gear?.imageUrl ?? '';
-  }
-
-  // 카테고리 · 색상 메타 라인(앱 상세와 동일 톤). 둘 다 없으면 빈 문자열.
+  // 카테고리 · 색상 · 사이즈 메타 라인(앱 상세와 동일 톤). 빈 항목은 생략한다.
   public getMetaLine() {
     const category = this.gear?.category
       ? CATEGORY_LABEL[this.gear.category] ?? ''
       : '';
     const color = this.gear?.colorKorean || this.gear?.color || '';
+    const size = this.gear?.sizeKorean || this.gear?.size || '';
 
-    return [category, color].filter(Boolean).join(' · ');
+    return [category, color, size].filter(Boolean).join(' · ');
   }
 }
 

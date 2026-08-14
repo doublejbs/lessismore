@@ -1,4 +1,4 @@
-import { FC, useCallback } from 'react';
+import { CSSProperties, FC, useCallback } from 'react';
 import { observer } from 'mobx-react-lite';
 import GearShare from '../model/GearShare';
 
@@ -6,212 +6,208 @@ interface Props {
   gearShare: GearShare;
 }
 
+// 앱 설치 화면(src/app-install/AppInstallView.tsx)에서 사용하는 스토어 링크와 동일하다.
 const APP_STORE_URL = 'https://apps.apple.com/kr/app/id6751174681';
 const PLAY_STORE_URL =
   'https://play.google.com/store/apps/details?id=kr.co.useless.app';
 
-const isAndroid = /Android/i.test(navigator.userAgent);
-
-// 장비 공유 랜딩(GD-7). 장비 정보를 보여주고 '앱에서 보기'로 딥링크한다.
-// 앱 미설치 시 스토어로 폴백(박지 공유 CS-7과 동일 구조).
+// 장비 공유 랜딩(GD-7). 앱이 설치되어 있으면 장비 상세 딥링크를 열고, 아니면 스토어로 보낸다.
 const GearShareView: FC<Props> = ({ gearShare }) => {
-  const openApp = useCallback(() => {
-    const scheme = `lessismoreapp://gear-detail/${gearShare.getId()}`;
-    const storeUrl = isAndroid ? PLAY_STORE_URL : APP_STORE_URL;
+  const userAgent =
+    typeof navigator === 'undefined' ? '' : navigator.userAgent;
+  const isIOS = /iPhone|iPad|iPod/i.test(userAgent);
+  const isAndroid = /Android/i.test(userAgent);
+  const isMobile = isIOS || isAndroid;
+  const storeUrl = isAndroid ? PLAY_STORE_URL : APP_STORE_URL;
+  const metaLine = gearShare.getMetaLine();
+  const weightLabel = gearShare.getWeightLabel();
+  const ctaHint = isMobile
+    ? '앱이 없으면 스토어로 이동해요'
+    : '모바일 기기에서는 앱으로, 데스크톱에서는 앱스토어로 이동해요';
 
+  const openApp = useCallback(() => {
+    // 데스크톱에서는 커스텀 스킴을 호출하지 않고 스토어로 안내한다.
+    if (!isMobile) {
+      window.location.href = storeUrl;
+      return;
+    }
+
+    const scheme = `lessismoreapp://gear-detail/${gearShare.getId()}`;
     let fallback: ReturnType<typeof setTimeout> | null = null;
 
     const cancelFallback = () => {
-      if (fallback) {
+      if (fallback !== null) {
         clearTimeout(fallback);
         fallback = null;
       }
-      document.removeEventListener('visibilitychange', onVisibility);
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
     };
 
-    const onVisibility = () => {
+    const handleVisibilityChange = () => {
       if (document.hidden) {
         cancelFallback();
       }
     };
 
-    document.addEventListener('visibilitychange', onVisibility);
-
+    document.addEventListener('visibilitychange', handleVisibilityChange);
     fallback = setTimeout(() => {
       cancelFallback();
       window.location.href = storeUrl;
     }, 1500);
 
     window.location.href = scheme;
-  }, [gearShare]);
+  }, [gearShare, isMobile, storeUrl]);
 
   if (!gearShare.isInitialized()) {
     return (
-      <div style={styles.center}>
+      <main style={styles.center}>
         <p style={styles.muted}>불러오는 중…</p>
-      </div>
+      </main>
     );
   }
 
   if (gearShare.isNotFound()) {
     return (
-      <div style={styles.center}>
+      <main style={styles.center}>
         <p style={styles.muted}>장비 정보를 찾을 수 없어요.</p>
         <a href='https://useless.my' style={styles.linkMuted}>
           useless 홈으로
         </a>
-      </div>
+      </main>
     );
   }
 
-  const imageUrl = gearShare.getImageUrl();
-  const metaLine = gearShare.getMetaLine();
-  const weightLabel = gearShare.getWeightLabel();
-
   return (
-    <div style={styles.page}>
-      <div style={styles.card}>
-        {imageUrl ? (
-          <img src={imageUrl} alt={gearShare.getName()} style={styles.image} />
-        ) : (
-          <div style={styles.imagePlaceholder} />
-        )}
-
-        <div style={styles.body}>
-          <div style={styles.infoRow}>
-            <div style={styles.infoText}>
+    <main style={styles.page}>
+      <section style={styles.content} aria-labelledby='gear-share-name'>
+        <div style={styles.identityRow}>
+          <div style={styles.identityColumn}>
+            {gearShare.getCompany() && (
               <p style={styles.company}>{gearShare.getCompany()}</p>
-              <h1 style={styles.title}>{gearShare.getName()}</h1>
-              {metaLine && <p style={styles.meta}>{metaLine}</p>}
-            </div>
-            {weightLabel && (
-              <div style={styles.weightBox}>
-                <span style={styles.weightCaption}>무게</span>
-                <span style={styles.weight}>{weightLabel}</span>
-              </div>
             )}
+            <h1 id='gear-share-name' style={styles.title}>
+              {gearShare.getName()}
+            </h1>
+            {metaLine && <p style={styles.meta}>{metaLine}</p>}
           </div>
-
-          <button type='button' style={styles.cta} onClick={openApp}>
-            앱에서 보기
-          </button>
-          <p style={styles.ctaHint}>
-            useless 앱이 없으면 앱스토어로 이동해요
-          </p>
+          {weightLabel && <p style={styles.weight}>{weightLabel}</p>}
         </div>
-      </div>
-    </div>
+
+        <button type='button' style={styles.cta} onClick={openApp}>
+          앱으로 보기
+        </button>
+        <p style={styles.ctaHint}>{ctaHint}</p>
+      </section>
+    </main>
   );
 };
 
-const styles: Record<string, React.CSSProperties> = {
+const styles: Record<string, CSSProperties> = {
   page: {
     minHeight: '100vh',
-    backgroundColor: '#F5F5F5',
+    boxSizing: 'border-box',
+    backgroundColor: '#FFFFFF',
     display: 'flex',
     justifyContent: 'center',
-    padding: '20px 16px 40px',
+    padding: '0 24px calc(40px + env(safe-area-inset-bottom))',
+  },
+  content: {
+    width: '100%',
+    maxWidth: 520,
     boxSizing: 'border-box',
+    paddingTop: 24,
   },
-  card: {
-    width: '100%',
-    maxWidth: 480,
-    backgroundColor: '#FFFFFF',
-    borderRadius: 16,
-    overflow: 'hidden',
-    boxShadow: '0 4px 24px rgba(0,0,0,0.08)',
-  },
-  image: {
-    width: '100%',
-    aspectRatio: '1 / 1',
-    objectFit: 'contain',
-    display: 'block',
-    backgroundColor: '#F1F1F1',
-  },
-  imagePlaceholder: {
-    width: '100%',
-    aspectRatio: '1 / 1',
-    backgroundColor: '#F1F1F1',
-  },
-  body: {
-    padding: 20,
-  },
-  infoRow: {
+  identityRow: {
     display: 'flex',
     alignItems: 'flex-start',
-    justifyContent: 'space-between',
     gap: 12,
+    marginBottom: 32,
   },
-  infoText: {
+  identityColumn: {
     flex: 1,
     minWidth: 0,
   },
   company: {
-    fontSize: 13,
-    color: '#000000',
     margin: 0,
+    color: '#767676',
+    fontSize: 14,
+    lineHeight: '20px',
+    fontWeight: 600,
   },
   title: {
-    fontSize: 20,
-    fontWeight: 700,
-    color: '#000000',
     margin: '2px 0 0',
+    color: '#1A1A1A',
+    fontSize: 22,
+    lineHeight: '28px',
+    letterSpacing: '-0.4px',
+    fontWeight: 600,
+    overflowWrap: 'anywhere',
   },
   meta: {
-    fontSize: 13,
-    color: '#767676',
     margin: '6px 0 0',
-  },
-  weightBox: {
-    display: 'flex',
-    flexDirection: 'column',
-    alignItems: 'flex-end',
-    flexShrink: 0,
-  },
-  weightCaption: {
-    fontSize: 11,
     color: '#767676',
+    fontSize: 13,
+    lineHeight: '18px',
+    letterSpacing: '0.1px',
+    overflow: 'hidden',
+    textOverflow: 'ellipsis',
+    whiteSpace: 'nowrap',
   },
   weight: {
-    fontSize: 16,
+    flexShrink: 0,
+    margin: 0,
+    color: '#1A1A1A',
+    fontFamily:
+      '"Arial Narrow", "Roboto Condensed", "Avenir Next Condensed", sans-serif',
+    fontSize: 28,
+    lineHeight: '32px',
     fontWeight: 700,
-    color: '#000000',
-    marginTop: 2,
+    fontVariantNumeric: 'tabular-nums',
+    textAlign: 'right',
   },
   cta: {
     width: '100%',
-    marginTop: 24,
-    padding: '16px 0',
+    minHeight: 52,
+    boxSizing: 'border-box',
+    padding: '14px 24px',
     border: 'none',
-    borderRadius: 12,
-    backgroundColor: '#000000',
-    color: '#FFFFFF',
-    fontSize: 16,
+    borderRadius: 999,
+    backgroundColor: '#C8F244',
+    color: '#1A1A1A',
+    fontFamily: 'inherit',
+    fontSize: 14,
+    lineHeight: '20px',
     fontWeight: 600,
     cursor: 'pointer',
   },
   ctaHint: {
-    fontSize: 12,
+    margin: '12px 0 0',
     color: '#767676',
+    fontSize: 13,
+    lineHeight: '18px',
     textAlign: 'center',
-    marginTop: 8,
   },
   center: {
     minHeight: '100vh',
+    boxSizing: 'border-box',
     display: 'flex',
     flexDirection: 'column',
     alignItems: 'center',
     justifyContent: 'center',
     gap: 12,
-    backgroundColor: '#F5F5F5',
+    padding: 24,
+    backgroundColor: '#FFFFFF',
   },
   muted: {
-    fontSize: 15,
+    margin: 0,
     color: '#767676',
+    fontSize: 14,
+    lineHeight: '20px',
   },
   linkMuted: {
+    color: '#1A1A1A',
     fontSize: 14,
-    color: '#555555',
+    lineHeight: '20px',
   },
 };
 
