@@ -1,9 +1,21 @@
 import { observer } from 'mobx-react-lite';
 import React, { useState } from 'react';
+import { Tabs } from 'antd';
 import * as XLSX from 'xlsx';
 import app from './App';
-import FirebaseImageStorage from './firebase/FirebaseImageStorage';
+import { ALLOWED_UIDS } from './common/AllowedUids';
 import Gear from './model/Gear';
+import FeedContentTabView from './feed/FeedContentTabView';
+
+interface ExcelGearRow {
+  imageUrl?: string;
+  company?: string;
+  name?: string;
+  color?: string;
+  weight?: string | number;
+  category?: string;
+  companyKorean?: string;
+}
 
 // URL에서 이미지를 다운로드하여 File 객체로 변환하는 함수
 const urlToFile = async (url: string, fileName: string): Promise<File | null> => {
@@ -30,9 +42,9 @@ const urlToFile = async (url: string, fileName: string): Promise<File | null> =>
 
 const AdminView = () => {
   const [file, setFile] = useState<null | File>(null);
-  const [imageStorage] = useState<FirebaseImageStorage | null>(() => FirebaseImageStorage.new());
   const firebase = app.getFirebase();
   const isLoggedIn = firebase.isLoggedIn();
+  const isAllowed = ALLOWED_UIDS.includes(firebase.getUserId());
 
   // 파일 선택 시 상태 업데이트
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -63,43 +75,39 @@ const AdminView = () => {
       const sheet = workbook.Sheets[sheetName];
 
       // 시트 데이터를 JSON 형태로 변환
-      const jsonData = XLSX.utils.sheet_to_json(sheet);
+      const jsonData = XLSX.utils.sheet_to_json<ExcelGearRow>(sheet);
 
       for (let i = 0; i < jsonData.length; i++) {
-        const item: any = jsonData[i];
+        const item = jsonData[i];
         try {
           console.log(item);
           // imageUrl이 있는 경우 이미지 다운로드
-          let imageFile = null;
           if (item.imageUrl) {
-            imageFile = await urlToFile(
-              item.imageUrl,
-              `${item.company}-${item.name}-${item.color}.jpg`
-            );
+            await urlToFile(item.imageUrl, `${item.company}-${item.name}-${item.color}.jpg`);
           }
 
           await app.getGearStore().add(
             new Gear(
               '',
-              item.name,
-              item.company,
-              item.weight,
+              item.name ?? '',
+              item.company ?? '',
+              String(item.weight ?? ''),
               // imageFile
               //   ? ((await imageStorage?.uploadFileToPublic(
               //       imageFile,
               //       `${item.company}-${item.name}-${item.color}.jpg`
               //     )) ?? '')
               //   : '',
-              item.imageUrl,
+              item.imageUrl ?? '',
               false,
               false,
-              item.category,
+              item.category ?? '',
               [],
               [],
               [],
               Date.now(),
               item.color ?? '',
-              item.companyKorean
+              item.companyKorean ?? ''
             )
           );
         } catch (error) {
@@ -173,11 +181,47 @@ const AdminView = () => {
     );
   }
 
+  if (!isAllowed) {
+    return (
+      <div
+        style={{
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
+          height: '100vh',
+        }}
+      >
+        <h1>접근 권한이 없습니다.</h1>
+      </div>
+    );
+  }
+
   return (
-    <div>
-      <h2>엑셀 파일 업로드</h2>
-      <input type='file' accept='.xlsx, .xls' onChange={handleFileChange} />
-      <button onClick={handleFileUpload}>업로드</button>
+    <div style={{ maxWidth: 1100, margin: '32px auto', padding: '0 20px' }}>
+      <h1 style={{ fontSize: 28, fontWeight: 700, marginBottom: 20, color: '#222' }}>
+        관리자 도구
+      </h1>
+      <Tabs
+        defaultActiveKey='feed-content'
+        items={[
+          {
+            key: 'feed-content',
+            label: '홈 추천',
+            children: <FeedContentTabView />,
+          },
+          {
+            key: 'gear-upload',
+            label: '장비 엑셀 업로드',
+            children: (
+              <div>
+                <h2>엑셀 파일 업로드</h2>
+                <input type='file' accept='.xlsx, .xls' onChange={handleFileChange} />
+                <button onClick={handleFileUpload}>업로드</button>
+              </div>
+            ),
+          },
+        ]}
+      />
     </div>
   );
 };
