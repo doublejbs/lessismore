@@ -200,7 +200,7 @@ manage는 위 필드 중 **`colorKorean`, `size`, `sizeKorean`까지 표시·편
 ### 7.1 Firebase
 - **Firestore**: `gear` 컬렉션 (읽기/쓰기/배치 삭제)
 - **Storage**: `gears/{fileName}` 공개 경로 직접 업로드 ([`FirebaseImageStorage`](../../src/firebase/FirebaseImageStorage.ts))
-- **Auth**: Google 로그인
+- **Auth**: Google 로그인 — `authDomain`은 `lessismore-7e070.web.app`을 사용한다 (팝업 로그인 요청 도메인)
 
 ### 7.2 이미지 업로드 서버 (Cloud Run) — `uploadAndUpdateImageUrl`
 - `POST https://uploadimage-434364025032.asia-northeast3.run.app`
