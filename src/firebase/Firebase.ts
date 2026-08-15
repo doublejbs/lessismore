@@ -29,7 +29,7 @@ import { FirebaseStorage, getStorage } from 'firebase/storage';
 class Firebase {
   private static readonly config = {
     apiKey: 'AIzaSyBhg7PCSJY7Zm6p804Y5dTad4Qoi8Tr6MU',
-    authDomain: 'useless.my',
+    authDomain: 'lessismore-7e070.web.app',
     projectId: 'lessismore-7e070',
     storageBucket: 'lessismore-7e070.appspot.com',
     messagingSenderId: '434364025032',
