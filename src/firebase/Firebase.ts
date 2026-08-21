@@ -166,6 +166,7 @@ class Firebase {
 
   public async logInWithGoogle() {
     await signInWithPopup(this.auth, this.googleProvider);
+    await this.checkLoggedIn();
   }
 
   public getStore() {

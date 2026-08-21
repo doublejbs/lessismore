@@ -13,6 +13,10 @@ import GearShareWrapper from './gear-share/component/GearShareWrapper.tsx';
 import CelebrateView from './celebrate/CelebrateView';
 import AndroidAppBannerView from './components/AndroidAppBannerView';
 import ManageView from './manage/ManageView';
+import LogIn from './LogIn';
+import InfoView from './info/InfoView';
+import InfoDeleteView from './info/InfoDeleteView';
+import TermsAgreement from './TermsAgreement';
 import AnnouncementAdminView from './announcement/AnnouncementAdminView';
 import AdminView from './AdminView';
 
@@ -34,6 +38,10 @@ const ROUTES = [
   { path: '/admin', element: <AdminView /> },
   { path: '/celebrate', element: <CelebrateView /> },
   { path: '/app-install', element: <AppInstallView /> },
+  { path: '/login', element: <LogIn /> },
+  { path: '/info', element: <InfoView /> },
+  { path: '/info/delete', element: <InfoDeleteView /> },
+  { path: '/terms-agreement', element: <TermsAgreement /> },
   { path: '*', element: <Navigate to='/app-install' replace /> },
 ];
 

@@ -15,8 +15,8 @@ const TermsAgreement: FC = () => {
   const navigate = useNavigate();
 
   const handleSubmit = async () => {
-    if (!termsAgreed || !privacyAgreed) {
-      setError('서비스 이용약관과 개인정보 처리방침에 동의해야 서비스를 이용할 수 있습니다.');
+    if (!termsAgreed || !privacyAgreed || !personalInfoAgreed || !over14Agreed) {
+      setError('필수 항목에 모두 동의해야 서비스를 이용할 수 있습니다.');
       return;
     }
 
@@ -29,7 +29,7 @@ const TermsAgreement: FC = () => {
         personalInfoAgreed,
         over14Agreed
       );
-      navigate('/warehouse', { replace: true });
+      navigate('/info', { replace: true });
     } catch (error) {
       console.error('약관 동의 저장 오류:', error);
       setError('약관 동의 정보를 저장하는 중 오류가 발생했습니다. 다시 시도해주세요.');
@@ -670,17 +670,17 @@ const TermsAgreement: FC = () => {
       <button
         onClick={handleSubmit}
         style={{
-          backgroundColor: termsAgreed && privacyAgreed ? 'black' : '#CCCCCC',
+          backgroundColor: allRequiredChecked ? 'black' : '#CCCCCC',
           color: 'white',
           border: 'none',
           padding: '15px',
           borderRadius: '8px',
           fontSize: '16px',
           fontWeight: 'bold',
-          cursor: termsAgreed && privacyAgreed ? 'pointer' : 'not-allowed',
+          cursor: allRequiredChecked ? 'pointer' : 'not-allowed',
           marginTop: '10px',
         }}
-        disabled={!termsAgreed || !privacyAgreed}
+        disabled={!allRequiredChecked}
       >
         동의하고 계속하기
       </button>

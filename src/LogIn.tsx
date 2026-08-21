@@ -26,7 +26,18 @@ const LogIn = () => {
   };
 
   const handleClickGoogle = async () => {
-    await firebase.logInWithGoogle();
+    try {
+      await firebase.logInWithGoogle();
+
+      if (firebase.hasUserAgreedToTerms()) {
+        navigate('/info');
+      } else {
+        navigate('/terms-agreement');
+      }
+    } catch (e) {
+      setErrorMessage(e instanceof Error ? e.message : '로그인 중 오류가 발생했습니다.');
+      setShowError(true);
+    }
   };
 
   const handleClickJoin = () => {
