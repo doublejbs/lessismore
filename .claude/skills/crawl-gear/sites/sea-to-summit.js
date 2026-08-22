@@ -367,6 +367,7 @@ const crawlCategory = async (browser, categoryUrl, { withWeight = true } = {}) =
         weight,
         imageUrl,
         specs,
+        _detailUrl: `https://seatosummit.com/products/${product.handle}`,
         _source: categoryUrl,
       });
     });

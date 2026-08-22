@@ -404,6 +404,7 @@ const crawlCategory = async (browser, categoryUrl, { withWeight = true } = {}) =
       weight,
       imageUrl: it.imageUrl,
       specs,
+      _detailUrl: it.detailUrl,
       _source: categoryUrl,
     });
   }

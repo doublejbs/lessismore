@@ -157,7 +157,8 @@ export const SPECS_SCHEMA = {
   // 식기류
   cup: CUPWARE,
   bowl: CUPWARE,
-  cookware_etc: CUPWARE,
+  cookware: CUPWARE, // 조리 본체(코펠/쿠커/팟/쿡셋)
+  cookware_etc: CUPWARE, // 조리 부속(집게/스푼/그릴넷 등)
   // 수저
   cutlery: CUTLERY,
   // 물통
@@ -173,8 +174,10 @@ export const SPECS_SCHEMA = {
   // 가구
   chair: CHAIR,
   table: TABLE,
+  furniture_etc: GENERIC, // 체어/테이블 아닌 가구(해먹 제외 잡화 등)
   // 조명
   lighting: LIGHTING,
+  headlamp: LIGHTING, // 헤드랜턴(헤드램프)
   // 트레킹폴
   trekking_pole: TREKKING_POLE,
   // 파우치/배낭커버
@@ -211,14 +214,17 @@ export const CATEGORY_LABELS = {
   stove: '버너',
   torch: '토치',
   bottle: '물통',
+  cookware: '코펠·쿡웨어',
   cookware_etc: '식기류 기타',
   chair: '체어',
   table: '테이블',
-  clothing: '의류',
+  furniture_etc: '그 외 기타',
+  clothing: '일반',
   sunglasses: '선글라스',
   gaiter: '스패츠',
   gloves: '장갑',
   lighting: '조명',
+  headlamp: '헤드랜턴',
   food: '식품',
   towel: '수건',
   pouch: '파우치/수납가방',

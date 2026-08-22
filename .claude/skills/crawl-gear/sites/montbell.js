@@ -396,6 +396,7 @@ const crawlCategory = async (browser, categoryUrl, { withWeight = true } = {}) =
             weight: weightG,
             imageUrl,
             specs,
+            _detailUrl: `${BASE_URL}/jp/en/products/detail/${productCode}`,
             _source: categoryUrl,
           });
         }
