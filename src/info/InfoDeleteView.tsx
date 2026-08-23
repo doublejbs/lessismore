@@ -1,11 +1,16 @@
 import { FC, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { Navigate, useNavigate } from 'react-router-dom';
 import Layout from '../Layout';
 import app from '../App';
+import SignInProvider from '../firebase/SignInProvider';
 
 const InfoDeleteView: FC = () => {
   const navigate = useNavigate();
   const [isDeleting, setIsDeleting] = useState(false);
+
+  if (!app.getFirebase().isLoggedIn()) {
+    return <Navigate to='/login' replace state={{ from: '/info/delete' }} />;
+  }
 
   const handleCancel = () => {
     navigate('/info');
@@ -15,24 +20,42 @@ const InfoDeleteView: FC = () => {
     if (isDeleting) return;
 
     const confirmMessage =
-      '정말로 탈퇴하시겠습니까? 모든 데이터가 삭제되며 복구할 수 없습니다.\n\n본인 확인을 위해 Google 재인증 팝업이 표시됩니다.';
+      '정말로 탈퇴하시겠습니까? 모든 데이터가 삭제되며 복구할 수 없습니다.\n\n본인 확인을 위해 재인증이 진행됩니다.';
     if (!window.confirm(confirmMessage)) {
       return;
+    }
+
+    let password: string | undefined;
+
+    if (app.getFirebase().getSignInProvider() === SignInProvider.Password) {
+      const input = window.prompt('본인 확인을 위해 비밀번호를 입력해주세요.');
+
+      if (!input) {
+        return;
+      }
+
+      password = input;
     }
 
     setIsDeleting(true);
 
     try {
-      await app.getFirebase().deleteUserAccount();
+      await app.getFirebase().deleteUserAccount(password);
       alert('회원 탈퇴가 완료되었습니다.');
       window.location.href = '/';
-    } catch (error: any) {
+    } catch (error) {
       console.error('회원 탈퇴 실패:', error);
-      if (error?.code === 'auth/popup-closed-by-user') {
+
+      const code = (error as { code?: string } | null)?.code;
+
+      if (code === 'auth/popup-closed-by-user') {
         alert('재인증이 취소되었습니다. 회원 탈퇴를 진행하려면 재인증이 필요합니다.');
+      } else if (code === 'auth/wrong-password' || code === 'auth/invalid-credential') {
+        alert('비밀번호가 올바르지 않습니다. 다시 시도해주세요.');
       } else {
         alert('회원 탈퇴 중 오류가 발생했습니다. 다시 시도해주세요.');
       }
+
       setIsDeleting(false);
     }
   };

@@ -1,5 +1,5 @@
 import React, { FC, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import App from './App';
 import { observer } from 'mobx-react-lite';
 
@@ -13,6 +13,7 @@ const TermsAgreement: FC = () => {
   const [error, setError] = useState('');
   const firebase = App.getFirebase();
   const navigate = useNavigate();
+  const location = useLocation();
 
   const handleSubmit = async () => {
     if (!termsAgreed || !privacyAgreed || !personalInfoAgreed || !over14Agreed) {
@@ -29,7 +30,7 @@ const TermsAgreement: FC = () => {
         personalInfoAgreed,
         over14Agreed
       );
-      navigate('/info', { replace: true });
+      navigate(location.state?.from ?? '/info', { replace: true });
     } catch (error) {
       console.error('약관 동의 저장 오류:', error);
       setError('약관 동의 정보를 저장하는 중 오류가 발생했습니다. 다시 시도해주세요.');

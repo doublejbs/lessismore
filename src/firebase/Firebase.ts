@@ -3,8 +3,11 @@ import {
   Auth,
   createUserWithEmailAndPassword,
   deleteUser,
+  EmailAuthProvider,
   getAuth,
   GoogleAuthProvider,
+  OAuthProvider,
+  reauthenticateWithCredential,
   reauthenticateWithPopup,
   signInWithCredential,
   signInWithEmailAndPassword,
@@ -25,6 +28,7 @@ import {
   writeBatch,
 } from 'firebase/firestore';
 import { FirebaseStorage, getStorage } from 'firebase/storage';
+import SignInProvider from './SignInProvider';
 
 class Firebase {
   private static readonly config = {
@@ -40,6 +44,7 @@ class Firebase {
   private auth!: Auth;
   private userId = '';
   private googleProvider = new GoogleAuthProvider();
+  private appleProvider = new OAuthProvider(SignInProvider.Apple);
   private initialized = false;
   private store!: Firestore;
   private storage!: FirebaseStorage;
@@ -47,6 +52,9 @@ class Firebase {
   private loggedIn = false;
 
   public constructor() {
+    this.appleProvider.addScope('email');
+    this.appleProvider.addScope('name');
+
     makeAutoObservable(this);
   }
 
@@ -148,6 +156,7 @@ class Firebase {
 
   public async login(email: string, password: string) {
     await signInWithEmailAndPassword(this.auth, email, password);
+    await this.checkLoggedIn();
   }
 
   public async logout() {
@@ -167,6 +176,15 @@ class Firebase {
   public async logInWithGoogle() {
     await signInWithPopup(this.auth, this.googleProvider);
     await this.checkLoggedIn();
+  }
+
+  public async logInWithApple() {
+    await signInWithPopup(this.auth, this.appleProvider);
+    await this.checkLoggedIn();
+  }
+
+  public getSignInProvider() {
+    return this.auth.currentUser?.providerData[0]?.providerId ?? '';
   }
 
   public getStore() {
@@ -198,7 +216,7 @@ class Firebase {
     await signInWithCredential(this.auth, credential);
   }
 
-  public async deleteUserAccount() {
+  public async deleteUserAccount(password?: string) {
     const user = this.auth.currentUser;
     if (!user) {
       throw new Error('로그인된 사용자가 없습니다.');
@@ -208,7 +226,22 @@ class Firebase {
 
     try {
       // 0. 재인증 수행 (민감한 작업을 위해 필요)
-      await reauthenticateWithPopup(user, this.googleProvider);
+      const providerId = user.providerData[0]?.providerId;
+
+      if (providerId === SignInProvider.Password) {
+        if (!user.email || !password) {
+          throw new Error('비밀번호가 필요합니다.');
+        }
+
+        await reauthenticateWithCredential(
+          user,
+          EmailAuthProvider.credential(user.email, password)
+        );
+      } else if (providerId === SignInProvider.Apple) {
+        await reauthenticateWithPopup(user, this.appleProvider);
+      } else {
+        await reauthenticateWithPopup(user, this.googleProvider);
+      }
 
       // 1. 사용자의 모든 배낭 ID 가져오기
       const userDocRef = doc(this.getStore(), 'users', userId);
