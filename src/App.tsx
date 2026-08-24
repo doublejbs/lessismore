@@ -19,6 +19,7 @@ import InfoDeleteView from './info/InfoDeleteView';
 import TermsAgreement from './TermsAgreement';
 import AnnouncementAdminView from './announcement/AnnouncementAdminView';
 import AdminView from './AdminView';
+import PrivacyPolicyView from './policy/PrivacyPolicyView';
 
 const ROUTES = [
   {
@@ -42,6 +43,7 @@ const ROUTES = [
   { path: '/info', element: <InfoView /> },
   { path: '/info/delete', element: <InfoDeleteView /> },
   { path: '/terms-agreement', element: <TermsAgreement /> },
+  { path: '/privacy', element: <PrivacyPolicyView /> },
   { path: '*', element: <Navigate to='/app-install' replace /> },
 ];
 
@@ -61,11 +63,12 @@ const App = () => {
   }, [isInitialized]);
 
   if (isInitialized) {
-    const isAppInstallPage = pathname === '/app-install';
+    // 앱 설치 배너를 숨길 페이지 — 개인정보처리방침(/privacy)은 심사용 문서라 상단 라벨을 가리면 안 됨
+    const isBannerHiddenPage = pathname === '/app-install' || pathname === '/privacy';
 
     return (
       <>
-        {!isAppInstallPage && <AndroidAppBannerView />}
+        {!isBannerHiddenPage && <AndroidAppBannerView />}
         <Routes>
           {ROUTES.map(({ path, element }) => (
             <Route key={path} path={path} element={element} />

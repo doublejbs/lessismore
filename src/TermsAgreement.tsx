@@ -574,6 +574,16 @@ const TermsAgreement: FC = () => {
           <strong>제13조(개인정보 처리방침 시행 및 변경)</strong>
           <br />이 개인정보 처리방침은 2025. 4. 1. 부터 적용됩니다.
         </div>
+        <div style={{ marginLeft: '30px' }}>
+          <a
+            href='/privacy'
+            target='_blank'
+            rel='noopener noreferrer'
+            style={{ fontSize: '13px', color: '#4285F4', textDecoration: 'underline' }}
+          >
+            개인정보처리방침 전문 보기
+          </a>
+        </div>
       </div>
       <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
         {renderCheckbox(
