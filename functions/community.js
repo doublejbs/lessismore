@@ -31,8 +31,7 @@ const deleteQueryInBatches = async (query, batchSize = FIRESTORE_BATCH_SIZE) => 
   while (hasMore) {
     const snapshot = await query.limit(batchSize).get();
     if (snapshot.empty) {
-      hasMore = false;
-      continue;
+      break;
     }
 
     const batch = db.batch();
@@ -297,7 +296,6 @@ const processWithdrawnComment = async (commentSnapshot, uid) => {
         status: "deleted",
         deletedReason: "withdrawal",
         body: "",
-        authorId: "",
         authorName: "",
         mentionedUserId: FieldValue.delete(),
         mentionedUserName: FieldValue.delete(),
@@ -329,19 +327,24 @@ const processWithdrawnComment = async (commentSnapshot, uid) => {
 const processWithdrawnComments = async (uid) => {
   const query = db.collectionGroup("comments").where("authorId", "==", uid);
   let processedCount = 0;
+  let lastDocument = null;
 
   let hasMore = true;
   while (hasMore) {
-    const snapshot = await query.limit(FIRESTORE_BATCH_SIZE).get();
+    let pageQuery = query.limit(FIRESTORE_BATCH_SIZE);
+    if (lastDocument) {
+      pageQuery = pageQuery.startAfter(lastDocument);
+    }
+    const snapshot = await pageQuery.get();
     if (snapshot.empty) {
-      hasMore = false;
-      continue;
+      break;
     }
 
     for (const commentSnapshot of snapshot.docs) {
       await processWithdrawnComment(commentSnapshot, uid);
     }
     processedCount += snapshot.size;
+    lastDocument = snapshot.docs[snapshot.docs.length - 1];
 
     if (snapshot.size < FIRESTORE_BATCH_SIZE) {
       hasMore = false;
@@ -370,7 +373,7 @@ const processWithdrawnLike = async (likeSnapshot, uid) => {
     transaction.delete(likeRef);
     if (postDocument.exists) {
       const postData = postDocument.data() || {};
-      if (postData.status === "published") {
+      if (postData.status === "published" || postData.status === "hidden") {
         transaction.update(postRef, {
           likeCount: decrementCounter(postData.likeCount),
         });
@@ -387,8 +390,7 @@ const processWithdrawnLikes = async (uid) => {
   while (hasMore) {
     const snapshot = await query.limit(FIRESTORE_BATCH_SIZE).get();
     if (snapshot.empty) {
-      hasMore = false;
-      continue;
+      break;
     }
 
     for (const likeSnapshot of snapshot.docs) {
@@ -426,6 +428,9 @@ const processWithdrawnVote = async (voteSnapshot, uid) => {
     }
 
     const postData = postDocument.data() || {};
+    if (postData.status !== "published" && postData.status !== "hidden") {
+      return;
+    }
     const poll = postData.poll;
     if (!poll || !Array.isArray(poll.options)) {
       return;
@@ -458,8 +463,7 @@ const processWithdrawnVotes = async (uid) => {
   while (hasMore) {
     const snapshot = await query.limit(FIRESTORE_BATCH_SIZE).get();
     if (snapshot.empty) {
-      hasMore = false;
-      continue;
+      break;
     }
 
     for (const voteSnapshot of snapshot.docs) {
@@ -473,6 +477,33 @@ const processWithdrawnVotes = async (uid) => {
   }
 
   return processedCount;
+};
+
+const clearMentionedUserReferences = async (uid) => {
+  const query = db.collectionGroup("comments")
+    .where("mentionedUserId", "==", uid);
+  let clearedCount = 0;
+  let hasMore = true;
+
+  while (hasMore) {
+    const snapshot = await query.limit(FIRESTORE_BATCH_SIZE).get();
+    if (snapshot.empty) {
+      hasMore = false;
+      break;
+    }
+
+    const batch = db.batch();
+    snapshot.docs.forEach((commentSnapshot) => {
+      batch.update(commentSnapshot.ref, {
+        mentionedUserName: "",
+        mentionedUserId: FieldValue.delete(),
+      });
+    });
+    await batch.commit();
+    clearedCount += snapshot.size;
+  }
+
+  return clearedCount;
 };
 
 export const onCommunityUserDeleted = functionsV1
@@ -489,6 +520,7 @@ export const onCommunityUserDeleted = functionsV1
     const commentCount = await processWithdrawnComments(uid);
     const likeCount = await processWithdrawnLikes(uid);
     const voteCount = await processWithdrawnVotes(uid);
+    const mentionCount = await clearMentionedUserReferences(uid);
     const storageCount = await deleteStoragePrefix(`community/${uid}/`);
 
     logger.info("커뮤니티 회원 탈퇴 정리를 완료했습니다.", {
@@ -496,6 +528,7 @@ export const onCommunityUserDeleted = functionsV1
       commentCount,
       likeCount,
       voteCount,
+      mentionCount,
       storageCount,
       reportsRetained: true,
     });
@@ -514,32 +547,16 @@ const isRecentUpload = (timeCreated) => {
 const inspectCommunityFile = async (file) => {
   const [metadata] = await file.getMetadata();
   if (isRecentUpload(metadata.timeCreated)) {
-    return {deleted: false, recent: true};
+    return {recent: true};
   }
 
   const pathParts = file.name.split("/");
   if (pathParts.length < 4 || pathParts[0] !== "community" ||
     !pathParts[1] || !pathParts[2]) {
-    return {deleted: false, recent: false};
+    return {recent: false};
   }
 
-  const postRef = db.collection("community-posts").doc(pathParts[2]);
-  const postSnapshot = await postRef.get();
-  let shouldDelete = !postSnapshot.exists;
-  if (postSnapshot.exists) {
-    const postData = postSnapshot.data() || {};
-    const images = Array.isArray(postData.images) ? postData.images : [];
-    const isReferenced = images.some((image) => image?.storagePath === file.name);
-    shouldDelete = postData.status === "deleted" ||
-      postData.status === "hidden" || !isReferenced;
-  }
-
-  if (!shouldDelete) {
-    return {deleted: false, recent: false};
-  }
-
-  await file.delete({ignoreNotFound: true});
-  return {deleted: true, recent: false};
+  return {recent: false, postId: pathParts[2]};
 };
 
 export const cleanupOrphanCommunityImages = onSchedule({
@@ -553,14 +570,52 @@ export const cleanupOrphanCommunityImages = onSchedule({
   const [files] = await getDefaultBucket().getFiles({prefix: "community/"});
   let deletedCount = 0;
   let recentCount = 0;
+  const filesByPostId = new Map();
 
   for (const file of files) {
     const result = await inspectCommunityFile(file);
-    if (result.deleted) {
-      deletedCount += 1;
-    }
     if (result.recent) {
       recentCount += 1;
+      continue;
+    }
+    if (!result.postId) {
+      continue;
+    }
+
+    const postFiles = filesByPostId.get(result.postId) || [];
+    postFiles.push(file);
+    filesByPostId.set(result.postId, postFiles);
+  }
+
+  const postSnapshots = new Map();
+  for (const postId of filesByPostId.keys()) {
+    const postSnapshot = await db.collection("community-posts")
+      .doc(postId).get();
+    postSnapshots.set(postId, postSnapshot);
+  }
+
+  for (const [postId, postFiles] of filesByPostId) {
+    const postSnapshot = postSnapshots.get(postId);
+    let postData = null;
+    if (postSnapshot?.exists) {
+      postData = postSnapshot.data() || {};
+    }
+
+    for (const file of postFiles) {
+      let shouldDelete = !postData;
+      if (postData) {
+        const images = Array.isArray(postData.images) ? postData.images : [];
+        const isReferenced = images.some(
+          (image) => image?.storagePath === file.name
+        );
+        shouldDelete = postData.status === "deleted" ||
+          postData.status === "hidden" || !isReferenced;
+      }
+
+      if (shouldDelete) {
+        await file.delete({ignoreNotFound: true});
+        deletedCount += 1;
+      }
     }
   }
 
@@ -568,5 +623,68 @@ export const cleanupOrphanCommunityImages = onSchedule({
     scannedCount: files.length,
     deletedCount,
     recentCount,
+    postReadCount: filesByPostId.size,
+  });
+});
+
+export const pruneCommunityCommentPlaceholders = onSchedule({
+  schedule: "every 24 hours",
+  region: REGION,
+  timeoutSeconds: 540,
+  memory: "512MiB",
+  maxInstances: 1,
+  retryCount: 3,
+}, async () => {
+  const query = db.collectionGroup("comments")
+    .where("status", "==", "deleted");
+  let lastDocument = null;
+  let deletedCount = 0;
+  let retainedCount = 0;
+  let hasMore = true;
+
+  while (hasMore) {
+    let pageQuery = query.limit(FIRESTORE_BATCH_SIZE);
+    if (lastDocument) {
+      pageQuery = pageQuery.startAfter(lastDocument);
+    }
+    const snapshot = await pageQuery.get();
+    if (snapshot.empty) {
+      hasMore = false;
+      break;
+    }
+
+    const batch = db.batch();
+    let pageDeletedCount = 0;
+    for (const commentSnapshot of snapshot.docs) {
+      const commentData = commentSnapshot.data() || {};
+      const parentId = commentData.parentId;
+      if (typeof parentId === "string" && parentId.length > 0) {
+        batch.delete(commentSnapshot.ref);
+        pageDeletedCount += 1;
+        continue;
+      }
+
+      const replies = await commentSnapshot.ref.parent
+        .where("parentId", "==", commentSnapshot.id)
+        .limit(1)
+        .get();
+      if (replies.empty) {
+        batch.delete(commentSnapshot.ref);
+        pageDeletedCount += 1;
+      } else {
+        retainedCount += 1;
+      }
+    }
+
+    if (pageDeletedCount > 0) {
+      await batch.commit();
+      deletedCount += pageDeletedCount;
+    }
+    lastDocument = snapshot.docs[snapshot.docs.length - 1];
+  }
+
+  logger.info("커뮤니티 댓글 소프트 삭제 자리표시를 정리했습니다.", {
+    deletedCount,
+    retainedCount,
   });
 });

@@ -19,6 +19,13 @@
 import * as functions from 'firebase-functions';
 import { Storage } from '@google-cloud/storage';
 import fetch from 'node-fetch';
+import {
+  onCommunityPostStatusChanged,
+  onCommunityCommentHidden,
+  onCommunityUserDeleted,
+  cleanupOrphanCommunityImages,
+  pruneCommunityCommentPlaceholders,
+} from "./community.js";
 
 // Google Cloud Storage 인스턴스 생성
 const storage = new Storage();
@@ -143,4 +150,5 @@ export {
   onCommunityCommentHidden,
   onCommunityUserDeleted,
   cleanupOrphanCommunityImages,
-} from "./community.js";
+  pruneCommunityCommentPlaceholders,
+};
