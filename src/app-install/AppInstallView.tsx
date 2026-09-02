@@ -5,7 +5,7 @@ const AppInstallView = () => {
   const isIOS = /iPhone|iPad|iPod/i.test(navigator.userAgent);
   const isAndroid = /Android/i.test(navigator.userAgent);
   const appStoreUrl = 'https://apps.apple.com/kr/app/id6751174681';
-  const playStoreUrl = 'https://play.google.com/store/apps/details?id=kr.co.useless.app';
+  const playStoreUrl = 'https://play.google.com/store/apps/details?id=com.doublejbs.useless';
 
   const handleInstallClick = () => {
     if (isIOS) {
