@@ -4,18 +4,20 @@
 
 ## 함수와 트리거
 
-- `onCommunityPostStatusChanged`: `community-posts/{postId}` 문서가 `published`에서 `deleted` 또는 `hidden`으로 바뀔 때 실행한다. 댓글, 좋아요, 투표를 400개 단위 배치로 삭제하고 `community/{authorId}/{postId}/` 사진을 삭제한다. `deleted`는 제목·본문·사진·배낭 스냅샷·투표·작성자 닉네임·카운트를 툼스톤 값으로 정리하고, `hidden`은 운영 검토용 본문을 남긴 채 사진과 `images`만 정리한다.
+- `onCommunityPostStatusChanged`: `community-posts/{postId}` 문서가 `published`에서 `hidden`으로 바뀌거나 `deleted`가 아닌 상태에서 `deleted`로 바뀔 때 실행한다. `deleted`는 댓글·좋아요·투표를 400개 단위 배치로 삭제하고 제목·본문·사진·배낭 스냅샷·투표·작성자 닉네임·카운트를 툼스톤 값으로 정리한다. `hidden`은 운영 검토·해제가 가능하므로 댓글·좋아요·투표와 카운트를 유지하고 `community/{authorId}/{postId}/` 사진과 `images`만 정리한다. `hidden` 뒤 `deleted`로 바뀌면 삭제 정리를 별도로 수행한다.
 - `onCommunityCommentHidden`: 댓글이 `published`에서 `hidden`으로 바뀔 때 부모 게시글 `commentCount`를 트랜잭션으로 0 미만이 되지 않도록 보정한다. 댓글 문서의 보정 표식을 함께 기록해 이벤트 재시도 시 중복 차감을 막는다. `deleted` 전환은 클라이언트가 카운트를 보정하므로 건드리지 않는다.
 - `onCommunityUserDeleted`: Firebase Auth 사용자 삭제(v1 Auth 트리거) 뒤 작성 게시글을 `deleted`로 전환하고, 작성 댓글·좋아요·투표를 트랜잭션과 배치로 정리한다. 답글이 남은 댓글은 `deletedReason: "withdrawal"` 자리표시로 바꾸며, 마지막 답글 삭제 시 탈퇴 자리표시 최상위 댓글도 삭제한다. 작성자의 `community/{uid}/` Storage 사진도 삭제하고 `community-reports`는 운영 기록이므로 보존한다.
 - `cleanupOrphanCommunityImages`: 24시간마다 `community/` Storage를 검사한다. 게시글이 없거나 `deleted`·`hidden`이거나 `images[].storagePath`에 없는 파일을 삭제하며, `timeCreated`가 최근 24시간 이내인 업로드는 작성 중일 수 있으므로 건너뛴다.
 
 ## 멱등성·재시도
 
-Firestore 삭제는 대상이 이미 없으면 다음 실행에서 남은 대상만 처리한다. 게시글 정리는 `cleanedAt`이 이미 있으면 종료하고, 댓글 숨김·탈퇴 처리는 트랜잭션 안에서 현재 문서와 카운트를 함께 확인한다. 게시글 상태 변경과 Auth 삭제는 재시도 옵션을 켜고, 스케줄 함수도 최대 3회 재시도하도록 설정하며, Storage 삭제는 `ignoreNotFound: true`를 사용한다. 각 단계가 실패한 뒤 재실행되어도 카운트를 0 아래로 내리지 않고 중복 차감하지 않도록 처리한다.
+Firestore 삭제는 대상이 이미 없으면 다음 실행에서 남은 대상만 처리한다. 게시글 정리는 상태별 완료 표식인 `hiddenCleanedAt`과 `deletedCleanedAt`을 사용한다. 따라서 `hidden` 정리가 끝난 뒤 `deleted`로 바뀌어도 삭제 정리가 실행되며, 각 단계가 실패한 뒤 재실행되어도 완료된 단계는 반복하지 않는다. 댓글 숨김·탈퇴 처리는 트랜잭션 안에서 현재 문서와 카운트를 함께 확인한다. 게시글 상태 변경과 Auth 삭제는 재시도 옵션을 켜고, 스케줄 함수도 최대 3회 재시도하도록 설정하며, Storage 삭제는 `ignoreNotFound: true`를 사용한다.
 
 ## 인덱스
 
 탈퇴 댓글 정리의 `collectionGroup("comments").where("authorId", "==", uid)` 쿼리를 위해 컬렉션 그룹 범위의 `comments / authorId ASCENDING` 인덱스가 필요하다. 배포 형식은 [community.indexes.json](community.indexes.json)에 기록했으며, Firebase 콘솔에서 `comments` 컬렉션 그룹 범위로 생성하거나 프로젝트 Firestore 인덱스 파일에 병합한 뒤 다음 명령을 사용한다.
+
+탈퇴 게시글 정리는 `community-posts`에서 `authorId == uid`만 조회한 뒤 코드에서 `status == "deleted"` 문서를 건너뛴다. 이 쿼리는 단일 필드 조건이므로 별도 복합 인덱스가 필요하지 않으며, 전체 조회 결과를 400개 단위 배치로 처리해 이미 삭제된 문서가 반복 조회되지 않게 한다.
 
 ```bash
 firebase deploy --only firestore:indexes

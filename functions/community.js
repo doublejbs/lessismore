@@ -75,28 +75,36 @@ const decrementCounter = (value) => {
   return Math.max(0, current - 1);
 };
 
-const isPublishedToDeletedOrHidden = (beforeData, afterData) => {
-  return beforeData.status === "published" &&
-    (afterData.status === "deleted" || afterData.status === "hidden");
+const isPostCleanupTransition = (beforeData, afterData) => {
+  const becameDeleted = beforeData.status !== "deleted" &&
+    afterData.status === "deleted";
+  const becameHidden = beforeData.status === "published" &&
+    afterData.status === "hidden";
+  return becameDeleted || becameHidden;
 };
 
 const cleanCommunityPost = async (postRef, postData) => {
-  if (postData.cleanedAt) {
+  const cleanupField = postData.status === "deleted"
+    ? "deletedCleanedAt"
+    : "hiddenCleanedAt";
+  if (postData[cleanupField]) {
     return false;
   }
 
   const authorId = typeof postData.authorId === "string" ? postData.authorId : "";
   const postId = postRef.id;
 
-  await deleteQueryInBatches(
-    postRef.collection("comments")
-  );
-  await deleteQueryInBatches(
-    db.collection("community-post-likes").where("postId", "==", postId)
-  );
-  await deleteQueryInBatches(
-    db.collection("community-poll-votes").where("postId", "==", postId)
-  );
+  if (postData.status === "deleted") {
+    await deleteQueryInBatches(
+      postRef.collection("comments")
+    );
+    await deleteQueryInBatches(
+      db.collection("community-post-likes").where("postId", "==", postId)
+    );
+    await deleteQueryInBatches(
+      db.collection("community-poll-votes").where("postId", "==", postId)
+    );
+  }
 
   if (authorId) {
     await deleteStoragePrefix(`community/${authorId}/${postId}/`);
@@ -109,7 +117,7 @@ const cleanCommunityPost = async (postRef, postData) => {
     }
 
     const latestData = latestSnapshot.data() || {};
-    if (latestData.cleanedAt) {
+    if (latestData[cleanupField]) {
       return;
     }
 
@@ -123,12 +131,12 @@ const cleanCommunityPost = async (postRef, postData) => {
         authorName: "",
         commentCount: 0,
         likeCount: 0,
-        cleanedAt: FieldValue.serverTimestamp(),
+        deletedCleanedAt: FieldValue.serverTimestamp(),
       });
     } else if (latestData.status === "hidden") {
       transaction.update(postRef, {
         images: [],
-        cleanedAt: FieldValue.serverTimestamp(),
+        hiddenCleanedAt: FieldValue.serverTimestamp(),
       });
     }
   });
@@ -152,7 +160,7 @@ export const onCommunityPostStatusChanged = onDocumentUpdated({
 
   const beforeData = beforeSnapshot.data() || {};
   const afterData = afterSnapshot.data() || {};
-  if (!isPublishedToDeletedOrHidden(beforeData, afterData)) {
+  if (!isPostCleanupTransition(beforeData, afterData)) {
     return;
   }
 
@@ -216,31 +224,28 @@ export const onCommunityCommentHidden = onDocumentUpdated({
 
 const updatePostsForWithdrawnUser = async (uid) => {
   const query = db.collection("community-posts")
-    .where("authorId", "==", uid)
-    .where("status", "!=", "deleted");
+    .where("authorId", "==", uid);
+  const snapshot = await query.get();
+  const documentsToUpdate = snapshot.docs.filter((document) => {
+    const postData = document.data() || {};
+    return postData.status !== "deleted";
+  });
   let updatedCount = 0;
 
-  let hasMore = true;
-  while (hasMore) {
-    const snapshot = await query.limit(FIRESTORE_BATCH_SIZE).get();
-    if (snapshot.empty) {
-      hasMore = false;
-      continue;
-    }
-
+  for (let index = 0; index < documentsToUpdate.length;
+    index += FIRESTORE_BATCH_SIZE) {
+    const documentBatch = documentsToUpdate.slice(
+      index, index + FIRESTORE_BATCH_SIZE
+    );
     const batch = db.batch();
-    snapshot.docs.forEach((document) => {
+    documentBatch.forEach((document) => {
       batch.update(document.ref, {
         status: "deleted",
         updatedAt: FieldValue.serverTimestamp(),
       });
     });
     await batch.commit();
-    updatedCount += snapshot.size;
-
-    if (snapshot.size < FIRESTORE_BATCH_SIZE) {
-      hasMore = false;
-    }
+    updatedCount += documentBatch.length;
   }
 
   return updatedCount;
