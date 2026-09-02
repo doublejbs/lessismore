@@ -137,3 +137,10 @@ export const uploadImageFromUrl = functions.https.onRequest(async (req, res) => 
     res.status(500).send(error.message);
   }
 });
+
+export {
+  onCommunityPostStatusChanged,
+  onCommunityCommentHidden,
+  onCommunityUserDeleted,
+  cleanupOrphanCommunityImages,
+} from "./community.js";
