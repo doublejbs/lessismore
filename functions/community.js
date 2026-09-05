@@ -127,6 +127,9 @@ const cleanCommunityPost = async (postRef, postData) => {
         images: [],
         bagSnapshot: FieldValue.delete(),
         poll: FieldValue.delete(),
+        // 첨부 불리언은 맵 존재와 항상 일치해야 한다(DM-28) — 툼스톤도 false로 맞춘다.
+        hasBagSnapshot: false,
+        hasPoll: false,
         authorName: "",
         commentCount: 0,
         likeCount: 0,
