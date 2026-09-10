@@ -409,6 +409,22 @@ const processWithdrawnLikes = async (uid) => {
   return processedCount;
 };
 
+// 투표 문서의 선택지 ID 집합을 반환한다(탈퇴 정리 카운터 근거).
+// - optionIds 배열(신형식) 우선: string 원소만, Set 으로 중복 제거
+// - 아니면 레거시 optionId(단일값)를 원소 하나로
+// - 둘 다 없으면 빈 Set (카운터를 건드리지 않는다)
+const getVotedOptionIds = (voteData) => {
+  if (Array.isArray(voteData.optionIds)) {
+    const ids = voteData.optionIds
+        .filter((id) => typeof id === "string");
+    return new Set(ids);
+  }
+  if (typeof voteData.optionId === "string") {
+    return new Set([voteData.optionId]);
+  }
+  return new Set();
+};
+
 const processWithdrawnVote = async (voteSnapshot, uid) => {
   const voteRef = voteSnapshot.ref;
   const voteData = voteSnapshot.data() || {};
@@ -439,8 +455,15 @@ const processWithdrawnVote = async (voteSnapshot, uid) => {
       return;
     }
 
+    // 카운터 근거는 트랜잭션 안에서 읽은 문서로 —
+    // 쿼리 시점 스냅샷은 경합 시 낡을 수 있다.
+    const votedIds = getVotedOptionIds(voteDocument.data() || {});
+    if (votedIds.size === 0) {
+      return;
+    }
+
     const options = poll.options.map((option) => {
-      if (option.id !== voteData.optionId) {
+      if (!votedIds.has(option.id)) {
         return option;
       }
       return {
