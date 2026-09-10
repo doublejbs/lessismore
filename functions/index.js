@@ -19,6 +19,13 @@
 import * as functions from 'firebase-functions';
 import { Storage } from '@google-cloud/storage';
 import fetch from 'node-fetch';
+import {
+  onCommunityPostStatusChanged,
+  onCommunityCommentHidden,
+  onCommunityUserDeleted,
+  cleanupOrphanCommunityImages,
+  pruneCommunityCommentPlaceholders,
+} from "./community.js";
 
 // Google Cloud Storage 인스턴스 생성
 const storage = new Storage();
@@ -137,3 +144,11 @@ export const uploadImageFromUrl = functions.https.onRequest(async (req, res) => 
     res.status(500).send(error.message);
   }
 });
+
+export {
+  onCommunityPostStatusChanged,
+  onCommunityCommentHidden,
+  onCommunityUserDeleted,
+  cleanupOrphanCommunityImages,
+  pruneCommunityCommentPlaceholders,
+};
