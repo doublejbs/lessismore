@@ -26,6 +26,12 @@ import {
   cleanupOrphanCommunityImages,
   pruneCommunityCommentPlaceholders,
 } from "./community.js";
+import {
+  onGroupCreated,
+  onGroupUpdated,
+  onGroupDeleted,
+  onGroupUserDeleted,
+} from "./group.js";
 
 // Google Cloud Storage 인스턴스 생성
 const storage = new Storage();
@@ -151,4 +157,8 @@ export {
   onCommunityUserDeleted,
   cleanupOrphanCommunityImages,
   pruneCommunityCommentPlaceholders,
+  onGroupCreated,
+  onGroupUpdated,
+  onGroupDeleted,
+  onGroupUserDeleted,
 };
