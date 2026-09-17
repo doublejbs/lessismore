@@ -17,6 +17,9 @@ export interface GroupInviteSummary {
 }
 
 // 멤버 상한(GRP-3). 참여 거절은 앱이 판단하고, 웹은 안내만 한다.
+// 앱 레포 `model/group/GroupLimits.ts`의 `GROUP_MAX_MEMBER_COUNT`와 손으로 맞춘 값이다.
+// 웹에서 앱 상수를 import할 수 없어 복제해 두었으니, 한쪽만 바꾸면 조용히 어긋난다 —
+// 앱 상한이 바뀌면 이 값도 반드시 함께 고칠 것.
 const MAX_MEMBERS = 20;
 
 class GroupInvite {

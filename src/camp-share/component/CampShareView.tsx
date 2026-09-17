@@ -1,49 +1,18 @@
 import { FC, useCallback } from 'react';
 import { observer } from 'mobx-react-lite';
 import CampShare from '../model/CampShare';
+import { openAppScheme } from '../../utils/AppSchemeLink';
 
 interface Props {
   campShare: CampShare;
 }
 
-const APP_STORE_URL = 'https://apps.apple.com/kr/app/id6751174681';
-const PLAY_STORE_URL =
-  'https://play.google.com/store/apps/details?id=kr.co.useless.app';
-
-const isAndroid = /Android/i.test(navigator.userAgent);
-
 // 박지 공유 랜딩(CS-7). 박지 정보를 보여주고 '앱에서 보기'로 딥링크한다.
 // 앱 미설치 시 스토어로 폴백(Universal Link 미사용 — 웹 랜딩을 먼저 보여주는 의도).
+// 스킴 이동·스토어 폴백은 `src/utils/AppSchemeLink.ts`가 담당한다.
 const CampShareView: FC<Props> = ({ campShare }) => {
   const openApp = useCallback(() => {
-    const scheme = `lessismoreapp://camp-site/${campShare.getId()}`;
-    const storeUrl = isAndroid ? PLAY_STORE_URL : APP_STORE_URL;
-
-    // 앱이 열리면 페이지가 백그라운드로 가므로, visibility가 바뀌면 스토어 폴백을 취소한다.
-    let fallback: ReturnType<typeof setTimeout> | null = null;
-
-    const cancelFallback = () => {
-      if (fallback) {
-        clearTimeout(fallback);
-        fallback = null;
-      }
-      document.removeEventListener('visibilitychange', onVisibility);
-    };
-
-    const onVisibility = () => {
-      if (document.hidden) {
-        cancelFallback();
-      }
-    };
-
-    document.addEventListener('visibilitychange', onVisibility);
-
-    fallback = setTimeout(() => {
-      cancelFallback();
-      window.location.href = storeUrl;
-    }, 1500);
-
-    window.location.href = scheme;
+    openAppScheme(`lessismoreapp://camp-site/${campShare.getId()}`);
   }, [campShare]);
 
   if (!campShare.isInitialized()) {

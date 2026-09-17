@@ -1,24 +1,16 @@
 import { CSSProperties, FC, useCallback } from 'react';
 import { observer } from 'mobx-react-lite';
 import GearShare from '../model/GearShare';
+import { isMobileDevice, openAppScheme } from '../../utils/AppSchemeLink';
 
 interface Props {
   gearShare: GearShare;
 }
 
-// 앱 설치 화면(src/app-install/AppInstallView.tsx)에서 사용하는 스토어 링크와 동일하다.
-const APP_STORE_URL = 'https://apps.apple.com/kr/app/id6751174681';
-const PLAY_STORE_URL =
-  'https://play.google.com/store/apps/details?id=kr.co.useless.app';
-
 // 장비 공유 랜딩(GD-7). 앱이 설치되어 있으면 장비 상세 딥링크를 열고, 아니면 스토어로 보낸다.
+// 스킴 이동·스토어 폴백은 `src/utils/AppSchemeLink.ts`가 담당한다.
 const GearShareView: FC<Props> = ({ gearShare }) => {
-  const userAgent =
-    typeof navigator === 'undefined' ? '' : navigator.userAgent;
-  const isIOS = /iPhone|iPad|iPod/i.test(userAgent);
-  const isAndroid = /Android/i.test(userAgent);
-  const isMobile = isIOS || isAndroid;
-  const storeUrl = isAndroid ? PLAY_STORE_URL : APP_STORE_URL;
+  const isMobile = isMobileDevice();
   const metaLine = gearShare.getMetaLine();
   const weightLabel = gearShare.getWeightLabel();
   const ctaHint = isMobile
@@ -26,37 +18,8 @@ const GearShareView: FC<Props> = ({ gearShare }) => {
     : '모바일 기기에서는 앱으로, 데스크톱에서는 앱스토어로 이동해요';
 
   const openApp = useCallback(() => {
-    // 데스크톱에서는 커스텀 스킴을 호출하지 않고 스토어로 안내한다.
-    if (!isMobile) {
-      window.location.href = storeUrl;
-      return;
-    }
-
-    const scheme = `lessismoreapp://gear-detail/${gearShare.getId()}`;
-    let fallback: ReturnType<typeof setTimeout> | null = null;
-
-    const cancelFallback = () => {
-      if (fallback !== null) {
-        clearTimeout(fallback);
-        fallback = null;
-      }
-      document.removeEventListener('visibilitychange', handleVisibilityChange);
-    };
-
-    const handleVisibilityChange = () => {
-      if (document.hidden) {
-        cancelFallback();
-      }
-    };
-
-    document.addEventListener('visibilitychange', handleVisibilityChange);
-    fallback = setTimeout(() => {
-      cancelFallback();
-      window.location.href = storeUrl;
-    }, 1500);
-
-    window.location.href = scheme;
-  }, [gearShare, isMobile, storeUrl]);
+    openAppScheme(`lessismoreapp://gear-detail/${gearShare.getId()}`);
+  }, [gearShare]);
 
   if (!gearShare.isInitialized()) {
     return (
