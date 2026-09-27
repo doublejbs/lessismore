@@ -32,6 +32,10 @@ import {
   onGroupDeleted,
   onGroupUserDeleted,
 } from "./group.js";
+import {
+  revenuecatWebhook,
+  onSubscriptionUserDeleted,
+} from "./subscription.js";
 
 // Google Cloud Storage 인스턴스 생성
 const storage = new Storage();
@@ -161,4 +165,6 @@ export {
   onGroupUpdated,
   onGroupDeleted,
   onGroupUserDeleted,
+  revenuecatWebhook,
+  onSubscriptionUserDeleted,
 };
