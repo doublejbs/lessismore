@@ -10,6 +10,7 @@ import AppInstallView from './app-install/AppInstallView';
 import BagShareWrapper from './bag-share/component/BagShareWrapper.tsx';
 import CampShareWrapper from './camp-share/component/CampShareWrapper.tsx';
 import GearShareWrapper from './gear-share/component/GearShareWrapper.tsx';
+import GroupInviteWrapper from './group-invite/component/GroupInviteWrapper.tsx';
 import CelebrateView from './celebrate/CelebrateView';
 import AndroidAppBannerView from './components/AndroidAppBannerView';
 import ManageView from './manage/ManageView';
@@ -33,6 +34,11 @@ const ROUTES = [
   {
     path: '/gear-share/:id',
     element: <GearShareWrapper />,
+  },
+  {
+    // 그룹 초대 랜딩(GRP-3). 앱 `getGroupInviteUrl()`이 만드는 /group/{groupId}와의 계약이다.
+    path: '/group/:id',
+    element: <GroupInviteWrapper />,
   },
   { path: '/manage', element: <ManageView /> },
   { path: '/announcement', element: <AnnouncementAdminView /> },
