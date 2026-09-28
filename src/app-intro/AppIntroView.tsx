@@ -69,9 +69,9 @@ const AppIntroView: FC = () => {
             screenshotAlt='그룹 지도 화면 — 지리산 성중종주 코스와 물보급 포인트'
           />
           <AppIntroFeatureView
-            label='박지·탐색'
-            title='어디로 갈지, 무엇을 살지'
-            description='박지 정보와 인기 장비를 둘러봐요.'
+            label='박지'
+            title='어디서 하룻밤 보낼지'
+            description='전국의 백패킹 박지·대피소·캠핑장을 지도에서 찾아보세요.'
             screenshotName='explore'
             screenshotAlt='박지 지도 화면 — 백패킹·대피소·캠핑장 위치를 유형별로 표시'
           />
