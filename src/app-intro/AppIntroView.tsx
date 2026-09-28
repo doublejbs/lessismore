@@ -73,7 +73,7 @@ const AppIntroView: FC = () => {
             title='어디서 하룻밤 보낼지'
             description='전국의 백패킹 박지·대피소·캠핑장을 지도에서 찾아보세요.'
             screenshotName='explore'
-            screenshotAlt='박지 지도 화면 — 백패킹·대피소·캠핑장 위치를 유형별로 표시'
+            screenshotAlt='박지 지도 화면 — 선자령 박지의 소개와 날씨·후기, 여행지로 설정'
           />
           <AppIntroFeatureView
             label='커뮤니티'
