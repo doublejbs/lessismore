@@ -5,7 +5,6 @@
   --app-intro-muted: #767676;
   --app-intro-surface: #f2f2f2;
   --app-intro-hairline: #ededed;
-  --app-intro-lime: #c8f244;
   --app-intro-radius-surface: 12px;
   --app-intro-radius-chip: 10px;
   --app-intro-gutter: 24px;
@@ -45,13 +44,6 @@
   padding: 0 var(--app-intro-gutter);
 }
 
-/* 숫자·라틴 값 전용 콘덴스드. 비교하는 숫자가 자릿수 폭으로 흔들리지 않게 tabular-nums. */
-.app-intro-number {
-  font-family: 'Archivo Narrow', 'Pretendard', sans-serif;
-  font-weight: 700;
-  font-variant-numeric: tabular-nums;
-}
-
 /* ── 머리 ── */
 .app-intro-header-inner {
   display: flex;
@@ -69,52 +61,58 @@
   flex-shrink: 0;
 }
 
-/* ── 스토어 버튼(알약) ── */
-.app-intro-store-buttons {
+/* ── 스토어 배지(공식) ──
+   --app-intro-badge-height = 검정 배지 면이 보이는 높이. Apple SVG는 여백이 없고,
+   Google PNG(646×250)는 위아래로 29px씩 투명 여백이 있어(보이는 면 192) 그만큼 키우고 음수 여백으로 상쇄한다.
+   색·비율·자르기는 건드리지 않는다. 배지 사이 간격은 배지 높이의 1/4 이상(여유 공간). */
+.app-intro-store-badges {
+  --app-intro-badge-height: 48px;
+
   display: flex;
   flex-wrap: wrap;
-  gap: 8px;
+  align-items: center;
+  gap: 12px;
 }
 
-.app-intro-store-button {
+.app-intro-store-badges--compact {
+  --app-intro-badge-height: 36px;
+
+  gap: 10px;
+}
+
+.app-intro-store-badge {
   display: inline-flex;
   align-items: center;
-  justify-content: center;
-  min-height: 52px;
-  padding: 0 24px;
-  border-radius: 999px;
-  font-size: 15px;
-  line-height: 20px;
-  font-weight: 600;
-  color: var(--app-intro-ink);
-  text-decoration: none;
-  white-space: nowrap;
-}
-
-.app-intro-store-button--compact {
   min-height: 44px;
-  padding: 0 14px;
-  font-size: 14px;
+  border-radius: 8px;
 }
 
-.app-intro-store-button--lime {
-  background: var(--app-intro-lime);
+.app-intro-store-badge img {
+  display: block;
+  width: auto;
 }
 
-.app-intro-store-button--ink {
-  background: var(--app-intro-ink);
-  color: var(--app-intro-paper);
+.app-intro-store-badge-apple {
+  height: var(--app-intro-badge-height);
 }
 
-.app-intro-store-button--none {
-  background: var(--app-intro-surface);
+.app-intro-store-badge-google {
+  height: calc(var(--app-intro-badge-height) * 250 / 192);
+  margin: calc(var(--app-intro-badge-height) * -29 / 192) 0;
 }
 
-.app-intro-store-button:focus-visible,
+.app-intro-store-badge:focus-visible,
 .app-intro-footer-link:focus-visible,
 .app-intro-footer-policy:focus-visible {
   outline: 2px solid var(--app-intro-ink);
   outline-offset: 2px;
+}
+
+/* 모바일에서는 바로 아래 히어로에 같은 배지가 있어 머리 배지를 숨긴다. */
+@media (max-width: 599px) {
+  .app-intro-header .app-intro-store-badges {
+    display: none;
+  }
 }
 
 /* ── 히어로 ── */
@@ -172,164 +170,28 @@
   word-break: keep-all;
 }
 
-.app-intro-feature-snippet {
+.app-intro-feature-media {
+  display: flex;
+  justify-content: center;
   min-width: 0;
 }
 
-/* 목록 행: 최소 높이 72 · 위아래 14 · 첫 행은 헤어라인 없음 */
-.app-intro-row {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  gap: 2px;
-  min-height: 72px;
-  padding: 14px 0;
+/* 실제 앱 화면: 기기 프레임 없이 둥근 모서리 + 헤어라인. 페이지는 평평하게 두므로 그림자 없음(HM-8). */
+.app-intro-screenshot {
+  display: block;
+  width: min(72vw, 300px);
+  height: auto;
+  aspect-ratio: 720 / 1476;
+  border: 1px solid var(--app-intro-hairline);
+  border-radius: 28px;
+  background: var(--app-intro-paper);
 }
 
-.app-intro-rows .app-intro-row + .app-intro-row {
-  border-top: 1px solid var(--app-intro-hairline);
-}
-
-.app-intro-row-name {
-  font-size: 16px;
-  line-height: 22px;
-  font-weight: 500;
-}
-
-.app-intro-row-meta {
-  font-size: 14px;
-  line-height: 20px;
-  color: var(--app-intro-ink);
-}
-
-.app-intro-surface {
-  background: var(--app-intro-surface);
-  border-radius: var(--app-intro-radius-surface);
-  padding: 20px;
-}
-
-.app-intro-meta-label {
-  font-size: 13px;
-  line-height: 18px;
-  letter-spacing: 0.1px;
-  color: var(--app-intro-muted);
-}
-
-/* 여행 */
-.app-intro-trip-head {
-  display: flex;
-  align-items: baseline;
-  justify-content: space-between;
-  gap: 12px;
-}
-
-.app-intro-trip-dday {
-  font-size: 24px;
-  line-height: 28px;
-}
-
-.app-intro-trip-weight {
-  margin-top: 20px !important;
-  font-size: 30px;
-  line-height: 34px;
-}
-
-.app-intro-trip-forecast {
-  margin-top: 16px !important;
-  padding-top: 14px;
-  border-top: 1px solid var(--app-intro-hairline);
-  font-size: 14px;
-  line-height: 20px;
-}
-
-/* 패킹 */
-.app-intro-packing-head {
-  display: flex;
-  align-items: baseline;
-  gap: 8px;
-}
-
-.app-intro-packing-count {
-  font-size: 28px;
-  line-height: 32px;
-}
-
-.app-intro-packing-caption,
-.app-intro-packing-remain {
-  font-size: 14px;
-  line-height: 20px;
-}
-
-.app-intro-progress-track {
-  height: 8px;
-  margin: 14px 0 12px;
-  border-radius: 4px;
-  background: var(--app-intro-surface);
-  overflow: hidden;
-}
-
-.app-intro-progress-fill {
-  height: 100%;
-  border-radius: 4px;
-  background: var(--app-intro-ink);
-}
-
-/* 그룹 */
-.app-intro-group {
-  display: flex;
-  align-items: center;
-  gap: 16px;
-}
-
-.app-intro-avatars {
-  display: flex;
-  flex-shrink: 0;
-}
-
-.app-intro-avatar {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 36px;
-  height: 36px;
-  border-radius: 50%;
-  background: var(--app-intro-surface);
-  border: 2px solid var(--app-intro-paper);
-  font-size: 13px;
-  line-height: 18px;
-  font-weight: 600;
-}
-
-.app-intro-avatar + .app-intro-avatar {
-  margin-left: -8px;
-}
-
-/* 칩 */
-.app-intro-chips {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 6px;
-}
-
-.app-intro-chip {
-  display: inline-flex;
-  align-items: center;
-  min-height: 36px;
-  padding: 8px 12px;
-  border-radius: var(--app-intro-radius-chip);
-  background: var(--app-intro-surface);
-  color: var(--app-intro-ink);
-  font-size: 14px;
-  line-height: 20px;
-}
-
-.app-intro-chip--selected {
-  background: var(--app-intro-ink);
-  color: var(--app-intro-paper);
-}
-
-.app-intro-community .app-intro-row-meta {
-  margin-top: 4px !important;
+/* 아래가 비어 있는 화면은 위쪽 약 62%만 보여 준다. */
+.app-intro-screenshot--cropped {
+  aspect-ratio: 720 / 915;
+  object-fit: cover;
+  object-position: top;
 }
 
 /* ── 마무리 ── */
@@ -432,8 +294,9 @@
     padding: 56px 0;
   }
 
-  .app-intro-feature-snippet {
-    max-width: 440px;
+  /* 짝수 행은 스크린샷을 왼쪽에 둬 지그재그로 읽히게 한다. */
+  .app-intro-feature:nth-child(even) .app-intro-feature-media {
+    order: -1;
   }
 
   .app-intro-closing {

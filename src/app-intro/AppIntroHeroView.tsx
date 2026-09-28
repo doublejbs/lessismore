@@ -1,14 +1,8 @@
 import { FC } from 'react';
-import DevicePlatform from './model/DevicePlatform';
-import StoreButtonEmphasisType from './model/StoreButtonEmphasisType';
-import StoreButtonsView from './StoreButtonsView';
+import StoreBadgesView from './StoreBadgesView';
 
-interface Props {
-  platform: DevicePlatform;
-}
-
-// 첫 화면: 제목·부제·스토어 버튼(AppIntroSpec §3.2). 기기에 맞는 스토어 하나가 이 화면의 유일한 라임이다.
-const AppIntroHeroView: FC<Props> = ({ platform }) => {
+// 첫 화면: 제목·부제·스토어 배지(AppIntroSpec §3.2).
+const AppIntroHeroView: FC = () => {
   return (
     <section className='app-intro-hero'>
       <div className='app-intro-inner'>
@@ -18,9 +12,9 @@ const AppIntroHeroView: FC<Props> = ({ platform }) => {
           <span className='app-intro-nowrap'>배낭은 가볍게</span>
         </h1>
         <p className='app-intro-hero-subtitle'>
-          장비 무게를 정리하고, 여행을 준비하고, 함께 가는 사람과 나누세요.
+          장비 무게를 정리하고, 백패킹을 준비하고, 함께 가는 사람과 나누세요.
         </p>
-        <StoreButtonsView platform={platform} emphasis={StoreButtonEmphasisType.Lime} />
+        <StoreBadgesView />
       </div>
     </section>
   );
