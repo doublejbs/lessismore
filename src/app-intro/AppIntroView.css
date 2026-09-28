@@ -1,0 +1,451 @@
+/* 앱 소개 페이지(`/`) — 앱 레포 HM-8 시각 문법을 웹으로 옮긴 값(AppIntroSpec §4). */
+.app-intro {
+  --app-intro-paper: #ffffff;
+  --app-intro-ink: #000000;
+  --app-intro-muted: #767676;
+  --app-intro-surface: #f2f2f2;
+  --app-intro-hairline: #ededed;
+  --app-intro-lime: #c8f244;
+  --app-intro-radius-surface: 12px;
+  --app-intro-radius-chip: 10px;
+  --app-intro-gutter: 24px;
+
+  min-height: 100vh;
+  background: var(--app-intro-paper);
+  color: var(--app-intro-ink);
+  font-family:
+    'Pretendard',
+    -apple-system,
+    BlinkMacSystemFont,
+    'Segoe UI',
+    Roboto,
+    sans-serif;
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+}
+
+.app-intro *,
+.app-intro *::before,
+.app-intro *::after {
+  box-sizing: border-box;
+}
+
+.app-intro p,
+.app-intro h1,
+.app-intro h2,
+.app-intro dl,
+.app-intro dd {
+  margin: 0;
+}
+
+.app-intro-inner {
+  width: 100%;
+  max-width: 1080px;
+  margin: 0 auto;
+  padding: 0 var(--app-intro-gutter);
+}
+
+/* 숫자·라틴 값 전용 콘덴스드. 비교하는 숫자가 자릿수 폭으로 흔들리지 않게 tabular-nums. */
+.app-intro-number {
+  font-family: 'Archivo Narrow', 'Pretendard', sans-serif;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+
+/* ── 머리 ── */
+.app-intro-header-inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding-top: 12px;
+  padding-bottom: 12px;
+}
+
+.app-intro-wordmark {
+  display: block;
+  height: 20px;
+  width: auto;
+  flex-shrink: 0;
+}
+
+/* ── 스토어 버튼(알약) ── */
+.app-intro-store-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.app-intro-store-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 52px;
+  padding: 0 24px;
+  border-radius: 999px;
+  font-size: 15px;
+  line-height: 20px;
+  font-weight: 600;
+  color: var(--app-intro-ink);
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.app-intro-store-button--compact {
+  min-height: 44px;
+  padding: 0 14px;
+  font-size: 14px;
+}
+
+.app-intro-store-button--lime {
+  background: var(--app-intro-lime);
+}
+
+.app-intro-store-button--ink {
+  background: var(--app-intro-ink);
+  color: var(--app-intro-paper);
+}
+
+.app-intro-store-button--none {
+  background: var(--app-intro-surface);
+}
+
+.app-intro-store-button:focus-visible,
+.app-intro-footer-link:focus-visible,
+.app-intro-footer-policy:focus-visible {
+  outline: 2px solid var(--app-intro-ink);
+  outline-offset: 2px;
+}
+
+/* ── 히어로 ── */
+.app-intro-hero {
+  padding: 56px 0 64px;
+}
+
+.app-intro-hero-title {
+  font-size: 34px;
+  line-height: 42px;
+  letter-spacing: -0.8px;
+  font-weight: 700;
+  word-break: keep-all;
+}
+
+.app-intro-hero-subtitle {
+  margin-top: 16px !important;
+  margin-bottom: 32px !important;
+  max-width: 520px;
+  font-size: 16px;
+  line-height: 24px;
+  color: var(--app-intro-muted);
+  word-break: keep-all;
+}
+
+/* ── 핵심 기능 ── */
+.app-intro-feature {
+  display: grid;
+  gap: 24px;
+  padding: 40px 0;
+  border-top: 1px solid var(--app-intro-hairline);
+}
+
+.app-intro-feature-label {
+  font-size: 13px;
+  line-height: 18px;
+  letter-spacing: 0.1px;
+  color: var(--app-intro-muted);
+}
+
+.app-intro-feature-title {
+  margin-top: 6px !important;
+  font-size: 22px;
+  line-height: 28px;
+  letter-spacing: -0.4px;
+  font-weight: 600;
+  word-break: keep-all;
+}
+
+.app-intro-feature-description {
+  margin-top: 8px !important;
+  font-size: 14px;
+  line-height: 21px;
+  color: var(--app-intro-muted);
+  word-break: keep-all;
+}
+
+.app-intro-feature-snippet {
+  min-width: 0;
+}
+
+/* 목록 행: 최소 높이 72 · 위아래 14 · 첫 행은 헤어라인 없음 */
+.app-intro-row {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 2px;
+  min-height: 72px;
+  padding: 14px 0;
+}
+
+.app-intro-rows .app-intro-row + .app-intro-row {
+  border-top: 1px solid var(--app-intro-hairline);
+}
+
+.app-intro-row-name {
+  font-size: 16px;
+  line-height: 22px;
+  font-weight: 500;
+}
+
+.app-intro-row-meta {
+  font-size: 14px;
+  line-height: 20px;
+  color: var(--app-intro-ink);
+}
+
+.app-intro-surface {
+  background: var(--app-intro-surface);
+  border-radius: var(--app-intro-radius-surface);
+  padding: 20px;
+}
+
+.app-intro-meta-label {
+  font-size: 13px;
+  line-height: 18px;
+  letter-spacing: 0.1px;
+  color: var(--app-intro-muted);
+}
+
+/* 여행 */
+.app-intro-trip-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.app-intro-trip-dday {
+  font-size: 24px;
+  line-height: 28px;
+}
+
+.app-intro-trip-weight {
+  margin-top: 20px !important;
+  font-size: 30px;
+  line-height: 34px;
+}
+
+.app-intro-trip-forecast {
+  margin-top: 16px !important;
+  padding-top: 14px;
+  border-top: 1px solid var(--app-intro-hairline);
+  font-size: 14px;
+  line-height: 20px;
+}
+
+/* 패킹 */
+.app-intro-packing-head {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+}
+
+.app-intro-packing-count {
+  font-size: 28px;
+  line-height: 32px;
+}
+
+.app-intro-packing-caption,
+.app-intro-packing-remain {
+  font-size: 14px;
+  line-height: 20px;
+}
+
+.app-intro-progress-track {
+  height: 8px;
+  margin: 14px 0 12px;
+  border-radius: 4px;
+  background: var(--app-intro-surface);
+  overflow: hidden;
+}
+
+.app-intro-progress-fill {
+  height: 100%;
+  border-radius: 4px;
+  background: var(--app-intro-ink);
+}
+
+/* 그룹 */
+.app-intro-group {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.app-intro-avatars {
+  display: flex;
+  flex-shrink: 0;
+}
+
+.app-intro-avatar {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: var(--app-intro-surface);
+  border: 2px solid var(--app-intro-paper);
+  font-size: 13px;
+  line-height: 18px;
+  font-weight: 600;
+}
+
+.app-intro-avatar + .app-intro-avatar {
+  margin-left: -8px;
+}
+
+/* 칩 */
+.app-intro-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.app-intro-chip {
+  display: inline-flex;
+  align-items: center;
+  min-height: 36px;
+  padding: 8px 12px;
+  border-radius: var(--app-intro-radius-chip);
+  background: var(--app-intro-surface);
+  color: var(--app-intro-ink);
+  font-size: 14px;
+  line-height: 20px;
+}
+
+.app-intro-chip--selected {
+  background: var(--app-intro-ink);
+  color: var(--app-intro-paper);
+}
+
+.app-intro-community .app-intro-row-meta {
+  margin-top: 4px !important;
+}
+
+/* ── 마무리 ── */
+.app-intro-closing {
+  padding: 56px 0;
+  border-top: 1px solid var(--app-intro-hairline);
+}
+
+.app-intro-closing-title {
+  margin-bottom: 24px !important;
+  font-size: 22px;
+  line-height: 28px;
+  letter-spacing: -0.4px;
+  font-weight: 600;
+}
+
+/* ── 푸터 ── */
+.app-intro-footer {
+  padding: 32px 0 calc(40px + env(safe-area-inset-bottom));
+  border-top: 1px solid var(--app-intro-hairline);
+  font-size: 13px;
+  line-height: 18px;
+  letter-spacing: 0.1px;
+  color: var(--app-intro-muted);
+}
+
+.app-intro-footer-info {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px 16px;
+}
+
+.app-intro-footer-item {
+  display: flex;
+  gap: 6px;
+  word-break: keep-all;
+}
+
+.app-intro-footer-item dt {
+  color: var(--app-intro-muted);
+}
+
+.app-intro-footer-item dd {
+  color: var(--app-intro-ink);
+}
+
+.app-intro-footer-link,
+.app-intro-footer-policy {
+  color: var(--app-intro-ink);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.app-intro-footer-bottom {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px 16px;
+  margin-top: 20px;
+}
+
+.app-intro-footer-policy {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  font-weight: 600;
+}
+
+/* ── 데스크톱 ── */
+@media (min-width: 768px) {
+  .app-intro-header-inner {
+    padding-top: 20px;
+    padding-bottom: 20px;
+  }
+
+  .app-intro-wordmark {
+    height: 24px;
+  }
+
+  .app-intro-hero {
+    padding: 96px 0 104px;
+  }
+
+  .app-intro-hero-title {
+    font-size: 52px;
+    line-height: 62px;
+    letter-spacing: -1.2px;
+  }
+
+  .app-intro-hero-subtitle {
+    font-size: 18px;
+    line-height: 28px;
+  }
+
+  .app-intro-feature {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    align-items: center;
+    gap: 64px;
+    padding: 56px 0;
+  }
+
+  .app-intro-feature-snippet {
+    max-width: 440px;
+  }
+
+  .app-intro-closing {
+    padding: 80px 0;
+  }
+
+  .app-intro-closing-title {
+    font-size: 28px;
+    line-height: 34px;
+  }
+}
+
+.app-intro-nowrap {
+  white-space: nowrap;
+}

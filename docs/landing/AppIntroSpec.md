@@ -4,7 +4,7 @@
 | --- | --- |
 | 상태 | 제안 (2026-09-28) |
 | 범위 | `manage` 밖 작업 — 2026-09-28 사용자 승인 |
-| 코드 | `src/app-intro/`(예정), 라우트 등록 `src/App.tsx` |
+| 코드 | `src/app-intro/AppIntroView.tsx`(조립·제목/설명 설정) · `AppIntroHeaderView`·`AppIntroHeroView`·`AppIntroFeatureView`·`AppIntroClosingView`·`AppIntroFooterView`·`StoreButtonsView` · `src/app-intro/snippet/*SnippetView.tsx`(UI 조각) · `src/app-intro/model/DevicePlatform.ts`·`DevicePlatformType.ts`·`StoreButtonEmphasisType.ts` · 스타일 `src/app-intro/AppIntroView.css` · 라우트 `src/App.tsx` · Archivo Narrow 로드 `index.html` |
 | 앱 쪽 기준 | 앱 레포 `lessismore-app` `CLAUDE.md` 「디자인 시스템」·`specs/Home.md` HM-8(시각 문법) |
 
 ## 1. 목적
@@ -18,6 +18,8 @@
 
 - `/` → 소개 페이지(`AppIntroView`). **자동 이동하지 않는다.**
 - 나머지 라우트와 `*` → `/app-install` 폴백은 현행 유지.
+- `/`에서는 상단 앱 설치 배너(`AndroidAppBannerView`)를 띄우지 않는다 — 페이지가 스토어 버튼을 직접 두고, 고정 배너가 머리를 가린다.
+- 제목·description은 페이지가 마운트될 때 바꾸고 떠날 때 되돌린다(다른 페이지 제목을 건드리지 않는다). OG 태그는 `index.html` 공용 값을 그대로 둔다 — 크롤러는 JS를 실행하지 않으므로 `/` 전용 OG가 필요하면 별도 작업.
 - 페이지 `<title>`: `useless — 백패킹·캠핑 장비 관리`. 메타 description: `필요한 장비만, 배낭은 가볍게. 장비 무게를 정리하고 여행을 준비하는 백패킹 앱.` OG 이미지는 기존 `/icon.png`.
 
 ## 3. 구성 (위 → 아래)
@@ -43,7 +45,7 @@
 
 - 지면 **순백**(#FFFFFF). 면은 연회색 채움 #F2F2F2 + 모서리 12, **그림자 없음**. 헤어라인 #EDEDED.
 - 글꼴 **Pretendard**(이미 `index.html`에 CDN 로드). 숫자·라틴 큰 값은 **Archivo Narrow 700**(Google Fonts)으로, `tabular-nums`.
-- 잉크 #000, 보조 글자 #767676. **라임(#C8F04D 계열 — 앱 토큰 값 확인)은 화면당 주 액션 하나**(히어로의 스토어 버튼 묶음 중 해당 기기 스토어 하나, 데스크톱이면 App Store 쪽)에만. 라임 위 글자는 잉크.
+- 잉크 #000, 보조 글자 #767676. **라임(`#C8F244` — 앱 `DesignTokens` `lime`)은 화면당 주 액션 하나**(히어로의 스토어 버튼 묶음 중 해당 기기 스토어 하나, 데스크톱이면 App Store 쪽)에만. 라임 위 글자는 잉크.
 - 목록 행 문법: 이름 16 medium / 메타 14 잉크, 숫자를 맨 앞(`652g · 꼴로르 · 침낭`). 배지·칩을 행 안에 두지 않는다.
 - 스크린샷·장비 사진을 쓰지 않는다(앱 레포 DataModel §1 카탈로그 이미지 미제공 원칙). UI 조각은 HTML/CSS로 그린다.
 - 반응형: 모바일 우선, 좌우 여백 24(모바일)·최대 폭 1080 가운데 정렬(데스크톱). 가로 스크롤 없음. 스토어 버튼 터치 영역 44px 이상.
@@ -52,6 +54,7 @@
 
 - 스토어 버튼: App Store `https://apps.apple.com/kr/app/id6751174681`, Google Play `https://play.google.com/store/apps/details?id=com.doublejbs.useless`. 새 탭이 아니라 같은 탭으로 이동.
 - 기기 감지는 **주 액션 강조만** 바꾼다(iOS → App Store 라임, Android → Google Play 라임, 그 외 → App Store 라임). 자동 이동은 없다.
+- 라임은 히어로 묶음에만 쓴다. 머리 묶음은 두 버튼 모두 연회색 알약, 마무리 묶음의 주 스토어는 잉크 채움 알약(흰 글자)이다. 패킹 진행 막대 채움도 라임이 아니라 잉크다.
 - 이 페이지는 Firestore·로그인을 쓰지 않는다(정적).
 
 ## 6. 검증
