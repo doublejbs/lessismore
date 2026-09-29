@@ -32,6 +32,7 @@ import {
   onGroupDeleted,
   onGroupUserDeleted,
 } from "./group.js";
+import {groupInviteHtml} from "./groupInviteHtml.js";
 import {
   revenuecatWebhook,
   onSubscriptionUserDeleted,
@@ -165,6 +166,7 @@ export {
   onGroupUpdated,
   onGroupDeleted,
   onGroupUserDeleted,
+  groupInviteHtml,
   revenuecatWebhook,
   onSubscriptionUserDeleted,
 };

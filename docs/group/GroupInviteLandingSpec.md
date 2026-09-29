@@ -4,7 +4,7 @@
 | --- | --- |
 | 상태 | 구현 (2026-09-17) |
 | 원 스펙 | 앱 레포 `lessismore-app` `group/specs/Group.md` GRP-3, `group/specs/DataModel.md` DM-29 |
-| 코드 | `src/group-invite/`, 라우트 등록 `src/App.tsx` |
+| 코드 | `src/group-invite/`, 라우트 등록 `src/App.tsx`, 미리보기 태그 함수 `functions/groupInviteHtml.js`(§7) |
 
 > 이 문서는 **웹 랜딩 쪽 계약**만 적는다. 그룹 도메인의 단일 진실 공급원은 앱 레포의 GRP-3 · DM-29이며, 이 레포는 그 계약을 따르는 랜딩 한 장만 갖는다.
 
@@ -20,7 +20,8 @@
 - 경로: `/group/:id`. 앱의 `constants/WebLinks.ts` `getGroupInviteUrl()`이 만드는 형태와 1:1이다
   (`${WEB_BASE_URL}/group/${encodeURIComponent(groupId)}`).
 - `react-router-dom`의 `useParams()`가 이미 디코딩해 주므로 모델에는 **원본 groupId**가 들어간다.
-- Firebase Hosting은 `firebase.json`의 `"source": "**" → "/index.html"` 리라이트로 SPA 폴백을 이미 갖고 있다. 호스팅 설정 변경은 필요 없다.
+- Firebase Hosting은 `firebase.json`의 `"source": "**" → "/index.html"` 리라이트로 SPA 폴백을 갖고 있다. `/group/**`만 그 앞의 리라이트로 함수 `groupInviteHtml`에 보낸다(§7) — 함수가 같은 `index.html`에 태그만 바꿔 돌려주므로 브라우저에서 보이는 랜딩은 같다.
+  빌드 산출물의 정적 경로는 모두 절대 경로(`/assets/…`, `/manifest.json` 등, Vite `base` 기본값 `/`)라 `/group/{id}` 아래에서 서빙돼도 JS·CSS가 그대로 로드된다.
 
 ## 3. 초대 요약 읽기
 
@@ -70,7 +71,7 @@
   이 로직은 `src/utils/AppSchemeLink.ts`로 뽑아 재사용한다.
 - 데스크톱(iOS·Android가 아닌 UA)에서는 스킴을 호출하지 않고 바로 스토어로 보낸다(`gear-share`와 동일).
 
-## 7. 링크 미리보기(OG 태그) `[제안 2026-09-29]`
+## 7. 링크 미리보기(OG 태그) `[구현 2026-09-29 · 미배포]`
 
 초대 링크를 카카오톡·메시지·SNS에 붙이면 **그룹 이름과 일정이 미리보기에 보여야 한다.** 미리보기 크롤러(카카오 스크랩, 페이스북, 애플 메시지 등)는 자바스크립트를 실행하지 않으므로, 브라우저에서 태그를 바꾸는 방식으로는 안 된다 — **서버가 태그를 채운 HTML을 돌려준다.**
 
@@ -91,5 +92,10 @@
   - 트위터 태그(`twitter:title`·`twitter:description`·`twitter:url`)도 같은 값으로 맞춘다. `og:type=website`, `og:site_name=USELESS`는 유지.
   - 모든 값은 **HTML 이스케이프**한다(그룹 이름은 사용자 입력).
 - **실패해도 링크가 죽지 않는다**: 함수 오류·타임아웃 시 기본 태그의 `index.html`을 돌려준다(§3의 "초대 요약은 부가 정보" 원칙). `index.html`을 가져오지 못하면 302로 `/index.html`에 넘기지 않는다(루프 위험) — 최소 HTML(태그 + `/` 스크립트 로드 없이 앱 스킴 안내 링크)로 응답한다.
+- **구현**: `functions/groupInviteHtml.js`의 `groupInviteHtml`(`onRequest`, asia-northeast3, maxInstances 10), `functions/index.js`에서 export. 순수 함수 `parseGroupId`·`buildGroupInviteMeta`·`injectMeta`·`buildMinimalHtml`로 나뉜다.
+  - 태그 교체는 `<meta property|name="…" content="…">`를 속성 순서·따옴표와 무관하게 잡아 바꾸고, 없으면 `</head>` 앞에 넣는다.
+  - Firestore 읽기·템플릿 가져오기는 각각 3초 제한. 템플릿 가져오기에 실패하면 5분이 지난 묵은 캐시라도 있으면 그것을 쓰고, 없을 때만 최소 HTML(앱 스킴 `useless 앱에서 열기` + App Store·Google Play 링크)을 돌려준다.
+  - 이름이 빈 미러는 제목을 기본값(`useless 그룹 초대`)으로, 기간·여행지·인원이 모두 없으면 설명을 기본값으로 둔다.
+  - `GET`·`HEAD`만 받는다(그 외 405).
 - **카카오 캐시**: 카카오는 스크랩 결과를 캐시한다. 배포 직후 이미 공유된 링크는 카카오 디벨로퍼스 [공유 디버거](https://developers.kakao.com/tool/debugger/sharing)에서 캐시를 지워야 새 미리보기가 나온다.
 - **개인정보**: 미리보기는 §3의 공개 미러 값(이름·기간·여행지·인원)만 쓴다. `meetingNote`·멤버 이름은 싣지 않는다.
