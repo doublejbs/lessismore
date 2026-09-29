@@ -8,6 +8,13 @@
     ],
     "rewrites": [
       {
+        "source": "/group/**",
+        "function": {
+          "functionId": "groupInviteHtml",
+          "region": "asia-northeast3"
+        }
+      },
+      {
         "source": "**",
         "destination": "/index.html"
       }
