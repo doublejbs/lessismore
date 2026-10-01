@@ -151,9 +151,10 @@ const optIndexFor = (options, pred) => {
   return i >= 0 ? i + 1 : 0; // option1/2/3 (1-based), 0=없음
 };
 
+// ⚠ 스키마 volume/capacity 는 type:number(단위 L은 앱이 붙임) → 숫자만 반환(단위 문자 금지).
 const volumeFromTitle = (title) => {
   const m = title.match(/(\d+(?:\.\d+)?)\s*L\b/i) || title.match(/\b(\d{2,3})\b(?!\s*(?:oz|g|cm|mm))/);
-  return m ? `${m[1]}L` : '';
+  return m ? m[1] : '';
 };
 
 const buildSpecs = (category, title, tags) => {

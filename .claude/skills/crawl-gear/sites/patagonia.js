@@ -97,7 +97,8 @@ const classify = (catName, domain, name) => {
   if (/물병|보틀|bottle|플라스크|flask/i.test(s)) return 'bottle';
   if (/케어 ?제품|왁스|세탁|세제|리페어|repair|care|wash/i.test(s)) return 'etc';
   if (/장갑|glove|미튼|mitten/i.test(name)) return 'gloves';
-  if (/게이터|gaiter/i.test(name)) return 'gaiter';
+  // 넥게이터/넥워머는 넥웨어(의류) — 다리 스패츠(게이터)와 구분.
+  if (/게이터|gaiter/i.test(name)) return /넥|neck|넥워머/i.test(name) ? 'clothing' : 'gaiter';
   if (domain === 'packs') {
     // Packs & Gear: 전부 가방/팩류 → 러닝 베스트팩=vest_pack, 나머지 세분.
     if (/베스트|vest/i.test(name)) return 'vest_pack';
@@ -109,23 +110,32 @@ const classify = (catName, domain, name) => {
 };
 
 // ── 스펙 ──
-const volFromName = (name) => {
+// ⚠ 스키마 volume/capacity 는 type:number(단위 L/ml는 앱이 붙임) → 숫자만 저장(단위 문자 금지).
+const litersFromName = (name) => {
   const m = name.match(/(\d+(?:\.\d+)?)\s*L\b/);
-  return m ? `${m[1]}L` : '';
+  return m ? m[1] : '';
+};
+// bottle/cup capacity 는 스키마 단위가 ml → oz는 ml로 환산, ml/L 은 숫자화.
+const mlFromName = (name) => {
+  const oz = name.match(/(\d+(?:\.\d+)?)\s*oz/i);
+  if (oz) return String(Math.round(parseFloat(oz[1]) * 29.5735));
+  const ml = name.match(/(\d{2,4})\s*ml/i);
+  if (ml) return ml[1];
+  const l = litersFromName(name);
+  return l ? String(Math.round(parseFloat(l) * 1000)) : '';
 };
 const buildSpecs = (category, name, material) => {
   const s = {};
   if (category === 'backpack') {
-    const v = volFromName(name);
+    const v = litersFromName(name);
     if (v) s.volume = v;
     if (material) s.material = material;
   } else if (category === 'bottle' || category === 'cup') {
-    const oz = name.match(/(\d{1,2})\s*oz/i);
-    const v = volFromName(name) || (name.match(/(\d{3,4})\s*ml/i) ? `${name.match(/(\d{3,4})\s*ml/i)[1]}ml` : oz ? `${oz[1]}oz` : '');
+    const v = mlFromName(name);
     if (v) s.capacity = v;
     if (material) s.material = material;
   } else if (category === 'pouch') {
-    const v = volFromName(name);
+    const v = litersFromName(name);
     if (v) s.capacity = v;
     if (material) s.material = material;
   } else if (category === 'clothing') {
@@ -160,11 +170,41 @@ const COLORMAP = {
   hopes: '호프스', blooms: '블룸스', solo: '솔로', teal: '틸', lemon: '레몬', zest: '제스트', rock: '록',
   melon: '멜론', silver: '실버', park: '파크', stripe: '스트라이프', logo: '로고', and: '앤', classic: '클래식',
   dark: '다크', wispy: '위스피', vessel: '베슬', nouveau: '누보', shine: '샤인', sound: '사운드', touring: '투어링',
+  // 파타고니아 색상/프린트명 추가 보강(미리보기 검토에서 잡은 잔존 영문)
+  weathered: '웨더드', sage: '세이지', summit: '서밋', canopy: '캐노피', basin: '베이슨', den: '덴', cover: '커버',
+  virtually: '버추얼리', fitz: '피츠', roy: '로이', xdye: '엑스다이', glacial: '글레이셜', hut: '헛', tripper: '트리퍼',
+  lets: '레츠', chat: '챗', vellum: '벨럼', autumn: '어텀', sastrugi: '사스트루기', snowmelt: '스노우멜트',
+  river: '리버', snowshoe: '스노우슈', hare: '헤어', treeline: '트리라인', gumtree: '검트리', wide: '와이드',
+  sun: '선', cinnamon: '시나몬', sunken: '선큰', undyed: '언다이드', diver: '다이버', sunlit: '선릿',
+  natures: '네이처스', pace: '페이스', amanita: '아마니타', mountain: '마운틴', noble: '노블', quilt: '퀼트',
+  lynx: '링크스', label: '라벨', dyno: '다이노', trout: '트라우트', oar: '오어', blubby: '블러비', massif: '마시프',
+  barnacle: '바너클', sandstone: '샌드스톤', rusty: '러스티', deer: '디어', forever: '포에버', valley: '밸리',
+  cobalt: '코발트', fiber: '파이버', oval: '오벌', crossing: '크로싱', text: '텍스트', fish: '피시', jump: '점프',
+  evergreen: '에버그린', fjord: '피오르', foothills: '풋힐스', punchy: '펀치', more: '모어', knit: '니트',
+  stamped: '스탬프드', floral: '플로럴', patchwork: '패치워크', wetland: '웨틀랜드', bobcat: '밥캣', minded: '마인디드',
+  geo: '지오', viking: '바이킹', depth: '뎁스', nest: '네스트', snow: '스노우', owl: '아울', mako: '마코',
+  berm: '버엄', deep: '딥', freeze: '프리즈', polar: '폴라', breeze: '브리즈', seabird: '시버드', wing: '윙',
+  rising: '라이징', storm: '스톰', belwe: '벨위', andes: '안데스', pass: '패스', it: '잇', around: '어라운드',
+  belt: '벨트', caper: '케이퍼', buckhorn: '벅혼', feather: '페더', saxifrage: '색시프리지', smudge: '스머지',
+  wolf: '울프', solid: '솔리드', pickled: '피클드', buddies: '버디스', foliage: '폴리지', limestone: '라임스톤',
+  flurry: '플러리', diamond: '다이아몬드', crisp: '크리스프', icon: '아이콘', cosmos: '코스모스', mallow: '맬로우',
+  salmon: '새먼', energy: '에너지', peel: '필', undercurrent: '언더커런트', vintage: '빈티지',
 };
 const colorToKorean = (en) => {
-  const v = (en || '').trim();
+  let v = (en || '').trim();
   if (!v) return '';
-  return v.split(/\s+/).map((w) => COLORMAP[w.toLowerCase()] ?? w).join(' ');
+  v = v.replace(/\bw\//gi, '/'); // "Black w/Red"(배색) → "Black/Red"
+  // 공백·콜론·슬래시는 구분자로 보존, 각 단어는 사전 음역(미상은 원문 유지).
+  return v
+    .split(/(\s+|[:/])/)
+    .map((seg) => {
+      if (/^\s+$/.test(seg) || /^[:/]$/.test(seg)) return seg;
+      const key = seg.toLowerCase().replace(/[^a-z0-9]/g, '');
+      return COLORMAP[key] ?? seg; // P6 등 모델코드/미상은 원문
+    })
+    .join('')
+    .replace(/\s+/g, ' ')
+    .trim();
 };
 const SIZEMAP = { XS: '엑스스몰', S: '스몰', M: '미디엄', L: '라지', XL: '엑스라지', XXL: '더블엑스라지', ALL: '', 'ONE SIZE': '' };
 const sizeToKorean = (s) => {

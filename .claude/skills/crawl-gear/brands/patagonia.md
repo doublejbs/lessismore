@@ -35,5 +35,12 @@
 기존 의류 브랜드 관례(시에라디자인: 색상별 개별 행, size 미전개)에 맞춘다. 색상별로 이미지가 다르고
 사이즈 변형은 이미지·스펙 동일이라 행만 폭발(전개 시 2288행 → 색상 단위 578행). 색상명은 `tooltip`(영문) →
 `color`, `COLORMAP` 음역 → `colorKorean`. HTML 엔티티(`&apos;` 등)는 `decode()` 필수.
+## ⚠ 스펙·색상 함정 (2026-09 검토에서 수정)
+
+- **volume/capacity 는 숫자만 저장**(단위 문자 금지). 스키마가 `type:number, unit:'L'/'ml'` 이라 앱이 단위를
+  붙인다 → "26L" 로 저장하면 "26LL" 로 표시됨. `litersFromName`/`mlFromName` 이 숫자만 반환(oz→ml 환산).
+- **colorKorean 은 한글만**. 색상명이 `tooltip`(영문)이라 `COLORMAP` 음역 — 파타고니아는 프린트/색상명이
+  많아(Weathered/Sage/Sastrugi/Fitz Roy…) 사전을 크게 유지. `w/`(배색)는 `/`로. **P-6 로고는 원문 유지**(브랜드 마크).
+- **넥게이터=넥웨어(clothing)**, 다리 스패츠만 gaiter. **텀블러/캠프컵/머그=cup**(물병 아님).
 
 재실행: `node crawl.js patagonia --no-open` (전체 4개 대분류). 특정 대분류만: `PAT_ROOTS=001003000000000 node crawl.js patagonia`.
