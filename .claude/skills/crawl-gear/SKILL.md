@@ -262,7 +262,12 @@ import('puppeteer').then(async ({default: p}) => {
 등 정당한 예외일 수 있어 사람 검토 / INFO=커버리지). ⚠ **언어 방향을 양방향으로 검사한다** —
 영문 필드(name·size·color)에 한글, **한글 필드(nameKorean·sizeKorean·colorKorean)에 영문**,
 둘 다 잡는다(과거에 한 방향만 검사해 nameKorean/colorKorean 영문 누출을 통째로 놓친 실수 재발 방지).
-검증기가 놓치는 브랜드별 함정(무게 출처, 카테고리 오분류 등)은 여전히 눈으로 확인.
+**validate.js가 자동으로 잡는 것**(2026-10 확장): 필수/null/undefined, 언어 방향(양방향 + 한글명·색상 한글의 영문 단어 섞임),
+일본어·한자 잔존, 제품명 속 브랜드명, 색상·사이즈 짝, groupId 형식·같은 상품 groupId 통일·멀티브랜드 접두, 카테고리·스펙 키,
+숫자/불리언 스펙 타입(단위 문자), 사이즈 3규칙(이름 끝 부착·숫자 사이즈=용량·배낭 사이즈), 중복 행, `_source` 카테고리 혼재,
+색상 여럿인데 이미지 1장. → **체크리스트 중 아래 4개만 사람이 판단**한다(코드로 판별 불가):
+무게를 여러 방법으로 재시도했는가 / `name`이 네비 텍스트가 아닌 실제 상품명인가 / `_detailUrl`이 리스팅이 아닌 개별 상세인가 /
+카테고리 오분류·무게 출처(배송무게 등) 같은 브랜드별 함정. 새 룰을 추가하면 **validate.js에도 검사를 같이 추가**해 수동 항목을 늘리지 않는다.
 
 크롤 후 JSON 또는 HTML에서 확인:
 - [ ] `nameKorean`이 비어있지 않은가? (필수)
@@ -274,7 +279,8 @@ import('puppeteer').then(async ({default: p}) => {
 - [ ] `groupId` 형식이 `<brand>_<slug>` 인가?
 - [ ] 같은 제품의 다른 색상이 같은 `groupId`인가?
 - [ ] spec 필드가 schema 키와 일치하는가? (오타 없음)
-- [ ] **숫자형 스펙(`volume`·`capacity`·`waterproofRating` 등)에 단위 문자가 없는가?** (숫자만 — 앱이 단위 붙임. `"26L"`→앱에서 `"26LL"` 버그. validate 못 잡으니 수동 확인)
+- [ ] **숫자로 시작하는 `size`의 숫자 = `specs.volume`/`capacity` 인가?** 모델명 숫자(TRAIL CUP 500)를 사이즈로 쓰면 실제 용량(630ml)과 어긋난다 — 모델 숫자는 이름에, 실제 용량은 사이즈로(§ 변형 처리). 사이즈가 있는 행은 `name`이 ` / <size>`, `nameKorean`이 ` <sizeKorean>`로 끝나는가? 배낭인데 `size`가 비어 있지 않은가?
+- [ ] **숫자형 스펙(`volume`·`capacity`·`waterproofRating` 등)에 단위 문자가 없는가?** (숫자만 — 앱이 단위 붙임. `"26L"`→앱에서 `"26LL"` 버그. validate.js가 ERROR로 잡음)
 - [ ] empty 값이 `""` (null/undefined 아님)?
 - [ ] **`color`(영문)에 한글이 없는가? `colorKorean`(한글)에 영문이 없는가?** (KR 사이트가 색상을 한글로만 표기하면 색상 사전으로 `color`를 영문 변환할 것 — `color`에 한글이 들어가면 안 됨. `name`/`sizeKorean`도 동일: `name`·`size`=영문, `nameKorean`·`sizeKorean`=한글.)
 - [ ] **`imageUrl` 이 전부 빈값은 아닌가?** 이미지 셀렉터는 사이트마다 다르다 — `og:image` → `data-large_image`(WooCommerce 갤러리) → `wp-post-image` 순 폴백. WM 은 og:image 가 없고, MSR 은 있다. **크롤 후 `imageUrl` 채움률을 반드시 확인**(MSR 은 초기에 전부 빈값이었음).
@@ -310,7 +316,7 @@ ADMIN_UID=<uid> node .claude/skills/crawl-gear/push.js <json-path>
 | `name` | **필수** | 영문 제품명. 사이트가 영문명을 주면 그대로 쓰고, **국내 전용 브랜드처럼 영문명이 아예 없으면 `nameKorean`을 로마자 음역해 채운다** (빈 문자열로 두지 않는다) — 아래 "국내 전용 브랜드 name(영문) 채우기" 참고 |
 | `_detailUrl` (→ push 시 Firestore `productUrl`) | **필수** | 그 상품의 **개별 상세페이지 URL** (카테고리 리스팅 URL 아님). `_source`는 push.js의 카테고리 오버라이드 그룹핑 키로 별도로 쓰이므로 혼용하지 말 것 |
 | `color` / `colorKorean` | 색상이 있으면 **둘 다 필수** | 영문 / 한글 색상. 색상 옵션 자체가 없는 상품은 둘 다 빈 문자열 |
-| `size` / `sizeKorean` | 사이즈가 있으면 **둘 다 필수** | 영문 / 한글 사이즈. 사이즈 옵션 자체가 없는 상품(One Size 등)은 둘 다 빈 문자열 |
+| `size` / `sizeKorean` | 사이즈가 있으면 **둘 다 필수** | 영문 / 한글 사이즈. 사이즈 옵션 자체가 없는 상품(One Size 등)은 둘 다 빈 문자열 — **단 배낭은 용량(`35L`)을 사이즈로**(§ 변형 처리) |
 | `weight` | 선택 (기본 0) | 그램 단위 숫자. 선택 필드라고 첫 시도에서 못 찾으면 바로 포기하지 말 것 — 아래 "선택 필드도 여러 번 시도" 참고 |
 | `imageUrl` | 필수 | https 절대 URL |
 | `specs` | 선택 | 카테고리별 스펙 객체 |
@@ -353,8 +359,8 @@ etc
 > `minLength`·`maxLength`·`maxBrightness` 등)는 스키마의 `unit`('L'/'ml'/'mm'/'g'/'°C'…)을 **앱·에디터가
 > 표시할 때 붙인다.** 그래서 `"26L"`로 저장하면 화면에 **`"26LL"`**(이중 단위)로 나온다. buildSpecs에서
 > `` `${n}L` `` 금지, **`n`(숫자/숫자문자열)만** 반환. 단위가 다르면 환산(예: bottle/cup `capacity`는 ml →
-> oz는 `×29.5735`, L은 `×1000`). ⚠ validate.js는 숫자여부를 검사하지 않으니 **크롤 후 `specs` 값에
-> 단위 문자가 섞였는지 수동 확인**(과거 gossamer·patagonia가 `"20L"`로 저장해 앱에서 `"20LL"` 버그).
+> oz는 `×29.5735`, L은 `×1000`). validate.js가 number 필드에 단위/문자가 섞이면
+> **ERROR**로 잡는다(과거 gossamer·patagonia가 `"20L"`로 저장해 앱에서 `"20LL"` 버그).
 
 | 카테고리 | 필드 |
 |---|---|
@@ -384,7 +390,12 @@ etc
 **핵심 룰:**
 - **색상 옵션이 있으면 `color`/`colorKorean` 둘 다, 사이즈 옵션이 있으면 `size`/`sizeKorean` 둘 다 채운다.** 한쪽만 채우고 다른 쪽을 빈 문자열로 남기지 않는다 (옵션 자체가 없는 경우에만 둘 다 빈 문자열).
 - **옵션(사이즈·색상·온도)별로 모두 개별 제품으로 수집.** Shopify면 `products.json`의 `variants` 전체를 순회해 한 변형당 한 행. (예: 4사이즈×7색상 = 28행)
-- **사이즈를 영문 `name` 끝에 부착** (예: `Ascent Down Sleeping Bag Long / 15°F`). 사이즈+온도 등 비색상 옵션을 ` / `로 이어붙임.
+- **사이즈를 영문 `name` 끝에 부착** (예: `Ascent Down Sleeping Bag Long / 15°F`). 사이즈+온도 등 비색상 옵션을 ` / `로 이어붙임. 한글은 `nameKorean` 끝에 공백 + `sizeKorean`. **예외 없음** — 모델명에 숫자가 있어 겹쳐 보여도 붙인다(`ZENN 35 / 35L`). 룰에 없는 예외를 임의로 만들지 말 것(파고웍스에서 배낭만 빼먹어 지적받음).
+- **배낭(`backpack`/`vest_pack`)은 사이즈 옵션이 없으면 용량을 사이즈로** — `size`/`sizeKorean` = `"<specs.volume>L"`(기존 HMG 관례 `40L`). 위 룰대로 이름 끝에도 붙인다.
+- **🔴 숫자 사이즈 = 실제 용량. 모델명 숫자는 이름에 남기고 실제 용량을 사이즈로 뒤에 붙인다.** 사이즈(옵션값·모델명)의 숫자가 용량처럼 읽히는데 실제 용량과 다르면(모델 구분명), 그 숫자는 이름에 그대로 두고 **스펙의 실제 용량 + 단위를 `size`로 만들어** 이름 끝에 붙인다.
+  - 예(파고웍스): `TRAIL CUP 500`(실제 630ml) → `TRAIL CUP 500 / 630ml` · `트레일 컵 500 630ml`, `DRY SACK 8`(실제 8.5L) → `ZENN DRY SACK EXP 8 / 8.5L`, `ALK 30`(실제 28.5L) → `ALK 30 / 28.5L`, `RUSH 11R`(실제 12L) → `RUSH 11R / 12L`.
+  - `size`의 숫자 = `specs.volume`/`capacity` 가 항상 일치해야 한다. S/M/L/XL·Regular/Long처럼 용량으로 읽히지 않는 사이즈 등급은 그대로 둔다.
+  - 세트 상품(컵 여러 개 등)은 어느 구성품 용량을 쓸지 정해 브랜드 메모에 남긴다(파고웍스 트레일 컵 = 최대인 티타늄 컵).
 - **`One Size` / `Default Title` 은 사이즈 없음으로 처리** — `size`/`sizeKorean` 빈값, 이름에도 안 붙임.
 - **변형별 이미지를 각각 수집(색상 변형뿐 아니라 사이즈 변형도).** Shopify 컬렉션 `products.json`은 variant에 `image_id`가 없고 **`variant.featured_image.src`** 에 색상별 사진을 담는다 (개별 `product.json`은 `image_id` 사용). 단 컬렉션에 featured_image조차 없을 수 있다(NEMO) → 개별 `/products/<slug>.json`의 **`variant.image_id` → `images[].id`** 로 매핑한다. 한 제품에 이미지 한 장 일괄 금지. (자세히는 `brands/nemo.md`.)
 - **이미지-색상 매핑은 사후 검증 필수 (SAMAYA 세션에서 발견).** featured_image/image_id가 잘못된 색상 사진을 가리키는 경우가 다수 있다 (예: Bleu 변형인데 pink 파일명 이미지). 개별 `product.json`을 받아 `images[].variant_ids` ↔ `variants[].option1`(색상)을 직접 매칭해 `imageUrl`을 재검증·교정한다. 파일명에 `blue/pink/black` 등 색상 키워드가 있으면 1차 sanity check로 활용.
