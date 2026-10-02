@@ -274,6 +274,7 @@ import('puppeteer').then(async ({default: p}) => {
 - [ ] `groupId` 형식이 `<brand>_<slug>` 인가?
 - [ ] 같은 제품의 다른 색상이 같은 `groupId`인가?
 - [ ] spec 필드가 schema 키와 일치하는가? (오타 없음)
+- [ ] **숫자형 스펙(`volume`·`capacity`·`waterproofRating` 등)에 단위 문자가 없는가?** (숫자만 — 앱이 단위 붙임. `"26L"`→앱에서 `"26LL"` 버그. validate 못 잡으니 수동 확인)
 - [ ] empty 값이 `""` (null/undefined 아님)?
 - [ ] **`color`(영문)에 한글이 없는가? `colorKorean`(한글)에 영문이 없는가?** (KR 사이트가 색상을 한글로만 표기하면 색상 사전으로 `color`를 영문 변환할 것 — `color`에 한글이 들어가면 안 됨. `name`/`sizeKorean`도 동일: `name`·`size`=영문, `nameKorean`·`sizeKorean`=한글.)
 - [ ] **`imageUrl` 이 전부 빈값은 아닌가?** 이미지 셀렉터는 사이트마다 다르다 — `og:image` → `data-large_image`(WooCommerce 갤러리) → `wp-post-image` 순 폴백. WM 은 og:image 가 없고, MSR 은 있다. **크롤 후 `imageUrl` 채움률을 반드시 확인**(MSR 은 초기에 전부 빈값이었음).
@@ -346,6 +347,14 @@ etc
 ### 카테고리별 스펙
 
 `specs-schema.js`에 정의. 어댑터는 추출 가능한 필드만 채움. 모두 옵션.
+
+> 🔴 **숫자형 스펙은 단위 없이 숫자만 저장한다.** `specs-schema.js`가 `type:'number'`로 정의한 필드
+> (`volume`·`capacity`·`waterproofRating`·`fillWeight`·`comfortTemp`·`thickness`·`output`·`maxLoad`·
+> `minLength`·`maxLength`·`maxBrightness` 등)는 스키마의 `unit`('L'/'ml'/'mm'/'g'/'°C'…)을 **앱·에디터가
+> 표시할 때 붙인다.** 그래서 `"26L"`로 저장하면 화면에 **`"26LL"`**(이중 단위)로 나온다. buildSpecs에서
+> `` `${n}L` `` 금지, **`n`(숫자/숫자문자열)만** 반환. 단위가 다르면 환산(예: bottle/cup `capacity`는 ml →
+> oz는 `×29.5735`, L은 `×1000`). ⚠ validate.js는 숫자여부를 검사하지 않으니 **크롤 후 `specs` 값에
+> 단위 문자가 섞였는지 수동 확인**(과거 gossamer·patagonia가 `"20L"`로 저장해 앱에서 `"20LL"` 버그).
 
 | 카테고리 | 필드 |
 |---|---|
