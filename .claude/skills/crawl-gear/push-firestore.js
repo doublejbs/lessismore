@@ -110,6 +110,12 @@ const findExisting = async (gear) => {
   return null;
 };
 
+// 상세페이지 URL. push.js(CLI)는 _detailUrl을 productUrl로 바꿔 넘기지만, HTML 편집기 저장(server.js)은
+// 크롤 행을 그대로 넘겨 productUrl이 없다 → 두 경로 모두 여기서 _detailUrl까지 본다(2026-10 버그 수정).
+// _source는 옛 어댑터에서만 URL이고 요즘은 'brand_category' 키라 http로 시작할 때만 폴백.
+const productUrlOf = (gear) =>
+  gear.productUrl || gear._detailUrl || (/^https?:\/\//.test(gear._source ?? '') ? gear._source : '');
+
 export const upsertGear = async (gear) => {
   const existing = await findExisting(gear);
   const docId = existing ? existing.id : uuidv4();
@@ -133,7 +139,7 @@ export const upsertGear = async (gear) => {
     imageUrl,
     category: gear.category,
     groupId: gear.groupId ?? '',
-    productUrl: gear.productUrl ?? '',
+    productUrl: productUrlOf(gear),
   };
 
   if (existing) {
@@ -142,6 +148,8 @@ export const upsertGear = async (gear) => {
       ...data,
       ...catalogFields,
       companyKorean: gear.companyKorean || data.companyKorean || '',
+      // 새 값이 비면 기존 상세 URL을 지우지 않는다
+      productUrl: catalogFields.productUrl || data.productUrl || '',
       specs: { ...(data.specs ?? {}), ...(gear.specs ?? {}) },
     };
     await existing.ref.set(merged);

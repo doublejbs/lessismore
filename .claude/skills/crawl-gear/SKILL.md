@@ -470,6 +470,7 @@ Firebase Console → 프로젝트 설정 → 서비스 계정 → "새 비공개
 - **무게가 정수로 깎임** → `parseWeight`에서 `Math.round` 제거, met span 값 그대로
 - **HTML "저장" 시 서버 연결 실패** → 푸시 서버 미실행. `node@20 server.js`로 포트 3847 기동 (`--from-json`은 서버 안 띄움). `lsof -ti:3847`로 확인
 - **firebase-admin `SlowBuffer` 크래시** → Node 버전 너무 최신. `node@20`으로 푸시
+- **편집기 "Firestore 저장"으로 올린 문서의 `productUrl`이 빈 값** → server.js가 크롤 행을 그대로 넘기는데 업로드가 `productUrl`만 읽었음(`_detailUrl` 미매핑). 2026-10 `push-firestore.js`에서 `_detailUrl`까지 보도록 수정 + 기존 URL을 빈 값으로 덮지 않게 함. 그 전에 편집기로 올린 니모·코베아·랩·몽벨 등 363건이 빈 값이었음
 - **네이버 스마트스토어 등 강차단 쇼핑몰** → 서버 fetch는 429, Claude in Chrome도 쇼핑몰 안전제한으로 차단되어 현재 도구로 크롤 불가. 공식 브랜드 사이트를 우선 타깃으로
 - HTML 미리보기만 다시 만들려면 크롤 없이 `node crawl.js <brand> --from-json=<json> --no-open` (서버 spawn이 죽어도 HTML/JSON은 이미 생성됨)
 
