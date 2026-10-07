@@ -96,7 +96,8 @@ for (const r of rows) {
 
   // 한글 필드에 영문 단어 섞임 — 숫자 섞인 코드(3R/R500/V2)·사이즈 글자(S/M/L/XL)·짧은 대문자 약어(EXP/GTX/UL/PC)만 허용
   const latinWords = (s) => (s || '').match(/[A-Za-z][A-Za-z-]*/g) || [];
-  const okCode = (t) => /^[A-Z]{1,3}$/.test(t) || /^(XS|XXL|XXXL)$/i.test(t);
+  // 단위 표기(cm/mm/ml/oz/kg/in)는 한글 필드에도 그대로 쓰는 게 관례라 허용
+  const okCode = (t) => /^[A-Z]{1,3}$/.test(t) || /^(XS|XXL|XXXL|cm|mm|ml|oz|kg|in|ft)$/i.test(t);
   const stray = (s) => latinWords(s.replace(/[A-Za-z]*\d[A-Za-z\d]*/g, ' ')).filter((t) => !okCode(t));
   if (hasKorean(r.nameKorean) && stray(r.nameKorean).length) flag('nameKorean에 영문 단어 섞임', r, stray(r.nameKorean).join(','));
   if (hasKorean(r.colorKorean) && stray(r.colorKorean).length) flag('colorKorean에 영문 단어 섞임', r, stray(r.colorKorean).join(','));
@@ -106,8 +107,13 @@ for (const r of rows) {
   if (r.sizeKorean && !(r.nameKorean || '').endsWith(` ${r.sizeKorean}`)) err('sizeKorean이 nameKorean 끝에 미부착', r, `${r.nameKorean} | ${r.sizeKorean}`);
   // 숫자 사이즈 = 실제 용량(모델명 숫자를 사이즈로 쓰지 말 것: TRAIL CUP 500 → 630ml)
   const sizeNum = (r.size || '').match(/^(\d+(?:\.\d+)?)\s*(L|ml)?$/i); // 단위 없는 숫자("500")도 용량으로 읽히므로 포함
-  const capVal = r.specs?.volume ?? r.specs?.capacity;
-  if (sizeNum && capVal !== undefined && capVal !== '' && Number(sizeNum[1]) !== Number(capVal))
+  const capKey = r.specs?.volume !== undefined ? 'volume' : 'capacity';
+  const capVal = r.specs?.[capKey];
+  // 단위 환산: 사이즈 "2L" ↔ 스키마 unit ml(물통 capacity 2000)
+  const specUnit = ((SPECS_SCHEMA[r.category] || {})[capKey]?.unit || '').toLowerCase();
+  const sizeUnit = (sizeNum?.[2] || specUnit).toLowerCase();
+  const sizeInSpecUnit = sizeNum ? Number(sizeNum[1]) * (sizeUnit === 'l' && specUnit === 'ml' ? 1000 : sizeUnit === 'ml' && specUnit === 'l' ? 0.001 : 1) : NaN;
+  if (sizeNum && capVal !== undefined && capVal !== '' && Math.abs(sizeInSpecUnit - Number(capVal)) > 1e-6)
     err('숫자 사이즈 ≠ 용량 스펙', r, `size=${r.size} spec=${capVal}`);
   // 배낭은 사이즈 옵션이 없으면 용량을 사이즈로
   if (['backpack', 'vest_pack'].includes(r.category) && !r.size && r.specs?.volume) err('배낭 size 빈값(용량을 사이즈로)', r, `volume=${r.specs.volume}`);
