@@ -22,6 +22,7 @@ import TermsAgreement from './TermsAgreement';
 import AnnouncementAdminView from './announcement/AnnouncementAdminView';
 import AdminView from './AdminView';
 import PrivacyPolicyView from './policy/PrivacyPolicyView';
+import { getCampaignByPathname } from './utils/StoreLinks';
 
 const ROUTES = [
   // 앱 소개 페이지(AppIntroSpec). 자동 이동 없음 — 스토어 개발자 웹사이트가 가리키는 첫 화면이다.
@@ -79,7 +80,7 @@ const App = () => {
 
     return (
       <>
-        {!isBannerHiddenPage && <AndroidAppBannerView />}
+        {!isBannerHiddenPage && <AndroidAppBannerView campaign={getCampaignByPathname(pathname)} />}
         <Routes>
           {ROUTES.map(({ path, element }) => (
             <Route key={path} path={path} element={element} />

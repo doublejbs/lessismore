@@ -19,9 +19,14 @@ const FIRESTORE_READ_TIMEOUT_MS = 3000;
 const CACHE_CONTROL = "public, max-age=300, s-maxage=600";
 
 const APP_SCHEME_JOIN_URL = "lessismoreapp://group/join";
-const APP_STORE_URL = "https://apps.apple.com/kr/app/id6751174681";
+// 캠페인 태그 스토어 링크(docs/landing/StoreCampaignLinks.md). 웹 쪽 src/utils/StoreLinks.ts와
+// 같은 형식이다 — 함수는 별도 패키지라 import하지 않고 값을 직접 든다.
+const APP_STORE_URL =
+  "https://apps.apple.com/app/apple-store/id6751174681?pt=129546318&ct=group_invite&mt=8";
 const PLAY_STORE_URL =
-  "https://play.google.com/store/apps/details?id=com.doublejbs.useless";
+  "https://play.google.com/store/apps/details?id=com.doublejbs.useless" +
+  "&referrer=utm_source%3Dlessismore_web%26utm_medium%3Dserver_fallback" +
+  "%26utm_campaign%3Dgroup_invite";
 
 const GROUP_PATH_PREFIX = "group";
 

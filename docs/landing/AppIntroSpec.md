@@ -59,7 +59,7 @@
 
 ## 5. 동작
 
-- 스토어 배지: App Store `https://apps.apple.com/kr/app/id6751174681`, Google Play `https://play.google.com/store/apps/details?id=com.doublejbs.useless`. 새 탭이 아니라 같은 탭으로 이동.
+- 스토어 배지: 캠페인 `app_intro`가 붙은 스토어 링크(`src/utils/StoreLinks.ts`, 형식은 [StoreCampaignLinks.md](StoreCampaignLinks.md)). 새 탭이 아니라 같은 탭으로 이동.
 - 기기 감지를 하지 않는다 — 배지가 모두 같은 검정이라 강조를 바꿀 것이 없다. 자동 이동도 없다.
 - 배지 순서는 어디서나 App Store → Google Play다.
 - 이 페이지는 Firestore·로그인을 쓰지 않는다(정적).

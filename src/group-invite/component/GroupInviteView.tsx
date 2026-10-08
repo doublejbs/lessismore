@@ -2,6 +2,7 @@ import { CSSProperties, FC, useCallback } from 'react';
 import { observer } from 'mobx-react-lite';
 import GroupInvite from '../model/GroupInvite';
 import { isMobileDevice, openAppScheme } from '../../utils/AppSchemeLink';
+import StoreCampaignType from '../../utils/StoreCampaignType';
 
 interface Props {
   groupInvite: GroupInvite;
@@ -16,7 +17,7 @@ const GroupInviteView: FC<Props> = ({ groupInvite }) => {
     : '모바일 기기에서는 앱으로, 데스크톱에서는 앱스토어로 이동해요';
 
   const handleOpenApp = useCallback(() => {
-    openAppScheme(groupInvite.getAppSchemeUrl());
+    openAppScheme(groupInvite.getAppSchemeUrl(), StoreCampaignType.GroupInvite);
   }, [groupInvite]);
 
   if (groupInvite.isLoading()) {
@@ -50,8 +51,8 @@ const GroupInviteView: FC<Props> = ({ groupInvite }) => {
             <p style={styles.label}>그룹 초대</p>
             <h1 style={styles.title}>앱에서 초대를 확인해 주세요</h1>
             <p style={styles.description}>
-              그룹 정보는 앱에서 볼 수 있어요. 아래 버튼으로 앱을 열면 그룹 이름과
-              일정을 확인하고 참여할 수 있어요.
+              그룹 정보는 앱에서 볼 수 있어요. 아래 버튼으로 앱을 열면 그룹 이름과 일정을 확인하고
+              참여할 수 있어요.
             </p>
 
             <button type='button' style={styles.cta} onClick={handleOpenApp}>
@@ -78,9 +79,7 @@ const GroupInviteView: FC<Props> = ({ groupInvite }) => {
           {periodLabel && <p style={styles.period}>{periodLabel}</p>}
 
           <div style={styles.metaRow}>
-            {destinationName && (
-              <span style={styles.meta}>{destinationName}</span>
-            )}
+            {destinationName && <span style={styles.meta}>{destinationName}</span>}
             <span style={styles.meta}>{groupInvite.getMemberCountLabel()}</span>
           </div>
 
