@@ -2,6 +2,7 @@ import { CSSProperties, FC, useCallback } from 'react';
 import { observer } from 'mobx-react-lite';
 import GearShare from '../model/GearShare';
 import { isMobileDevice, openAppScheme } from '../../utils/AppSchemeLink';
+import StoreCampaignType from '../../utils/StoreCampaignType';
 
 interface Props {
   gearShare: GearShare;
@@ -18,7 +19,7 @@ const GearShareView: FC<Props> = ({ gearShare }) => {
     : '모바일 기기에서는 앱으로, 데스크톱에서는 앱스토어로 이동해요';
 
   const openApp = useCallback(() => {
-    openAppScheme(`lessismoreapp://gear-detail/${gearShare.getId()}`);
+    openAppScheme(`lessismoreapp://gear-detail/${gearShare.getId()}`, StoreCampaignType.GearShare);
   }, [gearShare]);
 
   if (!gearShare.isInitialized()) {
@@ -45,9 +46,7 @@ const GearShareView: FC<Props> = ({ gearShare }) => {
       <section style={styles.content} aria-labelledby='gear-share-name'>
         <div style={styles.identityRow}>
           <div style={styles.identityColumn}>
-            {gearShare.getCompany() && (
-              <p style={styles.company}>{gearShare.getCompany()}</p>
-            )}
+            {gearShare.getCompany() && <p style={styles.company}>{gearShare.getCompany()}</p>}
             <h1 id='gear-share-name' style={styles.title}>
               {gearShare.getName()}
             </h1>
@@ -120,8 +119,7 @@ const styles: Record<string, CSSProperties> = {
     flexShrink: 0,
     margin: 0,
     color: '#1A1A1A',
-    fontFamily:
-      '"Arial Narrow", "Roboto Condensed", "Avenir Next Condensed", sans-serif',
+    fontFamily: '"Arial Narrow", "Roboto Condensed", "Avenir Next Condensed", sans-serif',
     fontSize: 28,
     lineHeight: '32px',
     fontWeight: 700,
