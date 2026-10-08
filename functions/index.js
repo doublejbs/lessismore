@@ -33,6 +33,7 @@ import {
   onGroupUserDeleted,
 } from "./group.js";
 import {groupInviteHtml} from "./groupInviteHtml.js";
+import {rotateFeedContent} from "./feedRotation.js";
 import {
   revenuecatWebhook,
   onSubscriptionUserDeleted,
@@ -169,4 +170,5 @@ export {
   groupInviteHtml,
   revenuecatWebhook,
   onSubscriptionUserDeleted,
+  rotateFeedContent,
 };
