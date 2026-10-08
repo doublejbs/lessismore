@@ -66,6 +66,30 @@ firebase deploy --only firestore:indexes
 
 `groups` 의 `memberIds array-contains` 와 `users/{uid}/groups` 정렬은 단일 필드 자동 인덱스로 충분해 별도 선언이 없다.
 
+## 추천 박지 주간 교체 `rotateFeedContent`
+
+앱 홈 `useless가 고른 박지`(앱 레포 `specs/Home.md` HM-11 "주간 교체", 데이터 계약은 `specs/DataModel.md` DM-27 "주간 자동 교체")를 매주 자동으로 바꾸는 스케줄 함수다. 코드는 [feedRotation.js](feedRotation.js)에 있다.
+
+- **주기**: `every thursday 07:00`, `timeZone: Asia/Seoul`(매주 목요일 07:00 KST). 리전 `asia-northeast3`, `maxInstances: 1`, `retryCount: 3`.
+- **한 회차**: `feed-content`에서 `rotationState == "queued"`인 `spot_intro`를 `queueOrder` 오름차순(같으면 문서 ID)으로 세워 **앞 2건을 발행**한다 — `published: true`, `rotationState: "live"`, `publishedAt`(ISO string, 실행 시각, 두 번째 건은 1초 이른 값). 이어 `published == true`인 `spot_intro`를 `publishedAt` 내림차순으로 세워 **최신 5건 밖은 내린다** — `published: false`, `rotationState: "retired"`, `retiredAt`. `rotationState`가 없는 수동 발행분도 내림 대상이고, `gear_intro`는 건드리지 않는다.
+- **대기열이 비면** 발행·내림 없이 `logger.warn`과 실행 기록(`status: "queue_empty"`)만 남긴다.
+- **멱등성**: 실행 시각(`event.scheduleTime`, 재시도도 같은 값)을 KST 기준 ISO 주 ID(`2026-W42`)로 바꿔 `config/feedRotation.lastRunWeekId`와 비교한다. 이미 처리한 주면 아무것도 쓰지 않는다. 가드 확인·조회·발행·내림·`config/feedRotation`·`feed-rotation-runs/{weekId}` 기록이 **한 트랜잭션**이라 중간 실패 시 전부 롤백되고 재시도가 처음부터 다시 판단한다.
+- **실행 기록**: `feed-rotation-runs/{weekId}`에 `weekId`·`ranAt`·`status`·`publishedIds`·`retiredIds`·`queueRemaining`. `config/feedRotation.queueRemaining`이 **4 미만이면 대기열을 보충**한다(HM-11 운영 노트).
+- **인덱스**: 단일 필드 equality 조회 두 개(`rotationState`, `published`)뿐이고 정렬은 코드에서 해 복합 인덱스가 필요 없다.
+- **대기열 적재**: 레포 루트 [scripts/queue-feed-content.mjs](../scripts/queue-feed-content.mjs). DRY-RUN이 기본이고 `--apply`에서만 쓴다. firebase-tools 로그인(소유자) OAuth 토큰 + Firestore REST로 쓰며, 쓰기 전에 `feed-content` 전체를 `scripts/backups/`(gitignore)에 백업한다. 문서 ID는 `rot-{relatedSpotId}`이고 이미 있는 ID는 덮어쓰지 않는다. 이미 `feed-content`에 있는 박지·비활성 `camp-spot`은 건너뛴다. `pool.json`의 `_review` 등 다른 키는 적재하지 않는다.
+
+```bash
+# 대기열 적재 (레포 루트에서)
+node scripts/queue-feed-content.mjs <pool.json 경로>            # DRY-RUN
+node scripts/queue-feed-content.mjs <pool.json 경로> --apply    # 백업 후 적재
+
+# 함수만 배포
+firebase deploy --only functions:rotateFeedContent
+
+# 로그
+firebase functions:log --only rotateFeedContent
+```
+
 ## 운영 전제와 권한
 
 - Cloud Functions와 Cloud Scheduler 사용에는 Blaze 요금제가 필요하다.
