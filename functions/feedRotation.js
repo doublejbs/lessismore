@@ -57,16 +57,25 @@ const getQueueOrder = (item) => {
 const compareQueue = (a, b) => {
   const orderDiff = getQueueOrder(a) - getQueueOrder(b);
 
-  if (orderDiff !== 0) {
+  if (orderDiff !== 0 && !Number.isNaN(orderDiff)) {
     return orderDiff;
   }
 
   return a.id < b.id ? -1 : a.id > b.id ? 1 : 0;
 };
 
+// 계약은 ISO string이지만 Timestamp가 섞여 들어와도 정렬이 깨지지 않게 정규화한다.
+const toPublishedAtString = (value) => {
+  if (value && typeof value.toDate === "function") {
+    return value.toDate().toISOString();
+  }
+
+  return typeof value === "string" ? value : "";
+};
+
 const comparePublishedAtDesc = (a, b) => {
-  const left = String(a.publishedAt || "");
-  const right = String(b.publishedAt || "");
+  const left = toPublishedAtString(a.publishedAt);
+  const right = toPublishedAtString(b.publishedAt);
 
   return left < right ? 1 : left > right ? -1 : 0;
 };
@@ -133,6 +142,14 @@ export const runFeedRotation = async (runAt) => {
     const liveSnapshot = await transaction.get(
       feedCollection.where("published", "==", true),
     );
+    queuedSnapshot.docs
+      .filter((document) => document.get("published") === true)
+      .forEach((document) => {
+        logger.warn("발행 중인데 rotationState가 queued인 문서가 있어 후보에서 뺍니다.", {
+          id: document.id,
+        });
+      });
+
     const plan = planRotation({
       queued: toItems(queuedSnapshot),
       live: toItems(liveSnapshot),

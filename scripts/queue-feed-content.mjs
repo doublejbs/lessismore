@@ -114,7 +114,7 @@ const createClient = (accessToken) => {
     let pageToken = '';
 
     do {
-      const query = `pageSize=300${pageToken ? `&pageToken=${pageToken}` : ''}`;
+      const query = `pageSize=300${pageToken ? `&pageToken=${encodeURIComponent(pageToken)}` : ''}`;
       const response = await request(`${DOCUMENTS_BASE}/${collection}?${query}`);
       const body = await response.json();
 
@@ -123,7 +123,11 @@ const createClient = (accessToken) => {
       }
 
       (body.documents || []).forEach((document) => {
-        documents.push({ id: document.name.split('/').pop(), ...decodeFields(document.fields || {}) });
+        documents.push({
+          id: document.name.split('/').pop(),
+          ...decodeFields(document.fields || {}),
+          _rawFields: document.fields || {},
+        });
       });
       pageToken = body.nextPageToken || '';
     } while (pageToken);
@@ -213,13 +217,19 @@ const run = async () => {
   const client = createClient(await getAccessToken());
   const existing = await client.listCollection(FEED_COLLECTION);
   const featuredSpotIds = new Set(existing.map((document) => document.relatedSpotId).filter(Boolean));
-  const queuedOrders = new Set(
-    existing
-      .filter((document) => document.rotationState === QUEUED_STATE)
-      .map((document) => document.queueOrder),
-  );
+  const queuedDocuments = existing.filter((document) => document.rotationState === QUEUED_STATE);
+  const queuedOrders = new Set(queuedDocuments.map((document) => document.queueOrder));
+  const maxQueuedOrder = queuedDocuments.reduce((max, document) => {
+    return typeof document.queueOrder === 'number' ? Math.max(max, document.queueOrder) : max;
+  }, -Infinity);
+  const poolOrders = items.map((item) => item.queueOrder);
+  const duplicatedOrders = poolOrders.filter((order, index) => poolOrders.indexOf(order) !== index);
 
-  console.log(`기존 feed-content ${existing.length}건 (대기 ${queuedOrders.size}건)`);
+  console.log(`기존 feed-content ${existing.length}건 (대기 ${queuedDocuments.length}건)`);
+
+  if (duplicatedOrders.length > 0) {
+    console.log(`주의: pool 안에 같은 queueOrder가 있습니다 — ${[...new Set(duplicatedOrders)].join(', ')}`);
+  }
 
   if (APPLY) {
     fs.mkdirSync(BACKUP_DIR, { recursive: true });
@@ -256,6 +266,10 @@ const run = async () => {
       console.log(`  건너뜀 ${label} — camp-spot 문서 없음 또는 비활성(${item.relatedSpotId})`);
       skippedCount += 1;
       continue;
+    }
+
+    if (item.queueOrder < maxQueuedOrder) {
+      console.log(`  주의 ${label} — 기존 대기열 최댓값(${maxQueuedOrder})보다 앞에 끼어듭니다`);
     }
 
     if (queuedOrders.has(item.queueOrder)) {
