@@ -90,6 +90,53 @@ firebase deploy --only functions:rotateFeedContent
 firebase functions:log --only rotateFeedContent
 ```
 
+## 주말 날씨 브리핑 `sendWeekendBriefing`
+
+앱 레포 `specs/Notification.md` NT-11(주말 날씨 브리핑)·NT-12(푸시 토큰), 데이터 계약은 `specs/DataModel.md` DM-34·DM-35를 따른다. 코드는 [weekendBriefing.js](weekendBriefing.js)에 있다.
+
+- **주기**: `every thursday 18:30`, `timeZone: Asia/Seoul`(매주 목요일 18:30 KST). 리전 `asia-northeast3`, `timeoutSeconds: 540`, `memory: 512MiB`, `maxInstances: 1`, `concurrency: 1`, `retryCount: 2`.
+- **설정 `config/weekendBriefing`**(없으면 기본값): `{ enabled, maxTargets }`.
+  - `enabled`(기본 `true`) — 유일한 중단 스위치다. `false`면 보내지 않고 실행 기록에 `lastSkip: {at, reason: "disabled"}`만 남긴다(이미 발송된 주의 `status`를 덮지 않는다). 발송 시각은 코드의 스케줄만 정한다.
+  - `maxTargets`(기본 2000) — 한 주(`weekId`)에 보낼 uid 상한. 이번 회차는 `maxTargets - 이미 보낸 수`(최소 0)만큼만 처리하고, 넘친 수는 `logger.warn`으로 남긴다.
+- **대상**: 컬렉션 그룹 `push-tokens where briefingEnabled == true`를 `users/{uid}` 단위로 묶는다. uid당 박지 1곳을 NT-11 우선순위로 고른다 — ① KST 날짜 기준 오늘~오늘+14일 안에 시작하는 배낭(`bag.userId == uid`, `location.campSpotId`) 중 가장 빠른 것(여행 날짜·D-day), ② `users/{uid}/camp-favorites`의 `createdAt` 최신 1건, ③ `location.campSpotId`가 있는 배낭 중 `endDate`가 가장 늦은 것. 고른 `camp-spot`이 없거나 `status != "active"`이거나 `name`이 비면 다음 순위로 내려가고, 셋 다 없으면 `skippedNoSpot`.
+- **날씨**: Open-Meteo 일별 예보(`weather_code`, `temperature_2m_max/min`, `wind_speed_10m_max`, `wind_speed_unit=ms`, `timezone=Asia/Seoul`). 기본은 이번 토·일, ①은 여행 기간 최대 3일(내용에는 앞 2일, 비·바람 판단은 3일 전체). 요청은 10초 제한(`AbortSignal.timeout`), 429·5xx·네트워크 오류면 1.5초 뒤 한 번만 재시도하고, 한 묶음 안에서 동시에 8건까지만 보낸다. 같은 박지+기간은 실행 안에서 한 번만 조회한다(`spotWeatherCacheHits`) — 성공한 응답만 캐시하고 실패는 캐시하지 않는다. 그래도 실패하거나 빈 응답이면 `skippedNoWeather`. 날짜의 `weather_code`가 비면 상태는 `정보 없음`이다.
+- **문구**: 제목 `이번 주말 {박지명}` / 내용 `토 {상태} {최저}°~{최고}° · 일 …`. ①은 제목 `D-{n} {박지명}`(KST 시작일이 오늘이면 `D-day`). 문구는 한국어만 만든다(토큰의 `locale`은 예약 필드). 상태는 앱 `WeatherCode.ts`의 한글 라벨과 같다. 비·눈 코드가 하루라도 있으면 ` · 비 예보`, 아니면 풍속 최대 ≥ 10m/s일 때 ` · 바람 주의`.
+- **토큰 중복 제거**: 같은 `token` 값이 여러 uid 아래에 있으면(로그아웃 삭제 실패 뒤 다른 사용자 로그인 등) `updatedAt`이 가장 늦은 문서 하나만 보내고(같으면 uid 정렬상 뒤쪽) 나머지는 발송에서 뺀다 — 문서는 지우지 않고 실행 기록 `duplicateTokensSkipped`에 increment로 센다.
+- **발송**: `sendEachForMulticast`로 uid의 모든 토큰에 보낸다. `data: {type: "weekend_briefing", route}` — ①은 `/bag/{bagId}`, ②③은 `/camp-site/{spotId}`. APNs·Android 사운드는 `default`. 토큰 문서 삭제 규칙: `messaging/registration-token-not-registered`는 삭제한다. `messaging/invalid-argument`는 같은 uid의 다른 토큰이 이번 발송에서 성공했을 때만(페이로드가 정상임이 확인된 경우) 삭제하고, 아니면 남겨 두고 실패로만 센다. 실행 전체 토큰 중 `invalid-argument`가 20%를 넘으면 페이로드 문제로 보고 그 실행의 남은 토큰 삭제를 모두 멈추며 경고 로그를 남긴다.
+- **멱등성·실행 기록 `weekend-briefing-runs/{weekId}`**: `weekId`는 실행 시각(`event.scheduleTime`)의 KST ISO 주(`2026-W42`). 시작 시 문서의 `sentUids`를 읽어 건너뛰고, 10명 묶음마다 merge로 기록한다. 발송과 기록 사이에 끊기면 재시도 때 **최대 한 묶음(10명)** 이 다시 받을 수 있다해 시간 초과·재시도에도 같은 주에 두 번 보내지 않는다.
+  - `sentUids` — `arrayUnion`.
+  - `sent`·`skippedNoSpot`·`skippedNoWeather`·`failed`·`spotWeatherCacheHits`·`duplicateTokensSkipped` — `FieldValue.increment`로 그 주의 모든 실행(재시도 포함)을 누적한다. **시도 누적값이라 사용자 수가 아니다** — 건너뛴·실패한 uid는 재시도마다 다시 세어져 합이 `targets`보다 클 수 있다.
+  - `targets` — 문서에 아직 없을 때(그 주 첫 실행)만 쓴다. `firstRanAt`도 한 번만 쓰고, `ranAt`은 마지막 실행 시각이다.
+  - `status` — 한 명이라도 보내면 `published`, 이번에도 이전에도 보낸 사람이 없으면 `empty`. `enabled: false` 실행은 `status` 대신 `lastSkip`을 쓴다.
+- **인덱스**: `push-tokens` / `briefingEnabled` 컬렉션 그룹 단일 필드 인덱스가 필요하다(DM-34 — 콘솔에서 켠다). `bag.userId ==`·`camp-favorites orderBy createdAt`은 자동 단일 필드 인덱스로 충분하다.
+
+### 드라이런
+
+환경 변수 `BRIEFING_DRY_RUN=1`이면 대상 선정·날씨 조회·문구 작성까지만 하고 제목·내용·`route`를 `[DRY-RUN]` 로그로 남긴다. **발송·토큰 삭제·실행 기록(`sentUids` 포함) 쓰기를 하지 않는다.** Firestore·Open-Meteo 읽기는 실제로 일어난다.
+
+```bash
+# functions 디렉터리에서 (실데이터 읽기 — 프로젝트 선택·로그인 확인 후)
+BRIEFING_DRY_RUN=1 firebase functions:shell
+> sendWeekendBriefing()
+
+# 로그
+firebase functions:log --only sendWeekendBriefing
+```
+
+shell 수동 실행은 `scheduleTime`이 없으면 현재 시각을 실행 시각(`weekId`·주말 계산 기준)으로 쓴다. 시각 가드가 없으므로 언제 실행해도 돈다 — 드라이런 없이 shell로 부르면 **실제로 발송**된다. 배포된 함수는 이 변수를 두지 않는다(프로덕션 발송).
+
+### 배포 후 필수 — Scheduler 시도 기한 올리기
+
+2세대 스케줄 함수의 Cloud Scheduler 작업은 **HTTP 타깃**이고 기본 시도 기한(`attemptDeadline`)이 **180초**라 함수 제한 540초보다 짧다. 그대로 두면 실행 도중 Scheduler가 실패로 보고 재시도를 보내 실행이 겹친다(`sentUids`로 같은 사용자 중복은 막지만 한 묶음 10명은 다시 받을 수 있다). **배포할 때마다 확인하고 올린다.**
+
+```bash
+gcloud scheduler jobs describe firebase-schedule-sendWeekendBriefing-asia-northeast3 --location asia-northeast3
+gcloud scheduler jobs update http firebase-schedule-sendWeekendBriefing-asia-northeast3 \
+  --location asia-northeast3 --attempt-deadline=600s
+```
+
+gcloud가 없으면 Cloud Scheduler REST(`PATCH …/jobs/{name}?updateMask=attemptDeadline`, body `{"attemptDeadline":"600s"}`)로 같은 일을 한다.
+
 ## 운영 전제와 권한
 
 - Cloud Functions와 Cloud Scheduler 사용에는 Blaze 요금제가 필요하다.

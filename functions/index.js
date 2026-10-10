@@ -34,6 +34,7 @@ import {
 } from "./group.js";
 import {groupInviteHtml} from "./groupInviteHtml.js";
 import {rotateFeedContent} from "./feedRotation.js";
+import {sendWeekendBriefing} from "./weekendBriefing.js";
 import {
   revenuecatWebhook,
   onSubscriptionUserDeleted,
@@ -171,4 +172,5 @@ export {
   revenuecatWebhook,
   onSubscriptionUserDeleted,
   rotateFeedContent,
+  sendWeekendBriefing,
 };
