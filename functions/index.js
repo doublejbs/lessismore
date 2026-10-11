@@ -32,6 +32,7 @@ import {
   onGroupDeleted,
   onGroupUserDeleted,
 } from "./group.js";
+import {onBagDeleted} from "./bagCleanup.js";
 import {groupInviteHtml} from "./groupInviteHtml.js";
 import {rotateFeedContent} from "./feedRotation.js";
 import {sendWeekendBriefing} from "./weekendBriefing.js";
@@ -168,6 +169,7 @@ export {
   onGroupUpdated,
   onGroupDeleted,
   onGroupUserDeleted,
+  onBagDeleted,
   groupInviteHtml,
   revenuecatWebhook,
   onSubscriptionUserDeleted,

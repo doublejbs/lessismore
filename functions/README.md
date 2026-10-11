@@ -66,6 +66,23 @@ firebase deploy --only firestore:indexes
 
 `groups` 의 `memberIds array-contains` 와 `users/{uid}/groups` 정렬은 단일 필드 자동 인덱스로 충분해 별도 선언이 없다.
 
+## 배낭 삭제 정리 `onBagDeleted`
+
+[bagCleanup.js](bagCleanup.js)의 `onBagDeleted`는 `bag/{bagId}` 문서 삭제(v2 Firestore 트리거, `asia-northeast3`) 시 클라이언트가 지우지 않는 하위 데이터를 정리한다(앱 DM-30·DM-33). 클라이언트는 배낭 문서만 지운다.
+
+- `bag/{bagId}/routes`: 400개 이하 페이지로 읽어 각 문서의 GPX 원본(`storagePath`, 없으면 `bags/{bagId}/routes/{routeId}.gpx`)을 먼저 지우고, 그 페이지의 문서를 배치로 지운다. `storagePath`는 소유자가 쓴 값이라 `bags/{bagId}/routes/` 접두 밖을 가리키면 믿지 않고 기본 경로로 대체한다(남의 파일 삭제 방지).
+- `bag/{bagId}/points`: 400개 단위 배치로 전량 삭제한다.
+- Storage `bags/{bagId}/routes/` 접두: 문서 정리가 끝난 뒤 남은 파일(문서 없이 업로드만 된 고아 파일)을 한 번 더 쓸어 지운다.
+- 완료 시 `{bagId, routes, points, files}` 요약을 로그로 남긴다. `files`는 삭제(또는 이미 없음 확인)된 파일 수다.
+
+### 배낭 정리 멱등성·재시도
+
+배낭 삭제도 하드 삭제라 가드 필드를 두지 않고, 모든 단계를 재실행해도 같은 결과가 되게 짠다. 하위 문서 삭제는 본래 멱등이고 이미 지운 문서는 다음 쿼리에 잡히지 않는다. 파일을 문서보다 먼저 지우므로 도중에 실패해 재시도되어도 남은 문서의 `storagePath`를 다시 읽을 수 있다. Storage 삭제는 `ignoreNotFound: true`이고 404는 성공으로 본다. **그 밖의 Storage 오류는 로그만 남기고 던지지 않는다** — 파일 하나 때문에 문서 정리 재시도가 반복되지 않게 하기 위해서다. 남은 파일은 접두 쓸기가 한 번 더 시도한다. Firestore 오류는 던져 `retry: true`로 재배달을 받는다.
+
+```bash
+firebase deploy --only functions:onBagDeleted
+```
+
 ## 추천 박지 주간 교체 `rotateFeedContent`
 
 앱 홈 `useless가 고른 박지`(앱 레포 `specs/Home.md` HM-11 "주간 교체", 데이터 계약은 `specs/DataModel.md` DM-27 "주간 자동 교체")를 매주 자동으로 바꾸는 스케줄 함수다. 코드는 [feedRotation.js](feedRotation.js)에 있다.
