@@ -1,5 +1,11 @@
 import { FC } from 'react';
-import { APP_STORE_URL, PLAY_STORE_URL } from '../utils/AppSchemeLink';
+import { getAppStoreUrl, getPlayStoreUrl } from '../utils/StoreLinks';
+import StoreCampaignType from '../utils/StoreCampaignType';
+import StoreMediumType from '../utils/StoreMediumType';
+
+// 앱 소개 페이지의 배지는 머리·히어로·마무리 어디에 있든 같은 캠페인이다.
+const APP_STORE_URL = getAppStoreUrl(StoreCampaignType.AppIntro);
+const PLAY_STORE_URL = getPlayStoreUrl(StoreCampaignType.AppIntro, StoreMediumType.Badge);
 
 interface Props {
   isCompact?: boolean;

@@ -1,9 +1,14 @@
 import { useState, useEffect, FC } from 'react';
+import { getAppStoreUrl, getPlayStoreUrl } from '../utils/StoreLinks';
+import StoreCampaignType from '../utils/StoreCampaignType';
+import StoreMediumType from '../utils/StoreMediumType';
 
-const PLAY_STORE_URL = 'https://play.google.com/store/apps/details?id=com.doublejbs.useless';
-const APP_STORE_URL = 'https://apps.apple.com/app/useless/id6751174681';
+interface Props {
+  // 팝업을 띄운 페이지. 스토어 링크 캠페인으로 실린다.
+  campaign: StoreCampaignType;
+}
 
-const AppInstallPopupView: FC = () => {
+const AppInstallPopupView: FC<Props> = ({ campaign }) => {
   const [showPopup, setShowPopup] = useState(true);
   const [platform, setPlatform] = useState<'ios' | 'android' | null>(null);
 
@@ -21,7 +26,10 @@ const AppInstallPopupView: FC = () => {
   };
 
   const handleInstall = () => {
-    const url = platform === 'ios' ? APP_STORE_URL : PLAY_STORE_URL;
+    const url =
+      platform === 'ios'
+        ? getAppStoreUrl(campaign)
+        : getPlayStoreUrl(campaign, StoreMediumType.Popup);
     window.open(url, '_blank');
     setShowPopup(false);
   };

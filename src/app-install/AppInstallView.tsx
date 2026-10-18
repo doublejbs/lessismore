@@ -1,27 +1,32 @@
 import { useEffect } from 'react';
 import './AppInstallView.css';
+import { getAppStoreUrl, getPlayStoreUrl } from '../utils/StoreLinks';
+import StoreCampaignType from '../utils/StoreCampaignType';
+import StoreMediumType from '../utils/StoreMediumType';
+
+// `*` 폴백도 여기로 오므로, 알 수 없는 주소로 들어온 설치도 app_install로 잡힌다.
+const APP_STORE_URL = getAppStoreUrl(StoreCampaignType.AppInstall);
+const PLAY_STORE_URL = getPlayStoreUrl(StoreCampaignType.AppInstall, StoreMediumType.Redirect);
 
 const AppInstallView = () => {
   const isIOS = /iPhone|iPad|iPod/i.test(navigator.userAgent);
   const isAndroid = /Android/i.test(navigator.userAgent);
-  const appStoreUrl = 'https://apps.apple.com/kr/app/id6751174681';
-  const playStoreUrl = 'https://play.google.com/store/apps/details?id=com.doublejbs.useless';
 
   const handleInstallClick = () => {
     if (isIOS) {
-      window.location.href = appStoreUrl;
+      window.location.href = APP_STORE_URL;
     } else if (isAndroid) {
-      window.location.href = playStoreUrl;
+      window.location.href = PLAY_STORE_URL;
     }
   };
 
   useEffect(() => {
     if (isIOS) {
-      window.location.href = appStoreUrl;
+      window.location.href = APP_STORE_URL;
     } else if (isAndroid) {
-      window.location.href = playStoreUrl;
+      window.location.href = PLAY_STORE_URL;
     }
-  }, [isIOS, isAndroid, appStoreUrl, playStoreUrl]);
+  }, [isIOS, isAndroid]);
 
   return (
     <div className='app-install-container'>

@@ -2,6 +2,7 @@ import { FC, useCallback } from 'react';
 import { observer } from 'mobx-react-lite';
 import CampShare from '../model/CampShare';
 import { openAppScheme } from '../../utils/AppSchemeLink';
+import StoreCampaignType from '../../utils/StoreCampaignType';
 
 interface Props {
   campShare: CampShare;
@@ -12,7 +13,7 @@ interface Props {
 // 스킴 이동·스토어 폴백은 `src/utils/AppSchemeLink.ts`가 담당한다.
 const CampShareView: FC<Props> = ({ campShare }) => {
   const openApp = useCallback(() => {
-    openAppScheme(`lessismoreapp://camp-site/${campShare.getId()}`);
+    openAppScheme(`lessismoreapp://camp-site/${campShare.getId()}`, StoreCampaignType.CampShare);
   }, [campShare]);
 
   if (!campShare.isInitialized()) {
@@ -57,7 +58,7 @@ const CampShareView: FC<Props> = ({ campShare }) => {
 
           {tags.length > 0 && (
             <div style={styles.tagRow}>
-              {tags.map(tag => (
+              {tags.map((tag) => (
                 <span key={tag} style={styles.tag}>
                   #{tag}
                 </span>
@@ -77,9 +78,7 @@ const CampShareView: FC<Props> = ({ campShare }) => {
           <button type='button' style={styles.cta} onClick={openApp}>
             앱에서 보기
           </button>
-          <p style={styles.ctaHint}>
-            useless 앱이 없으면 앱스토어로 이동해요
-          </p>
+          <p style={styles.ctaHint}>useless 앱이 없으면 앱스토어로 이동해요</p>
         </div>
       </div>
     </div>

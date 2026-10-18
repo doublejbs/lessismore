@@ -94,7 +94,7 @@
 - **실패해도 링크가 죽지 않는다**: 함수 오류·타임아웃 시 기본 태그의 `index.html`을 돌려준다(§3의 "초대 요약은 부가 정보" 원칙). `index.html`을 가져오지 못하면 302로 `/index.html`에 넘기지 않는다(루프 위험) — 최소 HTML(태그 + `/` 스크립트 로드 없이 앱 스킴 안내 링크)로 응답한다.
 - **구현**: `functions/groupInviteHtml.js`의 `groupInviteHtml`(`onRequest`, asia-northeast3, maxInstances 10), `functions/index.js`에서 export. 순수 함수 `parseGroupId`·`buildGroupInviteMeta`·`injectMeta`·`buildMinimalHtml`로 나뉜다.
   - 태그 교체는 `<meta property|name="…" content="…">`를 속성 순서·따옴표와 무관하게 잡아 바꾸고, 없으면 `</head>` 앞에 넣는다.
-  - Firestore 읽기·템플릿 가져오기는 각각 3초 제한. 템플릿 가져오기에 실패하면 5분이 지난 묵은 캐시라도 있으면 그것을 쓰고, 없을 때만 최소 HTML(앱 스킴 `useless 앱에서 열기` + App Store·Google Play 링크)을 돌려준다.
+  - Firestore 읽기·템플릿 가져오기는 각각 3초 제한. 템플릿 가져오기에 실패하면 5분이 지난 묵은 캐시라도 있으면 그것을 쓰고, 없을 때만 최소 HTML(앱 스킴 `useless 앱에서 열기` + App Store·Google Play 링크 — 캠페인 `group_invite`, 위치 `server_fallback`, [StoreCampaignLinks.md](../landing/StoreCampaignLinks.md))을 돌려준다.
   - 이름이 빈 미러는 제목을 기본값(`useless 그룹 초대`)으로, 기간·여행지·인원이 모두 없으면 설명을 기본값으로 둔다.
   - `GET`·`HEAD`만 받는다(그 외 405).
 - **카카오 캐시**: 카카오는 스크랩 결과를 캐시한다. 배포 직후 이미 공유된 링크는 카카오 디벨로퍼스 [공유 디버거](https://developers.kakao.com/tool/debugger/sharing)에서 캐시를 지워야 새 미리보기가 나온다.

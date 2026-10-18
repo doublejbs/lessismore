@@ -1,11 +1,16 @@
 import { useState, useEffect, FC } from 'react';
+import { getAppStoreUrl, getPlayStoreUrl } from '../utils/StoreLinks';
+import StoreCampaignType from '../utils/StoreCampaignType';
+import StoreMediumType from '../utils/StoreMediumType';
 
-const PLAY_STORE_URL = 'https://play.google.com/store/apps/details?id=com.doublejbs.useless';
-const APP_STORE_URL = 'https://apps.apple.com/app/id6751174681';
+interface Props {
+  // 배너가 걸린 페이지. 여러 랜딩에 같은 배너가 뜨므로 호출부가 넘긴다.
+  campaign: StoreCampaignType;
+}
 const BANNER_DISMISSED_KEY = 'app-banner-dismissed';
 const DISMISS_DURATION = 7 * 24 * 60 * 60 * 1000;
 
-const AndroidAppBannerView: FC = () => {
+const AndroidAppBannerView: FC<Props> = ({ campaign }) => {
   const [showBanner, setShowBanner] = useState(false);
   const [platform, setPlatform] = useState<'ios' | 'android' | null>(null);
 
@@ -32,7 +37,10 @@ const AndroidAppBannerView: FC = () => {
   };
 
   const handleInstall = () => {
-    const url = platform === 'android' ? PLAY_STORE_URL : APP_STORE_URL;
+    const url =
+      platform === 'android'
+        ? getPlayStoreUrl(campaign, StoreMediumType.Banner)
+        : getAppStoreUrl(campaign);
     window.open(url, '_blank');
   };
 
