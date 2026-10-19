@@ -3,7 +3,11 @@
 - 사이트: https://www.newmedium.kr/outside — **식스샵(sixshop) 기반 멀티브랜드 편집숍**. OUTSIDE 카테고리 4개
   (Pack 932421 / Sleep 976805 / Clothing 932429 / Acc 932428).
 - 크롤러: `sites/newmedium.js`. 별도 한글화 스크립트 없음(상세 페이지에 공식 한글명이 있음).
-- 마지막 크롤: 2026-10, 리스팅 216개 → 대상 188개 상품 / 383행. validate ERROR 0.
+- 마지막 크롤: 2026-10-19 리프레시, 리스팅 227개 → 대상 199개 상품 / 406행. validate ERROR 0.
+  - 2026-10-07 최초 383행 push → 2026-10-19 신규 23행(8개 상품) push. 재크롤 시 기존 383행은 필드 변경 0 확인.
+  - 리프레시 신규: Portal Radius Cap 3색·Borders Cargo Belt 2색·Passage Cargo Vest 블랙 뷰티, Raide 러닝 벨트 2종,
+    Alpenglow Gear 3종. push 전 gear 전체(회사명 무관, 제품명 키워드)로 DB 중복 없음 확인 —
+    '알펜글로우'는 BD 후디·BioLite 랜턴·Sierra Designs 텐트와 이름만 같은 다른 제품.
 
 ## 수집 범위 (사용자 결정)
 
@@ -32,6 +36,12 @@
     두 번째 축(index 1)은 combined가 `"색상번호, 사이즈번호"`라 리스팅 `optionValueNo1/2`와 짝지을 수 있다.
 
 ## 브랜드·이름·색상
+
+- ⚠ **`Alpenblow`는 오타가 아니라 Alpenglow Gear의 매트 펌프 제품 라인명**(Alpenblow Lux 등). 회사만 Alpenglow Gear로
+  판별하고 이름에서 떼지 않는다(`Alpenblow Lux Micro Inflator` · `알펜블로우 럭스 마이크로 인플레이터`). 한때 오타로 오인해
+  `Lux Micro Inflator`로 잘라냈다가 행별 검토에서 바로잡음(push 전). `Alpenglow gear …` 접두만 브랜드로 뗀다.
+- Raide: 법인명은 Raide Research지만 사이트·소매처 표기대로 company `Raide | 레이드`.
+- Lux Lantern Leash 0.09g은 오기 아님(소매처 Garage Grown Gear도 0.003oz/0.09g, TPU 밴드).
 
 - 브랜드 필드가 없어 **이름 앞부분으로 판별**(`BRANDS`). groupId 접두는 회사 슬러그(멀티브랜드 룰).
   콜라보(`Rayon Vert x Sealson`, `Matter Of & Velo Temp`)는 회사=앞 브랜드, 이름 끝에 `(… Collab)` / `(… 콜라보)`.
@@ -64,10 +74,11 @@
 
 ## 카테고리
 
-- backpack: Pack/Backpack/Fastpack/PAC-Lite/PAC-bit · vest_pack: Passage Cargo Vest(10L) · pouch: 크로스바디·사코슈·
+- backpack: Pack/Backpack/Fastpack/PAC-Lite/PAC-bit/Running Belt(Raide 1L·2L — 힙팩류는 backpack, gossamer-gear 선례. 용량은 이름에서) · vest_pack: Passage Cargo Vest(10L) · pouch: 크로스바디·사코슈·
   파우치·사이드백·카메라 숄더·초크 버킷·트래시 백·토트·그로서리 백 · clothing: 재킷·베스트·후디·티·셔츠·팬츠·쇼츠·
-  스커트·양말·비니·모자·벨트·언더·하라마키·망토 · gloves · bottle: 보틀·물통·스루보틀·베시카 · cup: 컵·머그 ·
+  스커트·양말·비니·모자·캡·벨트·언더·하라마키·망토 · gloves · bottle: 보틀·물통·스루보틀·베시카 · cup: 컵·머그 ·
   cookware: Pot Hopper(핸드오프 §3 'pot') · cookware_etc: Fuel Stand(§3 어느 규칙에도 안 걸림) · tent_acc: 반사 코드·카본 스풀 · towel: 테누구이 ·
-  furniture_etc: 쿠션 · food: 커피 · etc: 패치·리페어·스트랩·밴드·스티커·연고·바이트밸브·스틱 스태셔·코르크 볼 등.
+  furniture_etc: 쿠션 · food: 커피 · etc: 패치·리페어·스트랩·밴드·스티커·연고·바이트밸브·스틱 스태셔·코르크 볼·USB-C 케이블·
+  Alpenblow 펌프(매트 펌프 전용 키 없음)·랜턴 리쉬(핸드오프: 랜턴 액세서리를 lighting에 넣지 않음) 등.
 
 재실행: `node crawl.js newmedium --no-open` → `node validate.js out/newmedium-<ts>.json` → 검토 → push(node@20 push.js).

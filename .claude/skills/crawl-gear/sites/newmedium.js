@@ -5,6 +5,7 @@
 //    고정 헤더 `Authorization: Basic OTI5MTg=`(사이트 ID 92918) 필수. curl로 바로 받아진다.
 //    thumbnails = 상품 사진 목록(순서대로). shopProductOptions[].optionImageSequence = 그 목록의 순번(색상 옵션 이미지).
 // ⚠ 브랜드 필드가 없다 → 이름 앞부분으로 판별(BRANDS). 회사별 company/groupId 접두 분리(멀티브랜드 룰).
+//    `Alpenblow`는 오타가 아니라 Alpenglow Gear의 펌프 라인명 — 회사만 판별하고 이름엔 남긴다.
 //    SOTO·Gossamer Gear·Samaya는 공식몰 어댑터로 이미 수집한 브랜드라 제외(사용자 확정 2026-09-30).
 // ⚠ 한글명: 상세 설명의 「관련 상품」 다음 줄이 영문 제목, 그다음 줄이 한글명(한 줄에 붙은 경우도 있음).
 //    한글명이 없는 상품(윈드스로우 컵 2종)은 KO_OVERRIDE로 음역. 브랜드 한글 접두는 떼고(제품명에 브랜드명 금지),
@@ -45,6 +46,10 @@ const BRANDS = [
   { en: /^GoLite\s*/i, company: 'GoLite', ko: '고라이트', koPre: /^고라이트\s*/ },
   { en: /^Lasal Gear\s*/i, company: 'Lasal Gear', ko: '라살 기어', koPre: /^라살\s*기어\s*/ },
   { en: /^Malachowski\s*/i, company: 'Malachowski', ko: '말라코프스키', koPre: /^말라코프스키\s*/ },
+  { en: /^Raide\s*/i, company: 'Raide', ko: '레이드', koPre: /^레이드\s*/ },
+  { en: /^Alpenglow\s+gear\s*/i, company: 'Alpenglow Gear', ko: '알펜글로우 기어', koPre: /^알펜글로우(\s*기어)?\s*/ },
+  // 'Alpenblow'는 오타가 아니라 알펜글로우 기어의 매트 펌프 제품 라인명(Alpenblow Lux 등) — 회사만 판별하고 이름에서 떼지 않는다
+  { en: /^(?=Alpenblow\b)/i, company: 'Alpenglow Gear', ko: '알펜글로우 기어', koPre: /^(?=알펜블로우)/ },
 ];
 // 공식몰 어댑터로 이미 수집한 브랜드 — 수집 안 함
 const EXCLUDE_BRAND = /^(SOTO|Gossamer\s*gear|Samaya)\b/i;
@@ -67,6 +72,7 @@ const KO_OVERRIDE = {
   "Pa'lante V2 Pack Black Ultraweave + Foam Pad": 'V2 팩 블랙 울트라위브 + 폼패드',
   'Windthrow Titanium Cup 420ml': '티타늄 컵 420ml',
   'Windthrow Camp Mug 12oz': '캠프 머그 12oz',
+  'Alpenglow gear USB-C Stable Cable': 'USB-C 스테이블 케이블', // 사이트 한글명에 USB-C 누락
 };
 
 // ── 색상(이름 끝 / 옵션) 영→한. 키는 소문자. 최장 꼬리 일치로 이름에서 분리한다. ──
@@ -89,7 +95,7 @@ const COLOR_KO = {
   brindle: '브린들', 'cz-gray': 'CZ 그레이', 'luminous white': '루미너스 화이트', 'carbon blue': '카본 블루', apricot: '애프리콧',
   'night blue': '나이트 블루', 'mountain red': '마운틴 레드', abocad: '아보카드', 'ebony black': '에보니 블랙',
   'pebblle beige': '페블 베이지', tabak: '타박', 'gray/black': '그레이/블랙', basalt: '바살트', serpentine: '서펜타인',
-  amethyst: '아메시스트', 'dark gray': '다크 그레이', 'heather gray': '헤더 그레이',
+  amethyst: '아메시스트', 'dark gray': '다크 그레이', 'heather gray': '헤더 그레이', peyote: '페요테',
 };
 // 한글 색상 단어(사이트 한글명 꼬리가 진짜 색상인지 판별용)
 const KO_COLOR_WORDS = new Set([...Object.values(COLOR_KO).flatMap((v) => v.split(/[\s/]+/)), '라이켄', '리켄', '리첸', '스톰', '옐로우', '크러쉬', '코른', '타프', '글레시어', '글래시어', '맬러카이트', '멜란지', '카멜', '아이보리']);
@@ -232,6 +238,7 @@ const classify = (en) => {
   if (/sleeping bag/.test(s)) return 'sleeping_bag';
   if (/cargo vest/.test(s)) return 'vest_pack'; // 10L 수납 러닝 베스트
   if (/\bpack\b|backpack|fastpack|pac-lite|pac-bit/.test(s)) return 'backpack';
+  if (/running belt/.test(s)) return 'backpack'; // 러닝 벨트(1L/2L 수납) — 힙팩류는 backpack(gossamer-gear 어댑터 선례)
   if (/crossbody|sacoche|pouch|sidebag|camera shoulder|chalk bucket|trash bag|tote|grocery bag/.test(s)) return 'pouch';
   if (/glove/.test(s)) return 'gloves';
   if (/bottle|water container|thrubottle|vesica/.test(s)) return 'bottle';
@@ -243,7 +250,7 @@ const classify = (en) => {
   if (/tenugui/.test(s)) return 'towel';
   if (/cushion/.test(s)) return 'furniture_etc';
   if (/coffee/.test(s)) return 'food';
-  if (/jacket|vest|hood|\bt\b|tee|shirt|pant|short|skirt|sock|beanie|hat|belt|under|haramaki|mant/.test(s)) return 'clothing';
+  if (/jacket|vest|hood|\bt\b|tee|shirt|pant|short|skirt|sock|beanie|hat|\bcap\b|belt|under|haramaki|mant/.test(s)) return 'clothing';
   return 'etc';
 };
 
@@ -345,7 +352,7 @@ const buildSpecs = (cat, ctx) => {
   const s = {};
   const material = materialIn(spec);
   if (cat === 'backpack' || cat === 'vest_pack') {
-    const v = litersIn(texts, size, desc);
+    const v = litersIn([...texts, name], size, desc); // 러닝 벨트는 용량이 이름에만("UL 1L Running Belt")
     if (v) s.volume = v;
     if (material) s.material = material;
   } else if (cat === 'pouch') {
