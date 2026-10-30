@@ -154,6 +154,35 @@ gcloud scheduler jobs update http firebase-schedule-sendWeekendBriefing-asia-nor
 
 gcloud가 없으면 Cloud Scheduler REST(`PATCH …/jobs/{name}?updateMask=attemptDeadline`, body `{"attemptDeadline":"600s"}`)로 같은 일을 한다.
 
+## 여행 도우미 `tripAssistant`
+
+앱 레포 `specs/Assistant.md`(AS-1·AS-2·AS-4·AS-5·AS-6·AS-8·AS-9·AS-10·AS-12, 데이터 계약은 `specs/DataModel.md` DM-39)의 서버 부분이다. 사용자가 대화로 여행(배낭)을 계획하면 모델이 읽기 도구를 서버에서 부르고, 쓰기 도구는 실행하지 않고 앱에 돌려준다. 코드는 [tripAssistant.js](tripAssistant.js)(핸들러)와 [assistant/](assistant/)(`prompt.js` 시스템 프롬프트, `tools.js` 도구 선언·읽기 구현, `schema.js` 공급자별 스키마 정리, `engine.js` 검증·턴 루프, `usage.js` 일일 한도, `providers/{anthropic,gemini}.js`)에 있다.
+
+- **형태**: v2 `onCall`, 리전 `asia-northeast3`, `timeoutSeconds: 120`, `memory: 512MiB`, `maxInstances: 10`, `invoker: "public"`(인증은 Firebase Auth ID 토큰 — `request.auth` 없으면 `unauthenticated`).
+- **공급자 교체형**: `functions/.env`의 `ASSISTANT_PROVIDER`(`anthropic` | `gemini`, 기본 `gemini`)와 `ASSISTANT_MODEL`(기본 gemini `gemini-3.1-flash-lite` / anthropic `claude-haiku-4-5`). `functions/.env`는 비밀이 없는 설정이라 커밋 대상이다. 키는 시크릿 `GEMINI_API_KEY`·`ANTHROPIC_API_KEY`이고, **배포 전에 두 시크릿이 모두 존재해야 한다**(쓰지 않는 공급자 쪽도 함수가 바인딩한다). `ANTHROPIC_API_KEY`는 프로젝트의 다른 함수도 같은 시크릿을 쓴다 — 값을 바꾸면(`secrets:set --force`는 그 함수들도 새 버전으로 재배포한다) 함께 영향을 받는다. 공식 SDK `@google/genai`·`@anthropic-ai/sdk`만 쓴다.
+  - Anthropic: 캐시 지점 3개 — 마지막 도구·`system`·마지막 사용자 메시지 블록(기록 캐시, 요청 사본에만 붙이고 앱 기록에는 남기지 않는다). 도구는 `strict: true`(숫자·길이·패턴 키워드는 strict가 지원하지 않아 `schema.js`로 제거, 선택 필드는 `required`에서 뺀 채 둔다). `max_tokens: 4096`, `output_config.effort: "low"`(Haiku 4.5·Sonnet 4.5는 effort를 거부해 생략), thinking 파라미터는 넣지 않는다(Haiku 4.5는 미지원, 5.x는 생략 시 adaptive). Fable 5/Opus 5/Sonnet 5.5 계열은 beta 클라이언트로 `fallbacks: "default"` + `server-side-fallback-2026-07-01`, Haiku 4.5 등은 넣지 않는다. 웹 검색 서버 도구(Haiku 4.5 등 이전 세대는 `web_search_20250305`, 그 밖은 `web_search_20260209`, 턴당 3회). `pause_turn`은 최대 3번 이어 보내고 넘으면 `unavailable`. 요청 타임아웃 `min(90초, 남은 시간)`, SDK 재시도는 남은 25초당 1회(최대 3회).
+  - Gemini: 비스트리밍 `generateContent`, `parametersJsonSchema`(지원하지 않는 키워드 제거), `googleSearch` 그라운딩(429·400이면 그 요청에서 끄고 재시도 — 무료 등급은 매 요청 첫 호출이 429로 끝난다), 429는 안내 시간(최대 30초)만큼 최대 3회 대기, 5xx는 2초 뒤 최대 2회(둘 다 대기 뒤 다음 요청에 15초 이상 남을 때만), 요청 타임아웃 `min(90초, 남은 시간)`, `maxOutputTokens: 8192`.
+- **무상태**: 앱이 공급자 원형 `history`를 보내고 함수는 이번 턴에 덧붙인 메시지를 `appended`로 돌려준다(append-only). 첫 요청이면 사용자 텍스트 앞에 `[오늘] {today} ({요일}) · 언어: {locale}`, `[달력]`(오늘부터 21일, 요일 포함 — 모델이 요일을 잘못 세는 문제 완화), `context.bagId`가 있으면 `[여행 현황]`(get_trip 결과)을 붙인다.
+- **호출 계약**: 요청 `{provider?, history, userText? | toolResults?, locale, today, context: {bagId?}}` → 응답 `{provider, model, appended, text, pendingActions: [{id, name, input}], remaining, stopReason: "end"|"tool_use"|"refusal"|"max_tokens"}`. 스트리밍(`request.acceptsStreaming`)이면 `{type: "status", tool}`(읽기·웹 검색)·`{type: "text_delta", text}` 청크를 보낸다(Gemini는 텍스트를 한 번에).
+- **도구 짝 맞추기**: `toolResults`는 기록 끝 모델 메시지의 쓰기 호출과 짝지어야 한다 — id가 있으면 id로, 없으면 쓰기 호출 순서·이름으로. Gemini `functionCall`에 id가 없으면 `call_{메시지 안 순번}`을 발급한다. 한 메시지에 읽기와 쓰기가 섞이면 쓰기만 `pendingActions`로 돌려주고, 같은 메시지의 읽기는 다음 요청(결과 이어 보내기)에서 서버가 실행해 쓰기 결과와 한 메시지로 합친다.
+- **입력 검증**: `history`+`toolResults`+`userText` 직렬화 200KB, 메시지 80개, `userText` 2,000자, 결과 하나 8KB. 기록은 role(Anthropic `user`/`assistant`, Gemini `user`/`model`)을 확인하고, 금지 목록 방식으로 위험한 항목만 거부한다 — Anthropic `image`·`document`·`search_result`·`container_upload` 블록과 `cache_control`, Gemini `inlineData`·`fileData`·`executableCode`·`codeExecutionResult`(어느 깊이든, 도구 입력 `input`/`args` 안은 제외). 공급자가 새 블록 타입을 내도 서버가 push한 응답이 거부되지 않게 허용 목록을 쓰지 않는다([assistant/historyGuard.js](assistant/historyGuard.js)). 걸리면 `invalid-argument`. 한도 초과 `resource-exhausted`의 `details.kind`는 발화 한도면 `message`, 이어 보내기 한도면 `toolTurn`(문구 "요청이 너무 잦아요…", `remaining`은 실제 남은 발화 수).
+- **시간 상한**: 함수 120초 안에서 공급자 작업은 시작 후 100초까지. 매 모델 호출 전에 남은 시간이 5초 미만이면 `unavailable`, 읽기 도구도 같은 기준으로 실행하지 않고 오류 결과를 돌려준다(Firestore 읽기엔 타임아웃이 없다). Anthropic은 `signal`로 재시도까지 포함한 전체 시간을 남은 예산에 묶는다.
+- **읽기 상한**: 한 턴 8회. 넘으면 실행 대신 오류 결과를 돌려줘 모델이 마무리하게 한다. 모델 호출이 12회를 넘으면 `internal`(앱은 appended를 받지 못한 요청을 기록에 남기지 않는다).
+- **오류**: `invalid-argument`(history 200KB·80개·userText 2,000자 초과, 짝 불일치), `resource-exhausted`(`details: {remaining: 0}`), `failed-precondition`(provider 불일치), `permission-denied`(남의 bagId), `unavailable`(공급자 429·5xx·연결, 재시도 뒤), `internal`. 거절·안전 차단은 오류가 아니라 고정 문구 + `stopReason: "refusal"`.
+- **사용량(DM-39)**: `assistant-usage/{uid}` `{day(KST), count, toolTurnCount, updatedAt}`. `count`는 사용자 발화(하루 20회), `toolTurnCount`는 결과 이어 보내기(하루 60회 — 조작한 기록으로 발화 한도를 우회하지 못하게 하는 보조 상한). 검증·키 확인 통과 뒤, 모델 호출 전에 한 트랜잭션으로 센다. 응답 `remaining`은 발화 기준이다. 서버가 쓰는 문서는 이것뿐이다.
+- **로그·개인정보(AS-10)**: uid 해시 앞 8자, 도구 이름·소요·결과 길이, 모델 호출별 토큰(Anthropic은 `cache_read_input_tokens` 포함), 턴 요약(stopReason·읽기 수·pendingActions 이름)만 남긴다. 대화 내용·도구 결과 본문은 남기지 않는다. 도구 결과에 uid·이메일·닉네임을 넣지 않는다.
+
+```bash
+# 함수만 배포(레포 루트)
+firebase deploy --only functions:tripAssistant
+
+# 스모크(3턴 대본, create_trip은 skipped로 응답 — 실제 여행을 만들지 않는다)
+node scripts/assistant-smoke.mjs <계정 파일>
+
+# 로그
+firebase functions:log --only tripAssistant
+```
+
 ## 운영 전제와 권한
 
 - Cloud Functions와 Cloud Scheduler 사용에는 Blaze 요금제가 필요하다.
