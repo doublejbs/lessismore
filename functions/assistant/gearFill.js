@@ -36,6 +36,13 @@ const PRIORITIES = ["essential", "recommended"];
 const SINGLE_PER_GROUP = new Set(["tent", "sleeping_bag", "mat", "backpack"]);
 const SNOW_SKIES = new Set(["눈", "소낙눈"]);
 const SHELTER_KEYWORD = "대피소";
+// 여행지가 없을 때 headline 앞에 반드시 오는 안내(사용자 언어).
+const NO_LOCATION_HEADLINES = {
+  ko: "여행지를 정하면 날씨에 맞춰 골라 드려요",
+  en: "Pick a destination and I'll match the weather",
+  ja: "目的地を決めると天気に合わせて選びます",
+};
+const TRAILING_PERIOD_RE = /[.。]+$/;
 // headline이 비었을 때 쓰는 사용자 언어 기본 문구.
 const DEFAULT_HEADLINES = {
   ko: "이 여행에 맞춰 골랐어요",
@@ -147,6 +154,25 @@ export const buildWeatherLine = (snapshot, locale) => {
 const clip = (value, max) => String(value ?? "").trim().slice(0, max);
 
 /**
+ * headline을 정리한다. 여행지가 없으면 안내 문구로 시작하게 하고(모델이 빠뜨려도),
+ * 60자 상한은 안내 문구 뒤 본문에만 적용한다. 비면 기본 문구.
+ */
+const buildHeadline = (raw, locale, hasLocation) => {
+  const text = String(raw ?? "").trim();
+
+  if (!hasLocation) {
+    const prefix = NO_LOCATION_HEADLINES[locale] ?? NO_LOCATION_HEADLINES.ko;
+    const body = clip(text.replace(prefix, "").replace(/^[\s.。,·—-]+/, ""),
+        MAX_HEADLINE);
+
+    return body ? `${prefix} · ${body}` : prefix;
+  }
+
+  return clip(text, MAX_HEADLINE) ||
+    (DEFAULT_HEADLINES[locale] ?? DEFAULT_HEADLINES.ko);
+};
+
+/**
  * propose_gear 입력을 검증한다(AS-13).
  * - 이 턴의 도구 결과에 실제로 있던 gearId만 통과, 표시 값은 도구 결과로 덮어쓴다.
  * - 이미 담긴 id·중복 id 제외, essential 먼저 정렬 후 필수 그룹은 1개씩,
@@ -159,6 +185,7 @@ export const validateProposal = ({
   tripGearIds,
   presetGroups = [],
   locale = "ko",
+  hasLocation = true,
 }) => {
   const rawItems = Array.isArray(input?.items) ? input.items : [];
   const usedIds = new Set();
@@ -182,7 +209,9 @@ export const validateProposal = ({
       priority: PRIORITIES.includes(raw.priority) ?
         raw.priority :
         "recommended",
-      reason: clip(raw.reason, MAX_REASON),
+      // reason은 마침표 없는 구절 — 끝의 마침표를 떼고 40자로 자른다.
+      reason: clip(String(raw.reason ?? "").trim()
+          .replace(TRAILING_PERIOD_RE, ""), MAX_REASON),
     });
   }
 
@@ -213,8 +242,7 @@ export const validateProposal = ({
       .map((n) => clip(n, MAX_NOTE_LENGTH));
 
   return {
-    headline: clip(input?.headline, MAX_HEADLINE) ||
-      (DEFAULT_HEADLINES[locale] ?? DEFAULT_HEADLINES.ko),
+    headline: buildHeadline(input?.headline, locale, hasLocation),
     rawCount: rawItems.length,
     items,
     notes,
@@ -402,6 +430,7 @@ export const runGearFill = async ({
       tripGearIds,
       presetGroups,
       locale,
+      hasLocation: Boolean(tripSnapshot.location),
     });
 
     // 제출 항목이 있었는데 전부 버려졌으면(지어낸 id 등) 오류 결과를 주고
