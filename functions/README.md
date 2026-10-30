@@ -191,10 +191,10 @@ firebase functions:log --only tripAssistant
 - **응답**: `{mode, provider, model, result: {headline, items: [{gearId, source, name, brand, weightG, group, priority, reason}], notes, trip: {name, startDate, endDate, locationName, weatherLine}} | null, refused, remaining}`.
 - **순서**: 검증(`mode`·`bagId`·`locale`·`today`) → 키 확인 → `get_trip`(소유자 확인 — `not-found`·`permission-denied`, 메모 본문은 뺀다) → 사용량 `count` +1(대화 발화와 같은 20회/일) → 모델.
 - **모델 입력**: 첫 메시지 = `[오늘]`·`[달력]`·`[여행 현황]` + "이 여행에 담을 장비를 골라 propose_gear로 답하세요". 시스템 프롬프트는 `GEAR_FILL_PROMPT`(대화형과 별개, 불변). 도구는 읽기 `list_warehouse`·`get_popular_gear`·`search_catalog`·`get_forecast` + 결과 도구 `propose_gear`만(박지 검색·쓰기 도구 없음). 웹 검색 끔.
-- **결과 도구 강제**: Gemini는 `functionCallingConfig.mode = ANY`(허용 목록 = 이 모드 도구). Anthropic은 프롬프트로 유도하고, 텍스트로 끝나면 "propose_gear 도구를 호출해 답하세요"를 한 번 더 보낸다. 그래도 없으면 `internal`. 결과 도구는 실행하지 않고 루프를 끝낸다(대화 경로의 쓰기 도구와 같은 경로).
+- **결과 도구 강제**: Gemini는 `functionCallingConfig.mode = ANY`(허용 목록 = 이 모드 도구). Anthropic은 프롬프트로 유도하고, 텍스트로 끝나면 "propose_gear 도구를 호출해 답하세요"를 한 번 더 보낸다. 그래도 없으면 `internal`. 결과 도구는 실행하지 않고 루프를 끝낸다(대화 경로의 쓰기 도구와 같은 경로). 마지막 허용 모델 호출에서는 Gemini 허용 목록을 `propose_gear` 하나로 좁히고, Anthropic은 "이번에는 propose_gear만" 안내를 같은 사용자 메시지에 덧붙인다.
 - **상한**: 모델 호출 8회(넘으면 `internal`), `search_catalog` 6회(넘으면 오류 결과), 읽기 8회, 시간 예산은 대화 경로와 같다.
-- **검증(AS-13)**: 이 턴의 읽기 결과에 실제로 있던 `gearId`만 통과(창고 → `warehouse`, 인기·카탈로그 → `catalog`). 이름·브랜드·무게·그룹·출처는 도구 결과 값으로 덮어쓴다. 여행에 이미 담긴 id·중복 id 제외, essential 먼저 정렬, 필수 그룹(텐트·침낭·매트·배낭)은 그룹당 1개(의류·기타 등은 날씨 추가가 여럿일 수 있어 자르지 않는다), 15개, `reason` 40자·`headline` 60자·`notes` 3개(각 80자). 버린 개수는 로그 `dropped`에만.
-- **`trip.weatherLine`**: 서버가 `bag.weather.daily`(여행 기간)에서 만든 한 줄 — `11/7~8 최저 -8° · 비 90% · 돌풍 15m/s`(locale별 라벨). 날씨 캐시가 없으면 이 턴에 `get_forecast`로 받은 예보로 만들고, 둘 다 없으면 `null`.
+- **검증(AS-13)**: 이 턴의 읽기 결과에 실제로 있던 `gearId`만 통과(창고 → `warehouse`, 인기·카탈로그 → `catalog`; 사용자 장비 id는 카탈로그 id와 같아 창고에 있는 id는 출처를 `warehouse`로 둔다). 이름·브랜드·무게·그룹·출처는 도구 결과 값으로 덮어쓴다. 여행에 이미 담긴 id·중복 id 제외, essential 먼저 정렬, 필수 그룹(텐트·침낭·매트·배낭)은 그룹당 1개(의류·기타 등은 날씨 추가가 여럿일 수 있어 자르지 않는다), 이미 담긴 필수 그룹과 대피소 박(`location.campSpotId` + 이름에 "대피소")의 텐트는 미리 채운 것으로 보고 거른다. 15개, `reason` 40자·`headline` 60자(비면 사용자 언어 기본 문구 "이 여행에 맞춰 골랐어요")·`notes` 3개(각 80자). 버린 개수는 로그 `dropped`에만. 제출 항목이 있었는데 **전부** 버려지면 `propose_gear` 결과로 "도구 결과에 있던 gearId만 쓰세요…" 오류를 돌려주고 모델 호출 상한 안에서 1회 더 받는다 — 두 번째도 0개면 `internal`.
+- **`trip.weatherLine`**: 서버가 `bag.weather.daily`의 여행 기간 날짜로 만든 한 줄(기간 안 날짜가 없으면 캐시를 쓰지 않는다) — `11/7~8 최저 -8° · 비 90% · 돌풍 15m/s`(locale별 라벨). 날씨 캐시가 없으면 이 턴에 `get_forecast`로 받은 예보로 만들고, 둘 다 없으면 `null`.
 - **거절**: `result: null`, `refused: true`.
 - **로그**: `mode`, 도구 이름·ms·결과 길이, 모델 호출별 토큰, `items`·`essential`·`catalog`·`dropped`·`notes` 개수만. 추천 내용·장비 이름은 남기지 않는다.
 

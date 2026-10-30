@@ -149,18 +149,39 @@ export const createProvider = ({
     }, requestOptions) :
     client.messages.stream(body, requestOptions));
 
-  const send = async ({userText, toolResults, onText, onStatus, deadline}) => {
+  const send = async ({
+    userText,
+    toolResults,
+    onText,
+    onStatus,
+    deadline,
+    finalCall,
+  }) => {
+    // 강제 tool_choice를 쓰지 않으므로(5.5 계열 거절) 마지막 허용 호출에서는
+    // 결과 도구만 부르라는 안내를 같은 사용자 메시지 끝에 덧붙인다.
+    const finalText = finalCall?.text ?
+      [{type: "text", text: finalCall.text}] :
+      [];
+
     if (userText !== undefined) {
-      history.push({role: "user", content: userText});
+      history.push({
+        role: "user",
+        content: finalText.length > 0 ?
+          [{type: "text", text: userText}, ...finalText] :
+          userText,
+      });
     } else {
       history.push({
         role: "user",
-        content: toolResults.map((r) => ({
-          type: "tool_result",
-          tool_use_id: r.providerId,
-          content: JSON.stringify(r.content),
-          is_error: Boolean(r.isError),
-        })),
+        content: [
+          ...toolResults.map((r) => ({
+            type: "tool_result",
+            tool_use_id: r.providerId,
+            content: JSON.stringify(r.content),
+            is_error: Boolean(r.isError),
+          })),
+          ...finalText,
+        ],
       });
     }
 

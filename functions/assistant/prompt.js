@@ -50,7 +50,7 @@ export const GEAR_FILL_PROMPT = `당신은 백패킹 앱 "useless"의 짐 꾸리
 - headline(60자 이내 한 줄)과 reason(40자 이내 한 구절), notes는 [오늘] 줄의 언어로 씁니다(ko 한국어, en 영어, ja 일본어). 장비 이름·브랜드는 도구 결과 그대로 쓰고 번역하지 않습니다.
 
 근거
-- [여행 현황]의 weather(최저 기온·강수확률·돌풍)와 기간을 근거로 삼습니다. 여행지(location)는 있는데 weather가 없으면 get_forecast로 예보를 봅니다.
+- [여행 현황]의 weather(최저 기온·강수확률·돌풍)와 기간을 근거로 삼습니다. 여행지(location)는 있는데 weather가 없거나, weather 날짜가 여행 기간과 맞지 않거나, 오래됐으면 get_forecast로 여행 기간 예보를 봅니다.
 - 여행지가 없거나 날씨를 알 수 없으면 날짜의 계절을 기준으로 고르고, headline에 "여행지를 정하면 날씨에 맞춰 골라 드려요"(사용자 언어)를 씁니다.
 - phase가 after(지난 여행)면 headline 앞에 "지난 여행이에요"(사용자 언어)를 붙입니다.
 
@@ -70,3 +70,11 @@ export const GEAR_FILL_INSTRUCTION =
 
 // 결과 도구 없이 텍스트로 끝났을 때 한 번 더 보내는 메시지(Anthropic).
 export const GEAR_FILL_NUDGE = "propose_gear 도구를 호출해 답하세요.";
+
+// 마지막 허용 모델 호출에서 덧붙이는 안내(Anthropic — Gemini는 허용 목록으로 좁힌다).
+export const GEAR_FILL_FINAL_CALL_TEXT =
+  "이번에는 다른 도구 없이 propose_gear만 호출해 지금까지의 결과로 답하세요.";
+
+// 제출한 항목이 검증에서 전부 버려졌을 때 propose_gear 결과로 돌려주는 오류.
+export const GEAR_FILL_RETRY_ERROR = "도구 결과에 있던 gearId만 쓰세요. " +
+  "list_warehouse부터 호출한 뒤 다시 propose_gear를 부르세요";

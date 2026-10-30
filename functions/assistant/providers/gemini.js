@@ -96,14 +96,15 @@ export const createProvider = ({
   }));
   let searchEnabled = Boolean(webSearch);
   // 모드 호출: 텍스트만으로 끝나는 응답을 막고 이 모드 도구 중 하나를 꼭 부르게 한다.
-  const toolConfig = forceToolCall ? {
+  // 마지막 허용 호출(finalCall)이면 허용 목록을 결과 도구로 좁힌다.
+  const buildToolConfig = (finalCall) => (forceToolCall ? {
     toolConfig: {
       functionCallingConfig: {
         mode: FunctionCallingConfigMode.ANY,
-        allowedFunctionNames: tools.map((t) => t.name),
+        allowedFunctionNames: finalCall?.tools ?? tools.map((t) => t.name),
       },
     },
-  } : {};
+  } : {});
 
   const buildTools = () => {
     const list = [{functionDeclarations}];
@@ -115,7 +116,7 @@ export const createProvider = ({
     return list;
   };
 
-  const callModel = async (deadline) => {
+  const callModel = async (deadline, finalCall) => {
     // 기다린 뒤에도 다음 요청을 보낼 시간이 남아야 기다린다.
     const canWait = (ms) => Date.now() + ms + MIN_REQUEST_MS < deadline;
 
@@ -130,7 +131,7 @@ export const createProvider = ({
           config: {
             systemInstruction: system,
             tools: buildTools(),
-            ...toolConfig,
+            ...buildToolConfig(finalCall),
             maxOutputTokens: MAX_OUTPUT_TOKENS,
             abortSignal: AbortSignal.timeout(Math.max(1000,
                 Math.min(MAX_REQUEST_TIMEOUT_MS, deadline - Date.now()))),
@@ -182,7 +183,7 @@ export const createProvider = ({
     }
   };
 
-  const send = async ({userText, toolResults, onText, deadline}) => {
+  const send = async ({userText, toolResults, onText, deadline, finalCall}) => {
     if (userText !== undefined) {
       history.push({role: "user", parts: [{text: userText}]});
     } else {
@@ -198,7 +199,7 @@ export const createProvider = ({
       });
     }
 
-    const response = await callModel(deadline);
+    const response = await callModel(deadline, finalCall);
     const candidate = response.candidates?.[0];
     const finishReason = candidate?.finishReason ?? null;
     const blocked = Boolean(response.promptFeedback?.blockReason) ||

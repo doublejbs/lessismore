@@ -1,6 +1,7 @@
 import admin from "firebase-admin";
 import {HttpsError} from "firebase-functions/v2/https";
 import {liteClient} from "algoliasearch/lite";
+import {toKstDate} from "../kstDate.js";
 
 // 앱 레포 specs/Assistant.md AS-4(읽기 도구)·AS-5(쓰기 도구).
 // 읽기 도구는 Admin SDK·외부 API로 서버에서 실행하고, 쓰기 도구는 선언만 한다
@@ -142,19 +143,6 @@ const clampInt = (value, fallback, min, max) => {
   }
 
   return Math.min(Math.max(n, min), max);
-};
-
-// bag.startDate/endDate는 앱이 dayjs.toISOString()으로 쓴 UTC 문자열이라
-// KST 자정이 전날 15:00Z로 저장된다 — KST 날짜로 바꿔 읽는다.
-const toKstDate = (value) => {
-  const text = String(value ?? "");
-  const ms = Date.parse(text);
-
-  if (!text.includes("T") || Number.isNaN(ms)) {
-    return text.slice(0, 10);
-  }
-
-  return new Date(ms + 9 * 60 * 60 * 1000).toISOString().slice(0, 10);
 };
 
 const kstToday = () =>
@@ -870,5 +858,9 @@ export const createReadTools = ({uid, bagId, today}) => {
     get_forecast: getForecast,
   };
 
-  return {handlers, getTrip, tripGearIds};
+  // 창고 장비 id 집합(사용자 장비 id = 카탈로그 id라 출처 판별에 쓴다).
+  const warehouseIds = async () =>
+    new Set((await loadWarehouse()).map((g) => g.id));
+
+  return {handlers, getTrip, tripGearIds, warehouseIds};
 };

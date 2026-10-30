@@ -250,11 +250,14 @@ export const buildFirstTurnPrefix = ({today, locale, tripSnapshot}) => {
  * 한 턴을 돈다. provider는 history에 push하므로 끝나면
  * history.slice(startLength)가 appended다.
  * 모드 호출은 아래 선택 인자로 동작을 좁힌다(대화 경로는 기본값).
- * - isTerminalTool: 실행하지 않고 턴을 끝내는 도구(대화=쓰기, gear_fill=결과)
+ * - isTerminalTool: 실행하지 않고 턴을 끝내는 터미널 도구
+ *   (대화=쓰기 도구, gear_fill=결과 도구)
  * - maxModelCalls: 모델 호출 상한(넘으면 internal)
  * - toolLimits: 도구별 호출 상한(넘으면 실행 대신 오류 결과)
  * - nudgeText: 도구 없이 텍스트로 끝나면 한 번 더 보낼 사용자 메시지
  * - onReadResult(call, content): 성공한 읽기 결과를 받는다(결과 검증용)
+ * - finalCall: {tools, text} — 마지막 허용 모델 호출에서 부를 수 있는 도구를
+ *   좁힌다(Gemini는 allowedFunctionNames, Anthropic은 안내 text를 덧붙임)
  */
 export const runTurn = async ({
   provider,
@@ -270,6 +273,7 @@ export const runTurn = async ({
   toolLimits = {},
   nudgeText,
   onReadResult,
+  finalCall,
 }) => {
   const usage = {input: 0, output: 0, cacheRead: 0, cacheWrite: 0};
   const texts = [];
@@ -357,12 +361,13 @@ export const runTurn = async ({
   let pending;
 
   if (pairing) {
-    // 쓰기 결과(앱) + 같은 메시지의 읽기 호출(서버 실행)을 호출 순서대로 합친다.
+    // 터미널 도구 결과(앱·서버) + 같은 메시지의 읽기 호출(서버 실행)을
+    // 호출 순서대로 합친다.
     const reads = await runReads(
-        pairing.calls.filter((c) => !isWriteTool(c.name)));
+        pairing.calls.filter((c) => !isTerminalTool(c.name)));
     const readById = new Map(reads.map((r) => [r.id, r]));
     const toolResults = pairing.calls.map((c) => {
-      if (isWriteTool(c.name)) {
+      if (isTerminalTool(c.name)) {
         const r = pairing.writeResults.get(c.id);
 
         return {...c, content: r.content, isError: r.isError};
@@ -389,9 +394,18 @@ export const runTurn = async ({
       );
     }
 
+    // 마지막 허용 호출이면 터미널 도구만 부르게 좁힌다(모드 호출).
+    const isFinalCall = Boolean(finalCall) && modelCalls === maxModelCalls - 1;
+
     modelCalls += 1;
 
-    const res = await provider.send({...pending, onText, onStatus, deadline});
+    const res = await provider.send({
+      ...pending,
+      onText,
+      onStatus,
+      deadline,
+      ...(isFinalCall ? {finalCall} : {}),
+    });
 
     usage.input += res.usage.input;
     usage.output += res.usage.output;
@@ -420,12 +434,13 @@ export const runTurn = async ({
       break;
     }
 
-    const writes = res.toolCalls.filter((c) => isTerminalTool(c.name));
+    const terminalCalls = res.toolCalls.filter((c) => isTerminalTool(c.name));
 
-    // 쓰기가 섞이면 턴을 끝낸다. 같은 메시지의 읽기는 다음 요청(결과 이어 보내기)에서
-    // 서버가 실행해 쓰기 결과와 한 메시지로 합친다 — 기록 짝을 깨지 않기 위해서다.
-    if (writes.length > 0) {
-      pendingActions = writes.map((c) => ({
+    // 터미널 도구(쓰기·결과)가 나오면 턴을 끝낸다. 같은 메시지의 읽기는 다음
+    // 요청(결과 이어 보내기)에서 서버가 실행해 터미널 결과와 한 메시지로 합친다
+    // — 기록 짝을 깨지 않기 위해서다.
+    if (terminalCalls.length > 0) {
+      pendingActions = terminalCalls.map((c) => ({
         id: c.id,
         name: c.name,
         input: c.input ?? {},
