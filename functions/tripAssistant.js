@@ -16,6 +16,7 @@ import {
 } from "./assistant/engine.js";
 import * as anthropicProvider from "./assistant/providers/anthropic.js";
 import * as geminiProvider from "./assistant/providers/gemini.js";
+import {runGearFill} from "./assistant/gearFill.js";
 
 // 여행 도우미(AI로 여행 계획하기) callable — 앱 레포 specs/Assistant.md
 // AS-1·AS-2·AS-4·AS-5·AS-6·AS-8·AS-9·AS-10·AS-12.
@@ -128,6 +129,28 @@ export const tripAssistant = onCall({
   let stage = "validate";
 
   try {
+    // 모드 호출(AS-1 개정): mode가 있으면 대화 경로 대신 모드 처리. 기록 없음.
+    if (request.data?.mode !== undefined) {
+      const key = secret.value();
+      const result = await runGearFill({
+        data: request.data,
+        uid,
+        providerName,
+        model,
+        providerModule,
+        apiKey: key && key !== UNSET_SECRET ? key : null,
+        log,
+        deadline,
+        setStage: (next) => {
+          stage = next;
+        },
+      });
+
+      log({event: "mode_done", mode: result.mode, ms: Date.now() - startedAt});
+
+      return result;
+    }
+
     // 1. 입력 검증(사용량을 세기 전에).
     const req = validateRequest(request.data, {
       serverProvider: providerName,

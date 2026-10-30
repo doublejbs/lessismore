@@ -144,6 +144,19 @@ const clampInt = (value, fallback, min, max) => {
   return Math.min(Math.max(n, min), max);
 };
 
+// bag.startDate/endDate는 앱이 dayjs.toISOString()으로 쓴 UTC 문자열이라
+// KST 자정이 전날 15:00Z로 저장된다 — KST 날짜로 바꿔 읽는다.
+const toKstDate = (value) => {
+  const text = String(value ?? "");
+  const ms = Date.parse(text);
+
+  if (!text.includes("T") || Number.isNaN(ms)) {
+    return text.slice(0, 10);
+  }
+
+  return new Date(ms + 9 * 60 * 60 * 1000).toISOString().slice(0, 10);
+};
+
 const kstToday = () =>
   new Date(Date.now() + 9 * 60 * 60 * 1000).toISOString().slice(0, 10);
 
@@ -438,6 +451,81 @@ export const TOOL_DECLARATIONS = [
   },
 ];
 
+// ----- 모드 호출 gear_fill(AS-13) -----
+
+// 결과 도구. 서버가 검증해 result로 돌려준다(실행하지 않는다).
+export const PROPOSE_GEAR_TOOL = "propose_gear";
+
+const PROPOSE_GEAR_DECLARATION = {
+  name: PROPOSE_GEAR_TOOL,
+  description: "이 여행에 담을 장비 추천을 제출한다. 설명문 대신 반드시 이 " +
+    "도구 하나로 답한다. items의 gearId·source·name·brand·weightG·group은 " +
+    "이번에 부른 도구 결과 값을 그대로 쓴다(창고 결과는 source=\"warehouse\", " +
+    "인기·카탈로그 결과는 source=\"catalog\"). essential 먼저, 같은 그룹 " +
+    "1개, 15개 이내.",
+  input_schema: {
+    type: "object",
+    properties: {
+      headline: {
+        type: "string",
+        maxLength: 60,
+        description: "근거 한 줄(사용자 언어, 60자 이내)",
+      },
+      items: {
+        type: "array",
+        maxItems: 15,
+        items: {
+          type: "object",
+          properties: {
+            gearId: {type: "string"},
+            source: {type: "string", enum: ["warehouse", "catalog"]},
+            name: {type: "string"},
+            brand: {type: "string"},
+            weightG: {type: "number"},
+            group: {type: "string", enum: GROUP_KEYS},
+            priority: {type: "string", enum: ["essential", "recommended"]},
+            reason: {
+              type: "string",
+              maxLength: 40,
+              description: "고른 이유 한 구절(사용자 언어, 40자 이내)",
+            },
+          },
+          required: [
+            "gearId", "source", "name", "brand", "weightG", "group",
+            "priority", "reason",
+          ],
+          additionalProperties: false,
+        },
+      },
+      notes: {
+        type: "array",
+        maxItems: 3,
+        items: {type: "string"},
+        description: "장비로 담을 수 없는 준비물·주의(물·식량·행동식·예약), " +
+          "3줄 이내, 사용자 언어",
+      },
+    },
+    required: ["headline", "items", "notes"],
+    additionalProperties: false,
+  },
+};
+
+const GEAR_FILL_READ_TOOLS = [
+  "list_warehouse",
+  "get_popular_gear",
+  "search_catalog",
+  "get_forecast",
+];
+
+export const GEAR_FILL_READ_TOOL_NAMES = new Set(GEAR_FILL_READ_TOOLS);
+
+// gear_fill 도구 세트: 읽기 4종 + 결과 도구. search_camp_spots·쓰기 도구는 없다.
+export const GEAR_FILL_TOOL_DECLARATIONS = [
+  ...GEAR_FILL_READ_TOOLS.map((name) =>
+    TOOL_DECLARATIONS.find((t) => t.name === name)),
+  PROPOSE_GEAR_DECLARATION,
+];
+
 export const WRITE_TOOL_NAMES = new Set([
   "create_trip",
   "add_gears",
@@ -542,8 +630,8 @@ export const createReadTools = ({uid, bagId, today}) => {
 
     const gearIds = Array.isArray(bag.gears) ? bag.gears : [];
     const gears = gearIds.length > 0 ? await fetchUserGearsByIds(gearIds) : [];
-    const startDate = String(bag.startDate ?? "").slice(0, 10);
-    const endDate = String(bag.endDate ?? "").slice(0, 10);
+    const startDate = toKstDate(bag.startDate);
+    const endDate = toKstDate(bag.endDate);
     const location = bag.location ? {
       name: bag.location.name ?? "",
       latitude: bag.location.latitude ?? null,
@@ -745,6 +833,8 @@ export const createReadTools = ({uid, bagId, today}) => {
       daily: "weather_code,temperature_2m_max,temperature_2m_min," +
         "precipitation_probability_max,wind_gusts_10m_max",
       timezone: "Asia/Seoul",
+      // 앱 WeatherService·bag.weather와 같은 단위(m/s). 기본값은 km/h다.
+      wind_speed_unit: "ms",
       start_date: start < now ? now : start,
       end_date: end > last ? last : end,
     }).toString();
@@ -780,5 +870,5 @@ export const createReadTools = ({uid, bagId, today}) => {
     get_forecast: getForecast,
   };
 
-  return {handlers, getTrip};
+  return {handlers, getTrip, tripGearIds};
 };

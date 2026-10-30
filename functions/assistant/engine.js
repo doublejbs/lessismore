@@ -23,6 +23,9 @@ const WEEKDAYS_KO = "일월화수목금토";
 const DAY_MS = 24 * 60 * 60 * 1000;
 const CALENDAR_DAYS = 21;
 const READ_DEADLINE_ERROR = {error: "시간이 부족해 읽기를 건너뜁니다"};
+const TOOL_LIMIT_ERROR = {
+  error: "이 도구의 호출 상한에 도달했습니다. 지금 아는 정보로 답하세요.",
+};
 const READ_LIMIT_ERROR = {
   error: "이 턴의 읽기 횟수 상한에 도달했습니다. 지금 아는 정보로 답하세요.",
 };
@@ -246,6 +249,12 @@ export const buildFirstTurnPrefix = ({today, locale, tripSnapshot}) => {
 /**
  * 한 턴을 돈다. provider는 history에 push하므로 끝나면
  * history.slice(startLength)가 appended다.
+ * 모드 호출은 아래 선택 인자로 동작을 좁힌다(대화 경로는 기본값).
+ * - isTerminalTool: 실행하지 않고 턴을 끝내는 도구(대화=쓰기, gear_fill=결과)
+ * - maxModelCalls: 모델 호출 상한(넘으면 internal)
+ * - toolLimits: 도구별 호출 상한(넘으면 실행 대신 오류 결과)
+ * - nudgeText: 도구 없이 텍스트로 끝나면 한 번 더 보낼 사용자 메시지
+ * - onReadResult(call, content): 성공한 읽기 결과를 받는다(결과 검증용)
  */
 export const runTurn = async ({
   provider,
@@ -256,6 +265,11 @@ export const runTurn = async ({
   onStatus,
   log,
   deadline,
+  isTerminalTool = isWriteTool,
+  maxModelCalls = MAX_MODEL_CALLS_PER_TURN,
+  toolLimits = {},
+  nudgeText,
+  onReadResult,
 }) => {
   const usage = {input: 0, output: 0, cacheRead: 0, cacheWrite: 0};
   const texts = [];
@@ -263,9 +277,19 @@ export const runTurn = async ({
   let modelCalls = 0;
   let stopReason = "end";
   let pendingActions = [];
+  let nudged = false;
+  const toolCounts = {};
 
   const runRead = async (call) => {
     readCount += 1;
+    toolCounts[call.name] = (toolCounts[call.name] ?? 0) + 1;
+
+    if (toolLimits[call.name] !== undefined &&
+      toolCounts[call.name] > toolLimits[call.name]) {
+      log({event: "tool", tool: call.name, skipped: "tool_limit"});
+
+      return {...call, content: TOOL_LIMIT_ERROR, isError: true};
+    }
 
     if (readCount > MAX_READS_PER_TURN) {
       log({event: "tool", tool: call.name, skipped: "read_limit"});
@@ -297,6 +321,10 @@ export const runTurn = async ({
         ms: Date.now() - started,
         resultChars: JSON.stringify(content).length,
       });
+
+      if (handler) {
+        onReadResult?.(call, content);
+      }
 
       return {...call, content, isError: !handler};
     } catch (err) {
@@ -380,11 +408,19 @@ export const runTurn = async ({
     }
 
     if (res.toolCalls.length === 0) {
+      // 모드 호출: 결과 도구 없이 텍스트로 끝나면 한 번만 다시 유도한다.
+      if (nudgeText && !nudged && modelCalls < maxModelCalls) {
+        nudged = true;
+        log({event: "nudge"});
+        pending = {userText: nudgeText};
+        continue;
+      }
+
       stopReason = res.stopReason === "max_tokens" ? "max_tokens" : "end";
       break;
     }
 
-    const writes = res.toolCalls.filter((c) => isWriteTool(c.name));
+    const writes = res.toolCalls.filter((c) => isTerminalTool(c.name));
 
     // 쓰기가 섞이면 턴을 끝낸다. 같은 메시지의 읽기는 다음 요청(결과 이어 보내기)에서
     // 서버가 실행해 쓰기 결과와 한 메시지로 합친다 — 기록 짝을 깨지 않기 위해서다.
@@ -400,7 +436,7 @@ export const runTurn = async ({
 
     // 응답 없이 끝내면 기록 끝에 짝 없는 호출이 남으므로 실패로 돌려준다.
     // 앱은 appended를 받지 못한 요청을 기록에 남기지 않는다(AS-7).
-    if (modelCalls >= MAX_MODEL_CALLS_PER_TURN) {
+    if (modelCalls >= maxModelCalls) {
       log({event: "model_call_limit"});
       throw new HttpsError("internal", "응답을 마무리하지 못했습니다.");
     }

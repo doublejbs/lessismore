@@ -1,4 +1,4 @@
-import {GoogleGenAI} from "@google/genai";
+import {FunctionCallingConfigMode, GoogleGenAI} from "@google/genai";
 import {REFUSAL_TEXT} from "../prompt.js";
 import {GEMINI_UNSUPPORTED_KEYS, sanitizeSchema} from "../schema.js";
 import {isValidGeminiMessage} from "../historyGuard.js";
@@ -85,6 +85,7 @@ export const createProvider = ({
   webSearch,
   log,
   history,
+  forceToolCall = false,
 }) => {
   const ai = new GoogleGenAI({apiKey});
   const functionDeclarations = tools.map((t) => ({
@@ -94,6 +95,15 @@ export const createProvider = ({
         GEMINI_UNSUPPORTED_KEYS),
   }));
   let searchEnabled = Boolean(webSearch);
+  // 모드 호출: 텍스트만으로 끝나는 응답을 막고 이 모드 도구 중 하나를 꼭 부르게 한다.
+  const toolConfig = forceToolCall ? {
+    toolConfig: {
+      functionCallingConfig: {
+        mode: FunctionCallingConfigMode.ANY,
+        allowedFunctionNames: tools.map((t) => t.name),
+      },
+    },
+  } : {};
 
   const buildTools = () => {
     const list = [{functionDeclarations}];
@@ -120,6 +130,7 @@ export const createProvider = ({
           config: {
             systemInstruction: system,
             tools: buildTools(),
+            ...toolConfig,
             maxOutputTokens: MAX_OUTPUT_TOKENS,
             abortSignal: AbortSignal.timeout(Math.max(1000,
                 Math.min(MAX_REQUEST_TIMEOUT_MS, deadline - Date.now()))),

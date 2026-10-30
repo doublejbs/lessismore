@@ -183,6 +183,26 @@ node scripts/assistant-smoke.mjs <계정 파일>
 firebase functions:log --only tripAssistant
 ```
 
+### 모드 호출 `gear_fill`(장비 자동 채우기)
+
+앱 레포 `specs/Assistant.md` AS-1(개정)·AS-4·AS-6·AS-13. 대화 대신 기존 화면의 버튼 한 번으로 부르는 **AI 액션**이다. `request.data.mode`가 있으면 이 경로, 없으면 위의 대화 경로(`history`/`userText`/`toolResults`, 보류 중이지만 호환 유지). 코드는 [assistant/gearFill.js](assistant/gearFill.js).
+
+- **요청**: `{mode: "gear_fill", context: {bagId}, locale: "ko"|"en"|"ja", today: "YYYY-MM-DD"}`. 기록 없음(요청마다 독립), 비스트리밍.
+- **응답**: `{mode, provider, model, result: {headline, items: [{gearId, source, name, brand, weightG, group, priority, reason}], notes, trip: {name, startDate, endDate, locationName, weatherLine}} | null, refused, remaining}`.
+- **순서**: 검증(`mode`·`bagId`·`locale`·`today`) → 키 확인 → `get_trip`(소유자 확인 — `not-found`·`permission-denied`, 메모 본문은 뺀다) → 사용량 `count` +1(대화 발화와 같은 20회/일) → 모델.
+- **모델 입력**: 첫 메시지 = `[오늘]`·`[달력]`·`[여행 현황]` + "이 여행에 담을 장비를 골라 propose_gear로 답하세요". 시스템 프롬프트는 `GEAR_FILL_PROMPT`(대화형과 별개, 불변). 도구는 읽기 `list_warehouse`·`get_popular_gear`·`search_catalog`·`get_forecast` + 결과 도구 `propose_gear`만(박지 검색·쓰기 도구 없음). 웹 검색 끔.
+- **결과 도구 강제**: Gemini는 `functionCallingConfig.mode = ANY`(허용 목록 = 이 모드 도구). Anthropic은 프롬프트로 유도하고, 텍스트로 끝나면 "propose_gear 도구를 호출해 답하세요"를 한 번 더 보낸다. 그래도 없으면 `internal`. 결과 도구는 실행하지 않고 루프를 끝낸다(대화 경로의 쓰기 도구와 같은 경로).
+- **상한**: 모델 호출 8회(넘으면 `internal`), `search_catalog` 6회(넘으면 오류 결과), 읽기 8회, 시간 예산은 대화 경로와 같다.
+- **검증(AS-13)**: 이 턴의 읽기 결과에 실제로 있던 `gearId`만 통과(창고 → `warehouse`, 인기·카탈로그 → `catalog`). 이름·브랜드·무게·그룹·출처는 도구 결과 값으로 덮어쓴다. 여행에 이미 담긴 id·중복 id 제외, essential 먼저 정렬, 필수 그룹(텐트·침낭·매트·배낭)은 그룹당 1개(의류·기타 등은 날씨 추가가 여럿일 수 있어 자르지 않는다), 15개, `reason` 40자·`headline` 60자·`notes` 3개(각 80자). 버린 개수는 로그 `dropped`에만.
+- **`trip.weatherLine`**: 서버가 `bag.weather.daily`(여행 기간)에서 만든 한 줄 — `11/7~8 최저 -8° · 비 90% · 돌풍 15m/s`(locale별 라벨). 날씨 캐시가 없으면 이 턴에 `get_forecast`로 받은 예보로 만들고, 둘 다 없으면 `null`.
+- **거절**: `result: null`, `refused: true`.
+- **로그**: `mode`, 도구 이름·ms·결과 길이, 모델 호출별 토큰, `items`·`essential`·`catalog`·`dropped`·`notes` 개수만. 추천 내용·장비 이름은 남기지 않는다.
+
+```bash
+# 스모크: 테스트 계정의 테스트 배낭 2개(여행지 있음/없음)를 찾거나 만들고 각각 호출(호출당 사용량 1회)
+node scripts/assistant-gear-fill-smoke.mjs <계정 파일> [--only with|without]
+```
+
 ## 운영 전제와 권한
 
 - Cloud Functions와 Cloud Scheduler 사용에는 Blaze 요금제가 필요하다.
