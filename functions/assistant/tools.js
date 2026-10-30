@@ -221,7 +221,7 @@ const gearItemSchema = {
 
 const summarySchema = {
   type: "string",
-  description: "사용자에게 보여 줄 한 줄 요약(한국어, 60자 이내)",
+  description: "사용자에게 보여 줄 한 줄 요약(사용자 언어로, 60자 이내)",
 };
 
 export const TOOL_DECLARATIONS = [
