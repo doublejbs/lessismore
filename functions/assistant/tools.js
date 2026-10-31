@@ -61,11 +61,13 @@ const GROUP_LABEL = {
   etc: "기타",
 };
 
+export const ESSENTIAL_GROUPS = ["tent", "sleeping_bag", "mat", "backpack"];
+
 const groupOf = (fineKey) =>
   GROUP_KEYS.find((g) => CATEGORY_GROUPS[g].includes(fineKey)) ?? "etc";
 
 // 앱 WeatherCode.ts의 한글 라벨과 같다.
-const weatherLabel = (code) => {
+export const weatherLabel = (code) => {
   if (typeof code !== "number") {
     return "알 수 없음";
   }
@@ -444,13 +446,15 @@ export const TOOL_DECLARATIONS = [
 // 결과 도구. 서버가 검증해 result로 돌려준다(실행하지 않는다).
 export const PROPOSE_GEAR_TOOL = "propose_gear";
 
+// 모델은 gearId·name·group·priority·reason만 쓴다 — 브랜드·무게·출처는 서버가
+// 창고 값으로 채운다(출력 토큰 절약, 40개 상한). name·group은 모델이 id를 헷갈리지
+// 않게 붙이는 확인용이며 결과에는 창고 값이 들어간다.
 const PROPOSE_GEAR_DECLARATION = {
   name: PROPOSE_GEAR_TOOL,
   description: "이 여행에 담을 장비 추천을 제출한다. 설명문 대신 반드시 이 " +
-    "도구 하나로 답한다. items의 gearId·source·name·brand·weightG·group은 " +
-    "이번에 부른 도구 결과 값을 그대로 쓴다(창고 결과는 source=\"warehouse\", " +
-    "인기·카탈로그 결과는 source=\"catalog\"). essential 먼저, 같은 그룹 " +
-    "1개, 15개 이내.",
+    "도구 하나로 답한다. items의 gearId·name·group은 [창고] 블록(또는 " +
+    "list_warehouse 결과)의 값을 그대로 쓴다. essential 먼저, 필수 4종 " +
+    "그룹은 1개씩, 전부 40개 이내.",
   input_schema: {
     type: "object",
     properties: {
@@ -461,26 +465,24 @@ const PROPOSE_GEAR_DECLARATION = {
       },
       items: {
         type: "array",
-        maxItems: 15,
+        maxItems: 40,
         items: {
           type: "object",
           properties: {
             gearId: {type: "string"},
-            source: {type: "string", enum: ["warehouse", "catalog"]},
+            source: {type: "string", enum: ["warehouse"]},
             name: {type: "string"},
-            brand: {type: "string"},
-            weightG: {type: "number"},
             group: {type: "string", enum: GROUP_KEYS},
             priority: {type: "string", enum: ["essential", "recommended"]},
             reason: {
               type: "string",
               maxLength: 40,
-              description: "고른 이유 한 구절(사용자 언어, 40자 이내)",
+              description: "고른 이유 한 구절(사용자 언어, 40자 이내, " +
+                "마침표 없이)",
             },
           },
           required: [
-            "gearId", "source", "name", "brand", "weightG", "group",
-            "priority", "reason",
+            "gearId", "source", "name", "group", "priority", "reason",
           ],
           additionalProperties: false,
         },
@@ -498,16 +500,16 @@ const PROPOSE_GEAR_DECLARATION = {
   },
 };
 
+// 후보는 창고 장비뿐(2026-10-31) — 인기·카탈로그 검색은 gear_fill에서 쓰지 않는다.
+// 창고는 서버가 첫 메시지에 미리 넣고, list_warehouse는 200개 초과분 재조회용이다.
 const GEAR_FILL_READ_TOOLS = [
   "list_warehouse",
-  "get_popular_gear",
-  "search_catalog",
   "get_forecast",
 ];
 
 export const GEAR_FILL_READ_TOOL_NAMES = new Set(GEAR_FILL_READ_TOOLS);
 
-// gear_fill 도구 세트: 읽기 4종 + 결과 도구. search_camp_spots·쓰기 도구는 없다.
+// gear_fill 도구 세트: 읽기 2종 + 결과 도구. 박지·카탈로그·인기·쓰기 도구는 없다.
 export const GEAR_FILL_TOOL_DECLARATIONS = [
   ...GEAR_FILL_READ_TOOLS.map((name) =>
     TOOL_DECLARATIONS.find((t) => t.name === name)),
@@ -858,9 +860,32 @@ export const createReadTools = ({uid, bagId, today}) => {
     get_forecast: getForecast,
   };
 
-  // 창고 장비 id 집합(사용자 장비 id = 카탈로그 id라 출처 판별에 쓴다).
-  const warehouseIds = async () =>
-    new Set((await loadWarehouse()).map((g) => g.id));
+  // 창고 장비 전체 요약(담긴 것 포함) — gear_fill 선주입·missingGroups 계산용.
+  const warehouseGears = () => loadWarehouse();
 
-  return {handlers, getTrip, tripGearIds, warehouseIds};
+  // 지난 여행 후보: users/{uid}.bags → bag 문서(DM-25 30개 청크, 병렬).
+  // 현재 배낭은 빼고, 배열 뒤쪽(최근 추가)부터 maxBags개만 읽는다. 본인 문서만.
+  const loadOwnBags = async (maxBags) => {
+    const userSnap = await db.collection("users").doc(uid).get();
+    const raw = userSnap.exists ? userSnap.data()?.bags : null;
+    const ids = [...new Set((Array.isArray(raw) ? raw : [])
+        .filter((id) => typeof id === "string" && id.length > 0 &&
+          !id.includes("/") && id !== bagId))]
+        .slice(-maxBags);
+
+    if (ids.length === 0) {
+      return [];
+    }
+
+    const parts = await Promise.all(chunk(ids, FIRESTORE_IN_LIMIT)
+        .map((part) => db.collection("bag")
+            .where(FieldPath.documentId(), "in", part)
+            .get()));
+
+    return parts
+        .flatMap((snap) => snap.docs.map((d) => ({id: d.id, ...d.data()})))
+        .filter((b) => b.userId === uid);
+  };
+
+  return {handlers, getTrip, tripGearIds, warehouseGears, loadOwnBags};
 };

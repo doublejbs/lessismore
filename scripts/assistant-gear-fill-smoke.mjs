@@ -1,7 +1,8 @@
 // 여행 도우미 모드 호출 gear_fill 스모크 테스트 (앱 레포 specs/Assistant.md AS-1·AS-13).
 //   테스트 계정으로 로그인 → 그 계정의 테스트 배낭 2개(여행지 있음 / 없음)를 찾거나 만들고
-//   → 각각 mode: "gear_fill"을 호출해 result를 출력한다. 배낭은 지우지 않는다(재사용).
-//   호출 1회 = 사용량 1회(assistant-usage/{uid}.count).
+//   → 각각 mode: "gear_fill"을 호출해 result(items·missingGroups·warehouseEmpty)를 출력한다.
+//   배낭은 지우지 않는다(재사용). 호출 1회 = 사용량 1회(assistant-usage/{uid}.count) —
+//   단, 이 배낭에 안 담긴 창고 장비가 0개면 서버가 모델을 부르지 않고 세지도 않는다.
 //
 //   실행: node scripts/assistant-gear-fill-smoke.mjs <계정 파일> [--only with|without]
 //     계정 파일: 1행 이메일, 2행 비밀번호(assistant-smoke.mjs가 만든 파일).
@@ -111,7 +112,8 @@ const runFill = async (label, bagId) => {
 
     console.log(`headline: ${r.headline}`);
     console.log(`trip: ${JSON.stringify(r.trip)}`);
-    console.log(`items ${r.items.length}개 (essential ${r.items.filter((i) => i.priority === 'essential').length}, catalog ${r.items.filter((i) => i.source === 'catalog').length}):`);
+    console.log(`warehouseEmpty=${r.warehouseEmpty} missingGroups=${JSON.stringify(r.missingGroups)}`);
+    console.log(`items ${r.items.length}개 (essential ${r.items.filter((i) => i.priority === 'essential').length}, recommended ${r.items.filter((i) => i.priority === 'recommended').length}, 창고 밖 ${r.items.filter((i) => i.source !== 'warehouse').length}):`);
 
     for (const i of r.items) {
       console.log(`  · [${i.priority}] ${i.name} / ${i.brand} / ${i.weightG}g / ${i.group} / ${i.source} — ${i.reason}`);

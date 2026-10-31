@@ -105,6 +105,8 @@ export const createProvider = ({
   webSearch,
   log,
   history,
+  // 모드별 출력 상한(gear_fill은 40개 결과라 더 크게). 대화 경로는 기본값.
+  maxTokens = MAX_TOKENS,
 }) => {
   const client = new Anthropic({apiKey});
   // strict: true — 숫자·길이·패턴 제약은 strict 스키마가 지원하지 않아 뺀다
@@ -192,7 +194,7 @@ export const createProvider = ({
       const remainingMs = Math.max(1000, deadline - Date.now());
       const stream = openStream({
         model,
-        max_tokens: MAX_TOKENS,
+        max_tokens: maxTokens,
         system: [{
           type: "text",
           text: system,

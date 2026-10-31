@@ -7,33 +7,48 @@ import {
   GEAR_FILL_RETRY_ERROR,
 } from "./prompt.js";
 import {
+  ESSENTIAL_GROUPS,
   GEAR_FILL_READ_TOOL_NAMES,
   GEAR_FILL_TOOL_DECLARATIONS,
   PROPOSE_GEAR_TOOL,
   createReadTools,
 } from "./tools.js";
-import {UsageKind, consumeDailyUsage} from "./usage.js";
+import {
+  UsageKind,
+  assertUsageAvailable,
+  consumeDailyUsage,
+} from "./usage.js";
 import {buildFirstTurnPrefix, runTurn} from "./engine.js";
+import {
+  PAST_TRIPS_READ_LIMIT,
+  buildGearFillBlocks,
+  buildWarehouseEntries,
+  selectPastTrips,
+} from "./pastTrips.js";
 
 // 모드 호출 gear_fill(장비 자동 채우기) — 앱 레포 specs/Assistant.md
-// AS-1(개정)·AS-4·AS-6·AS-9·AS-10·AS-12·AS-13.
-// 대화 기록 없이 요청마다 독립: 여행 현황 → 읽기 도구 → propose_gear → 검증 → result.
+// AS-1(개정)·AS-4·AS-6·AS-9·AS-10·AS-12·AS-13(2026-10-31 개정).
+// 대화 기록 없이 요청마다 독립: 여행 현황·창고·지난 여행 선주입 → (필요 시 읽기)
+// → propose_gear → 검증 → result. 후보는 사용자 창고 장비뿐이다.
 
 export const MODE_GEAR_FILL = "gear_fill";
 
 const LOCALES = ["ko", "en", "ja"];
 const DATE_RE = /^\d{4}-\d{2}-\d{2}$/;
 const MAX_MODEL_CALLS = 8;
-const TOOL_LIMITS = {search_catalog: 6};
-const MAX_ITEMS = 15;
+// 40개 결과를 담을 출력 상한(Anthropic — Gemini는 이미 8192). 대화 경로는 기본값.
+const GEAR_FILL_MAX_TOKENS = 8192;
+// 지난 여행 조회 시간 상한 — 넘기면 블록 없이 진행한다.
+const PAST_TRIPS_TIMEOUT_MS = 4000;
+const MAX_ITEMS = 40;
 const MAX_HEADLINE = 60;
 const MAX_REASON = 40;
 const MAX_NOTES = 3;
 const MAX_NOTE_LENGTH = 80;
 const PRIORITIES = ["essential", "recommended"];
-// 그룹당 1개로 자르는 필수 그룹. 의류·기타 같은 그룹은 날씨 추가(우의·장갑·
-// 아이젠)가 여러 개일 수 있어 자르지 않는다(AS-6 "배낭 1·침낭 1·매트 1").
-const SINGLE_PER_GROUP = new Set(["tent", "sleeping_bag", "mat", "backpack"]);
+// 그룹당 1개로 자르는 필수 4종 그룹. 의류·조리 같은 그룹은 여러 개가 함께 갈 수
+// 있어 자르지 않는다(역할 중복 제거는 프롬프트 몫 — AS-6·AS-13).
+const SINGLE_PER_GROUP = new Set(ESSENTIAL_GROUPS);
 const SNOW_SKIES = new Set(["눈", "소낙눈"]);
 const SHELTER_KEYWORD = "대피소";
 // 여행지가 없을 때 headline 앞에 반드시 오는 안내(사용자 언어).
@@ -174,9 +189,10 @@ const buildHeadline = (raw, locale, hasLocation) => {
 
 /**
  * propose_gear 입력을 검증한다(AS-13).
- * - 이 턴의 도구 결과에 실제로 있던 gearId만 통과, 표시 값은 도구 결과로 덮어쓴다.
+ * - 이 턴에 서버가 선주입했거나 list_warehouse로 읽은 창고 gearId만 통과,
+ *   이름·브랜드·무게·그룹은 창고 값으로 덮어쓰고 출처는 항상 warehouse.
  * - 이미 담긴 id·중복 id 제외, essential 먼저 정렬 후 필수 그룹은 1개씩,
- *   15개로 자른다. 버린 개수는 dropped로만 센다.
+ *   40개로 자른다. 버린 개수는 dropped로만 센다.
  * - presetGroups: 이미 채워진 필수 그룹(여행에 담긴 것·대피소 박의 tent).
  */
 export const validateProposal = ({
@@ -201,7 +217,7 @@ export const validateProposal = ({
     usedIds.add(raw.gearId);
     candidates.push({
       gearId: raw.gearId,
-      source: seen.source,
+      source: "warehouse",
       name: seen.name,
       brand: seen.brand,
       weightG: seen.weightG,
@@ -250,45 +266,43 @@ export const validateProposal = ({
   };
 };
 
-// 읽기 결과에서 고를 수 있었던 장비를 모은다(id → 도구 결과 값).
-// 사용자 장비 id는 카탈로그 id와 같아, 창고에 있는 id는 어느 도구에서 왔든
-// 출처를 warehouse로 둔다(앱이 카탈로그 등록을 다시 하지 않게).
-export const collectSeenGear = (seenGear, warehouseIds, call, content) => {
-  const gears = Array.isArray(content?.gears) ? content.gears : [];
-
-  if (!["list_warehouse", "get_popular_gear", "search_catalog"]
-      .includes(call.name)) {
-    return;
-  }
-
-  for (const g of gears) {
-    if (!g?.id) {
-      continue;
-    }
-
-    const source = call.name === "list_warehouse" || warehouseIds.has(g.id) ?
-      "warehouse" :
-      "catalog";
-    const prev = seenGear.get(g.id);
-
-    // 이미 본 id는 출처만 warehouse로 올린다(표시 값은 처음 본 결과 유지).
-    if (prev) {
-      if (source === "warehouse") {
-        prev.source = "warehouse";
-      }
-
+/**
+ * 고를 수 있는 창고 장비를 모은다(id → 창고 값). 선주입한 [창고]와 이 턴의
+ * list_warehouse 결과만 넣는다 — 그 밖의 id는 검증에서 버려진다.
+ * @param {Map<string, object>} seenGear
+ * @param {object[]} gears 창고 요약({id, name, brand, weight, group})
+ */
+export const rememberWarehouseGear = (seenGear, gears) => {
+  for (const g of Array.isArray(gears) ? gears : []) {
+    if (!g?.id || seenGear.has(g.id)) {
       continue;
     }
 
     seenGear.set(g.id, {
-      source,
       name: g.name ?? "",
       brand: g.brand ?? "",
       weightG: Number.isFinite(g.weight) ? g.weight : 0,
-      // get_popular_gear 결과에는 group이 없어 요청한 그룹을 쓴다.
-      group: g.group ?? content.category ?? call.input?.category ?? "etc",
+      group: g.group ?? "etc",
     });
   }
+};
+
+const isShelterTrip = (location) => Boolean(location?.campSpotId) &&
+  String(location?.name ?? "").includes(SHELTER_KEYWORD);
+
+/**
+ * 창고에 없는 필수 그룹(AS-13 missingGroups): 필수 4종 중 사용자 창고 전체
+ * (담긴 것 포함)와 이 배낭에 그 그룹 장비가 하나도 없는 그룹. 대피소 박이면
+ * tent 제외. 순서는 tent·sleeping_bag·mat·backpack.
+ * @return {string[]}
+ */
+export const computeMissingGroups = ({warehouse, tripGears, location}) => {
+  const owned = new Set([...(warehouse ?? []), ...(tripGears ?? [])]
+      .map((g) => g?.group));
+  const shelter = isShelterTrip(location);
+
+  return ESSENTIAL_GROUPS.filter((group) => !owned.has(group) &&
+    !(shelter && group === "tent"));
 };
 
 /**
@@ -300,10 +314,8 @@ export const presetEssentialGroups = (tripSnapshot) => {
   const groups = new Set((tripSnapshot.gears ?? [])
       .map((g) => g.group)
       .filter((g) => SINGLE_PER_GROUP.has(g)));
-  const location = tripSnapshot.location;
 
-  if (location?.campSpotId &&
-    String(location.name ?? "").includes(SHELTER_KEYWORD)) {
+  if (isShelterTrip(tripSnapshot.location)) {
     groups.add("tent");
   }
 
@@ -331,17 +343,100 @@ export const runGearFill = async ({
     throw new HttpsError("internal", "문제가 생겼어요. 다시 시도해 주세요");
   }
 
+  // 한도를 이미 다 쓴 사용자는 읽기 전에 거절한다(최종 판정은 consumeDailyUsage).
+  setStage("usage");
+
+  const remainingBefore = await assertUsageAvailable(uid);
+
   // 여행 현황(소유자 확인 포함 — not-found·permission-denied). 메모 본문은 뺀다(AS-10).
   setStage("trip");
 
   const readTools = createReadTools({uid, bagId, today});
+  // 지난 여행은 창고·여행 현황과 병렬로 읽고, 실패하거나(권한·누락) 4초를 넘기면
+  // 블록 없이 진행한다.
+  let pastTimer = null;
+  const pastTimeout = new Promise((resolve) => {
+    pastTimer = setTimeout(() => {
+      log({event: "past_trips_timeout", mode: MODE_GEAR_FILL,
+        ms: PAST_TRIPS_TIMEOUT_MS});
+      resolve([]);
+    }, PAST_TRIPS_TIMEOUT_MS);
+  });
+  const pastBagsPromise = Promise.race([
+    readTools.loadOwnBags(PAST_TRIPS_READ_LIMIT).catch((err) => {
+      log({event: "past_trips_failed", mode: MODE_GEAR_FILL,
+        errorName: err?.constructor?.name ?? err?.name ?? null});
+
+      return [];
+    }),
+    pastTimeout,
+  ]).finally(() => clearTimeout(pastTimer));
+  const warehousePromise = readTools.warehouseGears();
+
+  // 여행 현황이 먼저 실패하면(not-found 등) 기다리지 않는 창고 읽기의 거부를 삼킨다.
+  warehousePromise.catch(() => {});
+
   // eslint-disable-next-line @typescript-eslint/no-unused-vars -- 메모 제외
   const {memo, ...tripSnapshot} = await readTools.getTrip();
-  const [tripGearIds, warehouseIds] = await Promise.all([
+  const [tripGearIds, warehouse, pastBags] = await Promise.all([
     readTools.tripGearIds(),
-    readTools.warehouseIds(),
+    warehousePromise,
+    pastBagsPromise,
   ]);
   const presetGroups = presetEssentialGroups(tripSnapshot);
+  const missingGroups = computeMissingGroups({
+    warehouse,
+    tripGears: tripSnapshot.gears,
+    location: tripSnapshot.location,
+  });
+  const available = warehouse.filter((g) => !tripGearIds.has(g.id));
+  const trip = {
+    name: tripSnapshot.name ?? "",
+    startDate: tripSnapshot.startDate ?? "",
+    endDate: tripSnapshot.endDate ?? "",
+    locationName: tripSnapshot.location?.name || null,
+    weatherLine: buildWeatherLine(tripSnapshot, locale),
+  };
+
+  // 고를 창고 장비가 없으면 모델을 부르지 않고 사용량도 세지 않는다(AS-4·§6).
+  // warehouseEmpty는 창고 자체가 빈 경우만 true — 전부 이미 담긴 경우와 앱 문구가
+  // 다르다(AS-15).
+  if (available.length === 0) {
+    log({event: "mode_result", mode: MODE_GEAR_FILL, items: 0, skipped: true,
+      warehouse: warehouse.length, missing: missingGroups.length});
+
+    return {
+      mode: MODE_GEAR_FILL,
+      provider: providerName,
+      model,
+      remaining: remainingBefore,
+      result: {
+        headline: "",
+        items: [],
+        notes: [],
+        trip,
+        missingGroups,
+        warehouseEmpty: warehouse.length === 0,
+      },
+      refused: false,
+    };
+  }
+
+  const warehouseIds = new Set(warehouse.map((g) => g.id));
+  const {trips: pastTrips, tripCounts, total: pastTotal} = selectPastTrips({
+    bags: pastBags,
+    today,
+    currentBagId: bagId,
+    warehouseIds,
+  });
+  const {
+    entries: warehouseEntries,
+    truncated,
+    truncatedByGroup,
+  } = buildWarehouseEntries({
+    available,
+    tripCounts,
+  });
 
   setStage("usage");
 
@@ -351,7 +446,23 @@ export const runGearFill = async ({
 
   const handlers = Object.fromEntries(Object.entries(readTools.handlers)
       .filter(([name]) => GEAR_FILL_READ_TOOL_NAMES.has(name)));
+  // list_warehouse 재조회 결과에도 trips를 붙인다(선주입 [창고]와 같은 모양).
+  const listWarehouse = handlers.list_warehouse;
+
+  handlers.list_warehouse = async (input) => {
+    const res = await listWarehouse(input);
+
+    return {
+      ...res,
+      gears: res.gears.map((g) => ({...g, trips: tripCounts.get(g.id) ?? 0})),
+    };
+  };
+
   const seenGear = new Map();
+  const injectedIds = new Set(warehouseEntries.map((e) => e.id));
+
+  rememberWarehouseGear(seenGear,
+      available.filter((g) => injectedIds.has(g.id)));
   // bag.weather가 없을 때 weatherLine 폴백으로 쓸, 이 턴의 get_forecast 예보.
   let forecastDaily = [];
   const history = [];
@@ -362,6 +473,7 @@ export const runGearFill = async ({
     tools: GEAR_FILL_TOOL_DECLARATIONS,
     webSearch: false,
     forceToolCall: true,
+    maxTokens: GEAR_FILL_MAX_TOKENS,
     log,
     history,
   });
@@ -379,11 +491,12 @@ export const runGearFill = async ({
       deadline,
       isTerminalTool: (name) => name === PROPOSE_GEAR_TOOL,
       maxModelCalls: MAX_MODEL_CALLS - modelCalls,
-      toolLimits: TOOL_LIMITS,
       nudgeText: GEAR_FILL_NUDGE,
       finalCall: {tools: [PROPOSE_GEAR_TOOL], text: GEAR_FILL_FINAL_CALL_TEXT},
       onReadResult: (call, content) => {
-        collectSeenGear(seenGear, warehouseIds, call, content);
+        if (call.name === "list_warehouse") {
+          rememberWarehouseGear(seenGear, content?.gears);
+        }
 
         if (call.name === "get_forecast" && content?.available &&
           Array.isArray(content.daily)) {
@@ -403,6 +516,12 @@ export const runGearFill = async ({
   };
   const base = {mode: MODE_GEAR_FILL, provider: providerName, model, remaining};
   const userText = buildFirstTurnPrefix({today, locale, tripSnapshot}) +
+    buildGearFillBlocks({
+      warehouseEntries,
+      truncated,
+      truncatedByGroup,
+      trips: pastTrips,
+    }) +
     GEAR_FILL_INSTRUCTION;
   let turn = await runOnce({userText});
   let checked = null;
@@ -465,9 +584,13 @@ export const runGearFill = async ({
     mode: MODE_GEAR_FILL,
     items: checked.items.length,
     essential: checked.items.filter((i) => i.priority === "essential").length,
-    catalog: checked.items.filter((i) => i.source === "catalog").length,
     dropped: checked.dropped,
     notes: checked.notes.length,
+    missing: missingGroups.length,
+    warehouse: warehouseEntries.length,
+    truncated,
+    pastTrips: pastTrips.length,
+    pastTotal,
     modelCalls,
     reads,
     usage,
@@ -480,15 +603,14 @@ export const runGearFill = async ({
       items: checked.items,
       notes: checked.notes,
       trip: {
-        name: tripSnapshot.name ?? "",
-        startDate: tripSnapshot.startDate ?? "",
-        endDate: tripSnapshot.endDate ?? "",
-        locationName: tripSnapshot.location?.name || null,
+        ...trip,
         // bag.weather.daily(여행 기간) 우선, 없으면 이 턴의 get_forecast 예보,
         // 둘 다 없으면 null.
-        weatherLine: buildWeatherLine(tripSnapshot, locale) ??
+        weatherLine: trip.weatherLine ??
           buildWeatherLine({...tripSnapshot, weather: forecastDaily}, locale),
       },
+      missingGroups,
+      warehouseEmpty: false,
     },
     refused: false,
   };

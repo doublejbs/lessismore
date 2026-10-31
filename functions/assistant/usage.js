@@ -78,3 +78,33 @@ export const consumeDailyUsage = async (uid, kind) => {
     return Math.max(0, DAILY_LIMIT - count);
   });
 };
+
+/**
+ * 세지 않고 오늘 남은 발화 수만 읽는다(창고가 비어 모델을 부르지 않는 모드 호출 —
+ * AS-4 "한도 미차감"). 쓰지 않는다.
+ * @param {string} uid
+ * @return {Promise<number>}
+ */
+export const peekDailyUsage = async (uid) => {
+  const snap = await admin.firestore()
+      .collection(USAGE_COLLECTION).doc(uid).get();
+
+  return Math.max(0, DAILY_LIMIT - readCount(snap.data(), "count", kstDay()));
+};
+
+/**
+ * 읽기 전에 미리 한도를 본다 — 이미 소진했으면 resource-exhausted를 던진다.
+ * 최종 판정은 consumeDailyUsage 트랜잭션이 한다(이건 불필요한 읽기 절약용).
+ * @param {string} uid
+ * @return {Promise<number>} 오늘 남은 발화 수(1 이상)
+ */
+export const assertUsageAvailable = async (uid) => {
+  const remaining = await peekDailyUsage(uid);
+
+  if (remaining <= 0) {
+    throw new HttpsError("resource-exhausted", MESSAGE_LIMIT_MESSAGE,
+        {kind: LimitKind.MESSAGE, remaining: 0});
+  }
+
+  return remaining;
+};
