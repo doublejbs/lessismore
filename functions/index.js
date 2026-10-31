@@ -36,6 +36,7 @@ import {onBagDeleted} from "./bagCleanup.js";
 import {groupInviteHtml} from "./groupInviteHtml.js";
 import {rotateFeedContent} from "./feedRotation.js";
 import {sendWeekendBriefing} from "./weekendBriefing.js";
+import {tripAssistant} from "./tripAssistant.js";
 import {
   revenuecatWebhook,
   onSubscriptionUserDeleted,
@@ -175,4 +176,5 @@ export {
   onSubscriptionUserDeleted,
   rotateFeedContent,
   sendWeekendBriefing,
+  tripAssistant,
 };

@@ -2,6 +2,7 @@ import process from "node:process";
 import admin from "firebase-admin";
 import {onSchedule} from "firebase-functions/v2/scheduler";
 import {logger} from "firebase-functions";
+import {KST_OFFSET_MS, parseDate, toKstDateString} from "./kstDate.js";
 
 // 앱 레포 specs/Notification.md NT-11(주말 날씨 브리핑), specs/DataModel.md DM-34·DM-35.
 const REGION = "asia-northeast3";
@@ -11,7 +12,6 @@ const CONFIG_DOC_PATH = "config/weekendBriefing";
 const RUN_LOG_COLLECTION = "weekend-briefing-runs";
 const PUSH_TOKEN_COLLECTION = "push-tokens";
 const FORECAST_URL = "https://api.open-meteo.com/v1/forecast";
-const KST_OFFSET_MS = 9 * 60 * 60 * 1000;
 const DAY_MS = 24 * 60 * 60 * 1000;
 const UPCOMING_TRIP_DAYS = 14;
 // Open-Meteo forecast는 오늘 포함 16일(오늘+15일)까지만 받는다(앱 WeatherService와 같은 한도).
@@ -125,11 +125,6 @@ export const getKstIsoWeekId = (date) => {
   return `${isoYear}-W${String(week).padStart(2, "0")}`;
 };
 
-// Date → KST 달력 날짜 문자열(YYYY-MM-DD).
-export const toKstDateString = (date) => {
-  return new Date(date.getTime() + KST_OFFSET_MS).toISOString().slice(0, 10);
-};
-
 // YYYY-MM-DD에 일수를 더한다(달력 연산이라 UTC 자정 기준으로 계산).
 export const addDays = (dateString, days) => {
   const base = Date.parse(`${dateString}T00:00:00Z`);
@@ -157,30 +152,6 @@ export const getUpcomingWeekend = (runAt) => {
   const saturday = addDays(today, (6 - weekday + 7) % 7);
 
   return {startDate: saturday, endDate: addDays(saturday, 1)};
-};
-
-const toIsoString = (value) => {
-  if (typeof value === "string") {
-    return value;
-  }
-
-  if (value && typeof value.toDate === "function") {
-    return value.toDate().toISOString();
-  }
-
-  return null;
-};
-
-const parseDate = (value) => {
-  const iso = toIsoString(value);
-
-  if (!iso) {
-    return null;
-  }
-
-  const time = Date.parse(iso);
-
-  return Number.isNaN(time) ? null : new Date(time);
 };
 
 const getCampSpotId = (bag) => {

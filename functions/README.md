@@ -154,6 +154,61 @@ gcloud scheduler jobs update http firebase-schedule-sendWeekendBriefing-asia-nor
 
 gcloud가 없으면 Cloud Scheduler REST(`PATCH …/jobs/{name}?updateMask=attemptDeadline`, body `{"attemptDeadline":"600s"}`)로 같은 일을 한다.
 
+## 여행 도우미 `tripAssistant`
+
+앱 레포 `specs/Assistant.md`(AS-1·AS-2·AS-4·AS-5·AS-6·AS-8·AS-9·AS-10·AS-12, 데이터 계약은 `specs/DataModel.md` DM-39)의 서버 부분이다. 사용자가 대화로 여행(배낭)을 계획하면 모델이 읽기 도구를 서버에서 부르고, 쓰기 도구는 실행하지 않고 앱에 돌려준다. 코드는 [tripAssistant.js](tripAssistant.js)(핸들러)와 [assistant/](assistant/)(`prompt.js` 시스템 프롬프트, `tools.js` 도구 선언·읽기 구현, `schema.js` 공급자별 스키마 정리, `engine.js` 검증·턴 루프, `usage.js` 일일 한도, `providers/{anthropic,gemini}.js`)에 있다.
+
+- **형태**: v2 `onCall`, 리전 `asia-northeast3`, `timeoutSeconds: 120`, `memory: 512MiB`, `maxInstances: 10`, `invoker: "public"`(인증은 Firebase Auth ID 토큰 — `request.auth` 없으면 `unauthenticated`).
+- **공급자 교체형**: `functions/.env`의 `ASSISTANT_PROVIDER`(`anthropic` | `gemini`, 기본 `gemini`)와 `ASSISTANT_MODEL`(기본 gemini `gemini-3.1-flash-lite` / anthropic `claude-haiku-4-5`). `functions/.env`는 비밀이 없는 설정이라 커밋 대상이다. 키는 시크릿 `GEMINI_API_KEY`·`ANTHROPIC_API_KEY`이고, **배포 전에 두 시크릿이 모두 존재해야 한다**(쓰지 않는 공급자 쪽도 함수가 바인딩한다). `ANTHROPIC_API_KEY`는 프로젝트의 다른 함수도 같은 시크릿을 쓴다 — 값을 바꾸면(`secrets:set --force`는 그 함수들도 새 버전으로 재배포한다) 함께 영향을 받는다. 공식 SDK `@google/genai`·`@anthropic-ai/sdk`만 쓴다.
+  - Anthropic: 캐시 지점 3개 — 마지막 도구·`system`·마지막 사용자 메시지 블록(기록 캐시, 요청 사본에만 붙이고 앱 기록에는 남기지 않는다). 도구는 `strict: true`(숫자·길이·패턴 키워드는 strict가 지원하지 않아 `schema.js`로 제거, 선택 필드는 `required`에서 뺀 채 둔다). `max_tokens: 4096`, `output_config.effort: "low"`(Haiku 4.5·Sonnet 4.5는 effort를 거부해 생략), thinking 파라미터는 넣지 않는다(Haiku 4.5는 미지원, 5.x는 생략 시 adaptive). Fable 5/Opus 5/Sonnet 5.5 계열은 beta 클라이언트로 `fallbacks: "default"` + `server-side-fallback-2026-07-01`, Haiku 4.5 등은 넣지 않는다. 웹 검색 서버 도구(Haiku 4.5 등 이전 세대는 `web_search_20250305`, 그 밖은 `web_search_20260209`, 턴당 3회). `pause_turn`은 최대 3번 이어 보내고 넘으면 `unavailable`. 요청 타임아웃 `min(90초, 남은 시간)`, SDK 재시도는 남은 25초당 1회(최대 3회).
+  - Gemini: 비스트리밍 `generateContent`, `parametersJsonSchema`(지원하지 않는 키워드 제거), `googleSearch` 그라운딩(429·400이면 그 요청에서 끄고 재시도 — 무료 등급은 매 요청 첫 호출이 429로 끝난다), 429는 안내 시간(최대 30초)만큼 최대 3회 대기, 5xx는 2초 뒤 최대 2회(둘 다 대기 뒤 다음 요청에 15초 이상 남을 때만), 요청 타임아웃 `min(90초, 남은 시간)`, `maxOutputTokens: 8192`.
+- **무상태**: 앱이 공급자 원형 `history`를 보내고 함수는 이번 턴에 덧붙인 메시지를 `appended`로 돌려준다(append-only). 첫 요청이면 사용자 텍스트 앞에 `[오늘] {today} ({요일}) · 언어: {locale}`, `[달력]`(오늘부터 21일, 요일 포함 — 모델이 요일을 잘못 세는 문제 완화), `context.bagId`가 있으면 `[여행 현황]`(get_trip 결과)을 붙인다.
+- **호출 계약**: 요청 `{provider?, history, userText? | toolResults?, locale, today, context: {bagId?}}` → 응답 `{provider, model, appended, text, pendingActions: [{id, name, input}], remaining, stopReason: "end"|"tool_use"|"refusal"|"max_tokens"}`. 스트리밍(`request.acceptsStreaming`)이면 `{type: "status", tool}`(읽기·웹 검색)·`{type: "text_delta", text}` 청크를 보낸다(Gemini는 텍스트를 한 번에).
+- **도구 짝 맞추기**: `toolResults`는 기록 끝 모델 메시지의 쓰기 호출과 짝지어야 한다 — id가 있으면 id로, 없으면 쓰기 호출 순서·이름으로. Gemini `functionCall`에 id가 없으면 `call_{메시지 안 순번}`을 발급한다. 한 메시지에 읽기와 쓰기가 섞이면 쓰기만 `pendingActions`로 돌려주고, 같은 메시지의 읽기는 다음 요청(결과 이어 보내기)에서 서버가 실행해 쓰기 결과와 한 메시지로 합친다.
+- **입력 검증**: `history`+`toolResults`+`userText` 직렬화 200KB, 메시지 80개, `userText` 2,000자, 결과 하나 8KB. 기록은 role(Anthropic `user`/`assistant`, Gemini `user`/`model`)을 확인하고, 금지 목록 방식으로 위험한 항목만 거부한다 — Anthropic `image`·`document`·`search_result`·`container_upload` 블록과 `cache_control`, Gemini `inlineData`·`fileData`·`executableCode`·`codeExecutionResult`(어느 깊이든, 도구 입력 `input`/`args` 안은 제외). 공급자가 새 블록 타입을 내도 서버가 push한 응답이 거부되지 않게 허용 목록을 쓰지 않는다([assistant/historyGuard.js](assistant/historyGuard.js)). 걸리면 `invalid-argument`. 한도 초과 `resource-exhausted`의 `details.kind`는 발화 한도면 `message`, 이어 보내기 한도면 `toolTurn`(문구 "요청이 너무 잦아요…", `remaining`은 실제 남은 발화 수).
+- **시간 상한**: 함수 120초 안에서 공급자 작업은 시작 후 100초까지. 매 모델 호출 전에 남은 시간이 5초 미만이면 `unavailable`, 읽기 도구도 같은 기준으로 실행하지 않고 오류 결과를 돌려준다(Firestore 읽기엔 타임아웃이 없다). Anthropic은 `signal`로 재시도까지 포함한 전체 시간을 남은 예산에 묶는다.
+- **읽기 상한**: 한 턴 8회. 넘으면 실행 대신 오류 결과를 돌려줘 모델이 마무리하게 한다. 모델 호출이 12회를 넘으면 `internal`(앱은 appended를 받지 못한 요청을 기록에 남기지 않는다).
+- **오류**: `invalid-argument`(history 200KB·80개·userText 2,000자 초과, 짝 불일치), `resource-exhausted`(`details: {remaining: 0}`), `failed-precondition`(provider 불일치), `permission-denied`(남의 bagId), `unavailable`(공급자 429·5xx·연결, 재시도 뒤), `internal`. 거절·안전 차단은 오류가 아니라 고정 문구 + `stopReason: "refusal"`.
+- **사용량(DM-39)**: `assistant-usage/{uid}` `{day(KST), count, toolTurnCount, updatedAt}`. `count`는 사용자 발화(하루 20회), `toolTurnCount`는 결과 이어 보내기(하루 60회 — 조작한 기록으로 발화 한도를 우회하지 못하게 하는 보조 상한). 검증·키 확인 통과 뒤, 모델 호출 전에 한 트랜잭션으로 센다. 응답 `remaining`은 발화 기준이다. 서버가 쓰는 문서는 이것뿐이다.
+- **로그·개인정보(AS-10)**: uid 해시 앞 8자, 도구 이름·소요·결과 길이, 모델 호출별 토큰(Anthropic은 `cache_read_input_tokens` 포함), 턴 요약(stopReason·읽기 수·pendingActions 이름)만 남긴다. 대화 내용·도구 결과 본문은 남기지 않는다. 도구 결과에 uid·이메일·닉네임을 넣지 않는다.
+
+```bash
+# 함수만 배포(레포 루트)
+firebase deploy --only functions:tripAssistant
+
+# 스모크(3턴 대본, create_trip은 skipped로 응답 — 실제 여행을 만들지 않는다)
+node scripts/assistant-smoke.mjs <계정 파일>
+
+# 로그
+firebase functions:log --only tripAssistant
+```
+
+### 모드 호출 `gear_fill`(장비 자동 채우기)
+
+앱 레포 `specs/Assistant.md` AS-1(개정)·AS-4·AS-6·AS-13. 대화 대신 기존 화면의 버튼 한 번으로 부르는 **AI 액션**이다. `request.data.mode`가 있으면 이 경로, 없으면 위의 대화 경로(`history`/`userText`/`toolResults`, 보류 중이지만 호환 유지). 코드는 [assistant/gearFill.js](assistant/gearFill.js).
+
+- **요청**: `{mode: "gear_fill", context: {bagId}, locale: "ko"|"en"|"ja", today: "YYYY-MM-DD"}`. 기록 없음(요청마다 독립), 비스트리밍.
+- **응답**: `{mode, provider, model, result: {headline, items: [{gearId, source: "warehouse", name, brand, weightG, group, priority, reason}], notes, trip: {name, startDate, endDate, locationName, weatherLine}, missingGroups: string[], warehouseEmpty: boolean} | null, refused, remaining}`.
+- **후보는 창고 장비뿐**(2026-10-31): 인기 장비·카탈로그 검색(`get_popular_gear`·`search_catalog`)은 이 모드에서 쓰지 않는다(대화 경로에는 남아 있다). 창고에 없는 필수 그룹은 `missingGroups`로 알리고 앱이 검색으로 유도한다.
+- **순서**: 검증(`mode`·`bagId`·`locale`·`today`) → 키 확인 → 한도 미리 보기(이미 20회를 다 썼으면 읽기 전에 `resource-exhausted`, 최종 판정은 아래 차감 트랜잭션) → `get_trip`(소유자 확인 — `not-found`·`permission-denied`, 메모 본문은 뺀다)·창고 전체·지난 여행을 병렬로 읽기 → **이 배낭에 안 담긴 창고 장비가 0개면** 모델을 부르지 않고 사용량도 세지 않은 채 빈 결과(`items: []`, `headline: ""`, `remaining`은 미리 본 남은 값)를 바로 돌려준다 → 사용량 `count` +1(대화 발화와 같은 20회/일) → 모델.
+- **`warehouseEmpty`**: 창고 자체가 비어 있을 때만 `true`. 창고 장비가 전부 이미 담긴 경우도 모델을 부르지 않지만 `false`다(앱 문구가 다르다 — AS-15).
+- **`missingGroups`**: 필수 4종 중 사용자 창고 전체(담긴 것 포함)와 이 배낭에 그 그룹 장비가 하나도 없는 그룹. 대피소 박(`location.campSpotId` + 이름에 "대피소")이면 `tent` 제외. 순서 `tent`·`sleeping_bag`·`mat`·`backpack`, 없으면 `[]`. 서버가 결정론적으로 계산한다(모델 무관).
+- **모델 입력**: 첫 메시지 = `[오늘]`·`[달력]`·`[여행 현황]` + **`[창고]`** + **`[이전 여행]`** + "[창고]에서 이 여행에 가져갈 장비를 전부 골라 propose_gear로 답하세요". 시스템 프롬프트는 `GEAR_FILL_PROMPT`(대화형과 별개, 불변). 도구는 읽기 `list_warehouse`(200개 초과분 재조회용)·`get_forecast` + 결과 도구 `propose_gear`만. 웹 검색 끔.
+  - `[창고]`: 이 배낭에 안 담긴 창고 장비를 200개까지(넘치면 필수 4종 그룹을 먼저 넣고 나머지를 가벼운 순으로 채운다, 블록 안 순서는 가벼운 순), 한 줄 JSON 배열 `{id, name, brand, g(무게 g), group(DM-4 1차 그룹), trips}`. `trips`는 읽은 지난 여행 전체에서 그 장비가 담긴 횟수. 200개를 넘으면 줄에 남은 개수와 잘린 그룹별 개수(`잘린 그룹: clothing 12·etc 7`)를 적고 모델이 `list_warehouse(category)`로 다시 읽는다(재조회 결과에도 `trips`를 붙인다).
+  - `[이전 여행]`: `users/{uid}.bags` → `bag` 문서를 30개씩 청크로 병렬 조회(배열 뒤쪽 최근 100건, 본인 문서만). 종료일(KST)이 `today`보다 앞서고 `gears`가 1개 이상, 현재 배낭 제외. 종료일 내림차순 최근 5건을 `{name, dates, place?, weather?, gearIds}`로 넣는다 — `weather`는 `bag.weather.daily`의 여행 기간 안 날짜로 만든 `최저 -2° · 비` 한 줄(기간 안 날짜가 없으면 생략), `gearIds`는 패킹을 완료했고 `packedGears`가 있으면 그것, 아니면 `gears` 중 **지금 창고에 있는 id만** 60개까지(남는 id가 없는 여행은 뺀다). 지난 여행이 없거나 읽기에 실패하거나(로그 `past_trips_failed`) 4초를 넘기면(로그 `past_trips_timeout`) 블록을 넣지 않고 진행한다. uid·메모·닉네임은 보내지 않는다.
+- **결과 도구 강제**: Gemini는 `functionCallingConfig.mode = ANY`(허용 목록 = 이 모드 도구). Anthropic은 프롬프트로 유도하고, 텍스트로 끝나면 "propose_gear 도구를 호출해 답하세요"를 한 번 더 보낸다. 그래도 없으면 `internal`. 결과 도구는 실행하지 않고 루프를 끝낸다(대화 경로의 쓰기 도구와 같은 경로). 마지막 허용 모델 호출에서는 Gemini 허용 목록을 `propose_gear` 하나로 좁히고, Anthropic은 "이번에는 propose_gear만" 안내를 같은 사용자 메시지에 덧붙인다.
+- **`propose_gear` 스키마**: 항목은 `gearId`·`source`(`"warehouse"`만)·`name`·`group`·`priority`·`reason`, `items` 최대 40개. 브랜드·무게는 모델이 쓰지 않고 서버가 창고 값으로 채운다(출력 토큰 절약). Anthropic `max_tokens`는 이 모드에서만 8192(대화 경로 4096), Gemini는 8192.
+- **상한**: 모델 호출 8회(넘으면 `internal`), 읽기 8회, 시간 예산은 대화 경로와 같다.
+- **검증(AS-13)**: 이 턴에 서버가 `[창고]`로 선주입했거나 `list_warehouse`로 읽은 창고 `gearId`만 통과, 이름·브랜드·무게·그룹은 창고 값으로 덮어쓰고 `source`는 항상 `warehouse`. 여행에 이미 담긴 id·중복 id 제외, essential 먼저 정렬, 필수 그룹(텐트·침낭·매트·배낭)은 그룹당 1개(그 밖의 그룹은 여러 개 허용 — 역할 중복 제거는 프롬프트 몫), 이미 담긴 필수 그룹과 대피소 박의 텐트는 거른다. 40개, `reason` 40자(끝 마침표 제거)·`headline` 60자(비면 사용자 언어 기본 문구 "이 여행에 맞춰 골랐어요", 여행지가 없으면 안내 문구로 시작)·`notes` 3개(각 80자). 버린 개수는 로그 `dropped`에만. 제출 항목이 있었는데 **전부** 버려지면 `propose_gear` 결과로 "[창고]에 있던 id만 gearId로 쓰세요…" 오류를 돌려주고 모델 호출 상한 안에서 1회 더 받는다 — 두 번째도 0개면 `internal`.
+- **`trip.weatherLine`**: 서버가 `bag.weather.daily`의 여행 기간 날짜로 만든 한 줄(기간 안 날짜가 없으면 캐시를 쓰지 않는다) — `11/7~8 최저 -8° · 비 90% · 돌풍 15m/s`(locale별 라벨). 날씨 캐시가 없으면 이 턴에 `get_forecast`로 받은 예보로 만들고, 둘 다 없으면 `null`.
+- **거절**: `result: null`, `refused: true`.
+- **로그**: `mode`, 도구 이름·ms·결과 길이, 모델 호출별 토큰, `items`·`essential`·`dropped`·`notes`·`missing`·`warehouse`(선주입 수)·`truncated`·`pastTrips`(블록 건수)·`pastTotal`(읽은 지난 여행 수) 개수만. 모델을 건너뛴 경우 `skipped: true`. 추천 내용·장비 이름·headline은 남기지 않는다.
+
+```bash
+# 스모크: 테스트 계정의 테스트 배낭 2개(여행지 있음/없음)를 찾거나 만들고 각각 호출(호출당 사용량 1회)
+node scripts/assistant-gear-fill-smoke.mjs <계정 파일> [--only with|without]
+```
+
 ## 운영 전제와 권한
 
 - Cloud Functions와 Cloud Scheduler 사용에는 Blaze 요금제가 필요하다.
