@@ -30,3 +30,7 @@
    제품명으로 매핑: `KO_EN` 토큰 사전(정션→Junction, 애스펙트→Aspect, 페미루프→**Pemi**, 울타미드→UltaMid,
    미드→Mid, 크로스피크→CrossPeak, 팟→Pod…). nameKorean 은 한글 verbatim. groupId 는 영문 슬러그.
    숫자 붙은 토큰(`울타미드2`)은 `([가-힣])(\d)` 로 분리 후 매핑.
+
+## 2026-11-16 리프레시
+- 신규 2개 push: CrossPeak 1(487g), UltaMid 2(530g). Unbound WD는 무게 0이라 보류.
+- hmg.py가 상세 URL을 `_source`에만 넣어 validate `_detailUrl` 필수 오류 → `_detailUrl`도 출력하도록 수정.

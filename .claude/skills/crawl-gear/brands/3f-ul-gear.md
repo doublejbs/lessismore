@@ -50,3 +50,10 @@
     (`/opt/homebrew/opt/node@20/bin/node`)으로 push 실행.
 11. 색상 옵션이 있는 상품(대부분 텐트/쉘터)만 color/colorKorean 채움 — 백팩(사이즈만),
     액세서리(대부분 옵션 없음)는 빈 문자열.
+
+## 2026-11-16 리프레시
+- 신규 17개 상품 / 37행 push(Freedom 20L 데이팩, 알코올 스토브, 타이지·란샨·칭콩 새 색상/시즌, 레인 판초·킬트 등). 무게 0 5행 보류.
+- 10월 룰 반영: 한글명 끝 sizeKorean 부착, 배낭은 이름의 용량을 size/specs.volume으로.
+- ⚠ **"Fabric weight: 40g(m²)"는 원단 밀도** — 무게로 잡지 않게 findWeightG에서 먼저 제거(칭콩 3이 40g으로 나왔음). 칭콩 3은 FLY WEIGHT 676g만 잡힘(이너 750g 별도).
+- ⚠ 변형값 정리: 빈 조각·색상 단어 조각·"one size"(사이즈 없음) 제거, 제품명 반복("RAIN PONCHO ZIP" → "ZIP"). 사이트 오타 MUTI → 멀티.
+- ⚠ 사이트가 제품명을 바꾼다("Lanshan Tent Sack" → "Tent Sack") — 같은 URL이라 신규가 아니다(filter-variants 단계에서 제외).

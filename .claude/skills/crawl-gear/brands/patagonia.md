@@ -44,3 +44,9 @@
 - **넥게이터=넥웨어(clothing)**, 다리 스패츠만 gaiter. **텀블러/캠프컵/머그=cup**(물병 아님).
 
 재실행: `node crawl.js patagonia --no-open` (전체 4개 대분류). 특정 대분류만: `PAT_ROOTS=001003000000000 node crawl.js patagonia`.
+
+## 2026-11-16 리프레시
+- 신규 41개 상품 / 61행 push(다운 파카·플리스·유아용 + 기존 상품 새 색상). 재크롤 621행.
+- 배낭은 사이즈 옵션이 없어 **용량을 사이즈로**("Terravia Pack 28L / 28L") — 10월 룰 반영. 2026-09 push분 배낭 28행은 size 빈값(기존 데이터 정리 대기).
+- 새 색상어 사전 추가(Coal·Low Ridge·Tri Color·Solar Blocks·Leave Only Footprints·Wavy Treelines). 새 상품이 나오면 colorKorean 영문 잔존을 꼭 확인.
+- 무게가 커 보여도 사이트 표기 그대로: 블랙 홀 로드 케이스 2,637g, 그레이트 디바이더 2,300g(상세 "무게" 표기 확인함).

@@ -63,3 +63,9 @@
 
 재실행: `node crawl.js helinox --no-open`(캐시 사용) → `python3 helinox-weight-ocr.py out/helinox-<ts>.json <out>` →
 `node validate.js` → 기존 Helinox 문서와 제품명+색상 대조 → push(node@20 push.js).
+
+## 2026-11-16 리프레시
+- 신규 24행(무게 있는 것만) push: 패커블 큐브색·캠핑 매트, 엄브렐라 신색상, 머그원 6색, 나이키 ACG 콜라보 3종, 시네마 파라디소 루브르 체어원 L.
+- 사전 추가: 캠핑 매트·큐브색·Camp Sack, 파트너 Nike ACG(`ACG`)·Cinema Paradiso 영문 표기.
+- ⚠ **패커블 캠핑 매트(140x100cm, 95g)는 침낭 매트가 아니라 접이식 깔개 → furniture_etc.**
+- 무게 0 상품(대부분 의류·콜라보 잡화)은 계속 보류.

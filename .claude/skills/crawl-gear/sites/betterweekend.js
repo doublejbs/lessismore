@@ -40,7 +40,8 @@ const decodeEntities = (s) =>
     .replace(/&amp;/g, '&');
 
 // ── 이미 공홈(또는 더기어샵) 크롤이 있는 브랜드 → 제외 ──
-const EXCLUDED_BRANDS = /^(black ?diamond|back diamond|big agnes|nemo|arc.?teryx|rab|scarpa|sierra ?designs|kolon ?sport|kolonsport|sea to summit|cayl|samaya|msr|therm-a-rest|evernew)$/i;
+// 2026-11: 더스턴·HMG·Zpacks는 공식몰 어댑터(durston-gear·hmg·zpacks)로 수집하므로 추가 제외
+const EXCLUDED_BRANDS = /^(black ?diamond|back diamond|big agnes|nemo|arc.?teryx|rab|scarpa|sierra ?designs|kolon ?sport|kolonsport|sea to summit|cayl|samaya|msr|therm-a-rest|evernew|durston|hyperlite mountain gear|zpacks)$/i;
 
 // ── Firestore에 사용자 수동입력으로 이미 있는 동일 모델 → 제외(2026-09 대조) ──
 const EXCLUDED_SRL = {
@@ -96,6 +97,7 @@ const BRANDS = {
   mountainrover: ['Mountain Rover', '마운틴로버'],
   'mountain rover': ['Mountain Rover', '마운틴로버'],
   osprey: ['Osprey', '오스프리'],
+  natora: ['NATORA', '나토라'],
   montane: ['Montane', '몬테인'],
   'mountain hardwear': ['Mountain Hardwear', '마운틴하드웨어'],
   leki: ['LEKI', '레키'],
@@ -131,6 +133,8 @@ const BRANDS = {
 //   음역 + 한글 카테고리어(트레일 러닝화/백팩/샌들/매트/등산스틱 등). 헤드램프는 국내 통용어 "헤드랜턴".
 //   MHW 텐트는 기존 수동입력(님버스 UL 1)과 같은 표기 방식을 따른다.
 const NAMES = {
+  98156: ['ThrULite Pro 55', '스루라이트 프로 55'],
+  98125: ['AG-01', 'AG-01 등산스틱'],
   97469: ['Helium Nova Down Jacket', '힐리움 노바 다운 자켓'],
   97367: ['Nano-Air Light Hoody (2026)', '나노-에어 라이트 후디 (2026)'],
   97293: ['Bare Sandal H01', '베어 샌들 H01'],
@@ -563,7 +567,24 @@ const buildRows = (card, html) => {
       specs: { ...specs, volume: v.volume },
     }));
   }
-  return [{ ...base, weight: override.weight ? toGrams(override.weight) : baseWeight(sp), specs }];
+  // 사이즈별 무게 "792 / 860 (S/M / M/L)" → 사이즈마다 행(2026-11 Osprey ThrULite Pro 55)
+  const perSize = String(sp.WEIGHT || '').match(/^([\d.,]+)\s*\/\s*([\d.,]+)\s*\(\s*(\S+)\s*\/\s*(\S+)\s*\)$/);
+  if (perSize) {
+    return [
+      [perSize[3], perSize[1]],
+      [perSize[4], perSize[2]],
+    ].map(([sz, w]) => ({ ...base, name: `${name} / ${sz}`, nameKorean: `${nameKorean} ${sz}`, size: sz, sizeKorean: sz, weight: toGrams(w), specs }));
+  }
+  // 배낭은 사이즈 옵션이 없으면 용량을 사이즈로(SKILL 룰 2026-10, 이름 끝에도 부착). 2026-10-01 push분은 size 빈값 — refresh-new.js가 같은 행으로 본다
+  const packSize = (category === 'backpack' || category === 'vest_pack') && specs.volume ? `${num(specs.volume)}L` : '';
+  return [
+    {
+      ...base,
+      ...(packSize ? { name: `${name} / ${packSize}`, nameKorean: `${nameKorean} ${packSize}`, size: packSize, sizeKorean: packSize } : {}),
+      weight: override.weight ? toGrams(override.weight) : baseWeight(sp),
+      specs,
+    },
+  ];
 };
 
 export { parseListing, parseSpecs, buildSpecs, toGrams };

@@ -73,3 +73,8 @@ SKILL.md의 33개 키 목록은 계약 이전 버전이라 `specs-schema.js`의 
 - company 는 Title case 표기, **Firestore 에 이미 있는 표기(NITECORE, Heritage, Valandre, Mountain Hardwear, Opinel,
   Goal Zero 등)는 그대로** 따른다. Hoka One One → `HOKA`(호카), fjallraven,specialized 콜라보 → `Fjallraven`.
 - 색상 옵션 없음 → color/colorKorean 전부 빈값(정상). `_source` = `betterweekend_<category>`(push 카테고리 1:1).
+
+## 2026-11-16 리프레시
+- 신규 1개 상품 / 2행 push: Osprey ThrULite Pro 55 — **사이즈별 무게 "792 / 860 (S/M / M/L)" → S/M·M/L 두 행**(처음엔 1행으로 합쳐져 있었음).
+- 공식몰 어댑터가 있는 더스턴·HMG·Zpacks는 `EXCLUDED_BRANDS`에 추가(중복 방지). NATORA AG-01은 길이별 무게라 기준이 애매해 보류(`NAMES`·`BRANDS`엔 등록).
+- 배낭은 용량을 사이즈로(`name / 55L`). 2026-10-01 push분 배낭 7행은 size 빈값(기존 데이터 정리 대기).

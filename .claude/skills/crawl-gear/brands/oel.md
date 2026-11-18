@@ -19,3 +19,7 @@
 - 이름이 비슷한 기존 DB 제품과 혼동 주의: 스노우피크 `Nyx`(345g), 헬리녹스 `소주잔`은 다른 제품.
 
 재실행: `node crawl.js oel --no-open` → `node validate.js out/oel-<ts>.json` → push(node@20 push.js).
+
+## 2026-11-16 리프레시
+- 신규 2개 push: Canopy 143 / 캐노피 143(초경량 3단 우산 143g, etc), Foldable Cup / 폴더블 컵(실리콘 200mL 77g).
+- **"OEL FIELD MEET 2026"은 행사 참가권 → `NOT_PRODUCT` 제외.** 한글명·원단 사양은 상세 이미지 OCR → `KO_NAME`/`SPEC_EXTRA`.

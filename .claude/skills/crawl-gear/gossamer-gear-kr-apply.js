@@ -4,6 +4,9 @@
 //    verbatim 사용이 곤란 → 공식 용어를 사전화해 일관 음역(음역 결과가 KR 스토어 표기와 일치).
 //  - 서드파티 콜라보 브랜드(Toaks/Nitecore/Suunto/Cumulus 등)·소재/모델코드(DCF/TPU/DAC/PVT/
 //    UHMWPE/G4-20/FT3/LT5/GVP)·규격(인치/mm/버클)은 그대로 둔다.
+//  - 2026-11 개정(크롤 공통 룰): 제품명에 브랜드명 금지 → 접두 "고싸머기어" 제거. 사이즈는 예외 없이 name " / size"·
+//    nameKorean " sizeKorean" 끝 부착. 배낭은 사이즈 옵션이 없으면 용량을 사이즈로("NL").
+//    (2026-08 push분은 옛 규칙이라 표기가 다르다 — 리프레시 신규 판별은 상세 URL 기준이라 영향 없음)
 // 사용: node gossamer-gear-kr-apply.js [crawl-json]
 import { readFileSync, writeFileSync } from 'node:fs';
 import { dirname, join } from 'node:path';
@@ -83,11 +86,11 @@ const translitToken = (t) => {
   return WORD[bare.toLowerCase()] ?? t; // 미상 → 원문(브랜드/모델명)
 };
 const transliterateName = (name) =>
-  ('고싸머기어 ' +
-    name
-      .split(/(\s+|\/)/)
-      .map((seg) => (/^\s+$/.test(seg) || seg === '/' ? seg : seg.split(/\s+/).map(translitToken).join(' ')))
-      .join(''))
+  name
+    .split(' / ')[0] // " / 사이즈" 꼬리는 sizeKorean으로 따로 붙인다
+    .split(/(\s+|\/)/)
+    .map((seg) => (/^\s+$/.test(seg) || seg === '/' ? seg : seg.split(/\s+/).map(translitToken).join(' ')))
+    .join('')
     .replace(/\s+/g, ' ')
     .trim();
 
@@ -111,9 +114,12 @@ const sizeToKorean = (s) => {
 const rows = JSON.parse(readFileSync(crawlPath, 'utf-8'));
 let n = 0;
 for (const r of rows) {
-  r.nameKorean = transliterateName(r.name);
   if (r.color) r.colorKorean = colorToKorean(r.color);
+  // 배낭은 사이즈 옵션이 없으면 용량을 사이즈로
+  if (!r.size && ['backpack', 'vest_pack'].includes(r.category) && r.specs?.volume) r.size = `${r.specs.volume}L`;
   if (r.size) r.sizeKorean = sizeToKorean(r.size);
+  if (r.size && !r.name.endsWith(` / ${r.size}`)) r.name = `${r.name} / ${r.size}`;
+  r.nameKorean = r.size ? `${transliterateName(r.name)} ${r.sizeKorean}` : transliterateName(r.name);
   n++;
 }
 writeFileSync(crawlPath, JSON.stringify(rows, null, 1), 'utf-8');
