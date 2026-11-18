@@ -122,11 +122,13 @@ def build(p, mf):
     else:  # tent_acc (footprint / vestibule)
         specs = {
             "material": mf.get("Tissu du sol", "") or mf.get("Tissu", ""),
-            "isWaterproof": bool(mm(mf.get("Imperméabilité du sol", "")) or mm(mf.get("Imperméabilité", ""))),
-            "capacity": "",
+            # tent_acc 스키마는 material·size만 — isWaterproof/capacity는 키가 없다(validate ERROR)
         }
         w = grams(mf.get("Poids", "")) or grams(mf.get("Poids minimum", "")) or grams_fallback
 
+    # 배낭은 사이즈 옵션이 없으면 용량을 사이즈로(SKILL 룰 2026-10)
+    size = f"{specs['volume']}L" if cat == "backpack" and specs.get("volume") else ""
+    size_ko = size
     rows = []
     for c in colors:
         rows.append({
@@ -134,18 +136,36 @@ def build(p, mf):
             "category": cat,
             "company": "samaya",
             "companyKorean": "사마야",
-            "name": re.sub(r"®|™", "", title).strip(),
-            "nameKorean": "",
+            "name": re.sub(r"®|™", "", title).strip() + (f" / {size}" if size else ""),
+            "nameKorean": ko_name(title) + (f" {size_ko}" if size else ""),
             "color": c,
             "colorKorean": COLOR_KO.get(c, ""),
-            "size": "",
-            "sizeKorean": "",
+            "size": size,
+            "sizeKorean": size_ko,
             "weight": w,
             "imageUrl": img,
             "specs": {k: v for k, v in specs.items() if v not in ("", None)},
+            "_detailUrl": f"{BASE}/products/{p['handle']}",
             "_source": f"{BASE}/products/{p['handle']}",
         })
     return rows
+
+
+# 2026-11: 한글명 음역(공식 한글명 없음). 메모에 한글화 단계가 없어 스크립트 안에서 바로 채운다.
+KO_WORD = {
+    "samaya": "사마야", "dyneema": "다이니마", "nylon": "나일론", "footprint": "풋프린트", "vestibule": "베스티블",
+    "ultra": "울트라", "pace": "페이스", "alpine": "알파인", "belay": "빌레이", "mountainproof": "마운틴프루프",
+    "handlebar": "핸들바", "pack": "팩", "radical": "래디컬", "inspire": "인스파이어", "assaut": "어사우트", "light": "라이트",
+    "opti": "옵티", "bivy": "비비", "nano": "나노", "highcamp": "하이캠프", "tent": "텐트", "white": "화이트",
+    "black": "블랙", "s/m": "S/M", "m/l": "M/L",
+    "alpinist": "알피니스트", "basecamp": "베이스캠프", "tarp": "타프",  # 기존 DB 표기에 맞춤
+}
+
+
+def ko_name(title):
+    t = re.sub(r"®|™", "", title).replace("_", " ")
+    t = re.sub(r"([A-Za-z])(\d)", r"\1 \2", t)  # "Samaya3.5" → "Samaya 3.5"
+    return " ".join(KO_WORD.get(w.lower(), w) for w in t.split())
 
 
 def main():

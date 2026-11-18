@@ -388,6 +388,7 @@ const classify = (en, xcode) => {
   if (/chair|bench|stool|rocker/.test(s)) return 'chair';
   if (/table/.test(s)) return 'table';
   if (/field office|e-hangar/.test(s)) return 'pouch';
+  if (/camping mat/.test(s)) return 'furniture_etc'; // 패커블 캠핑 매트 = 140x100cm 95g 접이식 깔개(침낭 매트 아님)
   if (/glove/.test(s)) return 'gloves';
   if (/t-shirt|\btee\b|hoodie|sweat|jacket|pants|shorts?\b|skirt|vest|beanie|\bcap\b|cap \d|ball cap|hat\b|bandana|muffler|robe|happy suit|boots|crewneck|polo|long sleeve|windbreak|shirt/.test(s)) return 'clothing';
   if (/backpack|knapsack|back pack/.test(s) && !/cooler|strap/.test(s)) return 'backpack';

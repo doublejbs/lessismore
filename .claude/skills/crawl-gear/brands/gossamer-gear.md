@@ -54,3 +54,7 @@ sizeKorean FLAG(하드웨어 규격·사이즈코드)은 번역 불가라 정당
 - 무게 보존 재분류기: `gossamer-gear-reclassify.js`(Cloudflare로 products.json 재페칭 불가 시 상품명만으로 영향 전환 적용).
 - ⚠ push 시 `productImageUrl`(앱이 직접 쓰는 og:image) 보존 필수 — `push-firestore.js`는 update를 `{...data,...catalogFields}`로
   병합하고 catalogFields에 productImageUrl이 없어 기존값 보존됨(§5 충족). bags/used/useless도 동일 보존.
+
+## 2026-11-16 리프레시 — 제외(Shopify 차단)
+- Shopify가 이 컴퓨터의 curl 요청에 products.json·/collections를 HTTP 429 `local_rate_limited`로 20시간 넘게 막아 이번 리프레시에서 제외(사용자 결정 2026-11-18). 브라우저로는 열림 — **헤더 위장 등 우회 금지.**
+- 다음 리프레시 때 다른 네트워크에서 돌리거나 시간을 두고 재시도. 스크립트는 2026-11-17에 현재 룰로 미리 고쳐 둠.

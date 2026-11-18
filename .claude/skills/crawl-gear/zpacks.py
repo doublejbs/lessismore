@@ -425,6 +425,8 @@ def main():
         cat = categorize(p)
         slug = p["handle"]
         title = re.sub(r"™|®", "", p["title"]).strip()
+        # 2026-11 크롤 공통 룰: 제품명에 브랜드명 금지("Zpacks Radiant Wool T-Shirt" → "Radiant Wool T-Shirt")
+        title = re.sub(r"^zpacks\s+", "", title, flags=re.I).strip()
         nameKo = transliterate_name(title)  # 공식 한글명 없음 → 음역
         variants = p.get("variants", [])
         all_grams_zero = all(not v.get("grams") for v in variants)
@@ -451,7 +453,8 @@ def main():
                 fi = v.get("featured_image")
                 vimg = (fi["src"].split("?")[0] if fi else imgid2src.get(v.get("image_id"))) or default_img
 
-            name_en = f"{title} {size}".strip() if size else title
+            # 사이즈는 예외 없이 name 끝에 " / size"(SKILL 룰)
+            name_en = f"{title} / {size}" if size else title
             rows.append({
                 "groupId": slugify(title),
                 "category": cat,
@@ -466,6 +469,7 @@ def main():
                 "weight": grams,
                 "imageUrl": vimg,
                 "specs": build_specs(cat, title, size),
+                "_detailUrl": f"{BASE}/products/{slug}",
                 "_source": f"{BASE}/products/{slug}",
             })
 

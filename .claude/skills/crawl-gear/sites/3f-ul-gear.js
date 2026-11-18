@@ -75,7 +75,9 @@ const WEIGHT_LABEL_RES = [
 ];
 const toGrams = (num, unit) => (unit.toLowerCase() === 'kg' ? Math.round(parseFloat(num) * 1000) : Math.round(parseFloat(num)));
 
-const findWeightG = (text) => {
+const findWeightG = (text0) => {
+  // ⚠ "Fabric weight: 40g(m²)"는 원단 밀도 — 제품 무게로 잡지 않게 먼저 지운다(2026-11 Qingkong 3에서 40g 오인)
+  const text = text0.replace(/fabric\s*weight\s*:?\s*[\d.]+\s*g\s*\(?\s*(?:m²|m2|\/m²)\)?[^A-Z]*/gi, ' ');
   for (const re of WEIGHT_LABEL_RES) {
     const m = text.match(re);
     if (m) return toGrams(m[1], m[2]);
@@ -191,6 +193,11 @@ const WORD_KOR = {
   small: '스몰', medium: '미디엄', large: '라지', regular: '레귤러', tarp: '타프',
   lightweight: '라이트웨이트', silicone: '실리콘', sealant: '실런트', luminous: '루미너스',
   sticker: '스티커', clips: '클립',
+  // 2026-11 리프레시 신규 상품 어휘
+  freedom: '프리덤', alcohol: '알코올', separate: '세퍼레이트', fly: '플라이', or: '또는', inner: '이너',
+  filter: '필터', mesh: '메쉬', full: '풀', solid: '솔리드', nylon: '나일론', silpoly: '실폴리',
+  silnylon: '실나일론', aqualite: '아쿠아라이트', zip: '집', multi: '멀티', use: '유즈', one: '원', size: '사이즈',
+  brown: '브라운', muti: '멀티', // muti = 사이트 오타(Multi)
 };
 // 모델명에 숫자가 붙어있으면("Shell2"·"Beetle16") 사전 키(shell/beetle)와 안 맞아 그대로 원문이
 // 남는다(실측: nameKorean에 한글이 0글자인 행 20개) — 사전 조회 전에 끝의 숫자를 분리한다.
@@ -232,6 +239,9 @@ const buildRowsForProduct = async (product, catSlug) => {
   const baseWeightG = findWeightG(descText);
   const specs = ['tent', 'shelter', 'tarp'].includes(category) ? buildTentSpecs(descText) : {};
   const nameKorean = transliterate(product.name);
+  // 배낭은 이름의 용량을 스펙·사이즈로(SKILL 룰: 사이즈 옵션이 없으면 용량을 사이즈로)
+  const packL = category === 'backpack' ? (product.name.match(/(\d+(?:\.\d+)?)\s*L\b/i) || [])[1] : '';
+  if (packL) specs.volume = packL;
 
   // push.js는 _source 로 묶어 그 안의 전 행을 하나의 카테고리로 강제 덮어쓴다(대화형/
   // 비대화형 둘 다 items[0].category 를 기본값으로 사용). 이 브랜드는 한 리스팅 페이지
@@ -255,11 +265,12 @@ const buildRowsForProduct = async (product, catSlug) => {
     return [
       {
         ...rowBase,
-        name: product.name,
+        name: packL ? `${product.name} / ${packL}L` : product.name,
+        nameKorean: packL ? `${nameKorean} ${packL}L` : nameKorean,
         color: '',
         colorKorean: '',
-        size: '',
-        sizeKorean: '',
+        size: packL ? `${packL}L` : '',
+        sizeKorean: packL ? `${packL}L` : '',
         weight: baseWeightG,
         imageUrl: product.images?.[0]?.src || '',
       },
@@ -294,6 +305,7 @@ const buildRowsForProduct = async (product, catSlug) => {
         name: bundleColor ? `${product.name} - ${bundleVal} / ${bundleColor}` : `${product.name} - ${bundleVal}`,
         color: bundleColor ? bundleColor.replace(/\b\w/g, (c) => c.toUpperCase()) : '',
         colorKorean: bundleColor ? transliterate(bundleColor) : '',
+        nameKorean: `${nameKorean} ${transliterate(bundleVal)}`,
         size: bundleVal,
         sizeKorean: transliterate(bundleVal),
         weight: findAccessoryWeightG(descText, keyword),
@@ -306,12 +318,22 @@ const buildRowsForProduct = async (product, catSlug) => {
     const seasonVal = allVals.map(extractSeason).find(Boolean) || '';
     const restVals = allVals.map((val) => stripColorSeason(val, colorVal)).filter(Boolean);
     const sizeParts = [seasonVal, ...restVals].filter(Boolean);
-    const sizeVal = [...new Set(sizeParts)].join(' / ');
+    // 변형값 정리(2026-11): 빈 조각·색상 단어 조각("/Brown")·"one size"(사이즈 없음) 제거, 제품명 반복("RAIN PONCHO ZIP" → "ZIP") 제거
+    const prodLow = product.name.toLowerCase();
+    const cleanParts = sizeParts
+      .flatMap((sv) => String(sv).split(/\s*\/\s*/))
+      .map((sv) => sv.trim())
+      .map((sv) => (sv.toLowerCase().startsWith(`${prodLow} `) ? sv.slice(prodLow.length).trim() : sv))
+      .filter((sv) => sv && !/^one\s*size$/i.test(sv) && !COLOR_WORD_KOR[sv.toLowerCase()]);
+    let sizeVal = [...new Set(cleanParts)].join(' / ');
+    if (!sizeVal && packL) sizeVal = `${packL}L`;
     const sizeSpecificG = allVals.map((sv) => findSizeWeightG(descText, sv)).find(Boolean) || 0;
 
     rows.push({
       ...rowBase,
       name: sizeVal ? `${product.name} / ${sizeVal}` : product.name,
+      // 사이즈는 예외 없이 한글명 끝에도(SKILL 룰)
+      nameKorean: sizeVal ? `${nameKorean} ${transliterate(sizeVal)}` : nameKorean,
       color: colorVal ? colorVal.replace(/\b\w/g, (c) => c.toUpperCase()) : '',
       colorKorean: colorVal ? transliterate(colorVal) : '',
       size: sizeVal,

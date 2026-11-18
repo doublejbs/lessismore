@@ -96,6 +96,7 @@ const COLOR_KO = {
   'night blue': '나이트 블루', 'mountain red': '마운틴 레드', abocad: '아보카드', 'ebony black': '에보니 블랙',
   'pebblle beige': '페블 베이지', tabak: '타박', 'gray/black': '그레이/블랙', basalt: '바살트', serpentine: '서펜타인',
   amethyst: '아메시스트', 'dark gray': '다크 그레이', 'heather gray': '헤더 그레이', peyote: '페요테',
+  'purple gridstop': '퍼플 그리드스탑', 'glacier ultraweave': '글레이셔 울트라위브',
 };
 // 한글 색상 단어(사이트 한글명 꼬리가 진짜 색상인지 판별용)
 const KO_COLOR_WORDS = new Set([...Object.values(COLOR_KO).flatMap((v) => v.split(/[\s/]+/)), '라이켄', '리켄', '리첸', '스톰', '옐로우', '크러쉬', '코른', '타프', '글레시어', '글래시어', '맬러카이트', '멜란지', '카멜', '아이보리']);
@@ -236,7 +237,7 @@ const splitColorKo = (ko, colorEn) => {
 const classify = (en) => {
   const s = en.toLowerCase();
   if (/sleeping bag/.test(s)) return 'sleeping_bag';
-  if (/cargo vest/.test(s)) return 'vest_pack'; // 10L 수납 러닝 베스트
+  if (/cargo vest|running vest/.test(s)) return 'vest_pack'; // 수납 러닝 베스트(Portal 10L, Raide 5L)
   if (/\bpack\b|backpack|fastpack|pac-lite|pac-bit/.test(s)) return 'backpack';
   if (/running belt/.test(s)) return 'backpack'; // 러닝 벨트(1L/2L 수납) — 힙팩류는 backpack(gossamer-gear 어댑터 선례)
   if (/crossbody|sacoche|pouch|sidebag|camera shoulder|chalk bucket|trash bag|tote|grocery bag/.test(s)) return 'pouch';
@@ -352,7 +353,9 @@ const buildSpecs = (cat, ctx) => {
   const s = {};
   const material = materialIn(spec);
   if (cat === 'backpack' || cat === 'vest_pack') {
-    const v = litersIn([...texts, name], size, desc); // 러닝 벨트는 용량이 이름에만("UL 1L Running Belt")
+    // 제품명에 용량이 있으면 그 값이 우선("LF 5L Running Vest" — 상세 문구의 플라스크 등 다른 L 값을 잡지 않게)
+    const nameL = (name.match(/(\d+(?:\.\d+)?)\s*L\b/) || [])[1];
+    const v = nameL || litersIn([...texts, name], size, desc); // 러닝 벨트는 용량이 이름에만("UL 1L Running Belt")
     if (v) s.volume = v;
     if (material) s.material = material;
   } else if (cat === 'pouch') {
