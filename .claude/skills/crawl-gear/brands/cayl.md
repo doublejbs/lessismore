@@ -39,3 +39,10 @@
 ### Cafe24 공통
 11. 서버렌더라 curl + 브라우저 UA 로 직접 fetch. 카테고리 `?page=N`(24개/페이지), 카드 `anchorBoxId_<no>`.
     URL 에 슬러그 필수(`/category/bag/43/`, `/category/43/` 은 안 됨).
+
+## 2026-11-19 리프레시(2단계)
+- 신규 97개 상품/565행(무게 0 포함: 메리노 블렌드 삭스·SUBU 윈터 샌들 0·00·1~4 사이즈. 브롬톤 자전거는 타브랜드라 제외).
+- **후처리 `cayl-kr-apply.js` 신설**(cayl.py 뒤 → normalize-rules.js): "MOAK_모악 (CORDURA)" 분해, 원단 괄호(그리드/B-그리드/엑스팩/코듀라) 표기·소재,
+  콜라보 "× Brompton/QMC", 영문 의류명 → EN_KO 사전 한글 음역, 장갑→gloves·삭스/스커트/부티→clothing·플라스크→bottle·GTD Vest→vest_pack,
+  설악(사코슈)·크로스백·메신저 토트→pouch, 소재 칸 설명문 조각 제거, 배낭 용량은 상세 "용량 약 NL"/"N~ML 용량"/"(N~ML)" 상한.
+- 브랜드명 제거가 "(cayl grid)"를 "( grid)"로 망가뜨림 → apply 에서 원단명으로 먼저 치환.

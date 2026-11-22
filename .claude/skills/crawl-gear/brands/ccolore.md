@@ -35,3 +35,7 @@
 9. **color=영문, colorKorean=한글.** 사이트가 색상을 한글로만 표기 → `KO_COLOR_EN` 사전으로 color 를 영문 변환
    (솔트 그레이 → Salt Grey). name/size=영문(사이즈 M), nameKorean/sizeKorean=한글(미디엄).
    (순수 한국 브랜드라 제품명 자체는 한글 verbatim.)
+
+## 2026-11-19 리프레시(2단계)
+- 신규 8개 상품/25행. classify 보강: 다운팬츠→clothing, 알파인 V-라이트·베러 트레일→sleeping_bag.
+- 콜라보 태그 "(BETTER WEEKEND x CCOLORE)"는 브랜드명이라 제품명에서 제거. 영문명은 normalize 사전(Airlite·Ultimatelite·Siltarp…).

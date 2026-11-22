@@ -44,7 +44,7 @@ def slugify(name):
 
 def classify(name):
     n = name.lower()
-    if re.search(r"자[켓캣]|자켓|후드|재킷|jacket|머플러|양말|삭스|socks|비니|글러브|장갑", n):
+    if re.search(r"자[켓캣]|자켓|후드|재킷|jacket|팬츠|pants|머플러|양말|삭스|socks|비니|글러브|장갑", n):
         return "clothing"
     if re.search(r"실타프|타프\b|tarp", n) and "폴" not in n and "파우치" not in n:
         return "tarp"
@@ -52,7 +52,7 @@ def classify(name):
         return "tent"
     if re.search(r"사이드월|이너|그라운드시트|풋프린트", n):
         return "tent_acc"
-    if re.search(r"에어라이트|얼티밋라이트|썸머라이트|슬립스퀘어|다운\s*라이너|침낭|퀼트|슬리핑", n):
+    if re.search(r"에어라이트|얼티밋라이트|썸머라이트|슬립스퀘어|v.?라이트|트레일\s*\d|다운\s*라이너|침낭|퀼트|슬리핑", n):
         return "sleeping_bag"
     if re.search(r"파우치|압축색|메쉬망|스터프|pouch|색\b|케이스|case", n):
         return "pouch"
@@ -63,7 +63,9 @@ def classify(name):
 
 def clean_name_color(title):
     t = html.unescape(title).strip()
-    t = re.sub(r"^\[(시즌오프|season\s*off|품절)\]\s*", "", t, flags=re.I)  # 세일 태그만 제거(콜라보 태그는 유지)
+    t = re.sub(r"^\[(시즌오프|season\s*off|품절)\]\s*", "", t, flags=re.I)  # 세일 태그 제거
+    # 콜라보 태그 "(BETTER WEEKEND x CCOLORE)"·"[SIERRA X CCOLORE]"는 브랜드명이라 제품명에서 뺀다(제품명 브랜드명 금지 룰)
+    t = re.sub(r"^[\[(][^\])]*\bx\s*ccolore[\])]\s*", "", t, flags=re.I)
     color = ""
     if " - " in t:
         head, tail = t.rsplit(" - ", 1)
