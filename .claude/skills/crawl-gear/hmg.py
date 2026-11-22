@@ -223,6 +223,7 @@ def build(listing):
                     "color": color_en_v, "colorKorean": COLOR_KOR.get(ck, color_en_v),
                     "size": size, "sizeKorean": size, "weight": w,
                     "imageUrl": image, "specs": sp,
+                    "_detailUrl": f"{BASE}/product/detail.html?product_no={no}",  # validate 필수(개별 상세 URL)
                     "_source": f"{BASE}/product/detail.html?product_no={no}",
                 })
         if i % 15 == 0 or i == total:

@@ -14,7 +14,11 @@ const UA = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (
 const KO_NAME = {
   nyx: { en: 'NYX Single Wall Tent', ko: '닉스 싱글월 텐트' }, // 이미지: "NYX LIGHTWEIGHT SINGLEWALL TENT", "닉스(NYX)"
   'titanium shot cup': { en: 'Titanium Shot Cup', ko: '티타늄 소주잔' }, // 이미지: "TITANIUM SHOT CUP 티타늄 소주잔"
+  'oel canopy 143': { en: 'Canopy 143', ko: '캐노피 143' }, // 초경량 3단 우산(이미지에 한글 상품명 없음 → 음역)
+  'foldable cup': { en: 'Foldable Cup', ko: '폴더블 컵' }, // 이미지: "OEL 폴더블 컵"
 };
+// 상품이 아닌 판매 페이지(행사 참가권 등)
+const NOT_PRODUCT = /FIELD MEET/i;
 // 이미지 사양표(OCR) — 텍스트에 없는 값
 const SPEC_EXTRA = {
   nyx: {
@@ -23,6 +27,8 @@ const SPEC_EXTRA = {
     pitchType: '자립', // 크로스폴 완전 자립식
   },
   'titanium shot cup': { material: '99% Pure Titanium', isSet: false },
+  'oel canopy 143': { material: 'Polyester 75D 210T, Black Pigment Coated (UPF50+)', size: 'Open 90 x 50 cm / Folded 22 x 3.5 cm' },
+  'foldable cup': { material: 'Silicone', isSet: false },
 };
 
 const curl = (url) => execFileSync('curl', ['-sL', '--compressed', '-A', UA, url], { encoding: 'utf-8', maxBuffer: 64 * 1024 * 1024 });
@@ -40,6 +46,7 @@ const classify = (name) => {
   if (/tent|텐트|nyx/.test(s)) return 'tent';
   if (/tarp|타프/.test(s)) return 'tarp';
   if (/cup|컵|잔|mug/.test(s)) return 'cup';
+  if (/canopy|umbrella|우산/.test(s)) return 'etc'; // 우산 — 헬리녹스 엄브렐라와 같은 etc
   return 'etc';
 };
 
@@ -122,6 +129,10 @@ export default {
     for (const idx of ids) {
       const d = parseDetail(idx);
       if (!d) continue;
+      if (NOT_PRODUCT.test(d.siteName)) {
+        console.log(`[oel]   제외(상품 아님): ${d.siteName}`);
+        continue;
+      }
       if (!KO_NAME[d.siteName.toLowerCase()]) console.warn(`[oel] ⚠ 한글명 미등록(상세 이미지 OCR 후 KO_NAME 추가): ${d.siteName}`);
       rows.push(buildRow(d));
       console.log(`[oel]   ${d.siteName}`);

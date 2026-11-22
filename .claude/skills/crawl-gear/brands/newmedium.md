@@ -82,3 +82,8 @@
   Alpenblow 펌프(매트 펌프 전용 키 없음)·랜턴 리쉬(핸드오프: 랜턴 액세서리를 lighting에 넣지 않음) 등.
 
 재실행: `node crawl.js newmedium --no-open` → `node validate.js out/newmedium-<ts>.json` → 검토 → push(node@20 push.js).
+
+## 2026-11-16 리프레시
+- 신규 10개 상품 / 17행 push: 팔란테(울트라라이트 팩 글래시어, 데저트 팩 브라운+조이스트랩, 조이 팩 2종, 사이드백 소프트), Raide(LF 5L 러닝 베스트, 여성 LF 2L 러닝 벨트), Portal 플라나 캡 3색.
+- Raide 러닝 베스트 → vest_pack(수납 베스트). 용량은 **제품명 용량 우선**(상세 문구의 플라스크 L 값을 잡아 3L로 나왔음).
+- Sidebag "Black Grid Mesh"는 기존 Sidebag Black과 같은 URL(사이트 색상명 변경) → 제외. Lasal 비니 S(무게 0) 보류.

@@ -90,9 +90,13 @@ for (const r of rows) {
     if (/[぀-ヿ一-鿿]/.test(r[f] || '')) err(`일본어/한자 잔존: ${f}`, r, r[f]);
 
   // 제품명에 회사·브랜드명 금지(회사는 company/companyKorean 필드에만)
+  // 예외(사용자 결정): 모델명 자체가 브랜드명인 제품 — 브랜드명 바로 뒤에 모델 번호가 오는 경우만 허용
+  //   samaya: 텐트 "Samaya 3.5"/"사마야 3.5" (2026-11-17 사용자 확정, brands/samaya.md)
+  const BRAND_IS_MODEL = { samaya: /^(samaya|사마야)\s*\d/i };
+  const modelOk = BRAND_IS_MODEL[r.company] && BRAND_IS_MODEL[r.company].test(r.name || '') && BRAND_IS_MODEL[r.company].test(r.nameKorean || '');
   const brandTokens = [r.company, r.companyKorean].filter((b) => b && b.length >= 2);
   for (const b of brandTokens)
-    if (`${r.name} ${r.nameKorean}`.toLowerCase().includes(b.toLowerCase())) err('제품명에 브랜드명 포함', r, `${b} ∈ ${r.nameKorean}`);
+    if (!modelOk && `${r.name} ${r.nameKorean}`.toLowerCase().includes(b.toLowerCase())) err('제품명에 브랜드명 포함', r, `${b} ∈ ${r.nameKorean}`);
 
   // 한글 필드에 영문 단어 섞임 — 숫자 섞인 코드(3R/R500/V2)·사이즈 글자(S/M/L/XL)·짧은 대문자 약어(EXP/GTX/UL/PC)만 허용
   const latinWords = (s) => (s || '').match(/[A-Za-z][A-Za-z-]*/g) || [];
@@ -117,6 +121,30 @@ for (const r of rows) {
     err('숫자 사이즈 ≠ 용량 스펙', r, `size=${r.size} spec=${capVal}`);
   // 배낭은 사이즈 옵션이 없으면 용량을 사이즈로
   if (['backpack', 'vest_pack'].includes(r.category) && !r.size && r.specs?.volume) err('배낭 size 빈값(용량을 사이즈로)', r, `volume=${r.specs.volume}`);
+
+  // ── 2026-11 리프레시 행별 검토에서 나온 유형(사람이 찾은 것 → 자동 검사로) ──
+  // One Size/Default Title 은 "사이즈 없음" — 사이즈로 넣지 않는다(3F 레인 판초 "MUTI USE PONCHO / one size")
+  for (const f of ['size', 'sizeKorean'])
+    if (/(^|\/\s*)(one\s*size|onesize|default\s*title|free\s*size|원\s*사이즈)(\s*\/|$)/i.test(r[f] || '')) err(`${f}에 One Size/Default(사이즈 없음으로 처리)`, r, r[f]);
+  // 변형값 파싱 잔해: 빈 조각("3 Season / /Brown"), 앞뒤 슬래시
+  for (const f of ['size', 'sizeKorean', 'name', 'nameKorean'])
+    if (/\/\s*\/|^\s*\/|\/\s*$/.test(r[f] || '')) err(`${f}에 빈 조각("/ /")`, r, r[f]);
+  // 이름 속 단어 반복("레인 판초 레인 판초 집" — 변형값에 제품명이 다시 들어감)
+  const dupPhrase = (s) => {
+    const t = (s || '').toLowerCase().split(/[\s/]+/).filter(Boolean);
+    for (let n = 2; n <= 3; n++) for (let i = 0; i + 2 * n <= t.length; i++) if (t.slice(i, i + n).join(' ') === t.slice(i + n, i + 2 * n).join(' ')) return t.slice(i, i + n).join(' ');
+    return '';
+  };
+  for (const f of ['name', 'nameKorean']) if (dupPhrase(r[f])) flag(`${f}에 단어 반복(변형값에 제품명 중복 의심)`, r, r[f]);
+  // 사이즈에 색상 단어(색상이 size 로 새는 축 판별 실수 의심)
+  if (r.size && /(^|[\s/])(black|white|grey|gray|brown|green|blue|red|khaki|olive|navy|yellow|orange|purple|pink|beige|tan|sand)([\s/]|$)/i.test(r.size))
+    flag('size에 색상 단어(색상↔사이즈 축 확인)', r, r.size);
+  // 카테고리 대비 무게 이상 — 원단 밀도(g/m²)·부품 무게를 본품 무게로 오인했거나 카테고리 오분류 신호
+  // (2026-11: 텐트 40g = "Fabric weight 40g(m²)" 오인, 침낭 매트 95g = 접이식 깔개 오분류)
+  const MIN_W = { tent: 300, shelter: 150, tarp: 100, sleeping_bag: 150, mat: 150, chair: 250, table: 150, backpack: 50, stove: 10 };
+  const MAX_W = { cup: 1500, bottle: 2000, pouch: 5000, clothing: 3000, gloves: 1500, mat: 4000, backpack: 6000 };
+  if (r.weight > 0 && MIN_W[r.category] && r.weight < MIN_W[r.category]) flag(`무게가 ${r.category} 치고 너무 가벼움(오인·오분류 확인)`, r, `${r.weight}g`);
+  if (r.weight > 0 && MAX_W[r.category] && r.weight > MAX_W[r.category]) flag(`무게가 ${r.category} 치고 너무 무거움(단위·세트 합산 확인)`, r, `${r.weight}g`);
 
   // weight 숫자
   if (typeof r.weight !== 'number' || Number.isNaN(r.weight) || r.weight < 0) err('weight 숫자 아님/음수', r, String(r.weight));

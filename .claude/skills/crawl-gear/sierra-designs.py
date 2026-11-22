@@ -35,7 +35,7 @@ COLOR_KOR = {
     "ivory": "아이보리", "beige": "베이지", "khaki": "카키", "brown": "브라운", "pink": "핑크",
     "purple": "퍼플", "sage": "세이지", "mint": "민트", "lemon": "레몬", "greige": "그레이지",
     "charcoal": "차콜", "natural": "내추럴", "cream": "크림", "olive": "올리브", "sky": "스카이",
-    "skyblue": "스카이블루", "union": "유니온", "dark": "다크", "light": "라이트", "sand": "샌드",
+    "blueberry": "블루베리", "misty": "미스티", "skyblue": "스카이블루", "union": "유니온", "dark": "다크", "light": "라이트", "sand": "샌드",
     "coral": "코랄", "teal": "틸", "burgundy": "버건디", "wine": "와인", "mustard": "머스타드",
     "silver": "실버", "gold": "골드", "camel": "카멜", "lavender": "라벤더", "peach": "피치",
     "multi": "멀티", "tan": "탄", "forest": "포레스트", "stone": "스톤",
@@ -62,17 +62,31 @@ def color_kor(en):
     return " ".join(out)
 
 
+def clean_alt(raw):
+    """리스팅 img alt 정리(2026-11 사이트 개편 후 alt 에 설명이 붙음):
+    "모조 티타늄 스포크 SILVER - 실버 톤 스포크 디테일 제품 이미지" → "모조 티타늄 스포크 SILVER".
+    판매 태그 접두("한정수량)", "[EXCLUSIVE]")도 뺀다(제품명이 아님)."""
+    t = html.unescape(raw).strip()
+    t = re.sub(r"\s+-\s+[^-]*제품\s*이미지\s*$", "", t)
+    t = re.sub(r"^(?:한정수량\)|\[EXCLUSIVE\])\s*", "", t)
+    t = re.sub(r"^W\)\s*", "우먼스 ", t)  # 여성용 표기
+    t = t.replace("LIMITED EDITION", "리미티드 에디션").replace("(SEOUL)", "(서울)").replace("KNOCK DOWN FLIPFLOP", "넉다운 플립플롭")
+    return t.strip()
+
+
 def split_name_color(raw):
-    name = html.unescape(raw).strip()
-    m = COLOR_TOKEN.search(name)
-    color = ""
-    if m:
-        cand = m.group(1).strip()
-        toks = [re.sub(r"^[LDN]\.", "", w).strip(".").lower() for w in re.split(r"\s+", cand)]
-        if any(t in COLOR_KOR for t in toks):
-            color = cand
-            name = name[: m.start()].strip()
-    return name, color
+    name = clean_alt(raw)
+    # 끝에서부터 색상 단어(대문자, L./D./N. 접두 허용)만 최대 3개 떼어 낸다 — "KNOCK DOWN FLIPFLOP YELLOW" → YELLOW
+    words = name.split()
+    k = len(words)
+    while k > 1 and len(words) - k < 3 and re.fullmatch(r"(?:[LDN]\.)?[A-Z][A-Z.]+", words[k - 1]) \
+            and re.sub(r"^[LDN]\.", "", words[k - 1]).strip(".").lower() in COLOR_KOR:
+        k -= 1
+    # "LIGHT BLUEBERRY"·"MISTY GREY"처럼 수식어+색상: 바로 앞 대문자 단어가 수식어면 같이 뗀다
+    if k < len(words) and k > 1 and words[k - 1] in ("LIGHT", "DARK", "MISTY", "DEEP", "MINT", "NEON"):
+        k -= 1
+    color = " ".join(words[k:])
+    return " ".join(words[:k]).strip(), color
 
 
 def slugify(s):
@@ -81,6 +95,19 @@ def slugify(s):
 
 def categorize_kr(name):
     s = name
+    # 이름으로 확정되는 소품(텐트 카테고리 번호 안에 섞인 한정판 컵·나침반 등)이 카테고리 번호보다 우선
+    if re.search(r"머그|시에라\s*컵|티타늄\s*컵", s):
+        return "cup"
+    if re.search(r"(?<!컴)포트|코펠|쿡\s*세트", s):
+        return "cookware_etc"
+    if re.search(r"스포크|스푼|포크", s):
+        return "cutlery"
+    if re.search(r"이어머프|귀마개", s):
+        return "clothing"
+    if re.search(r"테나야팩\s*\d+L|백팩\s*\d+L", s):
+        return "backpack"
+    if re.search(r"집색|스터프", s):
+        return "pouch"
     if re.search(r"글러브|장갑|미트", s):
         return "gloves"
     if re.search(r"백팩|배낭|플렉스\s*(카파시터|캐퍼시터|트레일|하이크|럼바)", s) and not re.search(r"팬츠|자켓|재킷|셔츠|후드|베스트", s):
@@ -143,8 +170,21 @@ def crawl_kr():
                 name_raw = alt.group(1)
                 img = re.search(r'src="(//[^"]+/web/product/(?:big|medium)[^"]+\.(?:jpg|png|gif))"', b)
                 image = ("https:" + img.group(1).split("?")[0]) if img else ""
+                if not image:
+                    # 2026-11 개편 후 리스팅 카드에 상품 이미지 src 가 없고 alt 엔 설명이 붙는다 →
+                    # 상세의 마지막 og:title(상품명)·og:image(상품 사진) 사용(첫 og 태그는 사이트 공통값)
+                    d = curl(f"{KR}/product/detail.html?product_no={no}")
+                    ogt = re.findall(r'og:title" content="([^"]+)"', d)
+                    ogi = [u for u in re.findall(r'og:image" content="([^"]+)"', d) if "/web/product/" in u]
+                    if ogt and ogt[-1] != "시에라디자인":
+                        name_raw = ogt[-1]
+                    if ogi:
+                        image = ogi[-1].split("?")[0]
                 base, color = split_name_color(name_raw)
-                cat = fixed_cat or categorize_kr(base)
+                kw = categorize_kr(base)
+                cat = kw if fixed_cat and kw in ("cup", "cookware_etc", "cutlery") else (fixed_cat or kw)
+                if re.search(r"써모컴패스|컴패스|나침반", base):
+                    cat = "etc"
                 # 풋프린트/그라운드시트/폴대는 텐트 카테고리에 섞여 있어도 tent_acc
                 if re.search(r"풋프린트|그라운드\s*시트|폴대|팩\s*세트|스테이크|가이라인", base):
                     cat = "tent_acc"
@@ -153,7 +193,7 @@ def crawl_kr():
                     "category": cat,
                     "company": "sierra-designs",
                     "companyKorean": "시에라디자인",
-                    "name": html.unescape(name_raw).strip(),
+                    "name": "",  # normalize-rules 가 nameKorean 에서 영문명 생성(괄호 원어 → 외래어 사전 → 로마자)
                     "nameKorean": base,
                     "color": color,
                     "colorKorean": color_kor(color),

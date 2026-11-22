@@ -189,6 +189,9 @@ const COLORMAP = {
   wolf: '울프', solid: '솔리드', pickled: '피클드', buddies: '버디스', foliage: '폴리지', limestone: '라임스톤',
   flurry: '플러리', diamond: '다이아몬드', crisp: '크리스프', icon: '아이콘', cosmos: '코스모스', mallow: '맬로우',
   salmon: '새먼', energy: '에너지', peel: '필', undercurrent: '언더커런트', vintage: '빈티지',
+  // 2026-11 리프레시 신규 색상
+  coal: '콜', low: '로우', ridge: '릿지', tri: '트라이', color: '컬러', solar: '솔라', blocks: '블록스',
+  leave: '리브', only: '온리', footprints: '풋프린츠', wavy: '웨이비', treelines: '트리라인스',
 };
 const colorToKorean = (en) => {
   let v = (en || '').trim();
@@ -240,6 +243,8 @@ const buildRows = (p, domain) => {
   };
   // ⚠ 색상만 전개하고 사이즈는 접는다(기존 의류 브랜드 관례 = 시에라디자인: 색상별 개별 행, 사이즈 미전개).
   //   색상별로 이미지가 다르고, 사이즈 변형은 이미지·스펙이 동일해 행만 폭발시키므로 대표 1행으로 접는다.
+  // 배낭은 사이즈 옵션이 없으면 용량을 사이즈로(SKILL 룰, 2026-10). 2026-09 push분은 size 빈값 — refresh-new.js가 같은 행으로 본다
+  const packSize = (category === 'backpack' || category === 'vest_pack') && specs.volume ? `${specs.volume}L` : '';
   const rows = [];
   const seen = new Set();
   const colorList = colors.length ? colors : [{ tooltip: '', image: p.image_src }];
@@ -250,14 +255,17 @@ const buildRows = (p, domain) => {
     const img = (c.image || c.thumb_images?.[0] || p.image_src || '').replace(/^http:/, 'https:');
     rows.push({
       ...rowBase,
+      // 사이즈는 예외 없이 이름 끝에(SKILL 룰)
+      name: packSize ? `${name} / ${packSize}` : name,
+      nameKorean: packSize ? `${nameKr} ${packSize}` : nameKr,
       color: colorEn,
       colorKorean: colorToKorean(colorEn),
-      size: '',
-      sizeKorean: '',
+      size: packSize,
+      sizeKorean: packSize,
       imageUrl: img,
     });
   }
-  return rows.length ? rows : [{ ...rowBase, color: '', colorKorean: '', size: '', sizeKorean: '', imageUrl: (p.image_src || '').replace(/^http:/, 'https:') }];
+  return rows.length ? rows : [{ ...rowBase, color: '', colorKorean: '', size: packSize, sizeKorean: packSize, imageUrl: (p.image_src || '').replace(/^http:/, 'https:') }];
 };
 
 export { classify, buildSpecs, colorToKorean };

@@ -48,3 +48,7 @@
   예: `X-Mid 1`→더스턴기어 X-Mid 1, `Spare X-Dome Parts`→더스턴기어 스페어 X-Dome 파츠.
 
 재실행: `node crawl.js durston-gear --no-open` → `node durston-gear-kr-apply.js` → (신규만 분리 후) push.
+
+## 2026-11-16 리프레시 — 제외(Shopify 차단)
+- Shopify가 이 컴퓨터의 curl 요청에 products.json·/collections를 HTTP 429 `local_rate_limited`로 20시간 넘게 막아 이번 리프레시에서 제외(사용자 결정 2026-11-18). 브라우저로는 열림 — **헤더 위장 등 우회 금지.**
+- 다음 리프레시 때 다른 네트워크에서 돌리거나 시간을 두고 재시도. 스크립트는 2026-11-17에 현재 룰로 미리 고쳐 둠.

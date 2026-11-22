@@ -15,3 +15,7 @@
 4. **한글명은 음역**(공식 한국명 없음). EPX/DCF 등 소재코드는 유지.
 5. `"Color | Torso"` 결합 옵션명은 ` | ` 로, `"Blue w/ Lite Floor"` 값은 ` w/ ` 로 분해.
 6. **push 후 문서수 < 행수면 색상변형 합쳐진 것** → push-firestore.js findExisting 이 color 포함하는지 확인(수정 완료).
+
+## 2026-11-16 리프레시 — 제외(Shopify 차단)
+- Shopify가 이 컴퓨터의 curl 요청에 products.json·/collections를 HTTP 429 `local_rate_limited`로 20시간 넘게 막아 이번 리프레시에서 제외(사용자 결정 2026-11-18). 브라우저로는 열림 — **헤더 위장 등 우회 금지.**
+- 다음 리프레시 때 다른 네트워크에서 돌리거나 시간을 두고 재시도. 스크립트는 2026-11-17에 현재 룰로 미리 고쳐 둠.
