@@ -4,6 +4,11 @@
 //   2) groupId + color + size                                 — push.js upsert 1순위 키
 //   3) 같은 회사의 (nameKorean 또는 legacy name) + colorKorean/color + size (공백·대소문자 무시) — 사용자 직접 입력분과의 중복 방지
 //   4) 같은 상세 URL + color 이고 DB size 가 빈값, 새 행 size 가 "<용량>L" — 배낭 용량-사이즈 룰(2026-10) 이전 push분
+//   5) 같은 상품(URL·groupId·이름) + color 이고 DB size 가 빈값 — 사이즈 행 분리 이전 push분(새 행 사이즈 무관)
+//   6) DB 행이 color 빈값이고 이름 끝에 색상이 붙어 있으면(새 행 이름+색상 = DB 이름) — 색상 분리 이전 push분
+//   7) 새 행 color 빈값 + DB 에 같은 URL·사이즈 행 존재 — 이번 크롤이 색상을 못 읽은 경우
+//   ※ 사이즈 "ONE"·"One Size"·"FREE" 는 빈 사이즈와 같게 비교
+//   (3의 이름 비교는 DB 이름 끝 시즌 코드 " F25"·" S26" 도 떼고 비교 — 시즌 재등록분)
 // Firestore 는 Node 20 으로(firebase-admin SlowBuffer 이슈).
 //
 // Usage: /opt/homebrew/opt/node@20/bin/node refresh-new.js <crawl-json> [out-json]
@@ -27,7 +32,11 @@ const rows = Array.isArray(data) ? data : data.items || data.gears;
 initializeApp({ credential: cert(JSON.parse(readFileSync(join(here, 'serviceAccountKey.json'), 'utf-8'))) });
 const db = getFirestore();
 
-const norm = (s) => String(s ?? '').replace(/\s+/g, '').toLowerCase();
+// "ONE"·"One Size"·"FREE" 사이즈는 사이즈 없음과 같게 본다(옛 행에 ONE 이 남아 있음, 2026-11 스노우피크)
+const norm = (s) => {
+  const t = String(s ?? '').replace(/\s+/g, '').toLowerCase();
+  return /^(one|onesize|os|free|원사이즈|프리)$/.test(t) ? '' : t;
+};
 // 상세 URL 키 — 같은 상품이 다른 주소로 잡히지 않게 정규화(2026-11 미스테리월·코베아에서 카테고리 경로·슬러그 차이로 가짜 신규)
 //   Cafe24: "/product/<슬러그>/<번호>/category/46/display/1/" · "/product/detail.html?product_no=<번호>" → "<호스트>#<번호>"
 //   메이크샵: "shopdetail.html?branduid=<번호>" → "<호스트>#<번호>"
@@ -61,12 +70,17 @@ const stripSize = (n, ...sizes) => {
   for (const z of sizes) if (z && t.endsWith(` ${z}`)) t = t.slice(0, -z.length - 1);
   return t;
 };
+// 시즌 코드 접미사(" F25"·" S26") 제거 — 같은 모델이 시즌마다 새 상품번호·접미사 없는 이름으로 재등록된다(2026-11 블랙다이아몬드)
+const stripSeason = (n) => String(n || '').replace(/\s+[SF]\d{2}$/, '');
 const byName = new Set();
 for (const g of existing) {
   for (const n of [g.nameKorean, g.name]) {
     for (const c of [g.colorKorean, g.color]) {
       byName.add(`${norm(g.company)}|${norm(n)}|${norm(c)}|${norm(g.sizeKorean || g.size)}`);
       byName.add(`${norm(g.company)}|${norm(stripSize(n, g.size, g.sizeKorean))}|${norm(c)}|${norm(g.sizeKorean || g.size)}`);
+      byName.add(`${norm(g.company)}|${norm(stripSeason(stripSize(n, g.size, g.sizeKorean)))}|${norm(c)}|${norm(g.sizeKorean || g.size)}`);
+      // 영문 size 로도 키를 만든다 — sizeKorean 번역이 바뀌면(몽벨 "라지 - Relaxed"→"라지 - 릴렉스드") 가짜 신규가 된다(2026-11)
+      if (g.size) byName.add(`${norm(g.company)}|${norm(stripSize(n, g.size, g.sizeKorean))}|${norm(c)}|${norm(g.size)}`);
     }
   }
 }
@@ -74,12 +88,34 @@ for (const g of existing) {
 // 4) 같은 URL+색상인데 DB 쪽 size 가 빈값이고 새 행 size 가 "<용량>L"(배낭 용량-사이즈 룰 도입 전 push분)
 const byUrlNoSize = new Set(existing.filter((g) => !g.size).map((g) => `${urlKey(g.productUrl)}|${norm(g.color)}`));
 const isPackSizeOnly = (r) => r.size && r.specs?.volume && norm(r.size) === norm(`${r.specs.volume}L`) && byUrlNoSize.has(`${urlKey(r._detailUrl || r._source)}|${norm(r.color)}`);
+// 5) 사이즈 행 분리 룰 이전에 사이즈 없이 push 된 상품(랩 의류 등): DB 에 같은 상품·색상이 size 빈값으로 있으면
+//    새 행의 사이즈가 무엇이든 기존 상품으로 본다(기존 행 정리는 별도 작업)
+const byGroupNoSize = new Set(existing.filter((g) => !g.size && g.groupId).map((g) => `${g.groupId}|${norm(g.color)}`));
+const byNameNoSize = new Set(existing.filter((g) => !g.size).flatMap((g) => [g.nameKorean, g.name].filter(Boolean).map((n) => `${norm(g.company)}|${norm(n)}|${norm(g.color)}`)));
+const isLegacyNoSize = (r) =>
+  r.size &&
+  (byUrlNoSize.has(`${urlKey(r._detailUrl || r._source)}|${norm(r.color)}`) ||
+    byGroupNoSize.has(`${r.groupId}|${norm(r.color)}`) ||
+    [r.nameKorean, r.name, stripSize(r.nameKorean, r.size, r.sizeKorean), stripSize(r.name, r.size, r.sizeKorean)].some((n) => byNameNoSize.has(`${norm(r.company)}|${norm(n)}|${norm(r.color)}`)));
 const nameHit = (r) =>
   [r.nameKorean, r.name, stripSize(r.nameKorean, r.size, r.sizeKorean), stripSize(r.name, r.size, r.sizeKorean)].some((n) =>
     [r.colorKorean, r.color].some((c) => [r.sizeKorean, r.size].some((z) => byName.has(`${norm(r.company)}|${norm(n)}|${norm(c)}|${norm(z)}`))),
   );
+// 6) 색상을 이름에 붙여 color 빈값으로 push 된 옛 행("컬러스테이크30 그린", color ''): 새 행 이름+색상이 DB 이름과 같으면 기존
+const byNameColorless = new Set(existing.filter((g) => !g.color).flatMap((g) => [g.nameKorean, g.name].filter(Boolean).map((n) => `${norm(g.company)}|${norm(n)}|${norm(g.size)}`)));
+const isColorInName = (r) =>
+  (r.color || r.colorKorean) &&
+  [[r.nameKorean, r.colorKorean], [r.name, r.color], [stripSize(r.nameKorean, r.size, r.sizeKorean), r.colorKorean], [stripSize(r.name, r.size, r.sizeKorean), r.color]].some(
+    ([n, c]) => n && c && [`${n} ${c}`, `${n}(${c})`].some((nc) => byNameColorless.has(`${norm(r.company)}|${norm(nc)}|${norm(r.size)}`)),
+  );
+// 7) 새 행이 color 빈값인데 DB 에 같은 상세 URL·사이즈 행이 있으면 기존(이번 크롤이 색상을 못 읽은 경우 — 가짜 신규 방지)
+const byUrlSize = new Set(existing.map((g) => `${urlKey(g.productUrl)}|${norm(g.size)}`));
+const isColorLost = (r) => !r.color && byUrlSize.has(`${urlKey(r._detailUrl || r._source)}|${norm(r.size)}`);
 const isExisting = (r) =>
   isPackSizeOnly(r) ||
+  isColorInName(r) ||
+  isColorLost(r) ||
+  isLegacyNoSize(r) ||
   nameHit(r) ||
   byUrl.has(`${urlKey(r._detailUrl || r._source)}|${norm(r.color)}|${norm(r.size)}`) ||
   byGroup.has(`${r.groupId}|${norm(r.color)}|${norm(r.size)}`) ||
