@@ -89,13 +89,19 @@ const COLOR_PAIRS = [
   ['민트', 'Mint'], ['아이보리', 'Ivory'], ['차콜', 'Charcoal'], ['코요테', 'Coyote'], ['탄', 'Tan'], ['카모', 'Camo'], ['크림', 'Cream'],
   ['라이트', 'Light'], ['다크', 'Dark'], ['딥', 'Deep'], ['스카이', 'Sky'], ['포레스트', 'Forest'], ['와인', 'Wine'], ['버건디', 'Burgundy'],
   ['멜란지', 'Melange'], ['티타늄', 'Titanium'], ['내추럴', 'Natural'], ['라임', 'Lime'], ['틸', 'Teal'], ['코랄', 'Coral'],
-  ['믹스', 'Mix'], ['진저', 'Ginger'], ['그레이프', 'Grape'], ['오크', 'Oak'], ['오트밀', 'Oatmeal'], ['슬레이트', 'Slate'], ['아이스', 'Ice'], ['아게이트', 'Agate'], ['버치', 'Birch'], ['매직', 'Magic'], ['매머드', 'Mommoth'], ['솔트그레이', 'Salt Grey'], ['솔트', 'Salt'], ['애쉬', 'Ash'], ['멀티', 'Multi'], ['투명', 'Clear'], ['청록', 'Teal'], ['검정', 'Black'], ['흰색', 'White'], ['회색', 'Gray'], ['빨강', 'Red'],
+  ['믹스', 'Mix'], ['템페스트', 'Tempest'], ['아미', 'Army'], ['앤트러사이트', 'Anthracite'], ['폴른', 'Pollen'], ['에보니', 'Ebony'], ['페블', 'Pebble'], ['피그', 'Fig'], ['그레이프프루트', 'Grapefruit'], ['투스칸', 'Tuscan'], ['블루버드', 'Bluebird'], ['플럼', 'Plum'], ['진저', 'Ginger'], ['그레이프', 'Grape'], ['오크', 'Oak'], ['오트밀', 'Oatmeal'], ['슬레이트', 'Slate'], ['아이스', 'Ice'], ['아게이트', 'Agate'], ['버치', 'Birch'], ['매직', 'Magic'], ['매머드', 'Mommoth'], ['솔트그레이', 'Salt Grey'], ['솔트', 'Salt'], ['애쉬', 'Ash'], ['멀티', 'Multi'], ['투명', 'Clear'], ['청록', 'Teal'], ['검정', 'Black'], ['흰색', 'White'], ['회색', 'Gray'], ['빨강', 'Red'],
   ['파랑', 'Blue'], ['초록', 'Green'], ['노랑', 'Yellow'], ['주황', 'Orange'], ['갈색', 'Brown'], ['남색', 'Navy'], ['분홍', 'Pink'],
+  // 2026-11 코오롱 신상 색상
+  ['멜란', 'Melange'], ['미디엄', 'Medium'], ['모스', 'Moss'], ['그레이지', 'Greige'], ['카멜', 'Camel'], ['그레이시', 'Grayish'],
+  ['오션', 'Ocean'], ['신더', 'Cinder'], ['페일', 'Pale'], ['애플', 'Apple'], ['로열', 'Royal'], ['로얄', 'Royal'], ['스틸', 'Steel'],
+  ['머스타드', 'Mustard'], ['브릭', 'Brick'], ['레이크', 'Lake'], ['바이올렛', 'Violet'], ['웜', 'Warm'], ['머드', 'Mud'],
+  ['라벤더', 'Lavender'], ['아쿠아', 'Aqua'], ['오프', 'Off'], ['세이지', 'Sage'], ['토프', 'Taupe'], ['스톤', 'Stone'], ['러셋', 'Russet'],
+  ['살몬', 'Salmon'],
 ];
 const KO2EN = new Map(COLOR_PAIRS.map(([k, e]) => [k, e]));
 const EN2KO = new Map();
 for (const [k, e] of COLOR_PAIRS) if (!EN2KO.has(e.toLowerCase())) EN2KO.set(e.toLowerCase(), k);
-const colorKoToEn = (s) => String(s).split(/(\s+|\/|&|,)/).map((t) => (KO2EN.get(t.trim()) ?? (/[가-힣]/.test(t) ? romanizeWord(t.trim()) : t))).join('').replace(/\s+/g, ' ').trim();
+export const colorKoToEn = (s) => String(s).split(/(\s+|\/|&|,)/).map((t) => (KO2EN.get(t.trim()) ?? (/[가-힣]/.test(t) ? romanizeWord(t.trim()) : t))).join('').replace(/\s+/g, ' ').trim();
 const colorEnToKo = (s) => {
   const parts = String(s).split(/(\s+|\/|&|,)/);
   const out = parts.map((t) => (/^[A-Za-z]+$/.test(t) ? EN2KO.get(t.toLowerCase()) ?? null : t));
@@ -239,7 +245,7 @@ export const normalizeRow = (r) => {
   return out;
 };
 
-if (import.meta.url === pathToFileURL(process.argv[1]).href) {
+if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) {
   const [src, dst] = process.argv.slice(2);
   if (!src) {
     console.error('Usage: node normalize-rules.js <in-json> [out-json]');

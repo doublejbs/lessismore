@@ -17,3 +17,11 @@
    - 매칭 = **숫자집합 완전일치 + 성별 일치 + bigram Dice ≥ 0.85(근접 길이 우선)**. 매칭되면 KR 공식명 verbatim, 아니면 음역 폴백.
    - 가드: ① 성별(Men's↔남/Women's↔여) — 없으면 여성 제품에 남성 이름 박힘 ② 시장 프리픽스(US/PS/WIC/SIC)·말미 영문색상 제거
      ③ 숫자집합 *정확* 일치(부분집합 X): `30L`↔`30L 2`(버전)·`20L`↔`30L` 오매칭 방지. 팩은 용량에 `L` 부착(차차 팩 30→30L).
+
+## 2026-11 리프레시
+- 크롤 6033행(1106상품) → 신규 926행(128상품, 대부분 26FW 의류·키즈·XXL 사이즈 추가분).
+- `kr-apply-montbell.js` 사전 보강: one-pack(원팩)·fiber(파이버)·exceloft(엑셀로프트)·thermaland(써마랜드)·cortina·husky·
+  climaair·Relaxed(릴렉스드 — 사이즈 "M - Relaxed") 등. 모델명 속 단독 s/m/l 은 대문자로.
+- 후처리 `montbell-refresh-fix.mjs`: 같은 상품이 두 카테고리 리스팅에 걸려 중복(블랭킷 sleeping_bag/clothing) → 구체 카테고리만,
+  배낭 액세서리(레인커버→backpack_cover, 사이드 포켓·추가 백→pouch), 리페어 테이프·SR-6 프레임→tent_acc, 트레일 쿠션→mat.
+- 기존 DB 에 sizeKorean "미디엄 - Relaxed"·nameKorean "thermaland"/"cycling" 영문 잔존 — 기존 행 정리 대상(보류).

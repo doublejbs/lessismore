@@ -46,6 +46,58 @@ const guessCategory = (url) => {
   return null;
 };
 
+// 상세에 "영문제품명" 행이 없는 신상품용 영문명: URL 슬러그에서 만든다
+// "mens-microlight-down-jacket" → "Men's Microlight Down Jacket", "descendor-40l-ski-pack" → "Descendor 40L Ski Pack"
+const UPPER_WORDS = new Set(['gtx', 'nd', 'as', 'g', 'x', 'vr']);
+export const englishNameFromUrl = (url) => {
+  let slug = slugFromUrl(url)
+    .replace(/^rab-/, '')
+    .replace(/-[a-z]{3}-\d+$/, '') // 상품코드 접미(-qwi-87, -qcc-20)
+    .replace(/-\d+$/, '');
+  let prefix = '';
+  const g = slug.match(/^(mens|womens|women-s|men-s)-/);
+  if (g) {
+    prefix = /^wom/.test(g[1]) ? "Women's " : "Men's ";
+    slug = slug.slice(g[0].length);
+  }
+  const words = slug.split('-').filter(Boolean).map((w) => {
+    if (/^\d+l$/.test(w)) return w.slice(0, -1); // 모델 숫자(Descendor 40) — 용량은 사이즈로 따로 붙는다
+    if (/^nd\d+l?$/.test(w)) return w.toUpperCase();
+    if (UPPER_WORDS.has(w)) return w.toUpperCase();
+    if (w === 'gore') return 'GORE';
+    if (w === 'tex') return 'TEX';
+    return w[0].toUpperCase() + w.slice(1);
+  });
+  return (prefix + words.join(' ')).replace(/GORE TEX/g, 'GORE-TEX');
+};
+
+// Magento jsonConfig 에서 색상별 사이즈 목록(colour_rab ∩ size_rab 의 simple product id 교집합)
+const SIZED = new Set(['clothing', 'gloves', 'gaiter', 'etc', 'vest_pack']);
+export const fetchSizesByColor = async (url) => {
+  try {
+    const html = await (await fetch(url, { headers: { 'User-Agent': 'Mozilla/5.0' } })).text();
+    const attr = (code) => {
+      const m = html.match(new RegExp(`"code":"${code}","label":"[^"]*","options":(\\[.*?\\])\\s*,\\s*"position"`));
+      try {
+        return m ? JSON.parse(m[1]) : [];
+      } catch {
+        return [];
+      }
+    };
+    const colors = attr('colour_rab');
+    const sizes = attr('size_rab');
+    const out = {};
+    for (const c of colors) {
+      const ids = new Set(c.products);
+      out[c.label] = sizes.filter((s) => s.products.some((p) => ids.has(p))).map((s) => s.label);
+    }
+    if (!colors.length && sizes.length) out[''] = sizes.map((s) => s.label);
+    return out;
+  } catch {
+    return {};
+  }
+};
+
 const slugFromUrl = (url) => {
   try {
     const u = new URL(url);
@@ -390,12 +442,12 @@ const crawlCategory = async (browser, categoryUrl, { withWeight = true } = {}) =
       specs = detail.specs;
       nameEnglish = detail.nameEnglish;
     }
-    results.push({
+    const base = {
       groupId: `rab_${slugFromUrl(it.detailUrl)}`,
       category,
       company: 'rab',
       companyKorean: '랩',
-      name: nameEnglish || it.nameKorean,
+      name: nameEnglish || englishNameFromUrl(it.detailUrl) || it.nameKorean,
       nameKorean: it.nameKorean,
       color: it.color,
       colorKorean: '',
@@ -406,7 +458,12 @@ const crawlCategory = async (browser, categoryUrl, { withWeight = true } = {}) =
       specs,
       _detailUrl: it.detailUrl,
       _source: categoryUrl,
-    });
+    };
+    // 사이즈 옵션은 행으로 펼친다(룰: 옵션별 개별 행). 배낭은 용량이 사이즈라 제외
+    const sizes = SIZED.has(category) && it.detailUrl ? ((await fetchSizesByColor(it.detailUrl))[it.color] ?? []) : [];
+    const real = sizes.filter((x) => !/^(one ?size|os|원\s*사이즈|free)$/i.test(x));
+    if (real.length) for (const sz of real) results.push({ ...base, size: sz, sizeKorean: sz });
+    else results.push(base);
   }
   await page.close();
   return results;
@@ -435,6 +492,13 @@ export default {
         console.log(`[rab] error on ${url}: ${e.message} — skipping`);
       }
     }
-    return all;
+    // 같은 상품이 상위·하위 카테고리(all-jackets ⊃ down-jackets 등)에 겹쳐 나온다 → groupId+color+size 로 하나만
+    const seen = new Set();
+    return all.filter((r) => {
+      const k = `${r.groupId}|${r.color}|${r.size}`;
+      if (seen.has(k)) return false;
+      seen.add(k);
+      return true;
+    });
   },
 };

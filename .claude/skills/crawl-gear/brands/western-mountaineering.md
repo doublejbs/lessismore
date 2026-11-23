@@ -7,8 +7,13 @@
 ## ⚠️ 주의사항
 
 ### 크롤 & 구조
-1. **전체 제품 = WP 사이트맵** `wp-sitemap-posts-product-1.xml` (72개, 품절 포함). 카테고리 리스팅은
-   페이지네이션(5p)·중복 많음. `product-sitemap.xml` 은 404 → WP 코어 사이트맵 사용.
+1. **전체 제품 = Yoast 사이트맵** `product-sitemap.xml`(품절 포함). 카테고리 리스팅은 페이지네이션·중복 많음.
+   ⚠ 2026-11 기준 WP 코어 사이트맵 `wp-sitemap-posts-product-1.xml` 은 Yoast 로 301 되어 0행이 나왔다
+   (2026-07 땐 반대로 product-sitemap.xml 이 404 였음 — 사이트가 바꾸면 둘 중 살아 있는 쪽으로).
+   - **robots.txt Crawl-delay: 10** → `wm.py` 가 요청 사이 10초 쉰다(약 70상품이면 15분+).
+   - 일부 의류는 `data-product_variations="false"`(변형을 AJAX 로 로드) → `<select name="attribute_...">`
+     옵션으로 폴백(예전엔 `'bool' object is not iterable` 로 죽었음).
+   - 행에 `_detailUrl`(`/product/<slug>/`) 을 반드시 넣는다(빠지면 refresh-new 의 URL 대조가 안 됨).
 2. **서버렌더(WooCommerce)** → curl + UA 직접. 상세 스펙은 `woocommerce-product-attributes` 표(label/value).
    길이별 값은 **nested `insidetable`** → 아이템 행 단위로 분할 파싱해야 안쪽 `</td>` 에 안 걸린다.
 3. **사이트가 미터법을 서빙**: Total Weight `820 g`, Temp Rating `-7°C`, 사이즈 `165cm`. 단 **혼재**하니
@@ -31,3 +36,8 @@
 10. **한글화 = 음역**(KR 공식 수입사명 미확인). `NAME_KO` 모델·구조어 사전으로 nameKorean 생성
     (알핀라이트/앤털로프/스톰실드/컴포터…), 미등재 코드(MF/GWS/XR/VBL)는 유지. sizeKorean: 침낭 cm 유지,
     의류 S/M/L→스몰/미디엄/라지. colorKorean 사전 음역.
+
+## 2026-11 리프레시
+- 신규 3상품 9행(아스트라라이트 탑 퀼트·나노라이트 탑 퀼트·스노잭 파카 GWS XS~XL).
+- **2026-11 검수에서 발견**: 탑 퀼트 사이즈 표기가 180cm/200cm → 173cm/193cm 로 바뀌었다(무게 동일 = 같은 변형). 가짜 신규라 제외.
+  스노잭 파카는 이번 크롤이 색상을 못 읽어(빈값) 가짜 신규 → refresh-new 규칙 7 로 걸러짐. 결과 신규 0.

@@ -15,7 +15,9 @@ import time
 
 UA = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
 BASE = "https://www.westernmountaineering.com"
-SITEMAP = f"{BASE}/wp-sitemap-posts-product-1.xml"
+# 2026-11: WP 코어 사이트맵이 Yoast product-sitemap.xml 로 301 이동
+SITEMAP = f"{BASE}/product-sitemap.xml"
+CRAWL_DELAY = 10  # robots.txt Crawl-delay: 10
 
 FEET_CM = {"5'0\"": "150cm", "5'6\"": "165cm", "6'0\"": "180cm", "6'6\"": "200cm", "7'0\"": "215cm"}
 COLOR_KOR = {
@@ -66,9 +68,9 @@ def kor_name(name):
 
 
 def curl(url):
-    time.sleep(0.05)
+    time.sleep(CRAWL_DELAY)
     for _ in range(3):
-        out = subprocess.run(["curl", "-sS", "-m", "30", "-A", UA, url], capture_output=True, timeout=35)
+        out = subprocess.run(["curl", "-sSL", "-m", "30", "-A", UA, url], capture_output=True, timeout=35)
         if out.returncode == 0:
             return out.stdout.decode("utf-8", "replace")
         time.sleep(1)
@@ -207,6 +209,13 @@ def garment_variants(t):
     except Exception:
         return [], ""
     sizes, colors = [], []
+    if not isinstance(vs, list):
+        # 변형이 많으면 WooCommerce 가 data-product_variations="false"(AJAX 로딩)로 둔다 →
+        # <select name="attribute_pa_...">의 option 값으로 대신 읽는다
+        vs = []
+        for name, body in re.findall(r'<select[^>]+name="(attribute_[^"]+)"[^>]*>(.*?)</select>', t, re.S):
+            for val in re.findall(r'<option value="([^"]+)"', body):
+                vs.append({"attributes": {name: val}})
     for v in vs:
         a = v.get("attributes", {})
         for k, val in a.items():
@@ -258,6 +267,7 @@ def crawl():
                 "size": size_en, "sizeKorean": size_ko, "weight": weight,
                 "imageUrl": image, "specs": sp,
                 "_source": f"{BASE}/product/{slug}/",
+                "_detailUrl": f"{BASE}/product/{slug}/",
             })
 
         if isinstance(tw, dict):  # 침낭: 길이별

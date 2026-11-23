@@ -256,14 +256,49 @@ const fetchDetailOnce = async (page, no) => {
         // 옵션 select가 있는 상품이면 그것도 populate될 때까지 같이 기다린다.
         const descOk = el && el.textContent.trim().length > 50;
         const selects = document.querySelectorAll('select[name="viewOptions[]"]');
-        const selectsOk = selects.length === 0 || [...selects].every((s) => s.options.length > 1);
+        // 사이즈 select(2번째)는 컬러를 고르기 전엔 플레이스홀더뿐인 상품이 있다(2026-11) — 첫 select만 기다리고
+        // 사이즈는 아래 loadSizesAfterColor 에서 컬러를 골라 채운다.
+        const selectsOk = selects.length === 0 || selects[0].options.length > 1;
         return descOk && selectsOk;
       },
       { timeout: 10000 }
     )
     .catch(() => {});
   await new Promise((r) => setTimeout(r, 300));
+  const result = await readDetail(page);
+  if (!result.sizes.length) result.sizes = await loadSizesAfterColor(page);
+  return result;
+};
+
+// 2026-11 리프레시에서 발견: 일부 상품(솔루션 2.0 자켓 등 161행)은 사이즈 select 가 컬러 선택 후 AJAX 로 채워져
+// 첫 렌더에선 비어 있다 → 사이즈가 통째로 빠져 DB(사이즈별 행)와 어긋나 가짜 신규가 됐다.
+// 첫 컬러를 골라 change 를 발생시키고 사이즈 옵션이 채워질 때까지 기다린 뒤 읽는다(품절 표시는 제거).
+const loadSizesAfterColor = async (page) => {
+  const ok = await page.evaluate(() => {
+    const selects = document.querySelectorAll('select[name="viewOptions[]"]');
+    if (selects.length < 2 || selects[0].options.length < 2) return false;
+    selects[0].selectedIndex = 1;
+    selects[0].dispatchEvent(new Event('change', { bubbles: true }));
+    if (window.jQuery) window.jQuery(selects[0]).trigger('change');
+    return true;
+  });
+  if (!ok) return [];
+  await page
+    .waitForFunction(() => document.querySelectorAll('select[name="viewOptions[]"]')[1]?.options.length > 1, { timeout: 8000 })
+    .catch(() => {});
   return page.evaluate(() => {
+    const sel = document.querySelectorAll('select[name="viewOptions[]"]')[1];
+    return sel
+      ? [...sel.options]
+          .slice(1)
+          .map((o) => o.textContent.replace(/\s*\(?품절\)?\s*/g, '').trim())
+          .filter((t) => t && t !== 'ONE')
+      : [];
+  });
+};
+
+const readDetail = (page) =>
+  page.evaluate(() => {
     const ogTitle = document.querySelector('meta[property="og:title"]');
     const ogImage = document.querySelector('meta[property="og:image"]');
     const nameKorean = ogTitle ? ogTitle.content.trim() : (document.title || '').replace(/\s*-\s*블랙다이아몬드\s*$/, '').trim();
@@ -306,7 +341,6 @@ const fetchDetailOnce = async (page, no) => {
 
     return { nameKorean, imageUrl, colors, sizes, descText };
   });
-};
 
 // 브랜드 자체가 국제 브랜드라 색상명이 이미 영문(Basalt, Creek Blue 등) — 별도 번역 사전
 // 불필요. colorKorean은 음역(로마자 역방향 아님, 발음 그대로 한글 표기)으로 채운다.
@@ -326,6 +360,36 @@ const KNOWN_COLOR_KO = {
   octane: '옥테인', minted: '민티드', envy: '엔비', ultra: '울트라', light: '라이트', dark: '다크',
   astral: '아스트랄', slate: '슬레이트', fire: '파이어', storm: '스톰', steel: '스틸',
   rose: '로즈', coral: '코랄', sulphur: '설퍼', wild: '와일드', rain: '레인', ash: '애쉬',
+  // 2026-11 리프레시: 하이픈 조합 색상(Black-Rye)·의류 시즌 컬러가 대량으로 음절 폴백에 빠져 깨진 한글이 됐다 → 전부 등재
+  agave: '아가베', aged: '에이지드', alloy: '알로이', alpnst: '알피니스트', aluminum: '알루미늄', amber: '앰버',
+  aqua: '아쿠아', arctic: '아틱', atmosphere: '애트모스피어', azul: '아줄', azurite: '아주라이트', baja: '바하',
+  bark: '바크', basalt: '바살트', bdg: '배지', badge: '배지', beeswax: '비즈왁스', belay: '빌레이', birch: '버치',
+  blk: '블랙', bloom: '블룸', blu: '블루', bolts: '볼트', bone: '본', bordeaux: '보르도', brush: '브러시',
+  burnt: '번트', cactus: '캑터스', cam: '캠', camp: '캠프', carbon: '카본', caspian: '캐스피언', chalk: '초크',
+  charcoal: '차콜', cherrywood: '체리우드', chlk: '초크', circle: '서클', citron: '시트론', clay: '클레이',
+  clean: '클린', cobalt: '코발트', corner: '코너', cranberry: '크랜베리', creek: '크릭', crimson: '크림슨',
+  curry: '커리', cypress: '사이프러스', dapper: '대퍼', deep: '딥', deeps: '딥스', deepwoods: '딥우즈',
+  denim: '데님', desert: '데저트', diamond: '다이아몬드', dragon: '드래곤', dragonpatch: '드래곤패치',
+  drifter: '드리프터', dual: '듀얼', dusk: '더스크', dyno: '다이노', eclipse: '이클립스', eqpmnt: '이큅먼트',
+  fade: '페이드', faded: '페이디드', fig: '피그', figure: '피규어', fir: '퍼', flax: '플랙스', foam: '폼',
+  fog: '포그', for: '포', frost: '프로스트', garnet: '가넷', glacier: '글래시어', glyphs: '글리프',
+  golden: '골든', granite: '그래니트', granola: '그래놀라', grape: '그레이프', grass: '그래스', gum: '검',
+  heather: '헤더', henna: '헤나', himalayan: '히말라얀', hmlyn: '히말라얀', hour: '아워', hyper: '하이퍼',
+  ice: '아이스', icon: '아이콘', indigo: '인디고', ink: '잉크', irn: '아이언', iron: '아이언', jammed: '잼드',
+  kingfisher: '킹피셔', kunzite: '쿤자이트', lagoon: '라군', laurel: '로렐', lemon: '레몬', lightning: '라이트닝',
+  lilac: '라일락', lime: '라임', logo: '로고', lt: '라이트', macaw: '마코', marigold: '메리골드', mauve: '모브',
+  meadow: '메도우', midnight: '미드나잇', midnt: '미드나잇', mineral: '미네랄', moab: '모압', moonstone: '문스톤',
+  moss: '모스', mulberry: '멀베리', mushroom: '머쉬룸', mve: '모브', nickel: '니켈', oak: '오크',
+  obsidian: '옵시디언', ocean: '오션', ochre: '오커', off: '오프', pale: '페일', palm: '팜', patch: '패치',
+  patina: '파티나', persimmon: '퍼시먼', pewter: '퓨터', pine: '파인', piton: '피톤', quilt: '퀼트',
+  raging: '레이징', rd: '레드', relief: '릴리프', repo: '리포', rope: '로프', rp: '로프', rosewood: '로즈우드',
+  rust: '러스트', rye: '라이', saffron: '사프란', sage: '세이지', salt: '솔트', sea: '씨', sienna: '시에나',
+  sky: '스카이', smk: '스모크', smoke: '스모크', snake: '스네이크', soft: '소프트', square: '스퀘어',
+  stroke: '스트로크', sunflare: '선플레어', sunrise: '선라이즈', tan: '탄', taupe: '타우프', triangle: '트라이앵글',
+  tundra: '툰드라', twilight: '트와일라잇', verde: '베르데', vertical: '버티컬', violet: '바이올렛',
+  walnut: '월넛', walnuts: '월넛', warp: '워프', wasabi: '와사비', washed: '워시드', wavy: '웨이비',
+  wht: '화이트', wisteria: '위스테리아', woods: '우즈', wordmark: '워드마크', woven: '우븐', wvn: '우븐',
+  dd: '다이아몬드', dmd: '다이아몬드', hood: '후드', moonlight: '문라이트', sand: '샌드', stone: '스톤', night: '나이트', forest: '포레스트',
 };
 // 사전에 없는 단어는 자음+모음을 묶어 음절 단위로 근사 표기한다(한 글자씩 이어붙이면
 // "Polished"→"프오을이스흐이드"처럼 심하게 깨짐). 완벽한 영한 표기법은 아니고 최후 폴백.
@@ -345,11 +409,21 @@ const syllabicKorean = (word) => {
   if (cur) chunks.length ? (chunks[chunks.length - 1] += cur) : chunks.push(cur);
   return chunks.map((c) => [...c].map((ch) => EN_TO_KO_SOUND[ch] ?? '').join('')).join('');
 };
-const roughColorKorean = (colorEnglish) =>
+// 하이픈·슬래시 조합("Black-Rye", "Moonstone - Midnt Blu")은 구분자를 살려 단어별로 옮긴다.
+// 사전에 없는 단어: 대문자 약어·숫자·한 글자(BD, C.P, 8)는 그대로, 그 외만 음절 폴백(새 단어는 사전에 추가할 것).
+export const roughColorKorean = (colorEnglish) =>
   colorEnglish
-    .split(/\s+/)
-    .map((w) => KNOWN_COLOR_KO[w.toLowerCase()] ?? syllabicKorean(w))
-    .join(' ');
+    .trim()
+    .split(/(\s*[-/]\s*|\s+)/)
+    .map((w) => {
+      if (/^\s*[-/]\s*$/.test(w)) return w.trim();
+      if (/^\s+$/.test(w) || !w) return w && ' ';
+      const ko = KNOWN_COLOR_KO[w.toLowerCase()];
+      if (ko) return ko;
+      if (/^[A-Z0-9.]{1,4}$/.test(w) || /^[a-z]$/i.test(w) || /\d/.test(w)) return w;
+      return syllabicKorean(w);
+    })
+    .join('');
 
 // specs-schema.js 기준 카테고리별 "material"(범용 소재) 키가 실제로 존재하는 카테고리만.
 // lighting은 소재 필드 자체가 없고, tent/shelter는 innerMaterial/flyMaterial/poleMaterial로

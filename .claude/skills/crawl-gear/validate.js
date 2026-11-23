@@ -35,6 +35,7 @@ const err = (k, r, d) => bump(errors, k, r, d);
 const flag = (k, r, d) => bump(flags, k, r, d);
 
 const dk = new Map();
+const dn = new Map();
 for (const r of rows) {
   // 필수 필드 비어있지 않음 + null 금지
   for (const f of REQUIRED) if (r[f] === '' || r[f] == null) err(`필수 필드 빈값: ${f}`, r);
@@ -125,7 +126,7 @@ for (const r of rows) {
   // ── 2026-11 리프레시 행별 검토에서 나온 유형(사람이 찾은 것 → 자동 검사로) ──
   // One Size/Default Title 은 "사이즈 없음" — 사이즈로 넣지 않는다(3F 레인 판초 "MUTI USE PONCHO / one size")
   for (const f of ['size', 'sizeKorean'])
-    if (/(^|\/\s*)(one\s*size|onesize|default\s*title|free\s*size|원\s*사이즈)(\s*\/|$)/i.test(r[f] || '')) err(`${f}에 One Size/Default(사이즈 없음으로 처리)`, r, r[f]);
+    if (/(^|\/\s*)(one\s*size|onesize|one|default\s*title|free\s*size|free|all|원\s*사이즈)(\s*\/|$)/i.test(r[f] || '')) err(`${f}에 One Size/Default(사이즈 없음으로 처리)`, r, r[f]);
   // 변형값 파싱 잔해: 빈 조각("3 Season / /Brown"), 앞뒤 슬래시
   for (const f of ['size', 'sizeKorean', 'name', 'nameKorean'])
     if (/\/\s*\/|^\s*\/|\/\s*$/.test(r[f] || '')) err(`${f}에 빈 조각("/ /")`, r, r[f]);
@@ -135,6 +136,15 @@ for (const r of rows) {
     for (let n = 2; n <= 3; n++) for (let i = 0; i + 2 * n <= t.length; i++) if (t.slice(i, i + n).join(' ') === t.slice(i + n, i + 2 * n).join(' ')) return t.slice(i, i + n).join(' ');
     return '';
   };
+  // 2026-11 리프레시에서 발견한 유형
+  //  - 글자 단위 음역으로 깨진 한글 색상("브을아크크"=Black, "크흐아르크오아을"=Charcoal) — 블랙다이아몬드
+  if (/브을|크흐|트흐|으[르을]|[가-힣]이이[가-힣]/.test(r.colorKorean || '')) err('colorKorean 글자단위 음역(깨진 한글)', r, r.colorKorean);
+  //  - color(영문)에 한글 로마자 음역("Beulraek"=블랙, "Neibi"=네이비) — 코오롱
+  if (/\b(?:Beul|Neibi|Geurei|Geurin|Raiteu|Dakeu|Beuraun|Chakol|Olribeu|Hwaiteu|Beiji)\w*/.test(r.color || '')) err('color(영문)에 로마자 음역(영문 색상명 써야 함)', r, r.color);
+  //  - 소문자 사이즈 코드("s") — 스노우피크
+  if (/^(x{0,3}[sml]|xxl)$/.test(r.size || '')) err('사이즈 코드 소문자(대문자로)', r, r.size);
+  //  - 사이즈 옵션값이 제품명 자체("F1 LT / F1 LT") — 스카르파
+  if (r.size && (r.name || '').replace(` / ${r.size}`, '') === r.size) err('사이즈가 제품명 자체(사이즈 없음 처리)', r, r.size);
   for (const f of ['name', 'nameKorean']) if (dupPhrase(r[f])) flag(`${f}에 단어 반복(변형값에 제품명 중복 의심)`, r, r[f]);
   // 사이즈에 색상 단어(색상이 size 로 새는 축 판별 실수 의심)
   if (r.size && /(^|[\s/])(black|white|grey|gray|brown|green|blue|red|khaki|olive|navy|yellow|orange|purple|pink|beige|tan|sand)([\s/]|$)/i.test(r.size))
@@ -153,8 +163,16 @@ for (const r of rows) {
   const key = `${r.groupId}|${r.color || ''}|${r.size || ''}`;
   if (!dk.has(key)) dk.set(key, []);
   dk.get(key).push(r);
+  // push.js 는 (company,nameKorean|name,color,size) 로도 기존 문서를 찾아 덮어쓴다 → 같은 파일 안에서 groupId 만 다른 같은 이름 행은
+  // 하나로 합쳐진다(2026-11 몽벨 시즌 재등록·스노우피크 R/RR 상품번호로 177행이 서로 덮어씀)
+  for (const n of [r.nameKorean, r.name]) {
+    const nk = `${r.company}|${n}|${r.color || ''}|${r.size || ''}`;
+    if (!dn.has(nk)) dn.set(nk, new Set());
+    dn.get(nk).add(r.groupId);
+  }
 }
 for (const [key, arr] of dk) for (let i = 1; i < arr.length; i++) err('중복 행 (groupId,color,size)', arr[i], key);
+for (const [key, gids] of dn) if (gids.size > 1) flag('같은 이름·색상·사이즈인데 groupId 다름(push 시 한 문서로 합쳐짐)', { groupId: [...gids].join(','), _detailUrl: '' }, key);
 
 // 같은 상품(같은 _detailUrl)의 변형은 같은 groupId
 const gidByUrl = new Map();

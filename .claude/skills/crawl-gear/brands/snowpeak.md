@@ -121,3 +121,12 @@ node .claude/skills/crawl-gear/sites/snowpeak.js  # (어댑터, crawl.js 통해 
 # 또는 러너로 직접: adapter.crawl(null,{}) → out/snowpeak-full.json
 ```
 크롤 ~162초(855개 상세 fetch). Firestore push/커밋 상태는 세션 진행에 따름.
+
+## 2026-11 리프레시
+- 신규 202상품 996행(2026 시즌 의류 100261xxxx 코드 위주 + 신규 기어). 무게 31%(의류 무게 없음은 정상).
+- 가짜 신규 원인: 옛 행은 색상을 **이름 끝**에 붙이고 color 빈값("컬러스테이크30 그린", "…(실버)")·사이즈 "ONE" 으로
+  저장돼 있다 → `refresh-new.js` 규칙 6·7 과 ONE=빈 사이즈 비교로 해결.
+- 2026 의류는 godNm 이 **영문뿐**(Technical Alan Knit) → 한글명 음역 필요(`refresh-kr-fix.mjs` 사전).
+  THERMO→써모, EDITION→에디션 등 한글명 속 영단어도 음역. W's/M's → 여성/남성.
+- 사이트가 같은 사이즈를 소문자 "s" 로 올린 상품 있음(타키비 스토리지 베스트) → 대문자로 통일.
+- 배낭인데 용량 정보가 전혀 없는 상품(에브리데이 유즈 백팩 등)은 사이즈 빈값으로 둠.
